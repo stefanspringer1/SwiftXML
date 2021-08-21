@@ -1,0 +1,9 @@
+.DS_Store
+Thumbs.db
+/.build
+/Packages
+/Package.resolved
+/*.xcodeproj
+xcuserdata/
+DerivedData/
+/.swiftpm
