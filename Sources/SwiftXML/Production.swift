@@ -1,9 +1,8 @@
 //
-//  File.swift
+//  Production.swift
 //  
-//
-//  Created by Stefan Springer on 20.08.21.
-//
+//  Created 2021 by Stefan Springer, https://stefanspringer.com
+//  License: Apache License 2.0
 
 import Foundation
 import SwiftXMLInterfaces

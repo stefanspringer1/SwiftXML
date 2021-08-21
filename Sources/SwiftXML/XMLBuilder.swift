@@ -1,7 +1,10 @@
+//
+//  XMLBuilder.swift
+//
+//  Created 2021 by Stefan Springer, https://stefanspringer.com
+//  License: Apache License 2.0
+
 import Foundation
-#if canImport(FoundationXML)
-import FoundationXML
-#endif
 import SwiftXMLInterfaces
 
 class XMLBuilder: SwiftXMLInterfaces.DefaultXMLEventHandler {

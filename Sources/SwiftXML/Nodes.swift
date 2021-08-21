@@ -1,9 +1,8 @@
 //
-//  File.swift
+//  Nodes.swift
 //
-//
-//  Created by Stefan Springer on 20.05.21.
-//
+//  Created 2021 by Stefan Springer, https://stefanspringer.com
+//  License: Apache License 2.0
 
 import Foundation
 
