@@ -23,7 +23,7 @@ public class XMLDocument: XMLBranch {
         self.systemID = systemID
     }
     
-    var declarationsInInternalSubset = [XMLDeclarationInInternalSubset]()
+    public var declarationsInInternalSubset = [XMLDeclarationInInternalSubset]()
     
     var internalEntityDeclarations = [String:XMLInternalEntityDeclaration]()
     var parameterEntityDeclarations = [String:XMLParameterEntityDeclaration]()
