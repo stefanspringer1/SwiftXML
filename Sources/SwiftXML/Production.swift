@@ -25,7 +25,7 @@ func sortByName(_ declarations: [String:XMLDeclarationInInternalSubset]) -> [XML
 
 open class DefaultXMLFormatter: SwiftXMLInterfaces.DefaultXMLFormatter, XMLFormatter {
     
-    public func sortedDeclarationsInInternalSubset(document: XMLDocument) -> [XMLDeclarationInInternalSubset] {
+    open func sortedDeclarationsInInternalSubset(document: XMLDocument) -> [XMLDeclarationInInternalSubset] {
         var sorted = [XMLDeclarationInInternalSubset]()
         ([
             sortByName(document.internalEntityDeclarations),
