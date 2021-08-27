@@ -81,32 +81,24 @@ public class XMLNode {
         }
     }
     
-    public func write(toPath path: String, productionType: XMLProduction.Type = DefaultXMLProduction.self) {
+    public func write(toFile path: String, formatter: XMLFormatter = DefaultXMLFormatter()) {
         let fileManager = FileManager.default
         if !fileManager.fileExists(atPath: path) {
             fileManager.createFile(atPath: path,  contents:Data("".utf8), attributes: nil)
         }
         if let fileHandle = FileHandle(forWritingAtPath: path) {
-            let production = productionType.init(file: fileHandle)
+            let production = DefaultXMLProduction(file: fileHandle, formatter: formatter)
             self.applyProduction(production: production)
             fileHandle.closeFile()
         }
         else {
             print("ERROR: cannot write to [\(path)]");
         }
+        
     }
     
-    public func write(production: XMLProduction) {
-        self.applyProduction(production: production)
-    }
-    
-    public func write(toFile file: FileHandle, productionType: XMLProduction.Type = DefaultXMLProduction.self) {
-        let production = productionType.init(file: file)
-        self.applyProduction(production: production)
-    }
-    
-    public func write(productionType: XMLProduction.Type = DefaultXMLProduction.self) {
-        write(toFile: FileHandle.standardOutput, productionType: productionType)
+    public func echo(formatter: XMLFormatter? = nil) {
+        applyProduction(production: DefaultXMLProduction(formatter: formatter))
     }
 }
 
@@ -242,7 +234,7 @@ public class XMLElement: XMLBranch, Named {
     override func produceEntering(production: XMLProduction) {
         production.elementStartBeforeAttributes(name: name, hasAttributes: !(attributes?.isEmpty ?? true), isEmpty: firstChild == nil)
         if let theAttributes = attributes {
-            production.sortedAttributeNames(attributeNames: Array(theAttributes.keys)).forEach { attributeName in
+            production.getFormatter().sortedAttributeNames(attributeNames: Array(theAttributes.keys)).forEach { attributeName in
                 if let theAttribute = theAttributes[attributeName] {
                     production.attribute(name: theAttribute.name, value: theAttribute.value)
                 }

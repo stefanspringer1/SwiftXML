@@ -150,7 +150,7 @@ public class XMLDocument: XMLBranch {
         production.documentTypeDeclarationBeforeInternalSubset(type: getType() ?? "?", publicID: publicID, systemID: systemID, hasInternalSubset: _hasInternalSubset)
         if _hasInternalSubset {
             production.documentTypeDeclarationInternalSubsetStart()
-            production.sortedDeclarationsInInternalSubset(document: self).forEach { declaration in
+            production.getFormatter().sortedDeclarationsInInternalSubset(document: self).forEach { declaration in
                 switch declaration {
                 case let internalEntityDeclaration as XMLInternalEntityDeclaration: production.internalEntityDeclaration(name: internalEntityDeclaration.name, value: internalEntityDeclaration.value)
                 case let parameterEntityDeclaration as XMLParameterEntityDeclaration: production.parameterEntityDeclaration(name: parameterEntityDeclaration.name, value: parameterEntityDeclaration.value)
