@@ -81,7 +81,7 @@ public class XMLNode {
         }
     }
     
-    public func write(path: String, productionType: XMLProduction.Type = DefaultXMLProduction.self) {
+    public func write(toPath path: String, productionType: XMLProduction.Type = DefaultXMLProduction.self) {
         let fileManager = FileManager.default
         if !fileManager.fileExists(atPath: path) {
             fileManager.createFile(atPath: path,  contents:Data("".utf8), attributes: nil)
@@ -100,13 +100,13 @@ public class XMLNode {
         self.applyProduction(production: production)
     }
     
-    public func write(file: FileHandle, productionType: XMLProduction.Type = DefaultXMLProduction.self) {
+    public func write(toFile file: FileHandle, productionType: XMLProduction.Type = DefaultXMLProduction.self) {
         let production = productionType.init(file: file)
         self.applyProduction(production: production)
     }
     
     public func write(productionType: XMLProduction.Type = DefaultXMLProduction.self) {
-        write(file: FileHandle.standardOutput, productionType: productionType)
+        write(toFile: FileHandle.standardOutput, productionType: productionType)
     }
 }
 
