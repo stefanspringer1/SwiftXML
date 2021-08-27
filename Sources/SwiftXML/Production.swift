@@ -7,11 +7,6 @@
 import Foundation
 import SwiftXMLInterfaces
 
-public protocol XMLFormatter: SwiftXMLInterfaces.XMLFormatter {
-    
-    func sortedDeclarationsInInternalSubset(document: XMLDocument) -> [XMLDeclarationInInternalSubset]
-}
-
 func sortByName(_ declarations: [String:XMLDeclarationInInternalSubset]) -> [XMLDeclarationInInternalSubset] {
     var sorted = [XMLDeclarationInInternalSubset]()
     declarations.keys.sorted().forEach { name in
@@ -22,7 +17,15 @@ func sortByName(_ declarations: [String:XMLDeclarationInInternalSubset]) -> [XML
     return sorted
 }
 
-open class DefaultXMLFormatter: SwiftXMLInterfaces.DefaultXMLFormatter, XMLFormatter {
+public protocol XMLProduction: SwiftXMLInterfaces.DefaultXMLProduction {
+    func sortedDeclarationsInInternalSubset(document: XMLDocument) -> [XMLDeclarationInInternalSubset]
+}
+
+open class DefaultXMLProduction: SwiftXMLInterfaces.DefaultXMLProduction, XMLProduction {
+    
+    required public init(file: FileHandle) {
+        super.init(file: file)
+    }
     
     open func sortedDeclarationsInInternalSubset(document: XMLDocument) -> [XMLDeclarationInInternalSubset] {
         var sorted = [XMLDeclarationInInternalSubset]()
@@ -40,29 +43,5 @@ open class DefaultXMLFormatter: SwiftXMLInterfaces.DefaultXMLFormatter, XMLForma
             }
         }
         return sorted
-    }
-}
-
-public protocol XMLProduction: SwiftXMLInterfaces.XMLProduction {
-    func set(formatter: XMLFormatter)
-    func getFormatter() -> XMLFormatter
-}
-
-open class DefaultXMLProduction: SwiftXMLInterfaces.DefaultXMLProduction, XMLProduction {
- 
-    private var swiftXMLFormatter: XMLFormatter
-    
-    public func getFormatter() -> XMLFormatter {
-        return swiftXMLFormatter
-    }
-    
-    public func set(formatter: XMLFormatter) {
-        super.set(formatter: formatter)
-        swiftXMLFormatter = formatter
-    }
-    
-    public init(file: FileHandle? = nil, formatter: XMLFormatter? = nil) {
-        self.swiftXMLFormatter = formatter ?? DefaultXMLFormatter()
-        super.init(file: file, formatter: formatter)
     }
 }
