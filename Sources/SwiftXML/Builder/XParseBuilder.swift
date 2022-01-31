@@ -76,8 +76,8 @@ public class XParseBuilder: XEventHandler {
         currentBranch.add(XExternalEntity(name))
     }
     
-    public func processingInstruction(target: String, content: String?) {
-        currentBranch.add(XProcessingInstruction(target: target, content: content))
+    public func processingInstruction(target: String, data: String?) {
+        currentBranch.add(XProcessingInstruction(target: target, data: data))
     }
     
     public func comment(text: String) {

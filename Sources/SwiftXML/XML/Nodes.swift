@@ -1005,9 +1005,9 @@ public class XProcessingInstruction: XNode, CustomStringConvertible {
         }
     }
     
-    init(target: String, content: String?) {
+    init(target: String, data: String?) {
         self._target = target
-        self._data = content
+        self._data = data
     }
     
     override func produceEntering(production: XProduction) {
@@ -1015,7 +1015,7 @@ public class XProcessingInstruction: XNode, CustomStringConvertible {
     }
     
     public override func shallowClone(forwardref: Bool = false) -> XProcessingInstruction {
-        let theClone = XProcessingInstruction(target: _target, content: _data)
+        let theClone = XProcessingInstruction(target: _target, data: _data)
         if forwardref {
             theClone._r = _r
             _r = theClone
