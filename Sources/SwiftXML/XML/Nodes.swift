@@ -110,6 +110,7 @@ public class XNode {
     public func addLeft(_ node: XNode) {
         if let selfAsText = self as? XText, let newAsText = node as? XText {
             selfAsText._value = newAsText._value + selfAsText._value
+            selfAsText.whitespace = .UNKNOWN
         }
         else {
             if parent?._firstChild === self {
@@ -135,6 +136,7 @@ public class XNode {
         if !text.isEmpty {
             if let selfAsText = self as? XText {
                 selfAsText._value = text + selfAsText._value
+                selfAsText.whitespace = .UNKNOWN
             }
             else {
                 addLeft(XText(text))
@@ -145,6 +147,7 @@ public class XNode {
     public func addRight(_ node: XNode) {
         if let selfAsText = self as? XText, let newAsText = node as? XText {
             selfAsText._value = selfAsText._value + newAsText._value
+            selfAsText.whitespace = .UNKNOWN
         }
         else if parent?._lastChild === self {
             parent?.add(node)
@@ -169,6 +172,7 @@ public class XNode {
         if !text.isEmpty {
             if let selfAsText = self as? XText {
                 selfAsText._value = selfAsText._value + text
+                selfAsText.whitespace = .UNKNOWN
             }
             else {
                 addRight(XText(text))
@@ -452,6 +456,7 @@ public class XBranch: XNode, WithAttic {
     public func add(_ node: XNode, skip: Bool = false) {
         if let lastAsText = last as? XText, let newAsText = node as? XText {
             lastAsText._value = lastAsText._value + newAsText._value
+            lastAsText.whitespace = .UNKNOWN
         }
         else {
             node.detach(forward: skip)
@@ -485,6 +490,7 @@ public class XBranch: XNode, WithAttic {
         if !text.isEmpty {
             if let lastAsText = last as? XText {
                 lastAsText._value = lastAsText._value + text
+                lastAsText.whitespace = .UNKNOWN
             }
             else {
                 add(XText(text))
@@ -500,6 +506,7 @@ public class XBranch: XNode, WithAttic {
     public func addFirst(_ node: XNode, skip: Bool = false) {
         if let firstAsText = first as? XText, let newAsText = node as? XText {
             firstAsText._value = newAsText._value + firstAsText._value
+            firstAsText.whitespace = .UNKNOWN
         }
         else {
             node.detach(forward: skip)
@@ -533,6 +540,7 @@ public class XBranch: XNode, WithAttic {
         if !text.isEmpty {
             if let firstAsText = first as? XText {
                 firstAsText._value = text + firstAsText._value
+                firstAsText.whitespace = .UNKNOWN
             }
             else {
                 addFirst(XText(text))
@@ -882,6 +890,7 @@ public class XText: XNode, CustomStringConvertible {
             }
             else {
                 _value = newText
+                whitespace = .UNKNOWN
             }
         }
     }
