@@ -109,7 +109,7 @@ public class XNode {
     
     public func addLeft(_ node: XNode) {
         if let selfAsText = self as? XText, let newAsText = node as? XText {
-            selfAsText._text = newAsText._text + selfAsText._text
+            selfAsText._value = newAsText._value + selfAsText._value
         }
         else {
             if parent?._firstChild === self {
@@ -134,7 +134,7 @@ public class XNode {
     public func addLeft(_ text: String) {
         if !text.isEmpty {
             if let selfAsText = self as? XText {
-                selfAsText._text = text + selfAsText._text
+                selfAsText._value = text + selfAsText._value
             }
             else {
                 addLeft(XText(text))
@@ -144,7 +144,7 @@ public class XNode {
     
     public func addRight(_ node: XNode) {
         if let selfAsText = self as? XText, let newAsText = node as? XText {
-            selfAsText._text = selfAsText._text + newAsText._text
+            selfAsText._value = selfAsText._value + newAsText._value
         }
         else if parent?._lastChild === self {
             parent?.add(node)
@@ -168,7 +168,7 @@ public class XNode {
     public func addRight(_ text: String) {
         if !text.isEmpty {
             if let selfAsText = self as? XText {
-                selfAsText._text = selfAsText._text + text
+                selfAsText._value = selfAsText._value + text
             }
             else {
                 addRight(XText(text))
@@ -451,7 +451,7 @@ public class XBranch: XNode, WithAttic {
      */
     public func add(_ node: XNode, skip: Bool = false) {
         if let lastAsText = last as? XText, let newAsText = node as? XText {
-            lastAsText._text = lastAsText._text + newAsText._text
+            lastAsText._value = lastAsText._value + newAsText._value
         }
         else {
             node.detach(forward: skip)
@@ -484,7 +484,7 @@ public class XBranch: XNode, WithAttic {
     public func add(_ text: String) {
         if !text.isEmpty {
             if let lastAsText = last as? XText {
-                lastAsText._text = lastAsText._text + text
+                lastAsText._value = lastAsText._value + text
             }
             else {
                 add(XText(text))
@@ -499,7 +499,7 @@ public class XBranch: XNode, WithAttic {
      */
     public func addFirst(_ node: XNode, skip: Bool = false) {
         if let firstAsText = first as? XText, let newAsText = node as? XText {
-            firstAsText._text = newAsText._text + firstAsText._text
+            firstAsText._value = newAsText._value + firstAsText._value
         }
         else {
             node.detach(forward: skip)
@@ -532,7 +532,7 @@ public class XBranch: XNode, WithAttic {
     public func addFirst(_ text: String) {
         if !text.isEmpty {
             if let firstAsText = first as? XText {
-                firstAsText._text = text + firstAsText._text
+                firstAsText._value = text + firstAsText._value
             }
             else {
                 addFirst(XText(text))
@@ -869,32 +869,33 @@ public class XElement: XBranch, CustomStringConvertible {
 }
 
 public class XText: XNode, CustomStringConvertible {
-    var _text: String
+    
+    var _value: String
     
     public var value: String {
         get {
-            return _text
+            return _value
         }
         set (newText) {
             if newText.isEmpty {
                 self.remove()
             }
             else {
-                _text = newText
+                _value = newText
             }
         }
     }
     
     public var description: String {
         get {
-            _text
+            _value
         }
     }
     
     public var whitespace: WhitespaceIndicator
     
     public init(_ text: String, whitespace: WhitespaceIndicator = .UNKNOWN) {
-        self._text = text
+        self._value = text
         self.whitespace = whitespace
     }
     
@@ -903,7 +904,7 @@ public class XText: XNode, CustomStringConvertible {
     }
     
     public override func shallowClone(forwardref: Bool = false) -> XText {
-        let theClone = XText(_text, whitespace: whitespace)
+        let theClone = XText(_value, whitespace: whitespace)
         if forwardref {
             theClone._r = _r
             _r = theClone
@@ -920,10 +921,20 @@ public class XText: XNode, CustomStringConvertible {
 }
 
 public class XInternalEntity: XNode {
-    var name: String
+    
+    var _name: String
+    
+    public var name: String {
+        get {
+            return _name
+        }
+        set(newName) {
+            _name = newName
+        }
+    }
     
     init(_ name: String) {
-        self.name = name
+        self._name = name
     }
     
     override func produceEntering(production: XProduction) {
@@ -931,7 +942,7 @@ public class XInternalEntity: XNode {
     }
     
     public override func shallowClone(forwardref: Bool = false) -> XInternalEntity {
-        let theClone = XInternalEntity(name)
+        let theClone = XInternalEntity(_name)
         if forwardref {
             theClone._r = _r
             _r = theClone
@@ -948,10 +959,20 @@ public class XInternalEntity: XNode {
 }
 
 public class XExternalEntity: XNode {
-    var name: String
+    
+    var _name: String
+    
+    public var name: String {
+        get {
+            return _name
+        }
+        set(newName) {
+            _name = newName
+        }
+    }
     
     init(_ name: String) {
-        self.name = name
+        self._name = name
     }
     
     override func produceEntering(production: XProduction) {
@@ -959,7 +980,7 @@ public class XExternalEntity: XNode {
     }
     
     public override func shallowClone(forwardref: Bool = false) -> XExternalEntity {
-        let theClone = XExternalEntity(name)
+        let theClone = XExternalEntity(_name)
         if forwardref {
             theClone._r = _r
             _r = theClone
@@ -976,6 +997,7 @@ public class XExternalEntity: XNode {
 }
 
 public class XProcessingInstruction: XNode, CustomStringConvertible {
+    
     var _target: String
     var _data: String?
     
@@ -1032,19 +1054,20 @@ public class XProcessingInstruction: XNode, CustomStringConvertible {
 }
 
 public class XComment: XNode {
-    var _text: String
+    
+    var _value: String
     
     public var value: String {
         get {
-            return _text
+            return _value
         }
         set(newText) {
-            _text = newText
+            _value = newText
         }
     }
     
     init(text: String) {
-        self._text = text
+        self._value = text
     }
     
     override func produceEntering(production: XProduction) {
@@ -1052,7 +1075,7 @@ public class XComment: XNode {
     }
     
     public override func shallowClone(forwardref: Bool = false) -> XComment {
-        let theClone = XComment(text: _text)
+        let theClone = XComment(text: _value)
         if forwardref {
             theClone._r = _r
             _r = theClone
@@ -1069,19 +1092,20 @@ public class XComment: XNode {
 }
 
 public class XCDATASection: XNode {
-    var _text: String
+    
+    var _value: String
     
     public var value: String {
         get {
-            return _text
+            return _value
         }
         set(newText) {
-            _text = newText
+            _value = newText
         }
     }
     
     init(text: String) {
-        self._text = text
+        self._value = text
     }
     
     override func produceEntering(production: XProduction) {
@@ -1089,7 +1113,7 @@ public class XCDATASection: XNode {
     }
     
     public override func shallowClone(forwardref: Bool = false) -> XCDATASection {
-        let theClone = XCDATASection(text: _text)
+        let theClone = XCDATASection(text: _value)
         if forwardref {
             theClone._r = _r
             _r = theClone
@@ -1106,16 +1130,26 @@ public class XCDATASection: XNode {
 }
 
 public class XDeclarationInInternalSubset {
-    var name: String = ""
+    
+    var _name: String = ""
+    
+    public var name: String {
+        get {
+            return _name
+        }
+        set(newName) {
+            _name = newName
+        }
+    }
     
     public init(name: String) {
-        self.name = name
+        self._name = name
     }
     
     func produceEntering(production: XProduction) {}
     
     func shallowClone() -> XDeclarationInInternalSubset {
-        return XDeclarationInInternalSubset(name: name)
+        return XDeclarationInInternalSubset(name: _name)
     }
 }
 
@@ -1123,10 +1157,20 @@ public class XDeclarationInInternalSubset {
  internal entity declaration
  */
 public class XInternalEntityDeclaration: XDeclarationInInternalSubset {
-    var value: String
+    
+    var _value: String
+    
+    public var value: String {
+        get {
+            return _value
+        }
+        set(newValue) {
+            _value = newValue
+        }
+    }
     
     public init(name: String, value: String) {
-        self.value = value
+        self._value = value
         super.init(name: name)
     }
     
@@ -1135,7 +1179,7 @@ public class XInternalEntityDeclaration: XDeclarationInInternalSubset {
     }
     
     public override func shallowClone() -> XInternalEntityDeclaration {
-        return XInternalEntityDeclaration(name: name, value: value)
+        return XInternalEntityDeclaration(name: _name, value: _value)
     }
 }
 
@@ -1143,12 +1187,30 @@ public class XInternalEntityDeclaration: XDeclarationInInternalSubset {
  parsed external entity declaration
  */
 public class XExternalEntityDeclaration: XDeclarationInInternalSubset {
-    var publicID: String?
-    var systemID: String
+    var _publicID: String?
+    var _systemID: String
+    
+    public var publicID: String? {
+        get {
+            return _publicID
+        }
+        set(newPublicID) {
+            _publicID = newPublicID
+        }
+    }
+    
+    public var systemID: String {
+        get {
+            return _systemID
+        }
+        set(newSystemID) {
+            _systemID = newSystemID
+        }
+    }
     
     public init(name: String, publicID: String?, systemID: String) {
-        self.publicID = publicID
-        self.systemID = systemID
+        self._publicID = publicID
+        self._systemID = systemID
         super.init(name: name)
     }
     
@@ -1157,7 +1219,7 @@ public class XExternalEntityDeclaration: XDeclarationInInternalSubset {
     }
     
     public override func shallowClone() -> XExternalEntityDeclaration {
-        return XExternalEntityDeclaration(name: name, publicID: publicID, systemID: systemID)
+        return XExternalEntityDeclaration(name: _name, publicID: _publicID, systemID: _systemID)
     }
 }
 
@@ -1165,14 +1227,41 @@ public class XExternalEntityDeclaration: XDeclarationInInternalSubset {
  unparsed external entity declaration
  */
 public class XUnparsedEntityDeclaration: XDeclarationInInternalSubset {
-    var publicID: String?
-    var systemID: String
-    var notationName: String
+    var _publicID: String?
+    var _systemID: String
+    var _notationName: String
+    
+    public var publicID: String? {
+        get {
+            return _publicID
+        }
+        set(newPublicID) {
+            _publicID = newPublicID
+        }
+    }
+    
+    public var systemID: String {
+        get {
+            return _systemID
+        }
+        set(newSystemID) {
+            _systemID = newSystemID
+        }
+    }
+    
+    public var notationName: String {
+        get {
+            return _notationName
+        }
+        set(newNotationName) {
+            _notationName = newNotationName
+        }
+    }
     
     public init(name: String, publicID: String?, systemID: String, notationName: String) {
-        self.publicID = publicID
-        self.systemID = systemID
-        self.notationName = notationName
+        self._publicID = publicID
+        self._systemID = systemID
+        self._notationName = notationName
         super.init(name: name)
     }
     
@@ -1181,7 +1270,7 @@ public class XUnparsedEntityDeclaration: XDeclarationInInternalSubset {
     }
     
     public override func shallowClone() -> XUnparsedEntityDeclaration {
-        return XUnparsedEntityDeclaration(name: name, publicID: publicID, systemID: systemID, notationName: notationName)
+        return XUnparsedEntityDeclaration(name: _name, publicID: _publicID, systemID: _systemID, notationName: _notationName)
     }
 }
 
@@ -1189,12 +1278,31 @@ public class XUnparsedEntityDeclaration: XDeclarationInInternalSubset {
  notation declaration
  */
 public class XNotationDeclaration: XDeclarationInInternalSubset {
-    var publicID: String?
-    var systemID: String?
+    
+    var _publicID: String?
+    var _systemID: String?
+    
+    public var publicID: String? {
+        get {
+            return _publicID
+        }
+        set(newPublicID) {
+            _publicID = newPublicID
+        }
+    }
+    
+    public var systemID: String? {
+        get {
+            return _systemID
+        }
+        set(newSystemID) {
+            _systemID = newSystemID
+        }
+    }
     
     public init(name: String, publicID: String?, systemID: String?) {
-        self.publicID = publicID
-        self.systemID = systemID
+        self._publicID = publicID
+        self._systemID = systemID
         super.init(name: name)
     }
     
@@ -1203,7 +1311,7 @@ public class XNotationDeclaration: XDeclarationInInternalSubset {
     }
     
     public override func shallowClone() -> XNotationDeclaration {
-        return XNotationDeclaration(name: name, publicID: publicID, systemID: systemID)
+        return XNotationDeclaration(name: _name, publicID: _publicID, systemID: _systemID)
     }
 }
 
@@ -1211,10 +1319,20 @@ public class XNotationDeclaration: XDeclarationInInternalSubset {
  element declaration
  */
 public class XElementDeclaration: XDeclarationInInternalSubset {
-    var literal: String
+    
+    var _literal: String
+    
+    public var literal: String {
+        get {
+            return _literal
+        }
+        set(newLiteral) {
+            _literal = newLiteral
+        }
+    }
     
     public init(name: String, literal: String) {
-        self.literal = literal
+        self._literal = literal
         super.init(name: name)
     }
     
@@ -1223,7 +1341,7 @@ public class XElementDeclaration: XDeclarationInInternalSubset {
     }
     
     public override func shallowClone() -> XElementDeclaration {
-        return XElementDeclaration(name: name, literal: literal)
+        return XElementDeclaration(name: _name, literal: _literal)
     }
 }
 
@@ -1231,10 +1349,20 @@ public class XElementDeclaration: XDeclarationInInternalSubset {
  attribute list declaration
  */
 public class XAttributeListDeclaration: XDeclarationInInternalSubset {
-    var literal: String
+    
+    var _literal: String
+    
+    public var literal: String {
+        get {
+            return _literal
+        }
+        set(newLiteral) {
+            _literal = newLiteral
+        }
+    }
     
     public init(name: String, literal: String) {
-        self.literal = literal
+        self._literal = literal
         super.init(name: name)
     }
     
@@ -1243,7 +1371,7 @@ public class XAttributeListDeclaration: XDeclarationInInternalSubset {
     }
     
     public override func shallowClone() -> XAttributeListDeclaration {
-        return XAttributeListDeclaration(name: name, literal: literal)
+        return XAttributeListDeclaration(name: _name, literal: _literal)
     }
 }
 
@@ -1251,10 +1379,20 @@ public class XAttributeListDeclaration: XDeclarationInInternalSubset {
  parameter entity declaration
  */
 public class XParameterEntityDeclaration: XDeclarationInInternalSubset {
-    var value: String
+    
+    var _value: String
+    
+    public var value: String {
+        get {
+            return _value
+        }
+        set(newValue) {
+            _value = newValue
+        }
+    }
     
     public init(name: String, value: String) {
-        self.value = value
+        self._value = value
         super.init(name: name)
     }
     
@@ -1263,6 +1401,6 @@ public class XParameterEntityDeclaration: XDeclarationInInternalSubset {
     }
     
     public override func shallowClone() -> XParameterEntityDeclaration {
-        return XParameterEntityDeclaration(name: name, value: value)
+        return XParameterEntityDeclaration(name: _name, value: _value)
     }
 }

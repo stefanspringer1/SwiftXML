@@ -193,11 +193,11 @@ open class XDefaultProduction: XProduction {
     }
     
     open func writeText(text: XText) {
-        write(escapeText(text._text))
+        write(escapeText(text._value))
     }
     
     open func writeCDATASection(cdataSection: XCDATASection) {
-        write("<![CDATA[\(cdataSection._text)]]>")
+        write("<![CDATA[\(cdataSection._value)]]>")
     }
     
     open func writeProcessingInstruction(processingInstruction: XProcessingInstruction) {
@@ -205,43 +205,43 @@ open class XDefaultProduction: XProduction {
     }
     
     open func writeComment(comment: XComment) {
-        write("<!--\(comment._text)-->")
+        write("<!--\(comment._value)-->")
     }
     
     open func writeInternalEntityDeclaration(internalEntityDeclaration: XInternalEntityDeclaration) {
-        write("\(declarationInInternalSubsetIndentation)<!ENTITY \(internalEntityDeclaration.name) \"\(escapeDoubleQuotedValue(internalEntityDeclaration.value))\">\(linebreak)")
+        write("\(declarationInInternalSubsetIndentation)<!ENTITY \(internalEntityDeclaration._name) \"\(escapeDoubleQuotedValue(internalEntityDeclaration._value))\">\(linebreak)")
     }
     
     open func writeExternalEntityDeclaration(externalEntityDeclaration: XExternalEntityDeclaration) {
-        write("\(declarationInInternalSubsetIndentation)<!ENTITY \(externalEntityDeclaration.name)\(externalEntityDeclaration.publicID != nil ? " PUBLIC \"\(externalEntityDeclaration.publicID ?? "")\"" : " SYSTEM") \"\(externalEntityDeclaration.systemID)\">\(linebreak)")
+        write("\(declarationInInternalSubsetIndentation)<!ENTITY \(externalEntityDeclaration._name)\(externalEntityDeclaration._publicID != nil ? " PUBLIC \"\(externalEntityDeclaration._publicID ?? "")\"" : " SYSTEM") \"\(externalEntityDeclaration._systemID)\">\(linebreak)")
     }
     
     open func writeUnparsedEntityDeclaration(unparsedEntityDeclaration: XUnparsedEntityDeclaration) {
-        write("\(declarationInInternalSubsetIndentation)<!ENTITY \(unparsedEntityDeclaration.name)\(unparsedEntityDeclaration.publicID != nil ? " PUBLIC \"\(unparsedEntityDeclaration.publicID ?? "")\"" : " SYSTEM") \"\(unparsedEntityDeclaration.systemID)\" NDATA \(unparsedEntityDeclaration.notationName)>\(linebreak)")
+        write("\(declarationInInternalSubsetIndentation)<!ENTITY \(unparsedEntityDeclaration._name)\(unparsedEntityDeclaration._publicID != nil ? " PUBLIC \"\(unparsedEntityDeclaration._publicID ?? "")\"" : " SYSTEM") \"\(unparsedEntityDeclaration._systemID)\" NDATA \(unparsedEntityDeclaration._notationName)>\(linebreak)")
     }
     
     open func writeNotationDeclaration(notationDeclaration: XNotationDeclaration) {
-        write("\(declarationInInternalSubsetIndentation)<!NOTATION \(notationDeclaration.name)\(notationDeclaration.publicID != nil ? " PUBLIC \"\(notationDeclaration.publicID ?? "")\"" : "")\(notationDeclaration.systemID != nil ? "\(notationDeclaration.publicID == nil ? " SYSTEM" : "") \"\(notationDeclaration.systemID ?? "")\"" : "")\(linebreak)>")
+        write("\(declarationInInternalSubsetIndentation)<!NOTATION \(notationDeclaration._name)\(notationDeclaration._publicID != nil ? " PUBLIC \"\(notationDeclaration._publicID ?? "")\"" : "")\(notationDeclaration._systemID != nil ? "\(notationDeclaration._publicID == nil ? " SYSTEM" : "") \"\(notationDeclaration._systemID ?? "")\"" : "")\(linebreak)>")
     }
     
     open func writeParameterEntityDeclaration(parameterEntityDeclaration: XParameterEntityDeclaration) {
-        write("\(declarationInInternalSubsetIndentation)<!ENTITY % \(parameterEntityDeclaration.name) \"\(escapeDoubleQuotedValue(parameterEntityDeclaration.value))\"\(linebreak)>")
+        write("\(declarationInInternalSubsetIndentation)<!ENTITY % \(parameterEntityDeclaration._name) \"\(escapeDoubleQuotedValue(parameterEntityDeclaration._value))\"\(linebreak)>")
     }
     
     open func writeInternalEntity(internalEntity: XInternalEntity) {
-        write("&\(internalEntity.name);")
+        write("&\(internalEntity._name);")
     }
     
     open func writeExternalEntity(externalEntity: XExternalEntity) {
-        write("&\(externalEntity.name);")
+        write("&\(externalEntity._name);")
     }
     
     open func writeElementDeclaration(elementDeclaration: XElementDeclaration) {
-        write("\(declarationInInternalSubsetIndentation)\(elementDeclaration.literal)\(linebreak)")
+        write("\(declarationInInternalSubsetIndentation)\(elementDeclaration._literal)\(linebreak)")
     }
     
     open func writeAttributeListDeclaration(attributeListDeclaration: XAttributeListDeclaration) {
-        write("\(declarationInInternalSubsetIndentation)\(attributeListDeclaration.literal)\(linebreak)")
+        write("\(declarationInInternalSubsetIndentation)\(attributeListDeclaration._literal)\(linebreak)")
     }
 
     open func writeDocumentEnd(document: XDocument) {
