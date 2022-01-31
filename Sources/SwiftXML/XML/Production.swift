@@ -197,7 +197,7 @@ open class XDefaultProduction: XProduction {
     }
     
     open func writeCDATASection(cdataSection: XCDATASection) {
-        write("<![CDATA[\(cdataSection.text)]]>")
+        write("<![CDATA[\(cdataSection._text)]]>")
     }
     
     open func writeProcessingInstruction(processingInstruction: XProcessingInstruction) {
@@ -205,7 +205,7 @@ open class XDefaultProduction: XProduction {
     }
     
     open func writeComment(comment: XComment) {
-        write("<!--\(comment.text)-->")
+        write("<!--\(comment._text)-->")
     }
     
     open func writeInternalEntityDeclaration(internalEntityDeclaration: XInternalEntityDeclaration) {

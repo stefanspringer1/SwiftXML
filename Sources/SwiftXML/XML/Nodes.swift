@@ -1032,10 +1032,19 @@ public class XProcessingInstruction: XNode, CustomStringConvertible {
 }
 
 public class XComment: XNode {
-    var text: String
+    var _text: String
+    
+    public var text: String {
+        get {
+            return _text
+        }
+        set(newText) {
+            _text = newText
+        }
+    }
     
     init(text: String) {
-        self.text = text
+        self._text = text
     }
     
     override func produceEntering(production: XProduction) {
@@ -1043,7 +1052,7 @@ public class XComment: XNode {
     }
     
     public override func shallowClone(forwardref: Bool = false) -> XComment {
-        let theClone = XComment(text: text)
+        let theClone = XComment(text: _text)
         if forwardref {
             theClone._r = _r
             _r = theClone
@@ -1060,10 +1069,19 @@ public class XComment: XNode {
 }
 
 public class XCDATASection: XNode {
-    var text: String
+    var _text: String
+    
+    public var text: String {
+        get {
+            return _text
+        }
+        set(newText) {
+            _text = newText
+        }
+    }
     
     init(text: String) {
-        self.text = text
+        self._text = text
     }
     
     override func produceEntering(production: XProduction) {
@@ -1071,7 +1089,7 @@ public class XCDATASection: XNode {
     }
     
     public override func shallowClone(forwardref: Bool = false) -> XCDATASection {
-        let theClone = XCDATASection(text: text)
+        let theClone = XCDATASection(text: _text)
         if forwardref {
             theClone._r = _r
             _r = theClone
