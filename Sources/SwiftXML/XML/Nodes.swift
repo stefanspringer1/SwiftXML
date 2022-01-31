@@ -649,7 +649,7 @@ public class XElement: XBranch, CustomStringConvertible {
     }
     
     public func copyAttributes(from other: XElement) {
-        other.attributeNames?.forEach { attributeName in
+        other.attributeNames.forEach { attributeName in
             if let theValue = other[attributeName] {
                 self[attributeName] = theValue
             }
@@ -707,9 +707,11 @@ public class XElement: XBranch, CustomStringConvertible {
         }
     }
     
-    public var attributeNames: [String]? {
+    private let EMPTY: [String] = []
+    
+    public var attributeNames: [String] {
         get {
-            return _attributeNames
+            return _attributeNames ?? EMPTY
         }
     }
     
