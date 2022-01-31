@@ -1034,7 +1034,7 @@ public class XProcessingInstruction: XNode, CustomStringConvertible {
 public class XComment: XNode {
     var _text: String
     
-    public var text: String {
+    public var value: String {
         get {
             return _text
         }
@@ -1071,7 +1071,7 @@ public class XComment: XNode {
 public class XCDATASection: XNode {
     var _text: String
     
-    public var text: String {
+    public var value: String {
         get {
             return _text
         }
