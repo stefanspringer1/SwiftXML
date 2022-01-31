@@ -871,7 +871,7 @@ public class XElement: XBranch, CustomStringConvertible {
 public class XText: XNode, CustomStringConvertible {
     var _text: String
     
-    public var text: String {
+    public var value: String {
         get {
             return _text
         }
