@@ -71,7 +71,7 @@ struct Stack<Element> {
     }
 }
 
-public class WeaklyListed<T: AnyObject> {
+public final class WeaklyListed<T: AnyObject> {
     var next: WeaklyListed<T>? = nil
     
     weak var element: T?
@@ -95,7 +95,7 @@ public class WeaklyListed<T: AnyObject> {
  A list that stores its elements weakly. It looks for zombies whenever operating
  on it; therefore it is only suitable for a small number of elements.
  */
-public class WeakList<T: AnyObject>: Sequence {
+public final class WeakList<T: AnyObject>: Sequence {
     
     var first: WeaklyListed<T>? = nil
     
@@ -145,7 +145,7 @@ public class WeakList<T: AnyObject>: Sequence {
     }
 }
 
-public class WeakListIterator<T: AnyObject>: IteratorProtocol {
+public final class WeakListIterator<T: AnyObject>: IteratorProtocol {
     
     var started = false
     var current: WeaklyListed<T>?

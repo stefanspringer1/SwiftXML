@@ -6,7 +6,7 @@
 
 import Foundation
 
-class XValue {
+final class XValue {
     var value: String
     
     init(_ value: String) {
@@ -14,7 +14,7 @@ class XValue {
     }
 }
 
-public class XDocument: XBranch {
+public final class XDocument: XBranch {
     
     var _source: String? = nil
     

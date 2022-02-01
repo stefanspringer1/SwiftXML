@@ -13,7 +13,7 @@ import Foundation
  precise iteration is implemented in "iteratorImplementation" which implements
  the XIteratorProtocol.
  */
-public class XNodeIterator: IteratorProtocol {
+public final class XNodeIterator: IteratorProtocol {
     
     var previousIterator: XNodeIterator? = nil
     var nextIterator: XNodeIterator? = nil
@@ -56,7 +56,7 @@ public class XNodeIterator: IteratorProtocol {
     }
 }
 
-public class XElementTreeIterator: IteratorProtocol {
+public final class XElementTreeIterator: IteratorProtocol {
     
     var previousIterator: XElementTreeIterator? = nil
     var nextIterator: XElementTreeIterator? = nil
@@ -99,7 +99,7 @@ public class XElementTreeIterator: IteratorProtocol {
     }
 }
 
-public class XElementNameIterator: IteratorProtocol {
+public final class XElementNameIterator: IteratorProtocol {
     
     var previousIterator: XElementNameIterator? = nil
     var nextIterator: XElementNameIterator? = nil
@@ -147,7 +147,7 @@ public struct XAttributeSpot {
     public let element: XElement
 }
 
-public class XAttributeIterator: IteratorProtocol {
+public final class XAttributeIterator: IteratorProtocol {
     
     var previousIterator: XAttributeIterator? = nil
     var nextIterator: XAttributeIterator? = nil

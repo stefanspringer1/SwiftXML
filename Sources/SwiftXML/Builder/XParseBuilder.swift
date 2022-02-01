@@ -7,7 +7,7 @@
 import Foundation
 import SwiftXMLInterfaces
 
-public class XParseBuilder: XEventHandler {
+public final class XParseBuilder: XEventHandler {
     
     public func parsingTime(seconds: Double) {
         // -

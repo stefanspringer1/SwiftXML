@@ -7,7 +7,7 @@
 
 import Foundation
 
-public class XTraversalSequence: Sequence {
+public final class XTraversalSequence: Sequence {
     
     let node: XNode
     let directionIndicator: XDirectionIndicator
@@ -22,7 +22,7 @@ public class XTraversalSequence: Sequence {
     }
 }
 
-public class XNextSequence: Sequence {
+public final class XNextSequence: Sequence {
     
     let node: XNode
     
@@ -35,7 +35,7 @@ public class XNextSequence: Sequence {
     }
 }
 
-public class XPreviousSequence: Sequence {
+public final class XPreviousSequence: Sequence {
     
     let node: XNode
     
@@ -48,7 +48,7 @@ public class XPreviousSequence: Sequence {
     }
 }
 
-public class XRightSequence: Sequence {
+public final class XRightSequence: Sequence {
     
     let node: XNode
     
@@ -61,7 +61,7 @@ public class XRightSequence: Sequence {
     }
 }
 
-public class XLeftSequence: Sequence {
+public final class XLeftSequence: Sequence {
     
     let node: XNode
     
@@ -74,7 +74,7 @@ public class XLeftSequence: Sequence {
     }
 }
 
-public class XContentSequence: Sequence {
+public final class XContentSequence: Sequence {
     
     let node: XNode
     
@@ -87,7 +87,7 @@ public class XContentSequence: Sequence {
     }
 }
 
-public class XChildrenSequence: Sequence {
+public final class XChildrenSequence: Sequence {
     
     let node: XNode
     
@@ -100,7 +100,7 @@ public class XChildrenSequence: Sequence {
     }
 }
 
-public class XAncestorsSequence: Sequence {
+public final class XAncestorsSequence: Sequence {
     
     let node: XNode
     
@@ -113,7 +113,7 @@ public class XAncestorsSequence: Sequence {
     }
 }
 
-public class XAllContentSequence: Sequence {
+public final class XAllContentSequence: Sequence {
     
     let node: XNode
     
@@ -126,7 +126,7 @@ public class XAllContentSequence: Sequence {
     }
 }
 
-public class XDescendantsSequence: Sequence {
+public final class XDescendantsSequence: Sequence {
     
     let node: XNode
     
@@ -139,7 +139,7 @@ public class XDescendantsSequence: Sequence {
     }
 }
 
-public class XElementsOfSameNameSequence: Sequence {
+public final class XElementsOfSameNameSequence: Sequence {
     
     let document: XDocument
     let name: String
@@ -159,7 +159,7 @@ public class XElementsOfSameNameSequence: Sequence {
     }
 }
 
-public class XAttributesOfSameNameSequence: Sequence {
+public final class XAttributesOfSameNameSequence: Sequence {
     
     let document: XDocument
     let attributeName: String

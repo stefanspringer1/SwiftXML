@@ -563,7 +563,7 @@ extension Array: XNodeLike where Element == XNodeLike {}
 
 extension XContentSequence: XNodeLike {}
 
-class XAttribute: XNode, Named {
+final class XAttribute: XNode, Named {
     
     var attributeIterators = WeakList<XAttributeIterator>()
     
@@ -599,7 +599,7 @@ class XAttribute: XNode, Named {
     }
 }
 
-class XNodeSampler {
+final class XNodeSampler {
     
     var nodes: [XNodeLike] = [XNode]()
     
@@ -640,7 +640,7 @@ public protocol WithAttic {
     func removeFromAttic(_ value: AnyObject, forKey key: String)
 }
 
-public class XElement: XBranch, CustomStringConvertible {
+public final class XElement: XBranch, CustomStringConvertible {
     
     var _treeIterators = WeakList<XElementTreeIterator>()
     var _nameIterators = WeakList<XElementNameIterator>()
@@ -880,7 +880,7 @@ public class XElement: XBranch, CustomStringConvertible {
     }
 }
 
-public class XText: XNode, CustomStringConvertible {
+public final class XText: XNode, CustomStringConvertible {
     
     var _value: String
     
@@ -933,7 +933,7 @@ public class XText: XNode, CustomStringConvertible {
     }
 }
 
-public class XInternalEntity: XNode {
+public final class XInternalEntity: XNode {
     
     var _name: String
     
@@ -971,7 +971,7 @@ public class XInternalEntity: XNode {
     }
 }
 
-public class XExternalEntity: XNode {
+public final class XExternalEntity: XNode {
     
     var _name: String
     
@@ -1009,7 +1009,7 @@ public class XExternalEntity: XNode {
     }
 }
 
-public class XProcessingInstruction: XNode, CustomStringConvertible {
+public final class XProcessingInstruction: XNode, CustomStringConvertible {
     
     var _target: String
     var _data: String?
@@ -1066,7 +1066,7 @@ public class XProcessingInstruction: XNode, CustomStringConvertible {
     }
 }
 
-public class XComment: XNode {
+public final class XComment: XNode {
     
     var _value: String
     
@@ -1104,7 +1104,7 @@ public class XComment: XNode {
     }
 }
 
-public class XCDATASection: XNode {
+public final class XCDATASection: XNode {
     
     var _value: String
     
@@ -1169,7 +1169,7 @@ public class XDeclarationInInternalSubset {
 /**
  internal entity declaration
  */
-public class XInternalEntityDeclaration: XDeclarationInInternalSubset {
+public final class XInternalEntityDeclaration: XDeclarationInInternalSubset {
     
     var _value: String
     
@@ -1199,7 +1199,7 @@ public class XInternalEntityDeclaration: XDeclarationInInternalSubset {
 /**
  parsed external entity declaration
  */
-public class XExternalEntityDeclaration: XDeclarationInInternalSubset {
+public final class XExternalEntityDeclaration: XDeclarationInInternalSubset {
     var _publicID: String?
     var _systemID: String
     
@@ -1239,7 +1239,7 @@ public class XExternalEntityDeclaration: XDeclarationInInternalSubset {
 /**
  unparsed external entity declaration
  */
-public class XUnparsedEntityDeclaration: XDeclarationInInternalSubset {
+public final class XUnparsedEntityDeclaration: XDeclarationInInternalSubset {
     var _publicID: String?
     var _systemID: String
     var _notationName: String
@@ -1290,7 +1290,7 @@ public class XUnparsedEntityDeclaration: XDeclarationInInternalSubset {
 /**
  notation declaration
  */
-public class XNotationDeclaration: XDeclarationInInternalSubset {
+public final class XNotationDeclaration: XDeclarationInInternalSubset {
     
     var _publicID: String?
     var _systemID: String?
@@ -1331,7 +1331,7 @@ public class XNotationDeclaration: XDeclarationInInternalSubset {
 /**
  element declaration
  */
-public class XElementDeclaration: XDeclarationInInternalSubset {
+public final class XElementDeclaration: XDeclarationInInternalSubset {
     
     var _literal: String
     
@@ -1361,7 +1361,7 @@ public class XElementDeclaration: XDeclarationInInternalSubset {
 /**
  attribute list declaration
  */
-public class XAttributeListDeclaration: XDeclarationInInternalSubset {
+public final class XAttributeListDeclaration: XDeclarationInInternalSubset {
     
     var _literal: String
     
@@ -1391,7 +1391,7 @@ public class XAttributeListDeclaration: XDeclarationInInternalSubset {
 /**
  parameter entity declaration
  */
-public class XParameterEntityDeclaration: XDeclarationInInternalSubset {
+public final class XParameterEntityDeclaration: XDeclarationInInternalSubset {
     
     var _value: String
     

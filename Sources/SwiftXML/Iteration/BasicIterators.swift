@@ -10,7 +10,7 @@ import Foundation
 /**
  Iterates though the elements of a specified name.
  */
-public class XElementsOfSameNameIterator: XElementIteratorProtocol {
+public final class XElementsOfSameNameIterator: XElementIteratorProtocol {
     
     private var started = false
     weak var document: XDocument?
@@ -48,7 +48,7 @@ public class XElementsOfSameNameIterator: XElementIteratorProtocol {
 /**
  Iterates though the elements with a specified attribute name.
  */
-class XAttributesOfSameNameIterator: XAttributeIteratorProtocol {
+final class XAttributesOfSameNameIterator: XAttributeIteratorProtocol {
 
     private var started = false
     weak var document: XDocument?
@@ -86,7 +86,7 @@ class XAttributesOfSameNameIterator: XAttributeIteratorProtocol {
 /**
  Iterates though the content of a branch.
  */
-public class XContentsIterator: XNodeIteratorProtocol {
+public final class XContentsIterator: XNodeIteratorProtocol {
     
     private var started = false
     let node: XNode
@@ -124,7 +124,7 @@ public class XContentsIterator: XNodeIteratorProtocol {
 /**
  Iterates though the nodes right of a node.
  */
-public class XNextIterator: XNodeIteratorProtocol {
+public final class XNextIterator: XNodeIteratorProtocol {
     
     let node: XNode
     weak var currentNode: XNode? = nil
@@ -158,7 +158,7 @@ public class XNextIterator: XNodeIteratorProtocol {
 /**
  Iterates though the nodes left of a node.
  */
-public class XPreviousIterator: XNodeIteratorProtocol {
+public final class XPreviousIterator: XNodeIteratorProtocol {
     
     weak var node: XNode?
     weak var currentNode: XNode? = nil
@@ -192,7 +192,7 @@ public class XPreviousIterator: XNodeIteratorProtocol {
 /**
  Iterates though the elements right of a node.
  */
-public class XRightIterator: XElementIteratorProtocol {
+public final class XRightIterator: XElementIteratorProtocol {
     
     weak var node: XNode?
     weak var currentNode: XNode? = nil
@@ -230,7 +230,7 @@ public class XRightIterator: XElementIteratorProtocol {
 /**
  Iterates though the elements left of a node.
  */
-public class XLeftIterator: XElementIteratorProtocol {
+public final class XLeftIterator: XElementIteratorProtocol {
     
     weak var node: XNode?
     weak var currentNode: XNode? = nil
@@ -268,7 +268,7 @@ public class XLeftIterator: XElementIteratorProtocol {
 /**
  Iterates though the children of a branch.
  */
-public class XChildrenIterator: XElementIteratorProtocol {
+public final class XChildrenIterator: XElementIteratorProtocol {
     
     private var started = false
     weak var node: XNode?
@@ -309,7 +309,7 @@ public class XChildrenIterator: XElementIteratorProtocol {
 /**
  Iterates though the ancestors.
  */
-public class XAncestorsIterator: XElementIteratorProtocol {
+public final class XAncestorsIterator: XElementIteratorProtocol {
     
     private var started = false
     weak var startNode: XNode?
@@ -357,7 +357,7 @@ public class XAncestorsIterator: XElementIteratorProtocol {
 /**
  Iterates though all content (tree traversal) of a branch.
  */
-public class XAllContentsIterator: XNodeIteratorProtocol {
+public final class XAllContentsIterator: XNodeIteratorProtocol {
     
     weak var startNode: XNode?
     weak var currentNode: XNode? = nil
@@ -393,7 +393,7 @@ public class XAllContentsIterator: XNodeIteratorProtocol {
 /**
  Iterates though all content (tree traversal) of a branch.
  */
-public class XDescendantsIterator: XElementIteratorProtocol {
+public final class XDescendantsIterator: XElementIteratorProtocol {
     
     weak var startNode: XNode?
     weak var currentNode: XNode? = nil
@@ -436,7 +436,7 @@ public class XDescendantsIterator: XElementIteratorProtocol {
     }
 }
 
-public class XDirectionIndicator {
+public final class XDirectionIndicator {
     var up = false
 }
 
@@ -446,7 +446,7 @@ public class XDirectionIndicator {
  When progressing via next(), down and up events can be captured by the closures
  "down" amd "up".
  */
-public class XTreeIterator: XNodeIteratorProtocol {
+public final class XTreeIterator: XNodeIteratorProtocol {
     
     var started = false
     weak var startNode: XNode?
