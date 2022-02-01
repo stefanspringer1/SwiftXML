@@ -179,6 +179,16 @@ public class XDocument: XBranch {
     var _attributesOfName_first = [String:XAttribute]()
     var _attributesOfName_last = [String:XAttribute]()
     
+    deinit {
+        
+        // destroy lists of elements with same name:
+        _elementsOfName_first.values.forEach { element in element.removeFollowingWithSameName() }
+            
+        // destroy lists of attributes with same name:
+        _attributesOfName_first.values.forEach { attribute in attribute.removeFollowingWithSameName() }
+        
+    }
+    
     func registerAttribute(attribute: XAttribute) {
         let name = attribute.name
         if let theLast = _attributesOfName_last[name] {

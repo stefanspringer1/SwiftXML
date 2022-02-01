@@ -79,6 +79,16 @@ public class WeaklyListed<T: AnyObject> {
     init(_ element: T) {
         self.element = element
     }
+    
+    // prevent stack overflow when destroying the list,
+    // to be applied on the first element in that list,
+    // cf. https://forums.swift.org/t/deep-recursion-in-deinit-should-not-happen/54987
+    func removeFollowing() {
+        var node = self
+        while isKnownUniquelyReferenced(&node.next) {
+            (node, node.next) = (node.next!, nil)
+        }
+    }
 }
 
 /**
@@ -128,6 +138,10 @@ public class WeakList<T: AnyObject>: Sequence {
     
     public func makeIterator() -> WeakListIterator<T> {
         return WeakListIterator(start: first)
+    }
+    
+    deinit {
+        first?.removeFollowing()
     }
 }
 

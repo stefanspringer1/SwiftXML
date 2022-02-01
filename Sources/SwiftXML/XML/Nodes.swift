@@ -582,18 +582,20 @@ class XAttribute: XNode, Named {
     weak var previousWithSameName: XAttribute? = nil
     var nextWithSameName: XAttribute? = nil
     
-    deinit {
-        // try to avoid deep recursion in deinit
-        // (cf. https://github.com/hatzel/swift-simple-queue/blob/6d03e672874a33d05aff4607c3d152bd5e4a2584/Sources/FifoQueue.swift#L8):
-        let temp = nextWithSameName
-        nextWithSameName = temp?.nextWithSameName
-        temp?.nextWithSameName = nil
-    }
-    
     init(name: String, value: String, element: XElement) {
         self._bareName = name
         self.value = value
         self.element = element
+    }
+    
+    // prevent stack overflow when destroying the list of elements with same name,
+    // to be applied on the first element in that list,
+    // cf. https://forums.swift.org/t/deep-recursion-in-deinit-should-not-happen/54987
+    func removeFollowingWithSameName() {
+        var node = self
+        while isKnownUniquelyReferenced(&node.nextWithSameName) {
+            (node, node.nextWithSameName) = (node.nextWithSameName!, nil)
+        }
     }
 }
 
@@ -726,12 +728,14 @@ public class XElement: XBranch, CustomStringConvertible {
     weak var previousWithSameName: XElement? = nil
     var nextWithSameName: XElement? = nil
     
-    deinit {
-        // try to avoid deep recursion in deinit
-        // (cf. https://github.com/hatzel/swift-simple-queue/blob/6d03e672874a33d05aff4607c3d152bd5e4a2584/Sources/FifoQueue.swift#L8):
-        let temp = nextWithSameName
-        nextWithSameName = temp?.nextWithSameName
-        temp?.nextWithSameName = nil
+    // prevent stack overflow when destroying the list of elements with same name,
+    // to be applied on the first element in that list,
+    // cf. https://forums.swift.org/t/deep-recursion-in-deinit-should-not-happen/54987
+    func removeFollowingWithSameName() {
+        var node = self
+        while isKnownUniquelyReferenced(&node.nextWithSameName) {
+            (node, node.nextWithSameName) = (node.nextWithSameName!, nil)
+        }
     }
     
     public subscript(attributeName: String) -> String? {
