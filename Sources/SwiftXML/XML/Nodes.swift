@@ -707,13 +707,13 @@ public final class XElement: XBranch, CustomStringConvertible {
     public var xpath: String {
         get {
             let myName = name
-            return "/" + [
+            return "/" + ([
                 self.ancestors.reversed().map {
                     let itsName = $0.name
                     return "\(itsName)[\($0.left.filter { $0.name == itsName }.count+1)]"
                 }.joined(separator: "/"),
                 "\(name)[\(left.filter { $0.name == myName }.count+1)]"
-            ].joined(separator: "/")
+            ].joinedNonEmpties(separator: "/") ?? "")
         }
     }
     

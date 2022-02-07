@@ -405,3 +405,17 @@ extension Sequence {
         }
     }
 }
+
+
+extension Array where Element == String? {
+    
+    func joined(separator: String) -> String? {
+        let nonNils = self.filter { $0 != nil } as! [String]
+        return nonNils.isEmpty ? nil : nonNils.joined(separator: separator)
+    }
+    
+    func joinedNonEmpties(separator: String) -> String? {
+        let nonEmpties = self.filter { !($0?.isEmpty ?? false) } as! [String]
+        return nonEmpties.isEmpty ? nil : nonEmpties.joined(separator: separator)
+    }
+}
