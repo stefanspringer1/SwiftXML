@@ -406,16 +406,25 @@ extension Sequence {
     }
 }
 
-
 extension Array where Element == String? {
     
     func joined(separator: String) -> String? {
-        let nonNils = self.filter { $0 != nil } as! [String]
+        var nonNils = [String]()
+        self.forEach { s in
+            if let s = s {
+                nonNils.append(s)
+            }
+        }
         return nonNils.isEmpty ? nil : nonNils.joined(separator: separator)
     }
     
     func joinedNonEmpties(separator: String) -> String? {
-        let nonEmpties = self.filter { !($0?.isEmpty ?? false) } as! [String]
+        var nonEmpties = [String]()
+        self.forEach { s in
+            if let s = s, !s.isEmpty {
+                nonEmpties.append(s)
+            }
+        }
         return nonEmpties.isEmpty ? nil : nonEmpties.joined(separator: separator)
     }
 }
