@@ -36,13 +36,13 @@ public final class XDocument: XBranch {
         }
     }
     
-    var xmlVersion = "1.0"
-    var encoding: String? = nil
-    var standalone: String? = nil
+    public var xmlVersion = "1.0"
+    public var encoding: String? = nil
+    public var standalone: String? = nil
     
     var type: String? = nil
-    var publicID: String? = nil
-    var systemID: String? = nil
+    public var publicID: String? = nil
+    public var systemID: String? = nil
     
     var attributeValueChangedActions = [String:(XElement,String?,String?)->()]()
     
@@ -87,18 +87,6 @@ public final class XDocument: XBranch {
         let theClone = shallowClone(forwardref: forwardref)
         theClone.addClones(from: self, forwardref: forwardref)
         return theClone
-    }
-    
-    func setEncoding(encoding: String?) {
-        self.encoding = encoding
-    }
-    
-    func setPubID(pubID: String?) {
-        self.publicID = pubID
-    }
-    
-    func setSystemID(systemID: String) {
-        self.systemID = systemID
     }
     
     func transform(_ transformations: (String,(XElement) -> ())...) {
