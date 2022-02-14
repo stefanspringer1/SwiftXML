@@ -790,7 +790,7 @@ public final class XElement: XBranch, CustomStringConvertible {
         }
     }
     
-    public init(_ name: String, _ attributes: [String:String]? = nil) {
+    public init(_ name: String, _ attributes: [String:String?]? = nil) {
         self._name = name
         super.init()
         if let theAttributes = attributes {
@@ -798,7 +798,7 @@ public final class XElement: XBranch, CustomStringConvertible {
         }
     }
     
-    public init(_ name: String, _ attributes: [String:String]? = nil, @XNodeBuilder builder: () -> XNodeLike) {
+    public init(_ name: String, _ attributes: [String:String?]? = nil, @XNodeBuilder builder: () -> XNodeLike) {
         self._name = name
         super.init()
         if let theAttributes = attributes {
@@ -828,7 +828,7 @@ public final class XElement: XBranch, CustomStringConvertible {
         super.detach(forward: forward)
     }
     
-    func setAttributes(attributes newAtttributeValues: [String:String]? = nil) {
+    func setAttributes(attributes newAtttributeValues: [String:String?]? = nil) {
         if self._attributes == nil {
             self._attributes = [String:XAttribute]()
         }
