@@ -838,29 +838,18 @@ public final class XElement: XBranch, CustomStringConvertible {
     }
     
     func setDocument(document newDocument: XDocument?) {
-        if !(newDocument === _document) {
-            var node: XNode = self
-            repeat {
-                if let element = node as? XElement {
-                    element._document?.unregisterElement(element: element)
-                    element._document = newDocument
-                    newDocument?.registerElement(element: element)
-                }
-                if let element = node as? XElement,
-                   let child = element._firstChild {
-                    node = child
-                }
-                else if !(node === self) {
-                    if let next = node._next {
-                        node = next
-                    }
-                    else if let parent = node._parent {
-                        node = parent
-                    }
-                }
-                
-            } while !(node === self)
-        }
+        var node: XNode? = self
+        repeat {
+            if let element = node as? XElement {
+                element._document?.unregisterElement(element: element)
+                element._document = newDocument
+                newDocument?.registerElement(element: element)
+            }
+            if self.getLastInTree() === node {
+                break
+            }
+            node = node?._nextInTree
+        } while node != nil
     }
     
     override func produceEntering(production: XProduction) {

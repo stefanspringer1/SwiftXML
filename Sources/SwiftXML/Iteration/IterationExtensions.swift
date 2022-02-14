@@ -64,3 +64,13 @@ extension XNode {
     }
 
 }
+
+extension XElement {
+    
+    public var descendantsIncludingSelf: XDescendantsIncludingSelfSequence {
+        get {
+            return XDescendantsIncludingSelfSequence(element: self)
+        }
+    }
+    
+}

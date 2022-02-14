@@ -139,6 +139,19 @@ public final class XDescendantsSequence: Sequence {
     }
 }
 
+public final class XDescendantsIncludingSelfSequence: Sequence {
+    
+    let element: XElement
+    
+    init(element: XElement) {
+        self.element = element
+    }
+    
+    public func makeIterator() -> XElementTreeIterator {
+        return XElementTreeIterator(elementIterator: XDescendantsIncludingSelfIterator(element: element))
+    }
+}
+
 public final class XElementsOfSameNameSequence: Sequence {
     
     let document: XDocument

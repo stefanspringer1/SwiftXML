@@ -436,6 +436,57 @@ public final class XDescendantsIterator: XElementIteratorProtocol {
     }
 }
 
+/**
+ Iterates though all content (tree traversal) of a branch.
+ */
+public final class XDescendantsIncludingSelfIterator: XElementIteratorProtocol {
+    
+    weak var startElement: XElement?
+    weak var currentNode: XNode? = nil
+    var started = false
+    
+    public init(
+        element: XElement
+    ) {
+        self.startElement = element
+    }
+    
+    public func next() -> XElement? {
+        repeat {
+            if startElement?.getLastInTree() === currentNode {
+                currentNode = nil
+            }
+            else if started == false {
+                currentNode = startElement
+                started = true
+            }
+            else {
+                currentNode = currentNode?._nextInTree
+                if let element = currentNode as? XElement {
+                    return element
+                }
+            }
+        } while currentNode != nil
+        return nil
+    }
+    
+    public func previous() -> XElement? {
+        repeat {
+            if currentNode === startElement {
+                currentNode = nil
+                started = false
+            }
+            else {
+                currentNode = currentNode?._previousInTree
+                if let element = currentNode as? XElement {
+                    return element
+                }
+            }
+        } while currentNode != nil
+        return nil
+    }
+}
+
 public final class XDirectionIndicator {
     var up = false
 }
