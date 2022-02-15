@@ -462,7 +462,7 @@ public class XBranch: XNode, WithAttic {
      inserted content.
      Else, the iterator will iterate through the inserted content.
      */
-    public func add(_ node: XNode, skip: Bool = false) {
+    func add(_ node: XNode, skip: Bool = false) {
         if let lastAsText = last as? XText, let newAsText = node as? XText {
             lastAsText._value = lastAsText._value + newAsText._value
             lastAsText.whitespace = .UNKNOWN
@@ -495,7 +495,7 @@ public class XBranch: XNode, WithAttic {
         }
     }
     
-    public func add(_ text: String) {
+    func add(_ text: String) {
         if !text.isEmpty {
             if let lastAsText = last as? XText {
                 lastAsText._value = lastAsText._value + text
