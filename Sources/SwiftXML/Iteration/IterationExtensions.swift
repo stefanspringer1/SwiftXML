@@ -62,15 +62,11 @@ extension XNode {
             return XDescendantsSequence(node: self)
         }
     }
-
-}
-
-extension XElement {
     
     public var descendantsIncludingSelf: XDescendantsIncludingSelfSequence {
         get {
-            return XDescendantsIncludingSelfSequence(element: self)
+            return XDescendantsIncludingSelfSequence(node: self)
         }
     }
-    
+
 }

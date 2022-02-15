@@ -141,14 +141,14 @@ public final class XDescendantsSequence: Sequence {
 
 public final class XDescendantsIncludingSelfSequence: Sequence {
     
-    let element: XElement
+    let node: XNode
     
-    init(element: XElement) {
-        self.element = element
+    init(node: XNode) {
+        self.node = node
     }
     
     public func makeIterator() -> XElementTreeIterator {
-        return XElementTreeIterator(elementIterator: XDescendantsIncludingSelfIterator(element: element))
+        return XElementTreeIterator(elementIterator: XDescendantsIncludingSelfIterator(node: node))
     }
 }
 

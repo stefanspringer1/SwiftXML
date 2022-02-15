@@ -391,7 +391,7 @@ public final class XAllContentsIterator: XNodeIteratorProtocol {
 }
 
 /**
- Iterates though all content (tree traversal) of a branch.
+ Iterates though all elements (tree traversal) of a branch.
  */
 public final class XDescendantsIterator: XElementIteratorProtocol {
     
@@ -437,34 +437,34 @@ public final class XDescendantsIterator: XElementIteratorProtocol {
 }
 
 /**
- Iterates though all content (tree traversal) of a branch.
+ Iterates though all elements (tree traversal) of a branch, inlcuding teh start node itself if it is an element.
  */
 public final class XDescendantsIncludingSelfIterator: XElementIteratorProtocol {
     
-    weak var startElement: XElement?
+    weak var startNode: XNode?
     weak var currentNode: XNode? = nil
     var started = false
     
     public init(
-        element: XElement
+        node: XNode
     ) {
-        self.startElement = element
+        self.startNode = node
     }
     
     public func next() -> XElement? {
         repeat {
-            if startElement?.getLastInTree() === currentNode {
+            if startNode?.getLastInTree() === currentNode {
                 currentNode = nil
             }
             else if started == false {
-                currentNode = startElement
+                currentNode = startNode
                 started = true
             }
             else {
                 currentNode = currentNode?._nextInTree
-                if let element = currentNode as? XElement {
-                    return element
-                }
+            }
+            if let element = currentNode as? XElement {
+                return element
             }
         } while currentNode != nil
         return nil
@@ -472,7 +472,7 @@ public final class XDescendantsIncludingSelfIterator: XElementIteratorProtocol {
     
     public func previous() -> XElement? {
         repeat {
-            if currentNode === startElement {
+            if currentNode === startNode {
                 currentNode = nil
                 started = false
             }
