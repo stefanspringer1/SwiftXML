@@ -192,7 +192,7 @@ public class XNode {
      Replace the node by other nodes.
      If "forward", then detaching prefetches the next node in iterators.
      */
-    public func replace(forward: Bool = false, @XNodeBuilder builder: () -> XNodeLike) {
+    public func set(forward: Bool = false, @XNodeBuilder builder: () -> XNodeLike) {
         if let theNext = _next {
             remove(forward: forward)
             (builder() as? [XNode])?.forEach { theNext.addLeft($0) }
