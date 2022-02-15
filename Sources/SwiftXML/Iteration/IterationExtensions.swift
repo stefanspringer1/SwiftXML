@@ -39,15 +39,15 @@ extension XNode {
         }
     }
     
-    public var right: XRightSequence {
+    public var nextElements: XNextElementsSequence {
         get {
-            return XRightSequence(node: self)
+            return XNextElementsSequence(node: self)
         }
     }
     
-    public var left: XLeftSequence {
+    public var previousElements: XPreviousElementsSequence {
         get {
-            return XLeftSequence(node: self)
+            return XPreviousElementsSequence(node: self)
         }
     }
     

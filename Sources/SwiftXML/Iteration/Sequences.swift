@@ -48,7 +48,7 @@ public final class XPreviousSequence: Sequence {
     }
 }
 
-public final class XRightSequence: Sequence {
+public final class XNextElementsSequence: Sequence {
     
     let node: XNode
     
@@ -57,11 +57,11 @@ public final class XRightSequence: Sequence {
     }
     
     public func makeIterator() -> XElementTreeIterator {
-        return XElementTreeIterator(elementIterator: XRightIterator(node: node))
+        return XElementTreeIterator(elementIterator: XNextElementsIterator(node: node))
     }
 }
 
-public final class XLeftSequence: Sequence {
+public final class XPreviousElementsSequence: Sequence {
     
     let node: XNode
     
@@ -70,7 +70,7 @@ public final class XLeftSequence: Sequence {
     }
     
     public func makeIterator() -> XElementTreeIterator {
-        return XElementTreeIterator(elementIterator: XLeftIterator(node: node))
+        return XElementTreeIterator(elementIterator: XPreviousElementsIterator(node: node))
     }
 }
 

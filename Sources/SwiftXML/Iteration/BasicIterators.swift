@@ -122,7 +122,7 @@ public final class XContentsIterator: XNodeIteratorProtocol {
 }
 
 /**
- Iterates though the nodes right of a node.
+ Iterates though the nodes after a node.
  */
 public final class XNextIterator: XNodeIteratorProtocol {
     
@@ -156,7 +156,7 @@ public final class XNextIterator: XNodeIteratorProtocol {
 }
 
 /**
- Iterates though the nodes left of a node.
+ Iterates though the nodes before a node.
  */
 public final class XPreviousIterator: XNodeIteratorProtocol {
     
@@ -190,9 +190,9 @@ public final class XPreviousIterator: XNodeIteratorProtocol {
 }
 
 /**
- Iterates though the elements right of a node.
+ Iterates though the elements after a node.
  */
-public final class XRightIterator: XElementIteratorProtocol {
+public final class XNextElementsIterator: XElementIteratorProtocol {
     
     weak var node: XNode?
     weak var currentNode: XNode? = nil
@@ -228,9 +228,9 @@ public final class XRightIterator: XElementIteratorProtocol {
 }
 
 /**
- Iterates though the elements left of a node.
+ Iterates though the elements before a node.
  */
-public final class XLeftIterator: XElementIteratorProtocol {
+public final class XPreviousElementsIterator: XElementIteratorProtocol {
     
     weak var node: XNode?
     weak var currentNode: XNode? = nil

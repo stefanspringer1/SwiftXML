@@ -107,7 +107,7 @@ public class XNode {
         _nodeIterators.forEach { $0.prefetch() }
     }
     
-    func insertLeft(_ node: XNode) {
+    func insertPrevious(_ node: XNode) {
         if let selfAsText = self as? XText, let newAsText = node as? XText {
             selfAsText._value = newAsText._value + selfAsText._value
             selfAsText.whitespace = .UNKNOWN
@@ -132,23 +132,23 @@ public class XNode {
         }
     }
     
-    func insertLeft(_ text: String) {
+    func insertPrevious(_ text: String) {
         if !text.isEmpty {
             if let selfAsText = self as? XText {
                 selfAsText._value = text + selfAsText._value
                 selfAsText.whitespace = .UNKNOWN
             }
             else {
-                insertLeft(XText(text))
+                insertPrevious(XText(text))
             }
         }
     }
     
-    public func insertLeft(@XNodeBuilder builder: () -> XNodeLike) {
-        (builder() as? [XNode])?.forEach { insertLeft($0) }
+    public func insertPrevious(@XNodeBuilder builder: () -> XNodeLike) {
+        (builder() as? [XNode])?.forEach { insertPrevious($0) }
     }
     
-    func insertRight(_ node: XNode) {
+    func insertNext(_ node: XNode) {
         if let selfAsText = self as? XText, let newAsText = node as? XText {
             selfAsText._value = selfAsText._value + newAsText._value
             selfAsText.whitespace = .UNKNOWN
@@ -172,20 +172,20 @@ public class XNode {
         }
     }
     
-    func insertRight(_ text: String) {
+    func insertNext(_ text: String) {
         if !text.isEmpty {
             if let selfAsText = self as? XText {
                 selfAsText._value = selfAsText._value + text
                 selfAsText.whitespace = .UNKNOWN
             }
             else {
-                insertRight(XText(text))
+                insertNext(XText(text))
             }
         }
     }
     
-    public func insertRight(@XNodeBuilder builder: () -> XNodeLike) {
-        (builder() as? [XNode])?.reversed().forEach { insertRight($0) }
+    public func insertNext(@XNodeBuilder builder: () -> XNodeLike) {
+        (builder() as? [XNode])?.reversed().forEach { insertNext($0) }
     }
     
     /**
@@ -195,7 +195,7 @@ public class XNode {
     public func set(forward: Bool = false, @XNodeBuilder builder: () -> XNodeLike) {
         if let theNext = _next {
             remove(forward: forward)
-            (builder() as? [XNode])?.forEach { theNext.insertLeft($0) }
+            (builder() as? [XNode])?.forEach { theNext.insertPrevious($0) }
             
         }
         else if let theParent = _parent {
@@ -727,9 +727,9 @@ public final class XElement: XBranch, CustomStringConvertible {
             return "/" + ([
                 self.ancestors.reversed().map {
                     let itsName = $0.name
-                    return "\(itsName)[\($0.left.filter { $0.name == itsName }.count+1)]"
+                    return "\(itsName)[\($0.previousElements.filter { $0.name == itsName }.count+1)]"
                 }.joined(separator: "/"),
-                "\(name)[\(left.filter { $0.name == myName }.count+1)]"
+                "\(name)[\(previousElements.filter { $0.name == myName }.count+1)]"
             ].joinedNonEmpties(separator: "/") ?? "")
         }
     }
