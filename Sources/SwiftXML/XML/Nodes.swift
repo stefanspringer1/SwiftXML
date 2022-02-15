@@ -144,6 +144,10 @@ public class XNode {
         }
     }
     
+    public func addLeft(@XNodeBuilder builder: () -> XNodeLike) {
+        (builder() as? [XNode])?.forEach { addLeft($0) }
+    }
+    
     public func addRight(_ node: XNode) {
         if let selfAsText = self as? XText, let newAsText = node as? XText {
             selfAsText._value = selfAsText._value + newAsText._value
@@ -180,18 +184,23 @@ public class XNode {
         }
     }
     
+    public func addRight(@XNodeBuilder builder: () -> XNodeLike) {
+        (builder() as? [XNode])?.reversed().forEach { addRight($0) }
+    }
+    
     /**
-     Replace the node by another one.
+     Replace the node by other nodes.
      If "forward", then detaching prefetches the next node in iterators.
      */
-    public func replace(by node: XNode, forward: Bool = false) {
+    public func replace(forward: Bool = false, @XNodeBuilder builder: () -> XNodeLike) {
         if let theNext = _next {
             remove(forward: forward)
-            theNext.addLeft(node)
+            (builder() as? [XNode])?.forEach { theNext.addLeft($0) }
+            
         }
         else if let theParent = _parent {
             remove(forward: forward)
-            theParent.add(node)
+            (builder() as? [XNode])?.forEach { theParent.add($0) }
         }
     }
     
@@ -498,6 +507,10 @@ public class XBranch: XNode, WithAttic {
         }
     }
     
+    public func add(@XNodeBuilder builder: () -> XNodeLike) {
+        (builder() as? [XNode])?.forEach { add($0) }
+    }
+    
     /**
      When adding content, setting skip = true let iterators continue _after_ the
      inserted content.
@@ -546,6 +559,10 @@ public class XBranch: XNode, WithAttic {
                 addFirst(XText(text))
             }
         }
+    }
+    
+    public func addFirst(@XNodeBuilder builder: () -> XNodeLike) {
+        (builder() as? [XNode])?.reversed().forEach { addFirst($0) }
     }
     
     func produceLeaving(production: XProduction) {
