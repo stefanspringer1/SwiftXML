@@ -107,7 +107,7 @@ public class XNode {
         _nodeIterators.forEach { $0.prefetch() }
     }
     
-    public func addLeft(_ node: XNode) {
+    func addLeft(_ node: XNode) {
         if let selfAsText = self as? XText, let newAsText = node as? XText {
             selfAsText._value = newAsText._value + selfAsText._value
             selfAsText.whitespace = .UNKNOWN
@@ -132,7 +132,7 @@ public class XNode {
         }
     }
     
-    public func addLeft(_ text: String) {
+    func addLeft(_ text: String) {
         if !text.isEmpty {
             if let selfAsText = self as? XText {
                 selfAsText._value = text + selfAsText._value
@@ -148,7 +148,7 @@ public class XNode {
         (builder() as? [XNode])?.forEach { addLeft($0) }
     }
     
-    public func addRight(_ node: XNode) {
+    func addRight(_ node: XNode) {
         if let selfAsText = self as? XText, let newAsText = node as? XText {
             selfAsText._value = selfAsText._value + newAsText._value
             selfAsText.whitespace = .UNKNOWN
@@ -172,7 +172,7 @@ public class XNode {
         }
     }
     
-    public func addRight(_ text: String) {
+    func addRight(_ text: String) {
         if !text.isEmpty {
             if let selfAsText = self as? XText {
                 selfAsText._value = selfAsText._value + text
@@ -507,8 +507,8 @@ public class XBranch: XNode, WithAttic {
         }
     }
     
-    public func add(@XNodeBuilder builder: () -> XNodeLike) {
-        (builder() as? [XNode])?.forEach { add($0) }
+    public func add(skip: Bool = false, @XNodeBuilder builder: () -> XNodeLike) {
+        (builder() as? [XNode])?.forEach { add($0, skip: skip) }
     }
     
     /**
@@ -516,7 +516,7 @@ public class XBranch: XNode, WithAttic {
      inserted content.
      Else, the iterator will iterate through the inserted content.
      */
-    public func addFirst(_ node: XNode, skip: Bool = false) {
+    func addFirst(_ node: XNode, skip: Bool = false) {
         if let firstAsText = first as? XText, let newAsText = node as? XText {
             firstAsText._value = newAsText._value + firstAsText._value
             firstAsText.whitespace = .UNKNOWN
@@ -549,7 +549,7 @@ public class XBranch: XNode, WithAttic {
         }
     }
     
-    public func addFirst(_ text: String) {
+    func addFirst(_ text: String) {
         if !text.isEmpty {
             if let firstAsText = first as? XText {
                 firstAsText._value = text + firstAsText._value
@@ -561,8 +561,8 @@ public class XBranch: XNode, WithAttic {
         }
     }
     
-    public func addFirst(@XNodeBuilder builder: () -> XNodeLike) {
-        (builder() as? [XNode])?.reversed().forEach { addFirst($0) }
+    public func addFirst(skip: Bool = false, @XNodeBuilder builder: () -> XNodeLike) {
+        (builder() as? [XNode])?.reversed().forEach { addFirst($0, skip: skip) }
     }
     
     func produceLeaving(production: XProduction) {
