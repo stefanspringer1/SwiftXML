@@ -144,8 +144,8 @@ public class XNode {
         }
     }
     
-    public func insertPrevious(@XNodeBuilder builder: () -> XNodeLike) {
-        (builder() as? [XNode])?.forEach { insertPrevious($0) }
+    public func insertPrevious(@XNodeBuilder builder: () -> XNodeLike?) {
+        (builder() as? [XNode?])?.forEach { if let node = $0 { insertPrevious(node) } }
     }
     
     func insertNext(_ node: XNode) {
@@ -184,23 +184,23 @@ public class XNode {
         }
     }
     
-    public func insertNext(@XNodeBuilder builder: () -> XNodeLike) {
-        (builder() as? [XNode])?.reversed().forEach { insertNext($0) }
+    public func insertNext(@XNodeBuilder builder: () -> XNodeLike?) {
+        (builder() as? [XNode?])?.reversed().forEach { if let node = $0 { insertNext(node) } }
     }
     
     /**
      Replace the node by other nodes.
      If "forward", then detaching prefetches the next node in iterators.
      */
-    public func set(forward: Bool = false, @XNodeBuilder builder: () -> XNodeLike) {
+    public func set(forward: Bool = false, @XNodeBuilder builder: () -> XNodeLike?) {
         if let theNext = _next {
             remove(forward: forward)
-            (builder() as? [XNode])?.forEach { theNext.insertPrevious($0) }
+            (builder() as? [XNode?])?.forEach { if let node = $0 { theNext.insertPrevious(node) } }
             
         }
         else if let theParent = _parent {
             remove(forward: forward)
-            (builder() as? [XNode])?.forEach { theParent.add($0) }
+            (builder() as? [XNode?])?.forEach { if let node = $0 { theParent.add(node) } }
         }
     }
     
@@ -507,8 +507,8 @@ public class XBranch: XNode, WithAttic {
         }
     }
     
-    public func add(skip: Bool = false, @XNodeBuilder builder: () -> XNodeLike) {
-        (builder() as? [XNode])?.forEach { add($0, skip: skip) }
+    public func add(skip: Bool = false, @XNodeBuilder builder: () -> XNodeLike?) {
+        (builder() as? [XNode?])?.forEach { if let node = $0 { add(node, skip: skip) } }
     }
     
     /**
@@ -561,8 +561,8 @@ public class XBranch: XNode, WithAttic {
         }
     }
     
-    public func addFirst(skip: Bool = false, @XNodeBuilder builder: () -> XNodeLike) {
-        (builder() as? [XNode])?.reversed().forEach { addFirst($0, skip: skip) }
+    public func addFirst(skip: Bool = false, @XNodeBuilder builder: () -> XNodeLike?) {
+        (builder() as? [XNode?])?.reversed().forEach { if let node = $0 { addFirst(node, skip: skip) } }
     }
     
     func produceLeaving(production: XProduction) {
@@ -815,13 +815,13 @@ public final class XElement: XBranch, CustomStringConvertible {
         }
     }
     
-    public init(_ name: String, _ attributes: [String:String?]? = nil, @XNodeBuilder builder: () -> XNodeLike) {
+    public init(_ name: String, _ attributes: [String:String?]? = nil, @XNodeBuilder builder: () -> XNodeLike?) {
         self._name = name
         super.init()
         if let theAttributes = attributes {
             setAttributes(attributes: theAttributes)
         }
-        (builder() as? [XNode])?.forEach { add($0) }
+        (builder() as? [XNode?])?.forEach { if let node = $0 { add(node) } }
     }
     
     init(_ name: String, document: XDocument) {
