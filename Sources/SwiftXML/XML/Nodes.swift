@@ -117,7 +117,7 @@ public class XNode {
                 parent?._firstChild = node
             }
             
-            node.detach()
+            node.removeKeep()
             
             _previous?._next = node
             node._previous = _previous
@@ -157,7 +157,7 @@ public class XNode {
             parent?.add(node)
         }
         else {
-            node.detach()
+            node.removeKeep()
             
             _next?._previous = node
             node._previous = self
@@ -224,7 +224,7 @@ public class XNode {
      If "forward", then detaching prefetches the next node in iterators.
      Else, the iterators all told to go to the previous node.
      */
-    public func detach(forward: Bool = false) {
+    func removeKeep(forward: Bool = false) {
         
         // correction in iterators:
         if forward {
@@ -270,7 +270,7 @@ public class XNode {
      Else, the iterators all told to go to the previous node.
      */
     public func remove(forward: Bool = false) {
-        detach(forward: forward)
+        removeKeep(forward: forward)
         if let meAsElement = self as? XElement {
             meAsElement.document?.unregisterElement(element: meAsElement)
         }
@@ -361,26 +361,26 @@ public class XNode {
 
 //public protocol XNodeLike: CustomStringConvertible {}
 
-public class XBranch: XNode, WithAttic {
+public class XBranch: XNode, WithAttachments {
     
     weak var _document: XDocument? = nil
     
     var _firstChild: XNode? = nil
     var _lastChild: XNode? = nil
     
-    var _attic: Index<String,AnyObject>? = nil
-    
-    public func intoAttic(_ value: AnyObject, forKey key: String) {
-        if _attic == nil { _attic = Index<String,AnyObject>() }
-        _attic?.add(value, forKey: key)
+    var _attachments: [String:Any]? = nil
+        
+    public func attach(_ value: Any, withKey key: String) {
+        if _attachments == nil { _attachments = [String:Any]() }
+        _attachments?[key] = value
     }
     
-    public func fromAttic(forKey key: String) -> Array<AnyObject>? {
-        return _attic?[key]
+    public func getAttachment(forKey key: String) -> Any? {
+        return _attachments?[key]
     }
     
-    public func removeFromAttic(_ value: AnyObject, forKey key: String) {
-        _attic?.remove(value, forKey: key)
+    public func detach(forKey key: String) {
+        _attachments?[key] = nil
     }
     
     public func addClones(from source: XBranch, forwardref: Bool = false) {
@@ -468,7 +468,7 @@ public class XBranch: XNode, WithAttic {
             lastAsText.whitespace = .UNKNOWN
         }
         else {
-            node.detach(forward: skip)
+            node.removeKeep(forward: skip)
             
             // insert into new chain:
             if let theLastChild = _lastChild {
@@ -522,7 +522,7 @@ public class XBranch: XNode, WithAttic {
             firstAsText.whitespace = .UNKNOWN
         }
         else {
-            node.detach(forward: skip)
+            node.removeKeep(forward: skip)
             
             // insert into new chain:
             if let theFirstChild = _firstChild {
@@ -651,10 +651,10 @@ public struct XNodeBuilder {
     }
 }
 
-public protocol WithAttic {
-    func intoAttic(_ value: AnyObject, forKey key: String)
-    func fromAttic(forKey key: String) -> Array<AnyObject>?
-    func removeFromAttic(_ value: AnyObject, forKey key: String)
+public protocol WithAttachments {
+    func attach(_ value: Any, withKey key: String)
+    func getAttachment(forKey key: String) -> Any?
+    func detach(forKey key: String)
 }
 
 public final class XElement: XBranch, CustomStringConvertible {
@@ -830,7 +830,7 @@ public final class XElement: XBranch, CustomStringConvertible {
         self._document = document
     }
     
-    public override func detach(forward: Bool = false) {
+    public override func removeKeep(forward: Bool = false) {
         
         // correction in iterators:
         if forward {
@@ -842,7 +842,7 @@ public final class XElement: XBranch, CustomStringConvertible {
             _nameIterators.forEach { _ = $0.previous() }
         }
         
-        super.detach(forward: forward)
+        super.removeKeep(forward: forward)
     }
     
     func setAttributes(attributes newAtttributeValues: [String:String?]? = nil) {

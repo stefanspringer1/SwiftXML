@@ -300,91 +300,11 @@ public func readSimplePropertiesList(path: String, errorHandler: ((String) -> ()
 
 var standardError = FileHandle.standardError
 
-/*extension FileHandle: TextOutputStream {
-  public func write(_ string: String) {
-    guard let data = string.data(using: .utf8) else {
-      fatalError()
-    }
-    self.write(data)
-  }
-}*/
-
 extension FileHandle: TextOutputStream {
   public func write(_ string: String) {
     let data = Data(string.utf8)
     self.write(data)
   }
-}
-
-/**
- Like a dictionary, but storing multiple values for one key.
- */
-struct Index<K: Hashable,V: AnyObject> {
-    
-    private var store = [K:RefArray<V>]()
-    
-    // need a reference type to work as desired (Set is a value type):
-    class RefArray<V: AnyObject> {
-        var array = Array<V>()
-        
-        func append(_ value: V) {
-            array.append(value)
-        }
-        
-        func remove(_ value: V) {
-            if array[0] === value {
-                
-            }
-            while let i = array.firstIndex(where: { $0 === value }) {
-                array.remove(at: i)
-            }
-        }
-        
-        var values: Array<V> {
-            get {
-                return array
-            }
-        }
-    }
-    
-    let noValues = Array<V>()
-    
-    subscript(key: K) -> Array<V> {
-        get {
-            return store[key]?.values ?? noValues
-        }
-    }
-    
-    mutating func add(_ value: V, forKey key: K) {
-        var array = store[key]
-        if array == nil {
-            array = RefArray<V>()
-            store[key] = array
-        }
-        array!.append(value)
-    }
-    
-    mutating func remove(_ value: V, forKey key: K) {
-        if let theArray = store[key] {
-            theArray.remove(value)
-        }
-    }
-    
-    func containsKey(_ key: K) -> Bool {
-        return store[key] != nil
-    }
-    
-    var isEmpty: Bool {
-        get {
-            return store.isEmpty
-        }
-    }
-    
-    var keys: Dictionary<K,RefArray<V>>.Keys {
-        get {
-            return store.keys
-        }
-    }
 }
 
 extension Sequence {
