@@ -642,7 +642,7 @@ public class Attachments {
     
     private var values: [String:Any]? = nil
     
-    public clear() {
+    public func clear() {
         values = nil
     }
     
