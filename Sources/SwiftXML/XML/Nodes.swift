@@ -642,7 +642,7 @@ public class Attachments {
     
     private var values: [String:Any]? = nil
     
-    subscript(key: String) -> Any? {
+    public subscript(key: String) -> Any? {
         get {
             values?[key]
         }
