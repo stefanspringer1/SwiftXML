@@ -361,27 +361,14 @@ public class XNode {
 
 //public protocol XNodeLike: CustomStringConvertible {}
 
-public class XBranch: XNode, WithAttachments {
+public class XBranch: XNode {
     
     weak var _document: XDocument? = nil
     
     var _firstChild: XNode? = nil
     var _lastChild: XNode? = nil
     
-    var _attachments: [String:Any]? = nil
-        
-    public func attach(_ value: Any, withKey key: String) {
-        if _attachments == nil { _attachments = [String:Any]() }
-        _attachments?[key] = value
-    }
-    
-    public func getAttachment(forKey key: String) -> Any? {
-        return _attachments?[key]
-    }
-    
-    public func detach(forKey key: String) {
-        _attachments?[key] = nil
-    }
+    var attached = Attachments()
     
     public func addClones(from source: XBranch, forwardref: Bool = false) {
         source.content.forEach { node in
@@ -651,10 +638,29 @@ public struct XNodeBuilder {
     }
 }
 
-public protocol WithAttachments {
-    func attach(_ value: Any, withKey key: String)
-    func getAttachment(forKey key: String) -> Any?
-    func detach(forKey key: String)
+public class Attachments {
+    
+    private var values: [String:Any]? = nil
+    
+    subscript(key: String) -> Any? {
+        get {
+            values?[key]
+        }
+        set(newValue) {
+            if newValue == nil {
+                values?[key] = nil
+                if values?.isEmpty == true {
+                    values = nil
+                }
+            }
+            else {
+                if values == nil {
+                    values = [String:Any]()
+                }
+                values?[key] = newValue
+            }
+        }
+    }
 }
 
 public final class XElement: XBranch, CustomStringConvertible {
