@@ -368,7 +368,7 @@ public class XBranch: XNode {
     var _firstChild: XNode? = nil
     var _lastChild: XNode? = nil
     
-    var attached = Attachments()
+    public var attached = Attachments()
     
     public func addClones(from source: XBranch, forwardref: Bool = false) {
         source.content.forEach { node in
