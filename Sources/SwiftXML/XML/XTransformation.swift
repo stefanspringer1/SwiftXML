@@ -7,14 +7,14 @@
 
 import Foundation
 
-public typealias RuleAction = (XElement)->()
+public typealias XRuleAction = (XElement)->()
 
-public struct Rule {
+public struct XRule {
     
     public let elementName: String
-    public let action: RuleAction
+    public let action: XRuleAction
     
-    public init(_ elementName: String, action: @escaping RuleAction) {
+    public init(_ elementName: String, action: @escaping XRuleAction) {
         self.elementName = elementName
         self.action = action
     }
@@ -22,26 +22,22 @@ public struct Rule {
 
 @resultBuilder
 public struct XRulesBuilder {
-    public static func buildBlock(_ components: XNodeLike?...) -> XNodeLike {
-        let sampler = XNodeSampler()
-        components.forEach { if let nodeLike = $0 { sampler.add(nodeLike) } }
-        return sampler.nodes
+    public static func buildBlock(_ components: XRule...) -> [XRule] {
+        return components
     }
 }
 
 public class XTransformation {
     
-    let document: XDocument
-    let rules: [Rule]
+    let rules: [XRule]
     
-    public init(forDocument document: XDocument, withRules rules: [Rule]) {
-        self.document = document
-        self.rules = rules
+    public init(@XRulesBuilder builder: () -> [XRule]) {
+        self.rules = builder()
     }
     
-    public func execute() {
+    public func execute(inDocument document: XDocument) {
         
-        var iteratorsWithActions = [(XElementNameIterator,RuleAction)]()
+        var iteratorsWithActions = [(XElementNameIterator,XRuleAction)]()
         
         rules.forEach { rule in
             iteratorsWithActions.append((
