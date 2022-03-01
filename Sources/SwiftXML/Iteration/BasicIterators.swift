@@ -16,19 +16,28 @@ public final class XElementsOfSameNameIterator: XElementIteratorProtocol {
     weak var document: XDocument?
     let name: String
     weak var currentElement: XElement? = nil
+    let keepLast: Bool
     
-    public init(document: XDocument, name: String) {
+    public init(document: XDocument, name: String, keepLast: Bool = false) {
         self.document = document
         self.name = name
+        self.keepLast = keepLast
     }
     
     public func next() -> XElement? {
+        let oldStarted = started
+        let oldCurrent = currentElement
         if started {
             currentElement = currentElement?.nextWithSameName
         }
         else {
             currentElement = document?._elementsOfName_first[name]
             started = true
+        }
+        if currentElement == nil && keepLast {
+            started = oldStarted
+            currentElement = oldCurrent
+            return nil
         }
         return currentElement
     }
