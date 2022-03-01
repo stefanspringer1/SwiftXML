@@ -20,7 +20,16 @@ public struct Rule {
     }
 }
 
-public class Transformation {
+@resultBuilder
+public struct XRulesBuilder {
+    public static func buildBlock(_ components: XNodeLike?...) -> XNodeLike {
+        let sampler = XNodeSampler()
+        components.forEach { if let nodeLike = $0 { sampler.add(nodeLike) } }
+        return sampler.nodes
+    }
+}
+
+public class XTransformation {
     
     let document: XDocument
     let rules: [Rule]
