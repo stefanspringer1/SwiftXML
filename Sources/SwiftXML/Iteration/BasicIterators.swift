@@ -1,9 +1,8 @@
 //
 //  BasicIterators.swift
-//  
 //
-//  Created by Stefan Springer on 27.09.21.
-//
+//  Created 2022 by Stefan Springer, https://stefanspringer.com
+//  License: Apache License 2.0
 
 import Foundation
 
@@ -63,19 +62,28 @@ final class XAttributesOfSameNameIterator: XAttributeIteratorProtocol {
     weak var document: XDocument?
     let attributeName: String
     weak var currentAttribute: XAttribute? = nil
+    let keepLast: Bool
     
-    public init(document: XDocument, attributeName: String) {
+    public init(document: XDocument, attributeName: String, keepLast: Bool = false) {
         self.document = document
         self.attributeName = attributeName
+        self.keepLast = keepLast
     }
     
     func next() -> XAttribute? {
+        let oldStarted = started
+        let oldCurrent = currentAttribute
         if started {
             currentAttribute = currentAttribute?.nextWithSameName
         }
         else {
             currentAttribute = document?._attributesOfName_first[attributeName]
             started = true
+        }
+        if currentAttribute == nil && keepLast {
+            started = oldStarted
+            currentAttribute = oldCurrent
+            return nil
         }
         return currentAttribute
     }

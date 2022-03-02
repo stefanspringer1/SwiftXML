@@ -5,12 +5,12 @@ import PackageDescription
 
 let package = Package(
     name: "SwiftXML",
-    products: [
+    /*products: [
         // Products define the executables and libraries a package produces, and make them visible to other packages.
         .library(
             name: "SwiftXML",
             targets: ["SwiftXML"]),
-    ],
+    ],*/
     dependencies: [
         // Dependencies declare other packages that this package depends on.
         .package(url: "https://github.com/stefanspringer1/SwiftXMLParser", from: "1.1.79"),

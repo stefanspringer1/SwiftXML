@@ -108,8 +108,11 @@ public final class XElementNameIterator: IteratorProtocol {
     
     var elementIterator: XElementIteratorProtocol
     
-    public init(elementIterator: XElementIteratorProtocol) {
+    var keepLast: Bool
+    
+    public init(elementIterator: XElementIteratorProtocol, keepLast: Bool = false) {
         self.elementIterator = elementIterator
+        self.keepLast = keepLast
     }
     
     weak var current: XElement? = nil
@@ -120,10 +123,16 @@ public final class XElementNameIterator: IteratorProtocol {
             prefetched = false
             return current
         }
-        current?._nameIterators.remove(self)
-        current = elementIterator.next()
-        current?._nameIterators.append(self)
-        return current
+        let next = elementIterator.next()
+        if keepLast && next == nil {
+            return nil
+        }
+        else {
+            current?._nameIterators.remove(self)
+            current = next
+            current?._nameIterators.append(self)
+            return current
+        }
     }
     
     public func previous() -> XElement? {
@@ -142,10 +151,7 @@ public final class XElementNameIterator: IteratorProtocol {
     }
 }
 
-public struct XAttributeSpot {
-    public let value: String
-    public let element: XElement
-}
+public typealias XAttributeSpot = (String,XElement)
 
 public final class XAttributeIterator: IteratorProtocol {
     
@@ -156,8 +162,11 @@ public final class XAttributeIterator: IteratorProtocol {
     
     var attributeIterator: XAttributeIteratorProtocol
     
-    init(attributeIterator: XAttributeIteratorProtocol) {
+    var keepLast: Bool
+    
+    init(attributeIterator: XAttributeIteratorProtocol, keepLast: Bool = false) {
         self.attributeIterator = attributeIterator
+        self.keepLast = keepLast
     }
     
     weak var current: XAttribute? = nil
@@ -168,9 +177,15 @@ public final class XAttributeIterator: IteratorProtocol {
             prefetched = false
         }
         else {
-            current?.attributeIterators.remove(self)
-            current = attributeIterator.next()
-            current?.attributeIterators.append(self)
+            let next = attributeIterator.next()
+            if keepLast && next == nil {
+                return nil
+            }
+            else {
+                current?.attributeIterators.remove(self)
+                current = next
+                current?.attributeIterators.append(self)
+            }
         }
         if let theValue = current?.value, let theElement = current?.element {
             return XAttributeSpot(value: theValue,element: theElement)
