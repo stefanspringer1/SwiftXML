@@ -8,7 +8,7 @@ import Foundation
 
 public typealias XElementAction = (XElement)->()
 
-public typealias XAttributeAction = (String,XElement)->()
+public typealias XAttributeAction = (XAttributeSpot)->()
 
 public struct XRule {
     
@@ -72,9 +72,9 @@ public class XTransformation {
                     }
                 }
                 else if let iterator = _iterator as? XAttributeIterator, let action = _action as? XAttributeAction {
-                    while let (value,element) = iterator.next() {
+                    while let attribute = iterator.next() {
                         working = true
-                        action(value,element)
+                        action(attribute)
                     }
                 }
             }
