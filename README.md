@@ -160,7 +160,13 @@ Any node (including an XML document) can be cloned, including the tree of nodes 
 func clone(forwardref: Bool) -> XNode
 ```
 
-Any node possesses the property `r` pointing to the node related to itself by (the last) cloning. By default, `r` points from the node in the clone to the according node in the original tree. By setting the argument `forwardref` to `true` (it defaults to `false`), this direction is reversed. By being able to set `forwardref` when cloning an XML document one can adjust to the situations of using the clone or the original tree for further manipulation. You might use the `clone` method several times, the property `rr` than goes along the whole chains of `r` values until the last one is reached. For a document, the method `func saveVersion()` formalises this: Use `saveVersion()` to save a certain state and then just continue manipulating the same document; the chain of `r` properties then just follows all versions.
+Any node possesses the property `r` pointing to the node related to itself by (the last) cloning. By default, `r` points from the node in the clone to the according node in the original tree. By setting the argument `forwardref` to `true` (it defaults to `false`), this direction is reversed. By being able to set `forwardref` when cloning an XML document one can adjust to the situations of using the clone or the original tree for further manipulation. You might use the `clone` method several times, the property `rr` than goes along the whole chains of `r` values until the last one is reached. For a document, the following method formalises this:
+
+```Swift
+func saveVersion()
+```
+
+Use `saveVersion()` to save a certain state and then just continue manipulating the same document; the chain of `r` properties then just follows all versions.
 
 Sometimes, only a “shallow” clone is needed, i.e. the node itself without the tree of nodes that is started by it. In this case, just use:
 
