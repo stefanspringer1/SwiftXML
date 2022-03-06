@@ -98,3 +98,38 @@ func resolve(
 This method is always called when an named entity reference is encountered (either in text or attribute) which is scored as an internal entity. It returns the textual replacement for the entity or `nil`. If the method returns `nil`, then the entity reference is not replaced by a text, but is kept. In the case of a named entity in an attribute value, an error is thrown when no replacement is given. The function arguments `forAttributeWithName` (name of the attribute) and `atElementWithName` (name of the element) have according values if and only if the entity is encountered inside an attribute value.
 
 One a more event handlers can be given a `parseXML` call, which implement `XEventHandler` from [XMLInterfaces](https://github.com/stefanspringer1/SwiftXMLInterfaces). This allows for the user of the library to catch any event during parsing like entering or leaving an element. E.g., the resolving of an internal entity reference could depend on the location inside the document (and not only on the name of the element or attribute), so this information can be collected by such an event handler.
+
+## Writing XML
+
+Any XML node (including an XML document) can be written, including the tree of nodes that is started by it, via the following methods.
+
+```Swift
+func write(toURL: URL, production: XProduction)
+```
+
+```Swift
+func write(toFile: String, production: XProduction)
+```
+
+```Swift
+func write(toFileHandle: FileHandle, production: XProduction)
+```
+
+The production argument has to implement the `XProduction` protocol and defines how each part of the document is written. The production defaults to an instance of `XDefaultProduction`, which also should be extended if only some details of how the document is written are to be changed, which is a common use case. E.g. you could override `func writeText(text: XText)` and `func writeAttributeValue(name: String, value: String, element: XElement)` to again write some characters as named entity references. Or you just provide an instance of `XDefaultProduction` itself and change its `linebreak` property to define how line breaks should be written (e.g. Unix or Windows style).
+
+For generality, the following method is provided to apply any `XProduction` to a node (and its containing tree):
+
+```Swift
+func applyProduction(production: XProduction)
+```
+
+To write to standard out (just print), the `echo` method can be used, with the production again defaulting to an instance of `XDefaultProduction`, and the terminator defaulting to a line break:
+
+```Swift
+func echo(production: XProduction, terminator: String)
+```
+
+In contrast to the above methods, when using a node as the argument to the `print` method, only some top-level printout results, e.g. only the start tag is printed.
+
+## Cloning
+
