@@ -24,7 +24,7 @@ let transformation = XTransformation {
 ---
 **NOTE**
 
-This library is not in a “final” state yet. Also, when such a final state is reached, the library might be further developed using a new repository URL. Further notice will be added here. See [there](https://stefanspringer.com) for contact indformation.
+This library is not in a “final” state yet. Also, when such a final state is reached, the library might be further developed using a new repository URL. Further notice will be added here. See [there](https://stefanspringer.com) for contact information.
 
 ---
 
