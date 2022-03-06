@@ -2,6 +2,13 @@
 
 A library written in Swift to process XML.
 
+---
+**NOTE**
+
+This library is not in a "final" state yet. Also, when such a final state is reached, this repository might be further developed using a new URL. Further notice will be added here.
+
+---
+
 ## Properties of the library
 
 The library reads XML from a source into an XML document instance, and provides methods to transform (or manipulate) the document, and others to write the document to a file. (The reading of a JSON source into a XML document structure is also implemented, but currently only in experimental state.)
@@ -10,9 +17,9 @@ The library reads XML from a source into an XML document instance, and provides 
 
 Other than some other libraries for XML, the manipulation of the document as built in memory is "in place", i.e. no new XML document is built. The goal is to be able to apply many isolated manipulations to an XML document efficiently. But it is always possible to clone a document easily with references to or from the old version.
 
-All iteration over elements in the document using the according library functions are lazy by default. While iterating over elements in the document using the according library functions, the document tree can be changed without affecting the iteration negatively.
+All iteration over elements in the document using the according library functions are lazy by default. While iterating over elements in the document using the according library functions, the document tree can be changed without negatively affecting the iteration.
 
-Part of the effiency is the possibility to effeciently find elements of a certain name of element with an attribute of a certain name with having to traverse the whole tree. An according iteration proceeds in the order by which the elements or attributes have been added to the document. When iterating in this manner, newly added elements or attributes are then also processed as part of the same iteration.
+Part of the effiency is the possibility to effeciently find elements or attributes of a certain name without having to traverse the whole tree. An according iteration proceeds in the order by which the elements or attributes have been added to the document. When iterating in this manner, newly added elements or attributes are then also processed as part of the same iteration.
 
 The user of the library can also provide a sets of rules to be applied. In such a rule, the user defines what to do with an element or attribute with a certain name. The set of rules can then be applied to a document, i.e. the rules are applied in the order of their definition. This is repeated, garanteeing that a rule is only apllied once to the same obejct, until no application takes places. So elements can be added during apllication of a rule and then later be processed by the same or another rule.
 
@@ -61,3 +68,4 @@ func resolve(entityWithName: String, forAttributeName: String?, atElement: Strin
 ```
 
 This methid is always called when a named entity reference is encountered. If the method returns `nil`, then the entity is not replaced by y text, but is kept. In the case of a named entity in an attribute value, an error is then thrown. The function arguments `forAttributeName` (name of the attribute) and `atElement` (name of the element) have according values if and only if the entity is encountered inside 
+nega
