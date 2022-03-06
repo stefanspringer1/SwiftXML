@@ -148,3 +148,188 @@ Sometimes, only a “shallow” clone is needed, i.e. the node itself without th
 ```Swift
 func shallowClone(forwardref: Bool) -> XNode
 ```
+
+## Traversals
+
+Traversing a tree depth-first starting from a node (including a document) can be done by the follwoing methods:
+
+```Swift
+func traverse(down: (XNode) -> (), up: ((XBranch) -> ())?)
+```
+
+```Swift
+func traverseAsync(down: (XNode) async -> (), up: ((XBranch) async -> ())?) async
+```
+
+```Swift
+func traverseAsyncThrowing(down: (XNode) async throws -> (), up: ((XBranch) async throws -> ())?) async throws
+```
+
+For a “branch”, i.e. a node that might contain other nodes (like an element, opposed to e.g. text, which does not contain other nodes), when returning from from the travesal of its content (also in the case of an empty branch) the closure given an the optional `up:` argument is called.
+
+Example:
+
+```Swift
+document.traverse { node in
+    if let element = node as? XElement {
+        print("entering element \(element.name)")
+    }
+}
+up:  { branch in
+    if let element = branch as? XElement {
+        print("leaving element \(element.name)")
+    }
+}
+```
+
+## Finding related nodes
+
+Starting from some node, you might want to find related nodes, e.g. its children. The following methods are provided. Sequences returned are always lazy sequences, iterating through them gives items of the obvious type. As mentioned in teh general description of the library, manipulating the XML tree during such an iteration is allowed.
+
+Finding the document the node is contained in:
+
+```Swift
+var document: XDocument?
+```
+
+Finding the parent element:
+
+```Swift
+var parent: XElement?
+```
+
+All its ancestor elements:
+
+```Swift
+var ancestors: XAncestorsSequence
+```
+
+The content of an document or an element:
+
+```Swift
+var content: XContentSequence
+```
+
+The content that is an element, i.e. all the children:
+
+```Swift
+var children: XChildrenSequence
+```
+
+All content in the tree of nodes that is started by the node itself, without the node itself:
+
+```Swift
+var allContent: XAllContentSequence
+```
+
+The descendants, i.e. all content in the tree of nodes that is started by the node itself, without the node itself, that is an element:
+
+```Swift
+var descendants: XDescendantsSequence
+```
+
+If a node is an element, the element itself and the descendants, starting with the element itself:
+
+```Swift
+var descendantsIncludingSelf: XDescendantsIncludingSelfSequence
+```
+
+All nodes next to the node (i.e. the next siblings):
+
+```Swift
+var next: XNextSequence
+```
+
+All next siblings that are elements:
+
+```Swift
+var nextElements: XNextElementsSequence
+```
+
+All nodes previous to the node (i.e. the previous siblings), in the order from the node:
+
+```Swift
+var previous: XPreviousSequence
+```
+
+All previous siblings that are elements:
+
+```Swift
+var previousElements: XPreviousElementsSequence
+```
+
+Example:
+
+```Swift
+myElement.descendants.forEach { descendant in
+    print("the name of the descendant is \(descendant.name)")
+}
+```
+
+## Constructing XML
+
+### Constructing an empty element
+
+When construction an element (without content), the name is given as the first (nameless) argument and the attrbute values are given as (nameless) a dictionary.
+
+Example: constructing an empty “paragraph” element with attrbutes `id="1"` and `style="note"`:
+
+```Swift
+let myElement = XElement("paragraph", ["id": "1", "style": "note"])
+```
+
+### Reading and setting attributes
+
+The attributes of an element can be read and set via the “index notation”. If an attribute is not set, `nil` is returned; reversely, settign an attribute to `nil` results in removing it.
+
+Example:
+
+```Swift
+// setting the "id" attribute to "1":
+myElement["id"] = "1"
+
+// reading an attribute:
+if let id = myElement["id"] {
+    print("the ID is \(id)")
+}
+```
+
+### Defining content
+
+When constructing an element, its content are given in parantheses “{...}”:
+
+```Swift
+let myElement = XElement("div") {
+    XElement("hr")
+    XElement("paragraph") {
+        "Hello World"
+    }
+    XElement("hr")
+}
+```
+
+(The text `"Hello World"` could also be given as `XText("Hello World")`. The text will be converted in such an XML node automatically.)
+
+The content might be given as an array or an appropriate sequence:
+
+```Swift
+let myElement = XElement("div") {
+    XElement("hr")
+    myOtherElement.content
+    XElement("hr")
+}
+```
+
+Sometimes the compiler needs a hint for the type (use `XNodeLike`):
+
+```Swift
+let myElement = XElement("div") {
+    XElement("hr")
+    ["Hallo ", "Welt"] as [XNodeLike]
+    XElement("hr")
+}
+```
+
+### Document for content during construction
+
+...
