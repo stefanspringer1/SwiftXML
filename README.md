@@ -13,7 +13,7 @@ This library is not in a "final" state yet. Also, when such a final state is rea
 
 The library reads XML from a source into an XML document instance, and provides methods to transform (or manipulate) the document, and others to write the document to a file. (The reading of a JSON source into a XML document structure is also implemented, but currently only in experimental state.)
 
-### Manipulation an XML document
+### Manipulation of an XML document
 
 Other than some other libraries for XML, the manipulation of the document as built in memory is "in place", i.e. no new XML document is built. The goal is to be able to apply many isolated manipulations to an XML document efficiently. But it is always possible to clone a document easily with references to or from the old version.
 
