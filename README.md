@@ -11,7 +11,7 @@ This library is not in a "final" state yet. Also, when such a final state is rea
 
 ## Properties of the library
 
-The library reads XML from a source into an XML document instance, and provides methods to transform (or manipulate) the document, and others to write the document to a file. (The reading of a JSON source into a XML document structure is also implemented, but currently only in experimental state.)
+The library reads XML from a source into an XML document instance, and provides methods to transform (or manipulate) the document, and others to write the document to a file. (The reading of a JSON source into an XML document structure is also implemented, but currently only in experimental state.)
 
 ### Manipulation of an XML document
 
