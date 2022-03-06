@@ -89,20 +89,6 @@ public final class XDocument: XBranch {
         return theClone
     }
     
-    func transform(_ transformations: (String,(XElement) -> ())...) {
-        let work = transformations.map { (XElementsOfSameNameSequence(document: self, name: $0.0).lazy.makeIterator(), $0.1) }
-        var working = true
-        while working {
-            working = false
-            work.forEach { (iterator,transformation) in
-                if let next = iterator.next() {
-                    working = true
-                    transformation(next)
-                }
-            }
-        }
-    }
-    
     public var declarationsInInternalSubset = [XDeclarationInInternalSubset]()
     
     var internalEntityDeclarations = [String:XInternalEntityDeclaration]()
@@ -156,8 +142,8 @@ public final class XDocument: XBranch {
         }
     }
     
-    public func elements(ofName elementName: String) -> LazySequence<XElementsOfSameNameSequence> {
-        return XElementsOfSameNameSequence(document: self, name: elementName).lazy
+    public func elements(ofName elementName: String) -> XElementsOfSameNameSequence {
+        return XElementsOfSameNameSequence(document: self, name: elementName)
     }
     
     // -------------------------------------------------------------------------
@@ -205,11 +191,11 @@ public final class XDocument: XBranch {
     }
     
     public func attributes(ofName attributeName: String)
-    -> LazySequence<XAttributesOfSameNameSequence> {
+    -> XAttributesOfSameNameSequence {
         return XAttributesOfSameNameSequence(
             document: self,
             attributeName: attributeName
-        ).lazy
+        )
     }
     
     // -------------------------------------------------------------------------

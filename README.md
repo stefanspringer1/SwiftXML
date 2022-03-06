@@ -214,7 +214,7 @@ As mentioned and the general description, the library allows to efficiently find
 Finding the elements of a certain name:
 
 ```Swift
-func elements(ofName: String) -> LazySequence<XElementsOfSameNameSequence>
+func elements(ofName: String) -> XElementsOfSameNameSequence
 ```
 
 Example:
@@ -230,7 +230,7 @@ myDocument.elements(ofName: "paragraph").forEach { paragraph in
 Finding the attributes of a certain name:
 
 ```Swift
-func attributes(ofName: String) -> LazySequence<XAttributesOfSameNameSequence>
+func attributes(ofName: String) -> XAttributesOfSameNameSequence
 ```
 
 The items of the returned sequence are of type `XAttributeSpot`, which is a pair of the value of the attribute at when it is found, and the `element`.
