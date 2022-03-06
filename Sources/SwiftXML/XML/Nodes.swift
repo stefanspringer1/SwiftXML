@@ -354,6 +354,10 @@ public class XNode {
         
     }
     
+    public func write(toURL url: URL, production: XProduction = XDefaultProduction()) {
+        write(toFile: url.path, production: production)
+    }
+    
     public func echo(production: XProduction? = nil) {
         applyProduction(production: production ?? XDefaultProduction())
     }
