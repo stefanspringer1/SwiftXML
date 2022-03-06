@@ -358,8 +358,8 @@ public class XNode {
         write(toFile: url.path, production: production)
     }
     
-    public func echo(production: XProduction? = nil) {
-        applyProduction(production: production ?? XDefaultProduction())
+    public func echo(production: XProduction = XDefaultProduction(), terminator: String = "\n") {
+        write(toFileHandle: FileHandle.standardOutput, production: production); print(terminator, terminator: "")
     }
 }
 
