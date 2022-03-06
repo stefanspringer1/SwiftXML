@@ -85,7 +85,7 @@ func parseXML(
 ) throws -> XDocument
 ```
 
-All named entities in attribute values have to be replaced by text during parsing. In order to achieve this (in case that named entities occur at all in attribute values in the source), an `InternalEntityResolver` can be provided. An `InternalEntityResolver` has to implement the following method:
+All internal entity references in attribute values have to be replaced by text during parsing. In order to achieve this (in case that internal entity references occur at all in attribute values in the source), an `InternalEntityResolver` can be provided. An `InternalEntityResolver` has to implement the following method:
 
 ```Swift
 func resolve(
@@ -95,6 +95,6 @@ func resolve(
 ) -> String?
 ```
 
-This method is always called when a named internal entity reference is encountered (either in text or attribute) which is scored as an internmal entity. It returns the textual replacement for the entity or `nil`. If the method returns `nil`, then the entity reference is not replaced by a text, but is kept. In the case of a named entity in an attribute value, an error is thrown when no replacement is given. The function arguments `forAttributeWithName` (name of the attribute) and `atElementWithName` (name of the element) have according values if and only if the entity is encountered inside an attribute value.
+This method is always called when an named entity reference is encountered (either in text or attribute) which is scored as an internal entity. It returns the textual replacement for the entity or `nil`. If the method returns `nil`, then the entity reference is not replaced by a text, but is kept. In the case of a named entity in an attribute value, an error is thrown when no replacement is given. The function arguments `forAttributeWithName` (name of the attribute) and `atElementWithName` (name of the element) have according values if and only if the entity is encountered inside an attribute value.
 
-One a more event handlers can be given a `parseXML` call, which implement `XEventHandler` from [XMLInterfaces](https://github.com/stefanspringer1/SwiftXMLInterfaces). This allows for the user of the library to catch all events during parsing. E.g., the resolving of the named internal entity references could depend on the location inside the document, so this information can be collected by such an event handler.
+One a more event handlers can be given a `parseXML` call, which implement `XEventHandler` from [XMLInterfaces](https://github.com/stefanspringer1/SwiftXMLInterfaces). This allows for the user of the library to catch all events during parsing. E.g., the resolving of an internal entity reference could depend on the location inside the document, so this information can be collected by such an event handler.
