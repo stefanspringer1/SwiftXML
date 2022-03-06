@@ -200,7 +200,7 @@ document.traverse { node in
         print("entering element \(element.name)")
     }
 }
-up:  { branch in
+up: { branch in
     if let element = branch as? XElement {
         print("leaving element \(element.name)")
     }
