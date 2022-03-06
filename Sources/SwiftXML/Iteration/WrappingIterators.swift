@@ -151,10 +151,7 @@ public final class XElementNameIterator: IteratorProtocol {
     }
 }
 
-public struct XAttributeSpot {
-    public let value: String
-    public let element: XElement
-}
+public typealias XAttributeSpot = (String,XElement)
 
 public final class XAttributeIterator: IteratorProtocol {
     
