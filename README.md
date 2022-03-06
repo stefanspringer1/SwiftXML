@@ -31,7 +31,7 @@ All parts of the XML source are retained in the XML document built in memory, in
 
 In the current implementation, the XML library does not implement any validation, i.e. validation against a DTD or other XML schema. The user has to use other libaries (e.g. [Libxml2Validation](https://github.com/stefanspringer1/Libxml2Validation)) for such validation. To compensate for that, the user of the library can provide a function that decides if encountered whitespace between elements should be kept or not. Also, possible default values of attributes have to be set by the user if desired once the document tree is built.
 
-This library gives full control of how to handle entities. Named entities can persist inside the document event if they are not defined. Named entity references are being scored as internal or external entity rerefences during parsing, the external entity references being those which are referenced by external entity definitions in the internal subset inside the document declaration of the document. Possible replacements of internal entity references by text can be controlled by the application.
+This library gives full control of how to handle entities. Named entity references can persist inside the document event if they are not defined. Named entity references are being scored as internal or external entity rerefences during parsing, the external entity references being those which are referenced by external entity definitions in the internal subset inside the document declaration of the document. Possible replacements of internal entity references by text can be controlled by the application.
 
 No automated inclusion of external parsed entities takes place. The user of the library has to implements such features herself.
 
