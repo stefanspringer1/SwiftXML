@@ -57,7 +57,7 @@ func parseXML(
 
 ```Swift
 func parseXML(
-    fromData: Data,
+    fromPath: String,
     sourceInfo: String?,
     internalEntityResolver: InternalEntityResolver?,
     eventHandlers: [XEventHandler]?,
@@ -77,7 +77,7 @@ func parseXML(
 
 ```Swift
 func parseXML(
-    fromPath: String,
+    fromData: Data,
     sourceInfo: String?,
     internalEntityResolver: InternalEntityResolver?,
     eventHandlers: [XEventHandler]?,
