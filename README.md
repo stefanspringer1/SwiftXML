@@ -7,7 +7,7 @@ This library is published under the Apache License 2.0 to foster usage and furth
 ---
 **NOTE**
 
-This library is not in a "final" state yet. Also, when such a final state is reached, this repository might be further developed using a new URL. Further notice will be added here. See [there](https://stefanspringer.com) for contact indformation.
+This library is not in a "final" state yet. Also, when such a final state is reached, the library might be further developed using a new repository URL. Further notice will be added here. See [there](https://stefanspringer.com) for contact indformation.
 
 ---
 
