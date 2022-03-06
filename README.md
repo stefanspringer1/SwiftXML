@@ -37,7 +37,7 @@ No automated inclusion of external parsed entities takes place. The user of the 
 
 In the current state, the library does not recognize XML namespaces; elements or attributes with namespace prefixes are give the full name "prefix:unprefixed".
 
-The encoding of the source should always be UTF-8 (ASCII is considered as a subset of it). The parser checks for correct UTF-8 encoding and also checks (according to the data used by the currently used Swift implementation) if a found codepoint is a valid Unicode codepoint.
+The encoding of the source should always be UTF-8 (ASCII is considered as a subset of it). The parser checks for correct UTF-8 encoding and also checks (according to the data available to the currently used Swift implementation) if a found codepoint is a valid Unicode codepoint.
 
 For any error during parsing an error is thrown and no document is then provided.
 
