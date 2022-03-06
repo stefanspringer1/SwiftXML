@@ -43,6 +43,8 @@ The encoding of the source should always be UTF-8 (ASCII is considered as a subs
 
 For any error during parsing an error is thrown and no document is then provided.
 
+The library is not to be used in concurrent contexts. 
+
 ## Reading XML
 
 The following functions take a source and return an XML document instance (`XDocument`). The source can either be provided as a URL, a path to a file, a text, or binary data.
@@ -333,3 +335,5 @@ let myElement = XElement("div") {
 ### Document for content during construction
 
 ...
+
+### Subsequent or empyt text
