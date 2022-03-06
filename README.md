@@ -238,9 +238,9 @@ The items of the returned sequence are of type `XAttributeSpot`, which is a pair
 Example:
 
 ```Swift
-myDocument.attributes(ofName: "id").forEach { attribute in
-    if attribute.element.name == "paragraph" {
-        print("found paragraph with ID \"\(attribute.value)\"")
+myDocument.attributes(ofName: "id").forEach { (value,element) in
+    if element.name == "paragraph" {
+        print("found paragraph with ID \"\(value)\"")
     }
 }
 ```
