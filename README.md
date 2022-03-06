@@ -4,6 +4,23 @@ A library written in Swift to process XML.
 
 This library is published under the Apache License 2.0 to foster usage and further development.
 
+```Swift
+let transformation = XTransformation {
+    
+    XRule(forElement: "table") { table in
+        table.insertNext {
+            XElement("caption") {
+                "this is the table caption"
+            }
+        }
+    }
+
+    XRule(forAttribute: "label") { (value,element) in
+        element["label"] = value + ")"
+    }
+}
+```
+
 ---
 **NOTE**
 
@@ -184,6 +201,44 @@ up:  { branch in
 }
 ```
 
+## Direct access to elements and attributes
+
+As mentioned and the general description, the library allows to efficiently find elements or attributes of a certain name without having to traverse the whole tree. 
+
+Finding the elements of a certain name:
+
+```Swift
+func elements(ofName: String) -> LazySequence<XElementsOfSameNameSequence>
+```
+
+Example:
+
+```Swift
+myDocument.elements(ofName: "paragraph").forEach { paragraph in
+    if let id = paragraph["id"] {
+        print("found paragraph with ID \"\(ID)\")
+    }
+}
+```
+
+Finding the attributes of a certain name:
+
+```Swift
+func attributes(ofName: String) -> LazySequence<XAttributesOfSameNameSequence>
+```
+
+The items of the returned sequence are of type `XAttributeSpot`, which is a pair of the value of the attribute at when it is found, and the `element`.
+
+Example:
+
+```Swift
+.attributes(ofName: "id").forEach { attribute in
+    if attribute.element.name == "paragraph" {
+        print("found paragraph with ID \"\(attribute.value)\"")
+    }
+}
+```
+
 ## Finding related nodes
 
 Starting from some node, you might want to find related nodes, e.g. its children. The following methods are provided. Sequences returned are always lazy sequences, iterating through them gives items of the obvious type. As mentioned in teh general description of the library, manipulating the XML tree during such an iteration is allowed.
@@ -332,8 +387,165 @@ let myElement = XElement("div") {
 }
 ```
 
-### Document for content during construction
+### Document membership during construction
 
-...
+If a node is already part of a document when it gets added to an element during construction of this element, it first gets removed from that document during construction, and subsequently count as a new element if the element gets added to the same document, so an active iteration might iterate over it twice.
 
 ### Subsequent or empyt text
+
+Subsequent text nodes (`XText`) are always automatically combined, and text nodes with empty text are automatically removed.
+
+## Tree manipulations
+
+Besides changing the node properties, an XML tree can be changed by the following methods.
+
+Add nodes to the end of the content of a branch:
+
+```Swift
+func add(skip: Bool, builder: () -> XNodeLike)
+```
+
+Add nodes to the start of the content of a branch (their order is kept):
+
+```Swift
+func addFirst(skip: Bool, builder: () -> XNodeLike)
+```
+
+Add nodes as the nodes next to the node:
+
+```Swift
+func insertNext(builder: () -> XNodeLike)
+```
+
+Add nodes as the nodes previous to the node (their order is kept):
+
+```Swift
+func insertPrevious(builder: () -> XNodeLike)
+```
+
+By using the next two methods, a node gets removed. If the argument `forward` is set to `true` (default is `false`), such an operation prefetches the next node in iterators that have the node as active node, else, the iterators all told to go to the previous node.
+
+Remove the node from the tree structure and the document:
+
+```Swift
+func remove(forward: Bool)
+```
+
+Replace the node by other nodes; if `forward`, then detaching prefetches the next node in iterators:
+
+```Swift
+func set(forward: Bool, builder: () -> XNodeLike)
+```
+
+Example:
+
+```Swift
+myDocument.elements(ofName: "table").forEach { table in
+    table.insertNext {
+        XElement("legend") {
+            "this is the table legend"
+        }
+        XElement("caption") {
+            "this is the table caption"
+        }
+    }
+}
+```
+
+## Rules
+
+As mentioned in the general description, a sets of rules `XRule` in the form of a transformation instance of type `XTransformation` can be used as follows.
+
+In a rule, the user defines what to do with an element or attribute with a certain name. The set of rules can then be applied to a document, i.e. the rules are applied in the order of their definition. This is repeated, garanteeing that a rule is only applied once to the same object (if not removed from the document and added again), until no application takes places. So elements can be added during apllication of a rule and then later be processed by the same or another rule.
+
+Example:
+
+```Swift
+let document = try parseXML(fromText:
+    #"""
+    <a><formula id="1"/></a>
+    """#
+)
+
+var count = 1
+
+let transformation = XTransformation {
+    
+    XRule(forAttribute: "id") { (value,element) in
+        print("\n----- Rule for attribute \"id\" -----\n")
+        print("  \(element) --> ", terminator: "")
+        element["id"] = "done-" + value
+        print(element)
+    }
+    
+    XRule(forElement: "formula") { element in
+        print("\n----- Rule for element \"formula\" -----\n")
+        print("  \(element)")
+        if count == 1 {
+            count += 1
+            print("  add image")
+            element.insertPrevious {
+                XElement("image", ["id": "\(count)"])
+            }
+            
+        }
+    }
+    
+    XRule(forElement: "image") { element in
+        print("\n----- Rule for element \"image\" -----\n")
+        print("  \(element)")
+        if count == 2 {
+            count += 1
+            print("  add formula")
+            element.insertPrevious {
+                XElement("formula", ["id": "\(count)"])
+            }
+        }
+    }
+    
+}
+
+transformation.execute(inDocument: document)
+
+print("\n----------------------------------------\n")
+
+document.write(toFileHandle: FileHandle.standardOutput); print(); print()
+```
+
+Output:
+
+```text
+
+----- Rule for attribute "id" -----
+
+  <formula id="1"> --> <formula id="done-1">
+
+----- Rule for element "formula" -----
+
+  <formula id="done-1">
+  add image
+
+----- Rule for element "image" -----
+
+  <image id="2">
+  add formula
+
+----- Rule for attribute "id" -----
+
+  <image id="2"> --> <image id="done-2">
+
+----- Rule for attribute "id" -----
+
+  <formula id="3"> --> <formula id="done-3">
+
+----- Rule for element "formula" -----
+
+  <formula id="done-3">
+
+----------------------------------------
+
+<?xml version="1.0"?>
+<!DOCTYPE a>
+<a><formula id="done-3"/><image id="done-2"/><formula id="done-1"/></a>
+
+```
