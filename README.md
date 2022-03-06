@@ -2,7 +2,7 @@
 
 A library written in Swift to process XML.
 
-This library is published under the Apache License 2.0 to foster usage and further development.
+This library is published under the Apache License 2.0.
 
 ```Swift
 let transformation = XTransformation {
