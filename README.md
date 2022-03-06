@@ -25,7 +25,7 @@ The user of the library can also provide a sets of rules to be applied. In such 
 
 ### Other properties
 
-The library uses the [SwiftXMLParser](https://github.com/stefanspringer1/SwiftXMLParser) to parse XML which implements the according interface from [XMLInterfaces](https://github.com/stefanspringer1/SwiftXMLInterfaces).
+The library uses the [SwiftXMLParser](https://github.com/stefanspringer1/SwiftXMLParser) to parse XML which implements the according protocol from [XMLInterfaces](https://github.com/stefanspringer1/SwiftXMLInterfaces).
 
 All parts of the XML source are retained in the XML document built in memory, including all comments and parts of an internal subset e.g. all entity or element definitions. (Elements definitions and attribute list definitions are, besides their reported element names, only retained as their original textual represenation, they are not parsed into any other representation.) 
 
