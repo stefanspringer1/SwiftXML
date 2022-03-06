@@ -46,25 +46,53 @@ For any error during parsing an error is thrown and no document is then provided
 The following functions take a source and return an XML document instance (`XDocument`). The source can either be provided as a URL, a path to a file, a text, or binary data.
 
 ```Swift
-func parseXML(fromURL: URL, sourceInfo: String?, internalEntityResolver: InternalEntityResolver?, eventHandlers: [XEventHandler]?, textAllowed: (() -> Bool)?) throws -> XDocument
+func parseXML(
+    fromURL: URL,
+    sourceInfo: String?,
+    internalEntityResolver: InternalEntityResolver?,
+    eventHandlers: [XEventHandler]?,
+    textAllowed: (() -> Bool)?
+) throws -> XDocument
 ```
 
 ```Swift
-func parseXML(fromData: Data, sourceInfo: String?, internalEntityResolver: InternalEntityResolver?, eventHandlers: [XEventHandler]?, textAllowed: (() -> Bool)?) throws -> XDocument
+func parseXML(
+    fromData: Data,
+    sourceInfo: String?,
+    internalEntityResolver: InternalEntityResolver?,
+    eventHandlers: [XEventHandler]?,
+    textAllowed: (() -> Bool)?
+) throws -> XDocument
 ```
 
 ```Swift
-func parseXML(fromText: String, sourceInfo: String?, internalEntityResolver: InternalEntityResolver?, eventHandlers: [XEventHandler]?, textAllowed: (() -> Bool)?) throws -> XDocument
+func parseXML(
+    fromText: String,
+    sourceInfo: String?,
+    internalEntityResolver: InternalEntityResolver?,
+    eventHandlers: [XEventHandler]?,
+    textAllowed: (() -> Bool)?
+) throws -> XDocument
 ```
 
 ```Swift
-func parseXML(fromPath: String, sourceInfo: String?, internalEntityResolver: InternalEntityResolver?, eventHandlers: [XEventHandler]?, textAllowed: (() -> Bool)?) throws -> XDocument
+func parseXML(
+    fromPath: String,
+    sourceInfo: String?,
+    internalEntityResolver: InternalEntityResolver?,
+    eventHandlers: [XEventHandler]?,
+    textAllowed: (() -> Bool)?
+) throws -> XDocument
 ```
 
 All named entities in attribute values have to be replaced by text during parsing. In order to achieve this (in case that named entities occur at all in attribute values in the source), an `InternalEntityResolver` can be provided. An `InternalEntityResolver` has to implement the following method:
 
 ```Swift
-func resolve(entityWithName: String, forAttributeWithName: String?, atElementWithName: String?) -> String?
+func resolve(
+    entityWithName: String,
+    forAttributeWithName: String?,
+    atElementWithName: String?
+) -> String?
 ```
 
 This method is always called when a named internal entity reference is encountered (either in text or attribute) which is scored as an internmal entity. It returns the textual replacement for the entity or `nil`. If the method returns `nil`, then the entity reference is not replaced by a text, but is kept. In the case of a named entity in an attribute value, an error is thrown when no replacement is given. The function arguments `forAttributeWithName` (name of the attribute) and `atElementWithName` (name of the element) have according values if and only if the entity is encountered inside an attribute value.
