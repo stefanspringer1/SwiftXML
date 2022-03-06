@@ -31,6 +31,26 @@ public func parseXML(
 }
 
 public func parseXML(
+    fromURL url: URL,
+    sourceInfo: String? = nil,
+    internalEntityResolver: InternalEntityResolver? = nil,
+    eventHandlers: [XEventHandler]? = nil,
+    textAllowed: (() -> Bool)? = nil
+) throws -> XDocument {
+    let document = XDocument()
+    document._source = url.path
+    
+    let parser = ConvenienceParser(
+        parser: XParser(internalEntityResolver: internalEntityResolver, textAllowed: textAllowed),
+        mainEventHandler: XParseBuilder(document: document)
+    )
+    
+    try parser.parse(fromURL: url, sourceInfo: sourceInfo, eventHandlers: eventHandlers)
+    
+    return document
+}
+
+public func parseXML(
     fromText text: String,
     sourceInfo: String? = nil,
     internalEntityResolver: InternalEntityResolver? = nil,
