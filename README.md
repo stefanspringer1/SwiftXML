@@ -14,10 +14,11 @@ let transformation = XTransformation {
             }
         }
     }
-
+    
     XRule(forAttribute: "label") { (value,element) in
         element["label"] = value + ")"
     }
+
 }
 ```
 
