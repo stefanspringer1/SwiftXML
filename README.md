@@ -7,7 +7,7 @@ This library is published under the Apache License 2.0 to foster usage and furth
 ---
 **NOTE**
 
-This library is not in a "final" state yet. Also, when such a final state is reached, the library might be further developed using a new repository URL. Further notice will be added here. See [there](https://stefanspringer.com) for contact indformation.
+This library is not in a “final” state yet. Also, when such a final state is reached, the library might be further developed using a new repository URL. Further notice will be added here. See [there](https://stefanspringer.com) for contact indformation.
 
 ---
 
@@ -17,7 +17,7 @@ The library reads XML from a source into an XML document instance, and provides 
 
 ### Manipulation of an XML document
 
-Other than some other libraries for XML, the manipulation of the document as built in memory is "in place", i.e. no new XML document is built. The goal is to be able to apply many isolated manipulations to an XML document efficiently. But it is always possible to clone a document easily with references to or from the old version.
+Other than some other libraries for XML, the manipulation of the document as built in memory is “in place", i.e. no new XML document is built. The goal is to be able to apply many isolated manipulations to an XML document efficiently. But it is always possible to clone a document easily with references to or from the old version.
 
 All iteration over elements in the document using the according library functions are lazy by default. While iterating over elements in the document using the according library functions, the document tree can be changed without negatively affecting the iteration.
 
@@ -37,7 +37,7 @@ This library gives full control of how to handle entities. Named entity referenc
 
 No automated inclusion of external parsed entities takes place. The user of the library has to implement such features herself if needed.
 
-In the current state, the library does not recognize XML namespaces; elements or attributes with namespace prefixes are give the full name "prefix:unprefixed".
+In the current state, the library does not recognize XML namespaces; elements or attributes with namespace prefixes are give the full name “prefix:unprefixed".
 
 The encoding of the source should always be UTF-8 (ASCII is considered as a subset of it). The parser checks for correct UTF-8 encoding and also checks (according to the data available to the currently used Swift implementation) if a found codepoint is a valid Unicode codepoint.
 
@@ -135,3 +135,16 @@ In contrast to the above methods, when using a node as the argument to the `prin
 
 ## Cloning
 
+Any node (including an XMl document) can be cloned, including the tree of nodes that is started by it, using the following method:
+
+```Swift
+func clone(forwardref: Bool) -> XNode
+```
+
+Any node possesses the property `r` pointing to the node related to itself by (the last) cloning. By default, `r` points from the node in the clone to the according node in the original tree. By setting the argument `forwardref` to `true` (it defaults to `false`), this direction is reversed. By being able to set `forwardref` when cloning an XML document one can adjust to the situations of using the clone or the original tree for further manipulation. You might use the `clone` method several times, the property `rr` than goes along the whole chains of `r` values until the last one is reached. For a document, the method `func saveVersion()` formalises this: Use `saveVersion()` to save a certain state and then just continue manipulation the document; the chain of `r` properties then just follows all versions.
+
+Sometimes, only a “shallow” clone is needed, i.e. the node itself without the tree of nodes that is started by it. In this cae, just use:
+
+```Swift
+func shallowClone(forwardref: Bool) -> XNode
+```
