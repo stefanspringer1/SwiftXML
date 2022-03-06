@@ -119,7 +119,7 @@ func write(toFile: String, production: XProduction)
 func write(toFileHandle: FileHandle, production: XProduction)
 ```
 
-The production argument has to implement the `XProduction` protocol and defines how each part of the document is written. The production defaults to an instance of `XDefaultProduction`, which also should be extended if only some details of how the document is written are to be changed, which is a common use case. E.g. you could override `func writeText(text: XText)` and `func writeAttributeValue(name: String, value: String, element: XElement)` to again write some characters as named entity references. Or you just provide an instance of `XDefaultProduction` itself and change its `linebreak` property to define how line breaks should be written (e.g. Unix or Windows style).
+The production argument has to implement the `XProduction` protocol and defines how each part of the document is written. The production defaults to an instance of `XDefaultProduction`, which also should be extended if only some details of how the document is written are to be changed, which is a common use case. E.g. you could override `func writeText(text: XText)` and `func writeAttributeValue(name: String, value: String, element: XElement)` to again write some characters as named entity references. Or you just provide an instance of `XDefaultProduction` itself and change its `linebreak` property to define how line breaks should be written (e.g. Unix or Windows style). You might also want to consider `func sortAttributeNames(attributeNames: [String], element: XElement) -> [String]` to sort the attributes for output.
 
 For generality, the following method is provided to apply any `XProduction` to a node (and its containing tree):
 
