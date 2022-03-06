@@ -154,7 +154,7 @@ In contrast to the above methods, when using a node as the argument to the `prin
 
 ## Cloning
 
-Any node (including an XMl document) can be cloned, including the tree of nodes that is started by it, using the following method:
+Any node (including an XML document) can be cloned, including the tree of nodes that is started by it, using the following method:
 
 ```Swift
 func clone(forwardref: Bool) -> XNode
