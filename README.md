@@ -35,7 +35,7 @@ The library reads XML from a source into an XML document instance, and provides 
 
 ### Manipulation of an XML document
 
-Other than some other libraries for XML, the manipulation of the document as built in memory is “in place", i.e. no new XML document is built. The goal is to be able to apply many isolated manipulations to an XML document efficiently. But it is always possible to clone a document easily with references to or from the old version.
+Other than some other libraries for XML, the manipulation of the document as built in memory is “in place”, i.e. no new XML document is built. The goal is to be able to apply many isolated manipulations to an XML document efficiently. But it is always possible to clone a document easily with references to or from the old version.
 
 The following features are important:
 
@@ -43,7 +43,7 @@ The following features are important:
 - While iterating over elements in the document, the document tree can be changed without negatively affecting the iteration.
 - Elements or attributes of a certain name can be efficiently found without having to traverse the whole tree. An according iteration proceeds in the order by which the elements or attributes have been added to the document. When iterating in this manner, newly added elements or attributes are then also processed as part of the same iteration.
 
-The following code takes any `<item>` with an integer value of `multiply` larger than 1 and inserts an item with a `multiply` number one less as the next element (the library will be explained in more detail in subsequent sections):
+The following code takes any `<item>` with an integer value of `multiply` larger than 1 and inserts an item with a `multiply` number one less than the next element (the library will be explained in more detail in subsequent sections):
 
 ```Swift
 let document = try parseXML(fromText: """
@@ -107,17 +107,17 @@ document.descendants
     }
 ```
 
-The user of the library can also provide sets of rules to be applied (see the code at the beginning and a full example in the section about rules). In such a rule, the user defines what to do with an element or attribute with a certain name. A set of rules can then be applied to a document, i.e. the rules are applied in the order of their definition. This is repeated, garanteeing that a rule is only applied once to the same object (if not detached from the document and added again), until no application takes places. So elements can be added during apllication of a rule and then later be processed by the same or another rule.
+The user of the library can also provide sets of rules to be applied (see the code at the beginning and a full example in the section about rules). In such a rule, the user defines what to do with an element or attribute with a certain name. A set of rules can then be applied to a document, i.e. the rules are applied in the order of their definition. This is repeated, guaranteeing that a rule is only applied once to the same object (if not detached from the document and added again), until no application takes places. So elements can be added during application of a rule and then later be processed by the same or another rule.
 
 ### Other properties
 
 The library uses the [SwiftXMLParser](https://github.com/stefanspringer1/SwiftXMLParser) to parse XML which implements the according protocol from [XMLInterfaces](https://github.com/stefanspringer1/SwiftXMLInterfaces).
 
-All parts of the XML source are retained in the XML document built in memory, including all comments and parts of an internal subset e.g. all entity or element definitions. (Elements definitions and attribute list definitions are, besides their reported element names, only retained as their original textual represenation, they are not parsed into any other representation.) 
+All parts of the XML source are retained in the XML document built in memory, including all comments and parts of an internal subset e.g. all entity or element definitions. (Elements definitions and attribute list definitions are, besides their reported element names, only retained as their original textual representation, they are not parsed into any other representation.) 
 
-In the current implementation, the XML library does not implement any validation, i.e. validation against a DTD or other XML schema. The user has to use other libaries (e.g. [Libxml2Validation](https://github.com/stefanspringer1/Libxml2Validation)) for such validation. To compensate for that, the user of the library can provide a function that decides if encountered whitespace between elements should be kept or not. Also, possible default values of attributes have to be set by the user if desired once the document tree is built.
+In the current implementation, the XML library does not implement any validation, i.e. validation against a DTD or other XML schema. The user has to use other libraries (e.g. [Libxml2Validation](https://github.com/stefanspringer1/Libxml2Validation)) for such validation. To compensate for that, the user of the library can provide a function that decides if encountered whitespace between elements should be kept or not. Also, possible default values of attributes have to be set by the user if desired once the document tree is built.
 
-This library gives full control of how to handle entities. Named entity references can persist inside the document event if they are not defined. Named entity references are being scored as internal or external entity rerefences during parsing, the external entity references being those which are referenced by external entity definitions in the internal subset inside the document declaration of the document. Possible replacements of internal entity references by text can be controlled by the application.
+This library gives full control of how to handle entities. Named entity references can persist inside the document event if they are not defined. Named entity references are being scored as internal or external entity references during parsing, the external entity references being those which are referenced by external entity definitions in the internal subset inside the document declaration of the document. Possible replacements of internal entity references by text can be controlled by the application.
 
 No automated inclusion of external parsed entities takes place. The user of the library has to implement such features herself if needed.
 
@@ -183,7 +183,7 @@ func resolve(
 ) -> String?
 ```
 
-This method is always called when an named entity reference is encountered (either in text or attribute) which is scored as an internal entity. It returns the textual replacement for the entity or `nil`. If the method returns `nil`, then the entity reference is not replaced by a text, but is kept. In the case of a named entity in an attribute value, an error is thrown when no replacement is given. The function arguments `forAttributeWithName` (name of the attribute) and `atElementWithName` (name of the element) have according values if and only if the entity is encountered inside an attribute value.
+This method is always called when a named entity reference is encountered (either in text or attribute) which is scored as an internal entity. It returns the textual replacement for the entity or `nil`. If the method returns `nil`, then the entity reference is not replaced by a text, but is kept. In the case of a named entity in an attribute value, an error is thrown when no replacement is given. The function arguments `forAttributeWithName` (name of the attribute) and `atElementWithName` (name of the element) have according values if and only if the entity is encountered inside an attribute value.
 
 One a more event handlers can be given a `parseXML` call, which implement `XEventHandler` from [XMLInterfaces](https://github.com/stefanspringer1/SwiftXMLInterfaces). This allows for the user of the library to catch any event during parsing like entering or leaving an element. E.g., the resolving of an internal entity reference could depend on the location inside the document (and not only on the name of the element or attribute), so this information can be collected by such an event handler.
 
@@ -203,7 +203,7 @@ func write(toFile: String, production: XProduction)
 func write(toFileHandle: FileHandle, production: XProduction)
 ```
 
-The production argument has to implement the `XProduction` protocol and defines how each part of the document is written. The production defaults to an instance of `XDefaultProduction`, which also should be extended if only some details of how the document is written are to be changed, which is a common use case. E.g. you could override `func writeText(text: XText)` and `func writeAttributeValue(name: String, value: String, element: XElement)` to again write some characters as named entity references. Or you just provide an instance of `XDefaultProduction` itself and change its `linebreak` property to define how line breaks should be written (e.g. Unix or Windows style). You might also want to consider `func sortAttributeNames(attributeNames: [String], element: XElement) -> [String]` to sort the attributes for output.
+The production argument has to implement the `XProduction` protocol and defines how each part of the document is written. E.g. how white space is handled, escaping of `>` or `"` and so on. The production defaults to an instance of `XDefaultProduction`, which also should be extended if only some details of how the document is written are to be changed, which is a common use case. E.g. you could override `func writeText(text: XText)` and `func writeAttributeValue(name: String, value: String, element: XElement)` to again write some characters as named entity references. Or you just provide an instance of `XDefaultProduction` itself and change its `linebreak` property to define how line breaks should be written (e.g. Unix or Windows style). You might also want to consider `func sortAttributeNames(attributeNames: [String], element: XElement) -> [String]` to sort the attributes for output.
 
 For generality, the following method is provided to apply any `XProduction` to a node (and its containing tree):
 
@@ -257,7 +257,7 @@ func traverseAsync(down: (XNode) async -> (), up: ((XBranch) async -> ())?) asyn
 func traverseAsyncThrowing(down: (XNode) async throws -> (), up: ((XBranch) async throws -> ())?) async throws
 ```
 
-For a “branch”, i.e. a node that might contain other nodes (like an element, opposed to e.g. text, which does not contain other nodes), when returning from from the travesal of its content (also in the case of an empty branch) the closure given an the optional `up:` argument is called.
+For a “branch”, i.e. a node that might contain other nodes (like an element, opposed to e.g. text, which does not contain other nodes), when returning from the traversal of its content (also in the case of an empty branch) the closure given the optional `up:` argument is called.
 
 Example:
 
@@ -289,7 +289,7 @@ Example:
 ```Swift
 myDocument.elements(ofName: "paragraph").forEach { paragraph in
     if let id = paragraph["id"] {
-        print("found paragraph with ID \"\(ID)\")
+        print("found paragraph with ID \"\(ID)\"")
     }
 }
 ```
@@ -314,7 +314,7 @@ myDocument.attributes(ofName: "id").forEach { (value,element) in
 
 ## Finding related nodes
 
-Starting from some node, you might want to find related nodes, e.g. its children. The following methods are provided. Sequences returned are always lazy sequences, iterating through them gives items of the obvious type. As mentioned in teh general description of the library, manipulating the XML tree during such an iteration is allowed.
+Starting from some node, you might want to find related nodes, e.g. its children. The following methods are provided. Sequences returned are always lazy sequences, iterating through them gives items of the obvious type. As mentioned in the general description of the library, manipulating the XML tree during such an iteration is allowed.
 
 Finding the document the node is contained in:
 
@@ -334,7 +334,7 @@ All its ancestor elements:
 var ancestors: XAncestorsSequence
 ```
 
-The content of an document or an element:
+The content of a document or an element:
 
 ```Swift
 var content: XContentSequence
@@ -412,9 +412,9 @@ myElement.descendants.forEach { descendant in
 
 ### Constructing an empty element
 
-When construction an element (without content), the name is given as the first (nameless) argument and the attrbute values are given as (nameless) a dictionary.
+When constructing an element (without content), the name is given as the first (nameless) argument and the attribute values are given as (nameless) a dictionary.
 
-Example: constructing an empty “paragraph” element with attrbutes `id="1"` and `style="note"`:
+Example: constructing an empty “paragraph” element with attributes `id="1"` and `style="note"`:
 
 ```Swift
 let myElement = XElement("paragraph", ["id": "1", "style": "note"])
@@ -422,7 +422,7 @@ let myElement = XElement("paragraph", ["id": "1", "style": "note"])
 
 ### Reading and setting attributes
 
-The attributes of an element can be read and set via the “index notation”. If an attribute is not set, `nil` is returned; reversely, settign an attribute to `nil` results in removing it.
+The attributes of an element can be read and set via the “index notation”. If an attribute is not set, `nil` is returned; reversely, setting an attribute to `nil` results in removing it.
 
 Example:
 
@@ -463,7 +463,7 @@ myElement.attached["note"] = nil
 
 ### Defining content
 
-When constructing an element, its content are given in parantheses “{...}”:
+When constructing an element, its contents are given in parentheses “{...}”:
 
 ```Swift
 let myElement = XElement("div") {
@@ -499,9 +499,9 @@ let myElement = XElement("div") {
 
 ### Document membership during construction and links
 
-If a node is already part of a document when it gets added to an element during construction of this element, it would first get removed from that document during construction, if really inserted into the new element. Subsequently it would count as a new element if the element gets added to the same document, so an active iteration might iterate over it twice.
+If a node is already part of a document when it gets added to an element during construction of this element, it would first get removed from that document during construction, if really inserted into the new element. Subsequently, it would count as a new element if the element gets added to the same document, so an active iteration might iterate over it twice.
 
-Therefore when an element is constructed, an existing node first gets inserted as a link (`XLink`). Only when the new element gets inserted into a document, the links inside it get replaced by the linked nodes (they get “realized”). Else, you could force such a realization by teh method `realizeAllLinks()`.
+Therefore, when an element is constructed, an existing node first gets inserted as a link (`XLink`). Only when the new element gets inserted into a document, the links inside it get replaced by the linked nodes (they get “realized”). Else, you could force such a realization by teh method `realizeAllLinks()`.
 
 Example: see the links:
 
@@ -571,9 +571,9 @@ Output:
 <a><b id="2"/><c><b id="1"/></c></a>
 ```
 
-As you can see from the `print` commands in the last example, the element `<b id="1">` does not loose its “connection” to the document (although it seems to get added again to it), so it is only iterated over once by the iteration.
+As you can see from the `print` commands in the last example, the element `<b id="1">` does not lose its “connection” to the document (although it seems to get added again to it), so it is only iterated over once by the iteration.
 
-### Subsequent or empyt text
+### Subsequent or empty text
 
 Subsequent text nodes (`XText`) are always automatically combined, and text nodes with empty text are automatically removed.
 
@@ -648,9 +648,9 @@ myDocument.elements(ofName: "table").forEach { table in
 
 ## Rules
 
-As mentioned in the general description, a sets of rules `XRule` in the form of a transformation instance of type `XTransformation` can be used as follows.
+As mentioned in the general description, a set of rules `XRule` in the form of a transformation instance of type `XTransformation` can be used as follows.
 
-In a rule, the user defines what to do with an element or attribute with a certain name. The set of rules can then be applied to a document, i.e. the rules are applied in the order of their definition. This is repeated, garanteeing that a rule is only applied once to the same object (if not removed from the document and added again), until no application takes places. So elements can be added during apllication of a rule and then later be processed by the same or another rule.
+In a rule, the user defines what to do with an element or attribute with a certain name. The set of rules can then be applied to a document, i.e. the rules are applied in the order of their definition. This is repeated, guaranteeing that a rule is only applied once to the same object (if not removed from the document and added again), until no application takes place. So elements can be added during application of a rule and then later be processed by the same or another rule.
 
 Example:
 
