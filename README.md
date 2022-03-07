@@ -388,6 +388,18 @@ All previous siblings that are elements:
 var previousElements: XPreviousElementsSequence
 ```
 
+Get the first content of a branch:
+
+```Swift
+var first: XNode?
+```
+
+Get the last content of a branch:
+
+```Swift
+var last: XNode?
+```
+
 Example:
 
 ```Swift
@@ -422,6 +434,31 @@ myElement["id"] = "1"
 if let id = myElement["id"] {
     print("the ID is \(id)")
 }
+```
+
+### Attachments
+
+Branches can have “attachments”. Those are objects that can be attached via a textual key to those branches but that not considered as belonging to the actual XML tree.
+
+The attachments can be reached by the property `attached`, and accessing and setting them is analogously to attributes:
+
+Example: attaching a “note” by attaching it with key `"note"` (it uses an element constructed with content as explained in the next section):
+
+```Swift
+myElement.attached["note"] = "this is a note"
+
+// replacing the attached note by a more complex object:
+myElement.attached["note"] = XElement("note") {
+    "this is a note as element instead"
+}
+
+// getting the attached note:
+if let note = myElement.attached["note"] as? XElement {
+    print("note: \((note.first as? XText)?.value ?? "")")
+}
+
+// removing the attached note:
+myElement.attached["note"] = nil
 ```
 
 ### Defining content
