@@ -192,7 +192,7 @@ public class XNode {
      Replace the node by other nodes.
      If "forward", then detaching prefetches the next node in iterators.
      */
-    public func set(forward: Bool = false, @XNodeBuilder builder: () -> XNodeLike) {
+    public func replace(forward: Bool = false, @XNodeBuilder builder: () -> XNodeLike) {
         if let theNext = _next {
             remove(forward: forward)
             (builder() as? [XNode])?.forEach { theNext.insertPrevious($0) }
@@ -201,6 +201,22 @@ public class XNode {
         else if let theParent = _parent {
             remove(forward: forward)
             (builder() as? [XNode])?.forEach { theParent.add($0) }
+        }
+    }
+    
+    /**
+     Clear the contents of the node.
+     If "forward", then detaching prefetches the next node in iterators.
+     */
+    public func clear(forward: Bool = false) {
+        if let meAsBranch = self as? XBranch {
+            var node = meAsBranch._firstChild
+            var nextNode = node?._next
+            while let toRemove = node {
+                toRemove.remove(forward: forward)
+                node = nextNode
+                nextNode = node?._next
+            }
         }
     }
     
@@ -554,6 +570,15 @@ public class XBranch: XNode {
     
     public func addFirst(skip: Bool = false, @XNodeBuilder builder: () -> XNodeLike) {
         (builder() as? [XNode])?.reversed().forEach { addFirst($0, skip: skip) }
+    }
+    
+    /**
+     Set the contents of the node.
+     If "forward", then detaching prefetches the next node in iterators.
+     */
+    public func set(forward: Bool = false, @XNodeBuilder builder: () -> XNodeLike) {
+        clear(forward: forward)
+        (builder() as? [XNode])?.forEach { add($0) }
     }
     
     func produceLeaving(production: XProduction) {
