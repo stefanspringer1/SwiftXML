@@ -497,9 +497,81 @@ let myElement = XElement("div") {
 }
 ```
 
-### Document membership during construction
+### Document membership during construction and links
 
-If a node is already part of a document when it gets added to an element during construction of this element, it first gets removed from that document during construction, and subsequently count as a new element if the element gets added to the same document, so an active iteration might iterate over it twice.
+If a node is already part of a document when it gets added to an element during construction of this element, it would first get removed from that document during construction, it really inserted into the new element. Subsequently it would count as a new element if the element gets added to the same document, so an active iteration might iterate over it twice.
+
+Therefore when an element is constructed, an existing node first gets inserted as a link (`XLink`). Only when the new element gets inserted into a document, the links inside it get replaced by the linked nodes (they get “realized”). Else, you could force such a realization by teh method `realizeAllLinks()`.
+
+Example: see the links:
+
+```Swift
+let document = try parseXML(fromText: """
+<a><b id="1"/><b id="2"/></a>
+""")
+
+let element = XElement("c") {
+    document.first?.children
+}
+
+document.first?.echo()
+element.echo()
+
+print("\n-----------------\n")
+
+element.realizeAllLinks()
+
+document.first?.echo()
+element.echo()
+```
+
+Output: 
+
+```text
+<a><b id="1"/><b id="2"/></a>
+<c>[LINK][LINK]</c>
+
+-----------------
+
+<a/>
+<c><b id="1"/><b id="2"/></c>
+```
+
+Example: a newly constructed element gets added to a document:
+
+```Swift
+let document = try parseXML(fromText: """
+<a><b id="1"/><b id="2"/></a>
+""")
+
+document.elements(ofName: "b").forEach { element in
+    print(element)
+    if element["id"] == "2" {
+        element.insertNext {
+            XElement("c") {
+                element.previous
+            }
+        }
+    }
+}
+
+print("\n-----------------\n")
+
+document.first?.echo()
+```
+
+Output:
+
+```text
+<b id="1">
+<b id="2">
+
+-----------------
+
+<a><b id="2"/><c><b id="1"/></c></a>
+```
+
+As you can see from the `print` commands in the last example, the element `<b id="1">` does not loose its “connection” to the document (although it seems to get added again to it), so it is only iterated over once by the iteration.
 
 ### Subsequent or empyt text
 

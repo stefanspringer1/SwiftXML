@@ -68,6 +68,11 @@ public class XNode {
         }
     }
     
+    public func detached() -> XNode {
+        self.remove()
+        return self
+    }
+    
     /**
      Usually the clone will have "r" pointed to the original node.
      If "forwardref", then this direction will be inversed, i.e.
@@ -201,6 +206,22 @@ public class XNode {
         else if let theParent = _parent {
             remove(forward: forward)
             (builder() as? [XNode])?.forEach { theParent.add($0) }
+        }
+    }
+    
+    /**
+     Replace the node by another node.
+     If "forward", then detaching prefetches the next node in iterators.
+     */
+    func replace1(forward: Bool = false, _ node: XNode) {
+        if let theNext = _next {
+            remove(forward: forward)
+            theNext.insertPrevious(node)
+            
+        }
+        else if let theParent = _parent {
+            remove(forward: forward)
+            theParent.add(node)
         }
     }
     
@@ -470,7 +491,10 @@ public class XBranch: XNode {
      Else, the iterator will iterate through the inserted content.
      */
     func add(_ node: XNode, skip: Bool = false) {
-        if let lastAsText = last as? XText, let newAsText = node as? XText {
+        if let link = node as? XLink, document != nil {
+            add(link.node)
+        }
+        else if let lastAsText = last as? XText, let newAsText = node as? XText {
             lastAsText._value = lastAsText._value + newAsText._value
             lastAsText.whitespace = .UNKNOWN
         }
@@ -500,6 +524,17 @@ public class XBranch: XNode {
                 element.setDocument(document: _document)
             }
         }
+        
+        if _document != nil {
+            realizeAllLinks()
+        }
+    }
+    
+    func realizeAllLinks() {
+        allContent.forEach { node in
+            if let link = node as? XLink {
+                node.replace1(link.node)
+        }}
     }
     
     func add(_ text: String) {
@@ -594,7 +629,19 @@ extension String: XNodeLike {}
 
 extension Array: XNodeLike where Element == XNodeLike {}
 
+extension XTraversalSequence: XNodeLike {}
+extension XNextSequence: XNodeLike {}
+extension XPreviousSequence: XNodeLike {}
+extension XNextElementsSequence: XNodeLike {}
+extension XPreviousElementsSequence: XNodeLike {}
 extension XContentSequence: XNodeLike {}
+extension XChildrenSequence: XNodeLike {}
+extension XAncestorsSequence: XNodeLike {}
+extension XAllContentSequence: XNodeLike {}
+extension XDescendantsSequence: XNodeLike {}
+extension XDescendantsIncludingSelfSequence: XNodeLike {}
+extension XElementsOfSameNameSequence: XNodeLike {}
+extension XAttributesOfSameNameSequence: XNodeLike {}
 
 final class XAttribute: XNode, Named {
     
@@ -643,11 +690,44 @@ final class XNodeSampler {
         else if let s = thing as? String {
             nodes.append(XText(s))
         }
-        else if let contentsSequence = thing as? XContentSequence {
-            contentsSequence.forEach { self.add($0) }
+        else if let sequence = thing as? XTraversalSequence {
+            sequence.forEach { self.add($0) }
         }
-        else if let contentsSequence = thing as? [XNodeLike] {
-            contentsSequence.forEach { self.add($0) }
+        else if let sequence = thing as? XNextSequence {
+            sequence.forEach { self.add($0) }
+        }
+        else if let sequence = thing as? XPreviousSequence {
+            sequence.forEach { self.add($0) }
+        }
+        else if let sequence = thing as? XNextElementsSequence {
+            sequence.forEach { self.add($0) }
+        }
+        else if let sequence = thing as? XPreviousElementsSequence {
+            sequence.forEach { self.add($0) }
+        }
+        else if let sequence = thing as? XContentSequence {
+            sequence.forEach { self.add($0) }
+        }
+        else if let sequence = thing as? XChildrenSequence {
+            sequence.forEach { self.add($0) }
+        }
+        else if let sequence = thing as? XAncestorsSequence {
+            sequence.forEach { self.add($0) }
+        }
+        else if let sequence = thing as? XAllContentSequence {
+            sequence.forEach { self.add($0) }
+        }
+        else if let sequence = thing as? XDescendantsSequence {
+            sequence.forEach { self.add($0) }
+        }
+        else if let sequence = thing as? XDescendantsIncludingSelfSequence {
+            sequence.forEach { self.add($0) }
+        }
+        else if let sequence = thing as? XElementsOfSameNameSequence {
+            sequence.forEach { self.add($0) }
+        }
+        else if let sequence = thing as? XAttributesOfSameNameSequence {
+            sequence.forEach { (_,element) in self.add(element) }
         }
         else if let p = thing as? CustomStringConvertible {
             nodes.append(XText(p.description))
@@ -655,6 +735,22 @@ final class XNodeSampler {
         else {
             nodes.append(XText("[\(type(of: thing))]"))
         }
+    }
+}
+
+/**
+ Helper node for constructing new elements using builders without detaching inserted content from the document.
+ */
+public class XLink: XNode {
+    
+    public let node: XNode
+    
+    init(_ node: XNode) {
+        self.node = node
+    }
+    
+    override func produceEntering(production: XProduction) {
+        production.write("[LINK]")
     }
 }
 
@@ -860,7 +956,9 @@ public final class XElement: XBranch, CustomStringConvertible {
         if let theAttributes = attributes {
             setAttributes(attributes: theAttributes)
         }
-        (builder() as? [XNode])?.forEach { add($0) }
+        (builder() as? [XNode])?.forEach { node in
+            add(node.document != nil ? XLink(node) : node)
+        }
     }
     
     init(_ name: String, document: XDocument) {
@@ -894,6 +992,8 @@ public final class XElement: XBranch, CustomStringConvertible {
     }
     
     func setDocument(document newDocument: XDocument?) {
+
+        // set document:
         var node: XNode? = self
         repeat {
             if let element = node as? XElement {
