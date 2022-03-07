@@ -243,7 +243,7 @@ func shallowClone(forwardref: Bool) -> XNode
 
 ## Traversals
 
-Traversing a tree depth-first starting from a node (including a document) can be done by the follwoing methods:
+Traversing a tree depth-first starting from a node (including a document) can be done by the following methods:
 
 ```Swift
 func traverse(down: (XNode) -> (), up: ((XBranch) -> ())?)
