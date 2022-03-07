@@ -37,9 +37,58 @@ The library reads XML from a source into an XML document instance, and provides 
 
 Other than some other libraries for XML, the manipulation of the document as built in memory is “in place", i.e. no new XML document is built. The goal is to be able to apply many isolated manipulations to an XML document efficiently. But it is always possible to clone a document easily with references to or from the old version.
 
-All iteration over elements in the document using the according library functions are lazy by default. While iterating over elements in the document using the according library functions, the document tree can be changed without negatively affecting the iteration.
+The following features are important:
 
-Part of the effiency is the possibility to efficiently find elements or attributes of a certain name without having to traverse the whole tree. An according iteration proceeds in the order by which the elements or attributes have been added to the document. When iterating in this manner, newly added elements or attributes are then also processed as part of the same iteration.
+- All iteration over elements in the document using the according library functions are lazy by default.
+- While iterating over elements in the document, the document tree can be changed without negatively affecting the iteration.
+- Elements or attributes of a certain name can be efficiently found without having to traverse the whole tree. An according iteration proceeds in the order by which the elements or attributes have been added to the document. When iterating in this manner, newly added elements or attributes are then also processed as part of the same iteration.
+
+The following code takes any `<item>` with an integer value of `multiply` larger than 1 and inserts an item with a `multiply` number one less as the next element:
+
+```Swift
+let document = try parseXML(fromText: """
+<a><item multiply="3"/></a>
+""")
+
+document.elements(ofName: "item").forEach { item in
+    if let multiply = item["multiply"], let n = Int(multiply), n > 1 {
+        item.insertNext {
+            XElement("item", ["multiply": n > 2 ? String(n-1) : nil])
+        }
+        item["multiply"] = nil
+    }
+}
+
+document.first?.echo()
+```
+
+The output is:
+
+```text
+<a><item/><item/><item/></a>
+```
+
+The elements returned by an iteration can even be removed without stopping the (lazy!) iteration:
+
+```Swift
+let document = try parseXML(fromText: """
+<a><item id="1" remove="true"/><item id="2"/><item id="3" remove="true"/><item id="4"/></a>
+""")
+
+document.traverse { node in
+    if let element = node as? XElement, element ["remove"] == "true" {
+        element.remove()
+    }
+}
+
+document.first?.echo()
+```
+
+The output is:
+
+```text
+<a><item id="2"/><item id="4"/></a>
+```
 
 The user of the library can also provide a sets of rules to be applied. In such a rule, the user defines what to do with an element or attribute with a certain name. The set of rules can then be applied to a document, i.e. the rules are applied in the order of their definition. This is repeated, garanteeing that a rule is only applied once to the same object (if not detached from the document and added again), until no application takes places. So elements can be added during apllication of a rule and then later be processed by the same or another rule.
 
@@ -439,6 +488,18 @@ func remove(forward: Bool)
 ```
 
 Replace the node by other nodes; if `forward`, then detaching prefetches the next node in iterators:
+
+```Swift
+func replace(forward: Bool, builder: () -> XNodeLike)
+```
+
+Clear the contents of the node:
+
+```Swift
+func clear(forward: Bool)
+```
+
+Set the contents of the branch:
 
 ```Swift
 func set(forward: Bool, builder: () -> XNodeLike)
