@@ -477,7 +477,7 @@ let myElement = XElement("div") {
 
 (The text `"Hello World"` could also be given as `XText("Hello World")`. The text will be converted in such an XML node automatically.)
 
-The content might be given as an array or an appropriate sequence:
+The content might be given as an array or an appropriate sequence (but consider the next section on document membership and links for this case):
 
 ```Swift
 let myElement = XElement("div") {
