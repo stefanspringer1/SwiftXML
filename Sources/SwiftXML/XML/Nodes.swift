@@ -118,8 +118,8 @@ public class XNode {
             selfAsText.whitespace = .UNKNOWN
         }
         else {
-            if parent?._firstChild === self {
-                parent?._firstChild = node
+            if _parent?._firstChild === self {
+                _parent?._firstChild = node
             }
             
             node.removeKeep()
@@ -158,8 +158,8 @@ public class XNode {
             selfAsText._value = selfAsText._value + newAsText._value
             selfAsText.whitespace = .UNKNOWN
         }
-        else if parent?._lastChild === self {
-            parent?.add(node)
+        else if _parent?._lastChild === self {
+            _parent?.add(node)
         }
         else {
             node.removeKeep()
