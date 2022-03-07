@@ -440,7 +440,7 @@ if let id = myElement["id"] {
 
 Branches can have “attachments”. Those are objects that can be attached via a textual key to those branches but that not considered as belonging to the actual XML tree.
 
-The attachments can be reached by the property `attached`, and accessing and setting them is analogously to attributes:
+The attachments can be reached by the property `attached`, and accessing and setting them is analogous to attributes:
 
 Example: attaching a “note” by attaching it with key `"note"` (it uses an element constructed with content as explained in the next section):
 
