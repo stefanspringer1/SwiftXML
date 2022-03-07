@@ -371,9 +371,13 @@ public class XNode {
         }
     }
     
-    public func write(toFileHandle fileHandle: FileHandle, production: XProduction = XDefaultProduction()) {
-        production.setFile(fileHandle)
+    public func write(toWriter writer: Writer, production: XProduction = XDefaultProduction()) {
+        production.setWriter(writer)
         self.applyProduction(production: production)
+    }
+    
+    public func write(toFileHandle fileHandle: FileHandle, production: XProduction = XDefaultProduction()) {
+        write(toWriter: FileWriter(fileHandle), production: production)
     }
     
     public func write(toFile path: String, production: XProduction = XDefaultProduction()) {
@@ -397,6 +401,12 @@ public class XNode {
     
     public func echo(production: XProduction = XDefaultProduction(), terminator: String = "\n") {
         write(toFileHandle: FileHandle.standardOutput, production: production); print(terminator, terminator: "")
+    }
+    
+    public func fullText(production: XProduction = XDefaultProduction()) -> String {
+        let writer = CollectingWriter()
+        write(toWriter: writer, production: production)
+        return writer.description
     }
 }
 

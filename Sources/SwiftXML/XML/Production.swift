@@ -13,11 +13,39 @@ import Foundation
  - It uses the nodes of the XML tree directly.
  */
 
+public protocol Writer {
+    func write(_ text: String)
+}
+
+public class FileWriter: Writer {
+    
+    private var _file: FileHandle = FileHandle.standardOutput
+
+    public init(_ file: FileHandle) {
+        self._file = file
+    }
+    
+    open func write(_ text: String) {
+        _file.write(text.data(using: .utf8)!)
+    }
+}
+
+public class CollectingWriter: Writer, CustomStringConvertible {
+    
+    private var texts = [String]()
+    
+    public var description: String { get { texts.joined() } }
+    
+    public func write(_ text: String) {
+        texts.append(text)
+    }
+}
+
 public protocol XProduction {
     
-    func setFile(_ file: FileHandle)
+    func setWriter(_ writer: Writer?)
     
-    func getFile() -> FileHandle
+    func getWriter() -> Writer?
     
     func write(_ text: String)
     
@@ -78,22 +106,21 @@ public protocol XProduction {
 
 open class XDefaultProduction: XProduction {
     
+    private var _writer: Writer? = nil
+    
+    public func setWriter(_ writer: Writer?) {
+        self._writer = writer
+    }
+    
+    public func getWriter() -> Writer? {
+        return _writer
+    }
+    
+    public func write(_ text: String) {
+        _writer?.write(text)
+    }
+    
     public init() {
-        
-    }
-    
-    private var _file: FileHandle = FileHandle.standardOutput
-
-    open func setFile(_ file: FileHandle) {
-        self._file = file
-    }
-    
-    open func getFile() -> FileHandle {
-        return _file
-    }
-    
-    open func write(_ text: String) {
-        _file.write(text.data(using: .utf8)!)
     }
     
     private var _linebreak = "\n"
