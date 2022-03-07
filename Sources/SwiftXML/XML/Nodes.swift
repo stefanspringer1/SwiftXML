@@ -403,7 +403,7 @@ public class XNode {
         write(toFileHandle: FileHandle.standardOutput, production: production); print(terminator, terminator: "")
     }
     
-    public func fullText(production: XProduction = XDefaultProduction()) -> String {
+    public func serialized(production: XProduction = XDefaultProduction()) -> String {
         let writer = CollectingWriter()
         write(toWriter: writer, production: production)
         return writer.description
