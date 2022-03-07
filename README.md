@@ -43,7 +43,7 @@ The following features are important:
 - While iterating over elements in the document, the document tree can be changed without negatively affecting the iteration.
 - Elements or attributes of a certain name can be efficiently found without having to traverse the whole tree. An according iteration proceeds in the order by which the elements or attributes have been added to the document. When iterating in this manner, newly added elements or attributes are then also processed as part of the same iteration.
 
-The following code takes any `<item>` with an integer value of `multiply` larger than 1 and inserts an item with a `multiply` number one less as the next element:
+The following code takes any `<item>` with an integer value of `multiply` larger than 1 and inserts an item with a `multiply` number one less as the next element (the library will be explained in more detail in subsequent sections):
 
 ```Swift
 let document = try parseXML(fromText: """
@@ -76,7 +76,7 @@ let document = try parseXML(fromText: """
 """)
 
 document.traverse { node in
-    if let element = node as? XElement, element ["remove"] == "true" {
+    if let element = node as? XElement, element["remove"] == "true" {
         element.remove()
     }
 }
@@ -90,7 +90,24 @@ The output is:
 <a><item id="2"/><item id="4"/></a>
 ```
 
-The user of the library can also provide a sets of rules to be applied. In such a rule, the user defines what to do with an element or attribute with a certain name. The set of rules can then be applied to a document, i.e. the rules are applied in the order of their definition. This is repeated, garanteeing that a rule is only applied once to the same object (if not detached from the document and added again), until no application takes places. So elements can be added during apllication of a rule and then later be processed by the same or another rule.
+Of course, since those iterations are regular sequences, all according Swift library functions like `map` and `filter` can be used. E.g., the `multiply` example could also have been implemented as follows:
+
+```Swift
+document.descendants
+    .filter { element in element.name == "item" }
+    .map { item in (item,Int(item["multiply"] ?? "") ?? 1) }
+    .filter { (item,multiply) in multiply > 1 }
+    .forEach { (item,multiply) in
+        item.insertNext {
+            XElement("item", [
+                "multiply": multiply > 2 ? String(multiply-1) : nil
+            ])
+        }
+        item["multiply"] = nil
+    }
+```
+
+The user of the library can also provide a sets of rules to be applied (see the code at the beginning). In such a rule, the user defines what to do with an element or attribute with a certain name. The set of rules can then be applied to a document, i.e. the rules are applied in the order of their definition. This is repeated, garanteeing that a rule is only applied once to the same object (if not detached from the document and added again), until no application takes places. So elements can be added during apllication of a rule and then later be processed by the same or another rule.
 
 ### Other properties
 
@@ -529,11 +546,9 @@ In a rule, the user defines what to do with an element or attribute with a certa
 Example:
 
 ```Swift
-let document = try parseXML(fromText:
-    #"""
-    <a><formula id="1"/></a>
-    """#
-)
+let document = try parseXML(fromText: """
+<a><formula id="1"/></a>
+""")
 
 var count = 1
 
