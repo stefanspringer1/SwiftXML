@@ -499,7 +499,7 @@ let myElement = XElement("div") {
 
 ### Document membership during construction and links
 
-If a node is already part of a document when it gets added to an element during construction of this element, it would first get removed from that document during construction, it really inserted into the new element. Subsequently it would count as a new element if the element gets added to the same document, so an active iteration might iterate over it twice.
+If a node is already part of a document when it gets added to an element during construction of this element, it would first get removed from that document during construction, if really inserted into the new element. Subsequently it would count as a new element if the element gets added to the same document, so an active iteration might iterate over it twice.
 
 Therefore when an element is constructed, an existing node first gets inserted as a link (`XLink`). Only when the new element gets inserted into a document, the links inside it get replaced by the linked nodes (they get “realized”). Else, you could force such a realization by teh method `realizeAllLinks()`.
 
