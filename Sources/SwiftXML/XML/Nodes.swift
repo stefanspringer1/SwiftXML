@@ -17,6 +17,20 @@ protocol Named: AnyObject {
 }
 
 public class XNode {
+
+    /**
+     Correct the tree order after this node has been inserted.
+     */
+    func setTreeOrder() {
+        // first check if self is the first or last child of a parent:
+        if _parent?.setTreeOrderForParent(withNewChild: self) != true {
+            // if not, do simple correction:
+            _previous?.getLastInTree()._nextInTree = self
+            _previousInTree = _previous ?? _parent
+            getLastInTree()._nextInTree = _next
+            _next?._previousInTree = getLastInTree()
+        }
+    }
     
     /**
      The reference to the original node after cloning.
@@ -130,6 +144,9 @@ public class XNode {
             _previous = node
             node._parent = _parent
             
+            // set tree order:
+            node.setTreeOrder()
+            
             // set document:
             if let element = node as? XElement, let theDocument = parent?._document, !(element._document === theDocument) {
                 element.setDocument(document: theDocument)
@@ -169,6 +186,9 @@ public class XNode {
             node._next = _next
             _next = node
             node._parent = _parent
+            
+            // set tree order:
+            node.setTreeOrder()
             
             // set document:
             if let element = node as? XElement, let theDocument = parent?._document, !(element._document === theDocument) {
@@ -469,10 +489,11 @@ public class XBranch: XNode {
     }
     
     /**
-     Correct the tree order after a new child has been inserted.
-     This is only necessary if the new child is the last child.
+     Correct the tree order after a new child
+     has been inserted as the last child.
+     Return true iff a correction has been done.
      */
-    func setTreeOrder(withNewChild newChild: XNode) {
+    func setTreeOrderForParent(withNewChild newChild: XNode) -> Bool {
         if newChild === _lastChild {
             let newLastInTree = newChild.getLastInTree()
             
@@ -492,6 +513,19 @@ public class XBranch: XNode {
             }
             
             lastInTree = newLastInTree
+            
+            return true
+        }
+        else if newChild === _firstChild {
+            newChild._previousInTree = self
+            _nextInTree?._previousInTree = newChild.getLastInTree()
+            newChild.getLastInTree()._nextInTree = _nextInTree
+            _nextInTree = newChild
+            
+            return true
+        }
+        else {
+            return false
         }
     }
     
@@ -527,7 +561,7 @@ public class XBranch: XNode {
             node._parent = self
             
             // set tree order:
-            setTreeOrder(withNewChild: node)
+            node.setTreeOrder()
             
             // set document:
             if let element = node as? XElement, !(element._document === _document) {
@@ -592,7 +626,7 @@ public class XBranch: XNode {
             node._parent = self
             
             // set tree order:
-            setTreeOrder(withNewChild: node)
+            node.setTreeOrder()
             
             // set document:
             if let element = node as? XElement, !(element._document === _document) {
