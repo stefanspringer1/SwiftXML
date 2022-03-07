@@ -399,11 +399,11 @@ public class XNode {
         write(toFile: url.path, production: production)
     }
     
-    public func echo(production: XProduction = XDefaultProduction(), terminator: String = "\n") {
+    public func echo(usingProduction production: XProduction = XDefaultProduction(), terminator: String = "\n") {
         write(toFileHandle: FileHandle.standardOutput, production: production); print(terminator, terminator: "")
     }
     
-    public func serialized(production: XProduction = XDefaultProduction()) -> String {
+    public func serialized(usingProduction production: XProduction = XDefaultProduction()) -> String {
         let writer = CollectingWriter()
         write(toWriter: writer, production: production)
         return writer.description
@@ -540,7 +540,7 @@ public class XBranch: XNode {
         }
     }
     
-    func realizeAllLinks() {
+    private func realizeAllLinks() {
         allContent.forEach { node in
             if let link = node as? XLink {
                 node.replace1(link.node)
