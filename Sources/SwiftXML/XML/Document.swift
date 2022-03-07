@@ -124,6 +124,7 @@ public final class XDocument: XBranch {
     }
     
     func unregisterElement(element: XElement) {
+        element._nameIterators.forEach { _ = $0.previous() }
         let name = element.name
         element.previousWithSameName?.nextWithSameName = element.nextWithSameName
         element.nextWithSameName?.previousWithSameName = element.previousWithSameName
@@ -177,6 +178,7 @@ public final class XDocument: XBranch {
     }
     
     func unregisterAttribute(attribute: XAttribute) {
+        attribute.attributeIterators.forEach { _ = $0.previous() }
         let name = attribute.name
         attribute.previousWithSameName?.nextWithSameName = attribute.nextWithSameName
         attribute.nextWithSameName?.previousWithSameName = attribute.previousWithSameName

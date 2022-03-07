@@ -1016,11 +1016,9 @@ public final class XElement: XBranch, CustomStringConvertible {
         // correction in iterators:
         if forward {
             _treeIterators.forEach { $0.prefetch() }
-            _nameIterators.forEach { $0.prefetch() }
         }
         else {
             _treeIterators.forEach { _ = $0.previous() }
-            _nameIterators.forEach { _ = $0.previous() }
         }
         
         super.removeKeep(forward: forward)
