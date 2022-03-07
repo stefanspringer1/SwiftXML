@@ -592,7 +592,7 @@ transformation.execute(inDocument: document)
 
 print("\n----------------------------------------\n")
 
-document.write(toFileHandle: FileHandle.standardOutput); print(); print()
+document.first?.echo()
 ```
 
 Output:
@@ -627,8 +627,6 @@ Output:
 
 ----------------------------------------
 
-<?xml version="1.0"?>
-<!DOCTYPE a>
 <a><formula id="done-3"/><image id="done-2"/><formula id="done-1"/></a>
 
 ```
