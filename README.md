@@ -463,7 +463,7 @@ myElement.attached["note"] = nil
 
 ### Defining content
 
-When constructing an element, its contents are given in parentheses “{...}”:
+When constructing an element, its contents are given in parentheses `{...}` (those parentheses are the `builder` argument of the initializer).
 
 ```Swift
 let myElement = XElement("div") {
@@ -499,9 +499,16 @@ let myElement = XElement("div") {
 
 ### Document membership during construction and links
 
-If a node is already part of a document when it gets added to an element during construction of this element, it would first get removed from that document during construction, if really inserted into the new element. Subsequently, it would count as a new element if the element gets added to the same document, so an active iteration might iterate over it twice.
+If a node is already part of a document when it gets added to an element as content in `{...}` brackets during construction of this element as we have seen in the last section, it would first get removed from that document during construction, if really inserted into the new element. Subsequently, it would count as a new element if the element gets added to the same document, so an active iteration might iterate over it twice.
 
-Therefore, when an element is constructed, an existing node first gets inserted as a link (`XLink`). Only when the new element gets inserted into a document, the links inside it get replaced by the linked nodes (they get “realized”). Else, you could force such a realization by teh method `realizeAllLinks()`.
+Therefore, when an element is constructed, an existing node added as content in `{...}` brackets first gets inserted as a link (`XLink`). Only when the new element gets inserted into a document, the links inside it get replaced by the linked nodes (they get “realized”). Else, you could force such a realization by the method `realizeAllLinks()`.
+
+Remarks:
+
+- The addition of nodes first as links does only occur inside the builder argument `{...}` of the initializers, and does not (!) occur when using explicit tree manipulation functions such as `insertNext(builder:)`. The reason is that when using e.g. `insertNext`, you can control the situation, i.e. you should be able to make sure that an element does not leave the document if you do not want to, e.g. by ensuring that you operate within the document tree and not on a separate tree. Whereas when constructing an element with its content defined in `{...}`, there would just nothing you could do to prevent its content to first escape from the document when the described link mechanism did not exist, so it is important that there is this mechanism that helps you in the background.
+- Of course, there might be some pitfalls when combining building elements with content defined in `{...}` and implictly (via functions defined by you) methods like `insertNext`. In those cases you might want to do several manipulation steps instead of one.
+- Note that (disregarding links) inserting nodes always moves them, a node is never at several places or in several trees at one time. When building elements with content defined in `{...}`, this movement of nodes is postponed until the element gets inserted in a document (or you call `realizeAllLinks()`).
+- When serialising (i.e. saving trees to text), the links do not (!) get automatically resolved, links then appear as `[LINK]` in the output (unless you change the production).
 
 Example: see the links:
 
