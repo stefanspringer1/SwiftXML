@@ -187,6 +187,22 @@ This method is always called when a named entity reference is encountered (eithe
 
 One a more event handlers can be given a `parseXML` call, which implement `XEventHandler` from [XMLInterfaces](https://github.com/stefanspringer1/SwiftXMLInterfaces). This allows for the user of the library to catch any event during parsing like entering or leaving an element. E.g., the resolving of an internal entity reference could depend on the location inside the document (and not only on the name of the element or attribute), so this information can be collected by such an event handler.
 
+## Displaying XML
+
+When printing a node via `print(...)`, only a top-level represenation like the start tag is printed and never the whoel tree. When you would like to print the whole tree or document, use:
+
+`func echo(usingProduction: XProduction, terminator: String)`
+
+(The production defaults to `XDefaultProduction`, an the terminator default to `"\n"`, i.e. newlines are then printed after the output.)
+
+When you want a serialization of a whole tree or document as text (`String`), use the following method:
+
+`func serialized(usingProduction: XProduction) -> String`
+
+(The production again defaults to `XDefaultProduction`.)
+
+But do not use `serialized` to print a tree or document, but use `echo` instead, because using `echo` is much more efficient in this case.
+
 ## Writing XML
 
 Any XML node (including an XML document) can be written, including the tree of nodes that is started by it, via the following methods.
