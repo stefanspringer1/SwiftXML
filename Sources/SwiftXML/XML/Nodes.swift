@@ -994,7 +994,7 @@ public final class XElement: XBranch, CustomStringConvertible {
         }
     }
     
-    public init(_ name: String, _ attributes: [String:String?]? = nil, eagerConstruction: Bool = false, @XNodeBuilder builder: () -> XNodeLike) {
+    public init(_ name: String, _ attributes: [String:String?]? = nil, realizeAllLinks: Bool = false, @XNodeBuilder builder: () -> XNodeLike) {
         self._name = name
         super.init()
         if let theAttributes = attributes {
@@ -1003,7 +1003,7 @@ public final class XElement: XBranch, CustomStringConvertible {
         (builder() as? [XNode])?.forEach { node in
             add(node.document != nil ? XLink(node) : node)
         }
-        if eagerConstruction {
+        if realizeAllLinks {
             self.realizeAllLinks()
         }
     }
