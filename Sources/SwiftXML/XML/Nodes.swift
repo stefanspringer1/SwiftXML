@@ -148,7 +148,7 @@ public class XNode {
             node.setTreeOrder()
             
             // set document:
-            if let element = node as? XElement, let theDocument = parent?._document, !(element._document === theDocument) {
+            if let theDocument = _parent?._document, let element = node as? XElement, !(element._document === theDocument) {
                 element.setDocument(document: theDocument)
             }
         }
@@ -191,7 +191,7 @@ public class XNode {
             node.setTreeOrder()
             
             // set document:
-            if let element = node as? XElement, let theDocument = parent?._document, !(element._document === theDocument) {
+            if let theDocument = _parent?._document, let element = node as? XElement, !(element._document === theDocument) {
                 element.setDocument(document: theDocument)
             }
         }
@@ -535,10 +535,7 @@ public class XBranch: XNode {
      Else, the iterator will iterate through the inserted content.
      */
     func add(_ node: XNode, skip: Bool = false) {
-        if let link = node as? XLink, document != nil {
-            add(link.node)
-        }
-        else if let lastAsText = last as? XText, let newAsText = node as? XText {
+        if let lastAsText = last as? XText, let newAsText = node as? XText {
             lastAsText._value = lastAsText._value + newAsText._value
             lastAsText.whitespace = .UNKNOWN
         }
@@ -564,21 +561,10 @@ public class XBranch: XNode {
             node.setTreeOrder()
             
             // set document:
-            if let element = node as? XElement, !(element._document === _document) {
+            if _document != nil, let element = node as? XElement, !(element._document === _document) {
                 element.setDocument(document: _document)
             }
         }
-        
-        if _document != nil {
-            realizeAllLinks()
-        }
-    }
-    
-    public func realizeAllLinks() {
-        allContent.forEach { node in
-            if let link = node as? XLink {
-                node.replace1(link.node)
-        }}
     }
     
     func add(_ text: String) {
@@ -629,7 +615,7 @@ public class XBranch: XNode {
             node.setTreeOrder()
             
             // set document:
-            if let element = node as? XElement, !(element._document === _document) {
+            if _document != nil, let element = node as? XElement, !(element._document === _document) {
                 element.setDocument(document: _document)
             }
         }
@@ -779,22 +765,6 @@ final class XNodeSampler {
         else {
             nodes.append(XText("[\(type(of: thing))]"))
         }
-    }
-}
-
-/**
- Helper node for constructing new elements using builders without detaching inserted content from the document.
- */
-public class XLink: XNode {
-    
-    public let node: XNode
-    
-    init(_ node: XNode) {
-        self.node = node
-    }
-    
-    override func produceEntering(production: XProduction) {
-        production.writeLink(link: self)
     }
 }
 
@@ -994,17 +964,14 @@ public final class XElement: XBranch, CustomStringConvertible {
         }
     }
     
-    public init(_ name: String, _ attributes: [String:String?]? = nil, realizeAllLinks: Bool = false, @XNodeBuilder builder: () -> XNodeLike) {
+    public init(_ name: String, _ attributes: [String:String?]? = nil, @XNodeBuilder builder: () -> XNodeLike) {
         self._name = name
         super.init()
         if let theAttributes = attributes {
             setAttributes(attributes: theAttributes)
         }
         (builder() as? [XNode])?.forEach { node in
-            add(node.document != nil ? XLink(node) : node)
-        }
-        if realizeAllLinks {
-            self.realizeAllLinks()
+            add(node)
         }
     }
     
