@@ -201,7 +201,7 @@ When you want a serialization of a whole tree or document as text (`String`), us
 
 (The production again defaults to `XDefaultProduction`.)
 
-But do not use `serialized` to print a tree or document, but use `echo` instead, because using `echo` is much more efficient in this case.
+But do not use `serialized` to print a tree or document, use `echo` instead, because using `echo` is much more efficient in this case.
 
 ## Writing XML
 
