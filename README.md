@@ -515,7 +515,7 @@ let myElement = XElement("div") {
 }
 ```
 
-### Document membership during construction and links
+### Document membership in constructed elements
 
 Elements that are part of a document (`XDocument`) are registered in the document. The same is true for its attributes. The reason is that this allows fast access to elements and attributes of a certain name via `elements(ofName:)` and `attributes(ofName:)` and the exact functioning of rules (see the section below on rules).
 
