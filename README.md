@@ -523,7 +523,7 @@ In the moment of constructing a new element with its content defined in `{...}` 
 
 If you would like to get the content a newly built element to get unregistered from the document, use its method `adjustDocument()`. This method diffuses the current document of the element (recursively) to its content. For a newly built element this document is `nil`, which unregisters a node from its document. You might also set the attribute `adjustDocument` to `true` in the initializer of the element to automatically call `adjustDocument()` when the building of the new element is accomplished. (This call or setting to adjust of the document is only necessary at the top-level element, it is dispersed through the whole tree.)
 
-Example: a newly constructed element gets added to a document; the rule is only applied once to the element `<b id="1"/>` :
+Example: a newly constructed element gets added to a document:
 
 ```Swift
 let document = try parseXML(fromText: """
