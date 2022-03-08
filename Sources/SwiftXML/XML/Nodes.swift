@@ -794,7 +794,7 @@ public class XLink: XNode {
     }
     
     override func produceEntering(production: XProduction) {
-        production.write("[LINK]")
+        production.writeLink(link: self)
     }
 }
 

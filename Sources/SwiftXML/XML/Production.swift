@@ -100,6 +100,8 @@ public protocol XProduction {
     func writeElementDeclaration(elementDeclaration: XElementDeclaration)
     
     func writeAttributeListDeclaration(attributeListDeclaration: XAttributeListDeclaration)
+    
+    func writeLink(link: XLink)
 
     func writeDocumentEnd(document: XDocument)
 }
@@ -270,7 +272,11 @@ open class XDefaultProduction: XProduction {
     open func writeAttributeListDeclaration(attributeListDeclaration: XAttributeListDeclaration) {
         write("\(declarationInInternalSubsetIndentation)\(attributeListDeclaration._literal)\(linebreak)")
     }
-
+    
+    open func writeLink(link: XLink) {
+        write("[LINK]")
+    }
+    
     open func writeDocumentEnd(document: XDocument) {
         
     }
