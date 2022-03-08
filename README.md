@@ -517,53 +517,13 @@ let myElement = XElement("div") {
 
 ### Document membership during construction and links
 
-If a node is already part of a document when it gets added to an element as content in `{...}` brackets during construction of this element as we have seen in the last section, it would first get removed from that document during construction, if really inserted into the new element. Subsequently, it would count as a new element if the element gets added to the same document, so an active iteration might iterate over it twice. This would be especially bad for transformation rules (see the section below on rules). 
+Elements that are part of a document (`XDocument`) are registered in the document. The same is true for its attributes. The reason is that this allows fast access to elements and attributes of a certain name via `elements(ofName:)` and `attributes(ofName:)` and the exact functioning of rules (see the section below on rules).
 
-Therefore, when an element is constructed, an existing node added as content in `{...}` brackets first gets inserted as a link (`XLink`). Only when the new element gets inserted into a document, the links inside it get replaced by the linked nodes (they get “realized”). The links get realized in the order of a depth-first traversal. Else, you could force such a realization of the links by the method `realizeAllLinks()` after the element is constructed. You can force an automated application of `realizeAllLinks()` immediately after the element got built by setting the `realizeAllLinks` argument of the initialiser to `true` (set `realizeAllLinks: true` only at the top-level element of the constructed tree).
+In the moment of constructing a new element with its content defined in `{...}` brackets during construction, the element is not part any document. The nodes inserted to it leave the document tree, but they are not (!) unregistered from the document. I.e. the iterations `elements(ofName:)` and `attributes(ofName:)` will still find them, and according rules will apply to them. The reason for this behaviour is the common case of the new element getting inserted into the same document. If the content of the new element would first get unregistered from the document and then get reinserted into the same document again, they would then count as new elements, and the mentioned iterations might iterate over them again.
 
-Remarks:
+If you would like to get the content a newly built element to get unregistered from the document, use its method `adjustDocument()`. This method diffuses the current document of the element (recursively) to its content. For a newly built element this document is `nil`, which unregisters a node from its document. You might also set the attribute `adjustDocument` to `true` in the initializer of the element to automatically call `adjustDocument()` when the building of the new element is accomplished. (This call or setting to adjust of the document is only necessary at the top-level element, it is dispersed through the whole tree.)
 
-- The addition of nodes first as links does only occur inside the builder argument `{...}` of the initializers, and does not (!) occur when using explicit tree manipulation functions such as `insertNext(builder:)`. The reason is that when using e.g. `insertNext`, you can control the situation, i.e. you should be able to make sure that an element does not leave the document if you do not want to, e.g. by ensuring that you operate within the document tree and not on a separate tree. Whereas when constructing an element with its content defined in `{...}`, there would just nothing you could do to prevent its content to first escape from the document when the described link mechanism did not exist, so it is important that there is such a mechanism that helps you in the background.
-- Of course, there might be some pitfalls when combining building elements with content inside the builder arguments `{...}` of the initializers and implictly (via functions defined by you) methods like `insertNext`. In those cases you might want to do several manipulation steps instead of one. Also, there could be set multiple links to nodes (the last one that gets realized wins).
-- Note that (disregarding links) inserting nodes always moves them, a node is never at several places or in several trees at one time. When building elements with content defined in `{...}`, this movement of nodes is postponed until the element gets inserted into a document (or you call `realizeAllLinks()`).
-- When serializing (i.e. saving trees or documents to text), the links do not (!) get automatically resolved, links then appear as `[LINK]` in the output (unless you change the production).
-- In some situations you might not want to add the original elements but clones.
-
-Example: see the links:
-
-```Swift
-let document = try parseXML(fromText: """
-<a><b id="1"/><b id="2"/></a>
-""")
-
-let element = XElement("c") {
-    document.first?.children
-}
-
-document.first?.echo()
-element.echo()
-
-print("\n-----------------\n")
-
-element.realizeAllLinks()
-
-document.first?.echo()
-element.echo()
-```
-
-Output: 
-
-```text
-<a><b id="1"/><b id="2"/></a>
-<c>[LINK][LINK]</c>
-
------------------
-
-<a/>
-<c><b id="1"/><b id="2"/></c>
-```
-
-Example: a newly constructed element gets added to a document:
+Example: a newly constructed element gets added to a document; the rule is only applied once to the element `<b id="1"/>` :
 
 ```Swift
 let document = try parseXML(fromText: """
@@ -571,7 +531,7 @@ let document = try parseXML(fromText: """
 """)
 
 document.elements(ofName: "b").forEach { element in
-    print(element)
+    print("applying the rule to \(element)"
     if element["id"] == "2" {
         element.insertNext {
             XElement("c") {
@@ -589,8 +549,8 @@ document.first?.echo()
 Output:
 
 ```text
-<b id="1">
-<b id="2">
+applying the rule to <b id="1">
+applying the rule to <b id="2">
 
 -----------------
 

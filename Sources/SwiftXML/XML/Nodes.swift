@@ -964,7 +964,7 @@ public final class XElement: XBranch, CustomStringConvertible {
         }
     }
     
-    public init(_ name: String, _ attributes: [String:String?]? = nil, @XNodeBuilder builder: () -> XNodeLike) {
+    public init(_ name: String, _ attributes: [String:String?]? = nil, adjustDocument _adjustDocument: Bool = false, @XNodeBuilder builder: () -> XNodeLike) {
         self._name = name
         super.init()
         if let theAttributes = attributes {
@@ -972,6 +972,9 @@ public final class XElement: XBranch, CustomStringConvertible {
         }
         (builder() as? [XNode])?.forEach { node in
             add(node)
+        }
+        if _adjustDocument {
+            adjustDocument()
         }
     }
     
@@ -1001,6 +1004,10 @@ public final class XElement: XBranch, CustomStringConvertible {
         newAtttributeValues?.forEach { name, value in
             self[name] = value
         }
+    }
+    
+    public func adjustDocument() {
+        setDocument(document: _document)
     }
     
     func setDocument(document newDocument: XDocument?) {
