@@ -1016,9 +1016,11 @@ public final class XElement: XBranch, CustomStringConvertible {
         var node: XNode? = self
         repeat {
             if let element = node as? XElement {
-                element._document?.unregisterElement(element: element)
-                element._document = newDocument
-                newDocument?.registerElement(element: element)
+                if !(newDocument === element._document) {
+                    element._document?.unregisterElement(element: element)
+                    element._document = newDocument
+                    newDocument?.registerElement(element: element)
+                }
             }
             if self.getLastInTree() === node {
                 break
