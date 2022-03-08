@@ -574,7 +574,7 @@ public class XBranch: XNode {
         }
     }
     
-    private func realizeAllLinks() {
+    public func realizeAllLinks() {
         allContent.forEach { node in
             if let link = node as? XLink {
                 node.replace1(link.node)
@@ -994,7 +994,7 @@ public final class XElement: XBranch, CustomStringConvertible {
         }
     }
     
-    public init(_ name: String, _ attributes: [String:String?]? = nil, @XNodeBuilder builder: () -> XNodeLike) {
+    public init(_ name: String, _ attributes: [String:String?]? = nil, eagerConstruction: Bool = false, @XNodeBuilder builder: () -> XNodeLike) {
         self._name = name
         super.init()
         if let theAttributes = attributes {
@@ -1002,6 +1002,9 @@ public final class XElement: XBranch, CustomStringConvertible {
         }
         (builder() as? [XNode])?.forEach { node in
             add(node.document != nil ? XLink(node) : node)
+        }
+        if eagerConstruction {
+            self.realizeAllLinks()
         }
     }
     
