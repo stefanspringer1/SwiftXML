@@ -15,7 +15,7 @@ public func parseXML(
     sourceInfo: String? = nil,
     internalEntityResolver: InternalEntityResolver? = nil,
     eventHandlers: [XEventHandler]? = nil,
-    textAllowed: (() -> Bool)? = nil
+    textAllowed: ((String) -> Bool)? = nil
 ) throws -> XDocument {
     let document = XDocument()
     document._source = path
@@ -35,7 +35,7 @@ public func parseXML(
     sourceInfo: String? = nil,
     internalEntityResolver: InternalEntityResolver? = nil,
     eventHandlers: [XEventHandler]? = nil,
-    textAllowed: (() -> Bool)? = nil
+    textAllowed: ((String) -> Bool)? = nil
 ) throws -> XDocument {
     let document = XDocument()
     document._source = url.path
@@ -55,7 +55,7 @@ public func parseXML(
     sourceInfo: String? = nil,
     internalEntityResolver: InternalEntityResolver? = nil,
     eventHandlers: [XEventHandler]? = nil,
-    textAllowed: (() -> Bool)? = nil
+    textAllowed: ((String) -> Bool)? = nil
 ) throws -> XDocument {
     let document = XDocument()
     
@@ -74,7 +74,7 @@ public func parseXML(
     sourceInfo: String? = nil,
     internalEntityResolver: InternalEntityResolver? = nil,
     eventHandlers: [XEventHandler]? = nil,
-    textAllowed: (() -> Bool)? = nil
+    textAllowed: ((String) -> Bool)? = nil
 ) throws -> XDocument {
     let document = XDocument()
     
