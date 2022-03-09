@@ -191,7 +191,7 @@ One a more event handlers can be given a `parseXML` call, which implement `XEven
 
 ## Displaying XML
 
-When printing a node via `print(...)`, only a top-level represenation like the start tag is printed and never the whoel tree. When you would like to print the whole tree or document, use:
+When printing a node via `print(...)`, only a top-level represenation like the start tag is printed and never the whole tree. When you would like to print the whole tree or document, use:
 
 ```Swift
 func echo(usingProduction: XProduction, terminator: String)
