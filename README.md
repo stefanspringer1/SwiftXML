@@ -690,6 +690,8 @@ print("\n----------------------------------------\n")
 document.first?.echo()
 ```
 
+```text
+
 ----- Rule for element "formula" -----
 
   <formula id="1">
