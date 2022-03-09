@@ -649,13 +649,6 @@ var count = 1
 
 let transformation = XTransformation {
     
-    XRule(forAttribute: "id") { (value,element) in
-        print("\n----- Rule for attribute \"id\" -----\n")
-        print("  \(element) --> ", terminator: "")
-        element["id"] = "done-" + value
-        print(element)
-    }
-    
     XRule(forElement: "formula") { element in
         print("\n----- Rule for element \"formula\" -----\n")
         print("  \(element)")
@@ -681,6 +674,13 @@ let transformation = XTransformation {
         }
     }
     
+    XRule(forAttribute: "id") { (value,element) in
+        print("\n----- Rule for attribute \"id\" -----\n")
+        print("  \(element) --> ", terminator: "")
+        element["id"] = "done-" + value
+        print(element)
+    }
+    
 }
 
 transformation.execute(inDocument: document)
@@ -690,23 +690,19 @@ print("\n----------------------------------------\n")
 document.first?.echo()
 ```
 
-Output:
-
-```text
-
------ Rule for attribute "id" -----
-
-  <formula id="1"> --> <formula id="done-1">
-
 ----- Rule for element "formula" -----
 
-  <formula id="done-1">
+  <formula id="1">
   add image
 
 ----- Rule for element "image" -----
 
   <image id="2">
   add formula
+
+----- Rule for attribute "id" -----
+
+  <formula id="1"> --> <formula id="done-1">
 
 ----- Rule for attribute "id" -----
 
