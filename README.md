@@ -193,13 +193,17 @@ One a more event handlers can be given a `parseXML` call, which implement `XEven
 
 When printing a node via `print(...)`, only a top-level represenation like the start tag is printed and never the whoel tree. When you would like to print the whole tree or document, use:
 
-`func echo(usingProduction: XProduction, terminator: String)`
+```Swift
+func echo(usingProduction: XProduction, terminator: String)
+```
 
 (Productions are explained in the next section; as the `usingProduction` argument defaults to `XDefaultProduction`, you do not need to worry about them at the moment. The terminator default to `"\n"`, i.e. newlines are then printed after the output.)
 
 When you want a serialization of a whole tree or document as text (`String`), use the following method:
 
-`func serialized(usingProduction: XProduction) -> String`
+```Swift
+func serialized(usingProduction: XProduction) -> String
+```
 
 (The production again defaults to `XDefaultProduction`.)
 
@@ -243,14 +247,6 @@ For generality, the following method is provided to apply any `XProduction` to a
 ```Swift
 func applyProduction(production: XProduction)
 ```
-
-To write to standard out (just print), the `echo` method can be used, with the production again defaulting to an instance of `XDefaultProduction`, and the terminator defaulting to a line break:
-
-```Swift
-func echo(production: XProduction, terminator: String)
-```
-
-In contrast to the above methods, when using a node as the argument to the `print` method, only some top-level printout results, e.g. only the start tag is printed.
 
 ## Cloning
 
