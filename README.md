@@ -437,7 +437,7 @@ myElement.descendants.forEach { descendant in
 }
 ```
 
-## Node prorties
+## Node properties
 
 ### Element names
 
