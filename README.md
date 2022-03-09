@@ -207,7 +207,7 @@ func serialized(usingProduction: XProduction) -> String
 
 (The production again defaults to `XDefaultProduction`.)
 
-But do not use `serialized` to print a tree or document, use `echo` instead, because using `echo` is much more efficient in this case.
+But do not use `serialized` to print a tree or document, use `echo` instead, because using `echo` is more efficient in this case.
 
 ## Writing XML
 
