@@ -570,10 +570,6 @@ applying the rule to <b id="2">
 
 As you can see from the `print` commands in the last example, the element `<b id="1">` does not lose its “connection” to the document (although it seems to get added again to it), so it is only iterated over once by the iteration.
 
-### Subsequent or empty text
-
-Subsequent text nodes (`XText`) are always automatically combined, and text nodes with empty text are automatically removed.
-
 ## Tree manipulations
 
 Besides changing the node properties, an XML tree can be changed by the following methods.
@@ -642,6 +638,10 @@ myDocument.elements(ofName: "table").forEach { table in
     }
 }
 ```
+
+## Handling of text
+
+Subsequent text nodes (`XText`) are always automatically combined, and text nodes with empty text are automatically removed.
 
 ## Rules
 
