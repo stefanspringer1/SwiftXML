@@ -294,7 +294,7 @@ up: { branch in
 
 ## Direct access to elements and attributes
 
-As mentioned and the general description, the library allows to efficiently find elements or attributes of a certain name without having to traverse the whole tree. 
+As mentioned and the general description, the library allows to efficiently find elements or attributes of a certain name in a document without having to traverse the whole tree. 
 
 Finding the elements of a certain name:
 
