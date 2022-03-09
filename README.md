@@ -225,7 +225,7 @@ The production argument has to implement the `XProduction` protocol and defines 
 
 Example: write a linebreak before all elements:
 
-```
+```Swift
 class MyProduction: XDefaultProduction {
     override func writeElementStartBeforeAttributes(element: XElement) {
         write(linebreak)
