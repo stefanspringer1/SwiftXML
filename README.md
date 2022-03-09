@@ -221,9 +221,22 @@ func write(toFile: String, production: XProduction)
 func write(toFileHandle: FileHandle, production: XProduction)
 ```
 
-The production argument has to implement the `XProduction` protocol and defines how each part of the document is written, e.g. you might want to add line breaks and whitespace between certain elemnts or you might want to change if `>` or `"` are written literally or as predefined XML entities in text sections. The production defaults to an instance of `XDefaultProduction`, which also should be extended if only some details of how the document is written are to be changed, which is a common use case. E.g. you could override `func writeText(text: XText)` and `func writeAttributeValue(name: String, value: String, element: XElement)` to again write some characters as named entity references. Or you just provide an instance of `XDefaultProduction` itself and change its `linebreak` property to define how line breaks should be written (e.g. Unix or Windows style). You might also want to consider `func sortAttributeNames(attributeNames: [String], element: XElement) -> [String]` to sort the attributes for output.
+The production argument has to implement the `XProduction` protocol and defines how each part of the document is written, e.g. if `>` or `"` are written literally or as predefined XML entities in text sections. The production defaults to an instance of `XDefaultProduction`, which also should be extended if only some details of how the document is written are to be changed, which is a common use case. E.g. you could override `func writeText(text: XText)` and `func writeAttributeValue(name: String, value: String, element: XElement)` to again write some characters as named entity references. Or you just provide an instance of `XDefaultProduction` itself and change its `linebreak` property to define how line breaks should be written (e.g. Unix or Windows style). You might also want to consider `func sortAttributeNames(attributeNames: [String], element: XElement) -> [String]` to sort the attributes for output.
 
-For generality, the following method is provided to apply any `XProduction` to a node (and its containing tree):
+Example: write a linebreak before all elements:
+
+```
+class MyProduction: XDefaultProduction {
+    override func writeElementStartBeforeAttributes(element: XElement) {
+        write(linebreak)
+        super.writeElementStartBeforeAttributes(element: element)
+    }
+}
+
+document.write(toFile: "myFile.xml", production: MyProduction())
+```
+
+For generality, the following method is provided to apply any `XProduction` to a node and its contained tree:
 
 ```Swift
 func applyProduction(production: XProduction)
