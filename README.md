@@ -437,7 +437,7 @@ myElement.descendants.forEach { descendant in
 }
 ```
 
-### Attributes
+## Attributes
 
 The attributes of an element can be read and set via the “index notation”. If an attribute is not set, `nil` is returned; reversely, setting an attribute to `nil` results in removing it.
 
@@ -453,7 +453,7 @@ if let id = myElement["id"] {
 }
 ```
 
-### Attachments
+## Attachments
 
 Branches (i.e. element and documents) can have “attachments”. Those are objects that can be attached via a textual key to those branches but that not considered as belonging to the actual XML tree.
 
