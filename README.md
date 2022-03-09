@@ -227,10 +227,12 @@ Example: write a linebreak before all elements:
 
 ```Swift
 class MyProduction: XDefaultProduction {
+
     override func writeElementStartBeforeAttributes(element: XElement) {
         write(linebreak)
         super.writeElementStartBeforeAttributes(element: element)
     }
+    
 }
 
 document.write(toFile: "myFile.xml", production: MyProduction())
