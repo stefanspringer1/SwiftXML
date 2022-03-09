@@ -542,7 +542,7 @@ let document = try parseXML(fromText: """
 """)
 
 document.elements(ofName: "b").forEach { element in
-    print("applying the rule to \(element)"
+    print("applying the rule to \(element)")
     if element["id"] == "2" {
         element.insertNext {
             XElement("c") {
