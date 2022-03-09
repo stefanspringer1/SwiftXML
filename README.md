@@ -445,7 +445,7 @@ Element names can be read and set by the using the property `name` of an element
 
 ### Text 
 
-For a text node (`XText`) its text can be read and set via the property `name` of an element.
+For a text node (`XText`) its text can be read and set via its property `value`.
 
 ### Changing and reading attributes
 
