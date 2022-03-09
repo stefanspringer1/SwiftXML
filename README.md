@@ -437,7 +437,17 @@ myElement.descendants.forEach { descendant in
 }
 ```
 
-## Changing and reading attributes
+## Node prorties
+
+### Element names
+
+Element names are changed by the using the property `name` of an element.
+
+### Text 
+
+For a text node (`XText`) its text can be set and read via the property `name` of an element.
+
+### Changing and reading attributes
 
 The attributes of an element can be read and set via the “index notation”. If an attribute is not set, `nil` is returned; reversely, setting an attribute to `nil` results in removing it.
 
@@ -453,7 +463,7 @@ if let id = myElement["id"] {
 }
 ```
 
-## Attachments
+### Attachments
 
 Branches (i.e. element and documents) can have “attachments”. Those are objects that can be attached via a textual key to those branches but that not considered as belonging to the actual XML tree.
 
