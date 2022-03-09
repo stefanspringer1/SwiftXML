@@ -441,11 +441,11 @@ myElement.descendants.forEach { descendant in
 
 ### Element names
 
-Element names are changed by the using the property `name` of an element.
+Element names can be read and set by the using the property `name` of an element.
 
 ### Text 
 
-For a text node (`XText`) its text can be set and read via the property `name` of an element.
+For a text node (`XText`) its text can be read and set via the property `name` of an element.
 
 ### Changing and reading attributes
 
