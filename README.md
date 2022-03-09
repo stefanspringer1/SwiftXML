@@ -197,7 +197,7 @@ When printing a node via `print(...)`, only a top-level represenation like the s
 func echo(usingProduction: XProduction, terminator: String)
 ```
 
-(Productions are explained in the next section; as the `usingProduction` argument defaults to `XDefaultProduction`, you do not need to worry about them at the moment. The terminator default to `"\n"`, i.e. newlines are then printed after the output.)
+Productions are explained in the next section; as the `usingProduction` argument defaults to `XDefaultProduction`, you do not need to worry about them at the moment. The terminator default to `"\n"`, i.e. newlines are then printed after the output.
 
 When you want a serialization of a whole tree or document as text (`String`), use the following method:
 
@@ -205,7 +205,7 @@ When you want a serialization of a whole tree or document as text (`String`), us
 func serialized(usingProduction: XProduction) -> String
 ```
 
-(The production again defaults to `XDefaultProduction`.)
+The production again defaults to `XDefaultProduction`.
 
 But do not use `serialized` to print a tree or document, use `echo` instead, because using `echo` is more efficient in this case.
 
