@@ -437,19 +437,7 @@ myElement.descendants.forEach { descendant in
 }
 ```
 
-## Constructing XML
-
-### Constructing an empty element
-
-When constructing an element (without content), the name is given as the first (nameless) argument and the attribute values are given as (nameless) a dictionary.
-
-Example: constructing an empty “paragraph” element with attributes `id="1"` and `style="note"`:
-
-```Swift
-let myElement = XElement("paragraph", ["id": "1", "style": "note"])
-```
-
-### Reading and setting attributes
+### Attributes
 
 The attributes of an element can be read and set via the “index notation”. If an attribute is not set, `nil` is returned; reversely, setting an attribute to `nil` results in removing it.
 
@@ -467,7 +455,7 @@ if let id = myElement["id"] {
 
 ### Attachments
 
-Branches can have “attachments”. Those are objects that can be attached via a textual key to those branches but that not considered as belonging to the actual XML tree.
+Branches (i.e. element and documents) can have “attachments”. Those are objects that can be attached via a textual key to those branches but that not considered as belonging to the actual XML tree.
 
 The attachments can be reached by the property `attached`, and accessing and setting them is analogous to attributes:
 
@@ -488,6 +476,18 @@ if let note = myElement.attached["note"] as? XElement {
 
 // removing the attached note:
 myElement.attached["note"] = nil
+```
+
+## Constructing XML
+
+### Constructing an empty element
+
+When constructing an element (without content), the name is given as the first (nameless) argument and the attribute values are given as (nameless) a dictionary.
+
+Example: constructing an empty “paragraph” element with attributes `id="1"` and `style="note"`:
+
+```Swift
+let myElement = XElement("paragraph", ["id": "1", "style": "note"])
 ```
 
 ### Defining content
