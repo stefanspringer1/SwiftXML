@@ -437,7 +437,7 @@ myElement.descendants.forEach { descendant in
 }
 ```
 
-## Attributes
+## Setting attributes
 
 The attributes of an element can be read and set via the “index notation”. If an attribute is not set, `nil` is returned; reversely, setting an attribute to `nil` results in removing it.
 
