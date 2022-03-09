@@ -643,6 +643,30 @@ myDocument.elements(ofName: "table").forEach { table in
 }
 ```
 
+## Tracking changes
+
+It might be helpful to get notified when certain things in the XML document are changed. A common use case is the change of an attribute. You can register for the notification for the change of any attribute of a certian name using:
+
+```Swift
+func setChangedAction(forAttributeName: String, action: (XElement, String?, String?) -> ())
+```
+
+The string arguments are the new and the old value, respectively. Only one action can be set for a specific attribute name.
+
+Example: get notified if an "id" attribute gets changed:
+
+```Swift
+myDocument.setChangedAction(forAttributeName: "id") { (element, oldValue, newValue) in
+    // ... do something ...
+}
+```
+
+To stop the notification, use
+
+```Swift
+func removeChangedAction(forAttributeName: String)
+```
+
 ## Rules
 
 As mentioned in the general description, a set of rules `XRule` in the form of a transformation instance of type `XTransformation` can be used as follows.
