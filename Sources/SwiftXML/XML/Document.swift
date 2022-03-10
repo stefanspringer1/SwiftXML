@@ -24,16 +24,8 @@ public final class XDocument: XBranch {
         }
     }
     
-    var _versions = [XDocument]()
-    
     public func saveVersion() {
-        _versions.append(clone(forwardref: true))
-    }
-    
-    var versions: [XDocument] {
-        get {
-            return _versions
-        }
+        _ = clone(pointingFromClone: true)
     }
     
     public var xmlVersion = "1.0"
@@ -83,9 +75,9 @@ public final class XDocument: XBranch {
         return theClone
     }
     
-    public override func clone(forwardref: Bool = false) -> XDocument {
-        let theClone = shallowClone(forwardref: forwardref)
-        theClone.addClones(from: self, forwardref: forwardref)
+    public override func clone(pointingFromClone: Bool = false) -> XDocument {
+        let theClone = shallowClone(forwardref: pointingFromClone)
+        theClone.addClones(from: self, forwardref: pointingFromClone)
         return theClone
     }
     
@@ -143,7 +135,7 @@ public final class XDocument: XBranch {
         }
     }
     
-    public func elements(ofName elementName: String) -> XElementsOfSameNameSequence {
+    public func elements(ofName elementName: String) -> XElementSequence {
         return XElementsOfSameNameSequence(document: self, name: elementName)
     }
     
@@ -192,8 +184,7 @@ public final class XDocument: XBranch {
         attribute.nextWithSameName = nil
     }
     
-    public func attributes(ofName attributeName: String)
-    -> XAttributesOfSameNameSequence {
+    public func attributes(ofName attributeName: String) -> XAttributeSequence {
         return XAttributesOfSameNameSequence(
             document: self,
             attributeName: attributeName

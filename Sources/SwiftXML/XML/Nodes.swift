@@ -104,17 +104,17 @@ public class XNode {
         return theClone
     }
     
-    public func clone(forwardref: Bool = false) -> XNode {
-        return shallowClone(forwardref: forwardref)
+    public func clone(pointingFromClone: Bool = false) -> XNode {
+        return shallowClone(forwardref: pointingFromClone)
     }
     
-    private var _nodeIterators = WeakList<XNodeIterator>()
+    private var _nodeIterators = WeakList<XBidirectionalNodeIterator>()
     
-    func addNodeIterator(_ nodeIterator: XNodeIterator) {
+    func addNodeIterator(_ nodeIterator: XBidirectionalNodeIterator) {
         _nodeIterators.append(nodeIterator)
     }
     
-    func removeNodeIterator(_ nodeIterator: XNodeIterator) {
+    func removeNodeIterator(_ nodeIterator: XBidirectionalNodeIterator) {
         _nodeIterators.remove(nodeIterator)
     }
     
@@ -682,7 +682,7 @@ extension XAttributesOfSameNameSequence: XNodeLike {}
 
 final class XAttribute: XNode, Named {
     
-    var attributeIterators = WeakList<XAttributeIterator>()
+    var attributeIterators = WeakList<XBidirectionalAttributeIterator>()
     
     var _bareName: String?
     var _sharedName: XValue? = nil
@@ -855,9 +855,9 @@ public final class XElement: XBranch, CustomStringConvertible {
         return theClone
     }
     
-    public override func clone(forwardref: Bool = false) -> XElement {
-        let theClone = shallowClone(forwardref: forwardref)
-        theClone.addClones(from: self, forwardref: forwardref)
+    public override func clone(pointingFromClone: Bool = false) -> XElement {
+        let theClone = shallowClone(forwardref: pointingFromClone)
+        theClone.addClones(from: self, forwardref: pointingFromClone)
         return theClone
     }
     
@@ -1104,8 +1104,8 @@ public final class XText: XNode, CustomStringConvertible {
         return theClone
     }
     
-    public override func clone(forwardref: Bool = false) -> XText {
-        return shallowClone(forwardref: forwardref)
+    public override func clone(pointingFromClone: Bool = false) -> XText {
+        return shallowClone(forwardref: pointingFromClone)
     }
 }
 
@@ -1142,8 +1142,8 @@ public final class XInternalEntity: XNode {
         return theClone
     }
     
-    public override func clone(forwardref: Bool = false) -> XInternalEntity {
-        return shallowClone(forwardref: forwardref)
+    public override func clone(pointingFromClone: Bool = false) -> XInternalEntity {
+        return shallowClone(forwardref: pointingFromClone)
     }
 }
 
@@ -1180,8 +1180,8 @@ public final class XExternalEntity: XNode {
         return theClone
     }
     
-    public override func clone(forwardref: Bool = false) -> XExternalEntity {
-        return shallowClone(forwardref: forwardref)
+    public override func clone(pointingFromClone: Bool = false) -> XExternalEntity {
+        return shallowClone(forwardref: pointingFromClone)
     }
 }
 
@@ -1237,8 +1237,8 @@ public final class XProcessingInstruction: XNode, CustomStringConvertible {
         return theClone
     }
     
-    public override func clone(forwardref: Bool = false) -> XProcessingInstruction {
-        return shallowClone(forwardref: forwardref)
+    public override func clone(pointingFromClone: Bool = false) -> XProcessingInstruction {
+        return shallowClone(forwardref: pointingFromClone)
     }
 }
 
@@ -1275,8 +1275,8 @@ public final class XComment: XNode {
         return theClone
     }
     
-    public override func clone(forwardref: Bool = false) -> XComment {
-        return shallowClone(forwardref: forwardref)
+    public override func clone(pointingFromClone: Bool = false) -> XComment {
+        return shallowClone(forwardref: pointingFromClone)
     }
 }
 
@@ -1313,8 +1313,8 @@ public final class XCDATASection: XNode {
         return theClone
     }
     
-    public override func clone(forwardref: Bool = false) -> XCDATASection {
-        return shallowClone(forwardref: forwardref)
+    public override func clone(pointingFromClone: Bool = false) -> XCDATASection {
+        return shallowClone(forwardref: pointingFromClone)
     }
 }
 

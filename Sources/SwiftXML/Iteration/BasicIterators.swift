@@ -6,6 +6,45 @@
 
 import Foundation
 
+public class XNodeIterator: IteratorProtocol {
+    public typealias Element = XNode
+    public func next() -> XNode? {
+        return nil
+    }
+}
+
+public class XNodeSequence: Sequence {
+    public func makeIterator() -> XNodeIterator {
+        return XNodeIterator()
+    }
+}
+
+public class XElementIterator: IteratorProtocol {
+    public typealias Element = XElement
+    public func next() -> XElement? {
+        return nil
+    }
+}
+
+public class XElementSequence: Sequence {
+    public func makeIterator() -> XElementIterator {
+        return XElementIterator()
+    }
+}
+
+public class XAttributeIterator: IteratorProtocol {
+    public typealias Element = XAttributeSpot
+    public func next() -> XAttributeSpot? {
+        return nil
+    }
+}
+
+public class XAttributeSequence: Sequence {
+    public func makeIterator() -> XAttributeIterator {
+        return XAttributeIterator()
+    }
+}
+
 /**
  Iterates though the elements of a specified name.
  */
@@ -505,9 +544,9 @@ public final class XDescendantsIncludingSelfIterator: XElementIteratorProtocol {
     var started = false
     
     public init(
-        node: XNode
+        element: XElement
     ) {
-        self.startNode = node
+        self.startNode = element
     }
     
     public func next() -> XElement? {

@@ -13,10 +13,10 @@ import Foundation
  precise iteration is implemented in "iteratorImplementation" which implements
  the XIteratorProtocol.
  */
-public final class XNodeIterator: IteratorProtocol {
+public final class XBidirectionalNodeIterator: XNodeIterator {
     
-    var previousIterator: XNodeIterator? = nil
-    var nextIterator: XNodeIterator? = nil
+    var previousIterator: XBidirectionalNodeIterator? = nil
+    var nextIterator: XBidirectionalNodeIterator? = nil
     
     public typealias Element = XNode
     
@@ -29,7 +29,7 @@ public final class XNodeIterator: IteratorProtocol {
     weak var current: Element? = nil
     var prefetched = false
     
-    public func next() -> XNode? {
+    public override func next() -> XNode? {
         if prefetched {
             prefetched = false
             return current
@@ -153,10 +153,10 @@ public final class XElementNameIterator: IteratorProtocol {
 
 public typealias XAttributeSpot = (String,XElement)
 
-public final class XAttributeIterator: IteratorProtocol {
+public final class XBidirectionalAttributeIterator: IteratorProtocol {
     
-    var previousIterator: XAttributeIterator? = nil
-    var nextIterator: XAttributeIterator? = nil
+    var previousIterator: XBidirectionalAttributeIterator? = nil
+    var nextIterator: XBidirectionalAttributeIterator? = nil
     
     public typealias Element = XAttributeSpot
     

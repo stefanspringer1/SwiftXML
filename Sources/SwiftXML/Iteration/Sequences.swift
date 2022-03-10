@@ -7,7 +7,7 @@
 
 import Foundation
 
-public final class XTraversalSequence: Sequence {
+public final class XTraversalSequence: XNodeSequence {
     
     let node: XNode
     let directionIndicator: XDirectionIndicator
@@ -17,12 +17,12 @@ public final class XTraversalSequence: Sequence {
         self.directionIndicator = directionIndicator
     }
     
-    public func makeIterator() -> XNodeIterator {
-        return XNodeIterator(nodeIterator: XTreeIterator(startNode: node, directionIndicator: directionIndicator))
+    public override func makeIterator() -> XBidirectionalNodeIterator {
+        return XBidirectionalNodeIterator(nodeIterator: XTreeIterator(startNode: node, directionIndicator: directionIndicator))
     }
 }
 
-public final class XNextSequence: Sequence {
+public final class XNextSequence: XNodeSequence {
     
     let node: XNode
     
@@ -30,12 +30,12 @@ public final class XNextSequence: Sequence {
         self.node = node
     }
     
-    public func makeIterator() -> XNodeIterator {
-        return XNodeIterator(nodeIterator: XNextIterator(node: node))
+    public override func makeIterator() -> XBidirectionalNodeIterator {
+        return XBidirectionalNodeIterator(nodeIterator: XNextIterator(node: node))
     }
 }
 
-public final class XPreviousSequence: Sequence {
+public final class XPreviousSequence: XNodeSequence {
     
     let node: XNode
     
@@ -43,12 +43,12 @@ public final class XPreviousSequence: Sequence {
         self.node = node
     }
     
-    public func makeIterator() -> XNodeIterator {
-        return XNodeIterator(nodeIterator: XPreviousIterator(node: node))
+    public override func makeIterator() -> XBidirectionalNodeIterator {
+        return XBidirectionalNodeIterator(nodeIterator: XPreviousIterator(node: node))
     }
 }
 
-public final class XNextElementsSequence: Sequence {
+public final class XNextElementsSequence: XElementSequence {
     
     let node: XNode
     
@@ -61,7 +61,7 @@ public final class XNextElementsSequence: Sequence {
     }
 }
 
-public final class XPreviousElementsSequence: Sequence {
+public final class XPreviousElementsSequence: XElementSequence {
     
     let node: XNode
     
@@ -74,7 +74,7 @@ public final class XPreviousElementsSequence: Sequence {
     }
 }
 
-public final class XContentSequence: Sequence {
+public final class XContentSequence: XNodeSequence {
     
     let node: XNode
     
@@ -82,12 +82,12 @@ public final class XContentSequence: Sequence {
         self.node = node
     }
     
-    public func makeIterator() -> XNodeIterator {
-        return XNodeIterator(nodeIterator: XContentsIterator(node: node))
+    public override func makeIterator() -> XBidirectionalNodeIterator {
+        return XBidirectionalNodeIterator(nodeIterator: XContentsIterator(node: node))
     }
 }
 
-public final class XChildrenSequence: Sequence {
+public final class XChildrenSequence: XElementSequence {
     
     let node: XNode
     
@@ -100,7 +100,7 @@ public final class XChildrenSequence: Sequence {
     }
 }
 
-public final class XAncestorsSequence: Sequence {
+public final class XAncestorsSequence: XElementSequence {
     
     let node: XNode
     
@@ -113,7 +113,7 @@ public final class XAncestorsSequence: Sequence {
     }
 }
 
-public final class XAllContentSequence: Sequence {
+public final class XAllContentSequence: XNodeSequence {
     
     let node: XNode
     
@@ -121,12 +121,12 @@ public final class XAllContentSequence: Sequence {
         self.node = node
     }
     
-    public func makeIterator() -> XNodeIterator {
-        return XNodeIterator(nodeIterator: XAllContentsIterator(node: node))
+    public override func makeIterator() -> XBidirectionalNodeIterator {
+        return XBidirectionalNodeIterator(nodeIterator: XAllContentsIterator(node: node))
     }
 }
 
-public final class XAllContentIncludingSelfSequence: Sequence {
+public final class XAllContentIncludingSelfSequence: XNodeSequence {
     
     let node: XNode
     
@@ -134,12 +134,12 @@ public final class XAllContentIncludingSelfSequence: Sequence {
         self.node = node
     }
     
-    public func makeIterator() -> XNodeIterator {
-        return XNodeIterator(nodeIterator: XAllContentsIterator(node: node))
+    public override func makeIterator() -> XBidirectionalNodeIterator {
+        return XBidirectionalNodeIterator(nodeIterator: XAllContentsIterator(node: node))
     }
 }
 
-public final class XDescendantsSequence: Sequence {
+public final class XDescendantsSequence: XElementSequence {
     
     let node: XNode
     
@@ -152,20 +152,20 @@ public final class XDescendantsSequence: Sequence {
     }
 }
 
-public final class XDescendantsIncludingSelfSequence: Sequence {
+public final class XDescendantsIncludingSelfSequence: XElementSequence {
     
-    let node: XNode
+    let element: XElement
     
-    init(node: XNode) {
-        self.node = node
+    init(element: XElement) {
+        self.element = element
     }
     
     public func makeIterator() -> XElementTreeIterator {
-        return XElementTreeIterator(elementIterator: XDescendantsIncludingSelfIterator(node: node))
+        return XElementTreeIterator(elementIterator: XDescendantsIncludingSelfIterator(element: element))
     }
 }
 
-public final class XElementsOfSameNameSequence: Sequence {
+public final class XElementsOfSameNameSequence: XElementSequence {
     
     let document: XDocument
     let name: String
@@ -185,7 +185,7 @@ public final class XElementsOfSameNameSequence: Sequence {
     }
 }
 
-public final class XAttributesOfSameNameSequence: Sequence {
+public final class XAttributesOfSameNameSequence: XAttributeSequence {
     
     let document: XDocument
     let attributeName: String
@@ -195,8 +195,8 @@ public final class XAttributesOfSameNameSequence: Sequence {
         self.attributeName = attributeName
     }
     
-    public func makeIterator() -> XAttributeIterator {
-        return XAttributeIterator(
+    public func makeIterator() -> XBidirectionalAttributeIterator {
+        return XBidirectionalAttributeIterator(
             attributeIterator: XAttributesOfSameNameIterator(
                 document: document,
                 attributeName: attributeName

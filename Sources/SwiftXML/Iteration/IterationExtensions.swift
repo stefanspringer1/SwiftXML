@@ -9,69 +9,72 @@ import Foundation
 
 extension XNode {
     
-    public var ancestors: XAncestorsSequence {
+    public var ancestors: XElementSequence {
         get {
             return XAncestorsSequence(node: self)
         }
     }
     
-    public var content: XContentSequence {
+    public var content: XNodeSequence {
         get {
             return XContentSequence(node: self)
         }
     }
     
-    public var children: XChildrenSequence {
+    public var children: XElementSequence {
         get {
             return XChildrenSequence(node: self)
         }
     }
     
-    public var next: XNextSequence {
+    public var next: XNodeSequence {
         get {
             return XNextSequence(node: self)
         }
     }
     
-    public var previous: XPreviousSequence {
+    public var previous: XNodeSequence {
         get {
             return XPreviousSequence(node: self)
         }
     }
     
-    public var nextElements: XNextElementsSequence {
+    public var nextElements: XElementSequence {
         get {
             return XNextElementsSequence(node: self)
         }
     }
     
-    public var previousElements: XPreviousElementsSequence {
+    public var previousElements: XElementSequence {
         get {
             return XPreviousElementsSequence(node: self)
         }
     }
     
-    public var allContent: XAllContentSequence {
+    public var allContent: XNodeSequence {
         get {
             return XAllContentSequence(node: self)
         }
     }
-    public var allContentIncludingSelf: XAllContentIncludingSelfSequence {
+    public var allContentIncludingSelf: XNodeSequence {
         get {
             return XAllContentIncludingSelfSequence(node: self)
         }
     }
     
-    public var descendants: XDescendantsSequence {
+    public var descendants: XElementSequence {
         get {
             return XDescendantsSequence(node: self)
         }
     }
+}
+
+extension XElement {
     
-    public var descendantsIncludingSelf: XDescendantsIncludingSelfSequence {
+    public var descendantsIncludingSelf: XElementSequence {
         get {
-            return XDescendantsIncludingSelfSequence(node: self)
+            return XDescendantsIncludingSelfSequence(element: self)
         }
     }
-
+    
 }

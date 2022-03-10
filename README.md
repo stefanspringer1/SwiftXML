@@ -253,16 +253,16 @@ func applyProduction(production: XProduction)
 Any node (including an XML document) can be cloned, including the tree of nodes that is started by it, using the following method:
 
 ```Swift
-func clone(forwardref: Bool) -> XNode
+func clone(pointingFromClone: Bool) -> XNode
 ```
 
-Any node possesses the property `r` pointing to the node related to itself by (the last) cloning. By default, `r` points from the node in the clone to the according node in the original tree. By setting the argument `forwardref` to `true` (it defaults to `false`), this direction is reversed. By being able to set `forwardref` when cloning an XML document one can adjust to the situations of using the clone or the original tree for further manipulation. You might use the `clone` method several times, the property `rr` than goes along the whole chains of `r` values until the last one is reached. For a document, the following method formalises this:
+Any node possesses the property `r` pointing to the node related to itself by (the last) cloning. By default, `r` points from the node in the clone to the according node in the original tree. The `r` values of the clone are as in the document that is being cloned. By setting the argument `pointingFromClone` to `true` (it defaults to `false`), this direction is reversed. By setting `pointingFromClone` when cloning an XML document one can adjust to the situation of using the original tree for further manipulation and just saving an old version for reference; the following method does exactly this:
 
 ```Swift
 func saveVersion()
 ```
 
-Use `saveVersion()` to save a certain state and then just continue manipulating the same document; the chain of `r` properties then just follows all versions.
+You might use the `clone` method several times, the property `r` gives you the whole chains of `rpath` values and `rr` gives you the last value in this chain.
 
 Sometimes, only a “shallow” clone is needed, i.e. the node itself without the tree of nodes that is started by it. In this case, just use:
 
@@ -362,7 +362,7 @@ var parent: XElement?
 All its ancestor elements:
 
 ```Swift
-var ancestors: XAncestorsSequence
+var ancestors: XElementSequence
 ```
 
 Get the first content of a branch:
@@ -380,37 +380,37 @@ var last: XNode?
 The direct content of a document or an element (“direct” means that their parent is this document or element):
 
 ```Swift
-var content: XContentSequence
+var content: XNodeSequence
 ```
 
 The direct content that is an element, i.e. all the children:
 
 ```Swift
-var children: XChildrenSequence
+var children: XElementSequence
 ```
 
 All content in the tree of nodes that is started by the node itself, without the node itself, in the order of a depth-first traversal:
 
 ```Swift
-var allContent: XAllContentSequence
+var allContent: XNodeSequence
 ```
 
 All content in the tree of nodes that is started by the node, starting with the node itself:
 
 ```Swift
-var allContentIncludingSelf: XAllContentIncludingSelfSequence
+var allContentIncludingSelf: XNodeSequence
 ```
 
 The descendants, i.e. all content in the tree of nodes that is started by the node, without the node itself, that is an element:
 
 ```Swift
-var descendants: XDescendantsSequence
+var descendants: XElementSequence
 ```
 
 If a node is an element, the element itself and the descendants, starting with the element itself:
 
 ```Swift
-var descendantsIncludingSelf: XDescendantsIncludingSelfSequence
+var descendantsIncludingSelf: XElementSequence
 ```
 
 The (direct) content of an branch (element or document) are “siblings” to each other.
@@ -432,25 +432,25 @@ The following very short method names `previous` and `next` actually mean “the
 All nodes previous to the node (i.e. the previous siblings), in the order from the node:
 
 ```Swift
-var previous: XPreviousSequence
+var previous: XNodeSequence
 ```
 
 All previous siblings that are elements:
 
 ```Swift
-var previousElements: XPreviousElementsSequence
+var previousElements: XElementSequence
 ```
 
 All nodes next to the node (i.e. the next siblings):
 
 ```Swift
-var next: XNextSequence
+var next: XNodeSequence
 ```
 
 All next siblings that are elements:
 
 ```Swift
-var nextElements: XNextElementsSequence
+var nextElements: XElementSequence
 ```
 
 You may also ask for the previous or next node in the tree, in the order of a depth-first traversal. E.g. if a node is the last node of a subtree starting at a certain element and the element has a next sibling, this next sibling is “the next node in the tree” for that last node of the subtree. Getting the next or previous node in the tree is very efficient, as the library keep track of them anyway.

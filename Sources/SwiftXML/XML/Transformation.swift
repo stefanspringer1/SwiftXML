@@ -54,7 +54,7 @@ public class XTransformation {
             }
             else if let attributeAction = rule.action as? XAttributeAction {
                 iteratorsWithActions.append((
-                    XAttributeIterator(attributeIterator: XAttributesOfSameNameIterator(document: document, attributeName: rule.name, keepLast: true), keepLast: true),
+                    XBidirectionalAttributeIterator(attributeIterator: XAttributesOfSameNameIterator(document: document, attributeName: rule.name, keepLast: true), keepLast: true),
                     attributeAction
                 ))
             }
@@ -71,7 +71,7 @@ public class XTransformation {
                         action(next)
                     }
                 }
-                else if let iterator = _iterator as? XAttributeIterator, let action = _action as? XAttributeAction {
+                else if let iterator = _iterator as? XBidirectionalAttributeIterator, let action = _action as? XAttributeAction {
                     while let attribute = iterator.next() {
                         working = true
                         action(attribute)
