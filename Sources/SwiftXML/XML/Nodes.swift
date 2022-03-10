@@ -665,20 +665,8 @@ extension String: XNodeLike {}
 
 extension Array: XNodeLike where Element == XNodeLike {}
 
-extension XTraversalSequence: XNodeLike {}
-extension XNextSequence: XNodeLike {}
-extension XPreviousSequence: XNodeLike {}
-extension XNextElementsSequence: XNodeLike {}
-extension XPreviousElementsSequence: XNodeLike {}
-extension XContentSequence: XNodeLike {}
-extension XChildrenSequence: XNodeLike {}
-extension XAncestorsSequence: XNodeLike {}
-extension XAllContentIncludingSelfSequence: XNodeLike {}
-extension XAllContentSequence: XNodeLike {}
-extension XDescendantsSequence: XNodeLike {}
-extension XDescendantsIncludingSelfSequence: XNodeLike {}
-extension XElementsOfSameNameSequence: XNodeLike {}
-extension XAttributesOfSameNameSequence: XNodeLike {}
+extension XNodeSequence: XNodeLike {}
+extension XElementSequence: XNodeLike {}
 
 final class XAttribute: XNode, Named {
     
@@ -727,47 +715,11 @@ final class XNodeSampler {
         else if let s = thing as? String {
             nodes.append(XText(s))
         }
-        else if let sequence = thing as? XTraversalSequence {
+        else if let sequence = thing as? XNodeSequence {
             sequence.forEach { self.add($0) }
         }
-        else if let sequence = thing as? XNextSequence {
+        else if let sequence = thing as? XElementSequence {
             sequence.forEach { self.add($0) }
-        }
-        else if let sequence = thing as? XPreviousSequence {
-            sequence.forEach { self.add($0) }
-        }
-        else if let sequence = thing as? XNextElementsSequence {
-            sequence.forEach { self.add($0) }
-        }
-        else if let sequence = thing as? XPreviousElementsSequence {
-            sequence.forEach { self.add($0) }
-        }
-        else if let sequence = thing as? XContentSequence {
-            sequence.forEach { self.add($0) }
-        }
-        else if let sequence = thing as? XChildrenSequence {
-            sequence.forEach { self.add($0) }
-        }
-        else if let sequence = thing as? XAncestorsSequence {
-            sequence.forEach { self.add($0) }
-        }
-        else if let sequence = thing as? XAllContentSequence {
-            sequence.forEach { self.add($0) }
-        }
-        else if let sequence = thing as? XAllContentIncludingSelfSequence {
-            sequence.forEach { self.add($0) }
-        }
-        else if let sequence = thing as? XDescendantsSequence {
-            sequence.forEach { self.add($0) }
-        }
-        else if let sequence = thing as? XDescendantsIncludingSelfSequence {
-            sequence.forEach { self.add($0) }
-        }
-        else if let sequence = thing as? XElementsOfSameNameSequence {
-            sequence.forEach { self.add($0) }
-        }
-        else if let sequence = thing as? XAttributesOfSameNameSequence {
-            sequence.forEach { (_,element) in self.add(element) }
         }
         else if let p = thing as? CustomStringConvertible {
             nodes.append(XText(p.description))
