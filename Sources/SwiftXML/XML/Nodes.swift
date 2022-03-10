@@ -166,8 +166,8 @@ public class XNode {
         }
     }
     
-    public func insertPrevious(@XNodeBuilder builder: () -> XNodeLike) {
-        (builder() as? [XNode])?.forEach { insertPrevious($0) }
+    public func insertPrevious(@XNodeBuilder builder: () -> [XNode]) {
+        builder().forEach { insertPrevious($0) }
     }
     
     func insertNext(_ node: XNode) {
@@ -209,23 +209,23 @@ public class XNode {
         }
     }
     
-    public func insertNext(@XNodeBuilder builder: () -> XNodeLike) {
-        (builder() as? [XNode])?.reversed().forEach { insertNext($0) }
+    public func insertNext(@XNodeBuilder builder: () -> [XNode]) {
+        builder().reversed().forEach { insertNext($0) }
     }
     
     /**
      Replace the node by other nodes.
      If "forward", then detaching prefetches the next node in iterators.
      */
-    public func replace(forward: Bool = false, @XNodeBuilder builder: () -> XNodeLike) {
+    public func replace(forward: Bool = false, @XNodeBuilder builder: () -> [XNode]) {
         if let theNext = _next {
             remove(forward: forward)
-            (builder() as? [XNode])?.forEach { theNext.insertPrevious($0) }
+            builder().forEach { theNext.insertPrevious($0) }
             
         }
         else if let theParent = _parent {
             remove(forward: forward)
-            (builder() as? [XNode])?.forEach { theParent.add($0) }
+            builder().forEach { theParent.add($0) }
         }
     }
     
@@ -585,8 +585,8 @@ public class XBranch: XNode {
         }
     }
     
-    public func add(skip: Bool = false, @XNodeBuilder builder: () -> XNodeLike) {
-        (builder() as? [XNode])?.forEach { add($0, skip: skip) }
+    public func add(skip: Bool = false, @XNodeBuilder builder: () -> [XNode]) {
+        builder().forEach { add($0, skip: skip) }
     }
     
     /**
@@ -639,15 +639,15 @@ public class XBranch: XNode {
         }
     }
     
-    public func addFirst(skip: Bool = false, @XNodeBuilder builder: () -> XNodeLike) {
-        (builder() as? [XNode])?.reversed().forEach { addFirst($0, skip: skip) }
+    public func addFirst(skip: Bool = false, @XNodeBuilder builder: () -> [XNode]) {
+        builder().reversed().forEach { addFirst($0, skip: skip) }
     }
     
     /**
      Set the contents of the node.
      If "forward", then detaching prefetches the next node in iterators.
      */
-    public func set(forward: Bool = false, @XNodeBuilder builder: () -> XNodeLike) {
+    public func set(forward: Bool = false, @XNodeBuilder builder: () -> [XNodeLike]) {
         clear(forward: forward)
         (builder() as? [XNode])?.forEach { add($0) }
     }
@@ -663,10 +663,15 @@ extension XNode: XNodeLike {}
 
 extension String: XNodeLike {}
 
-extension Array: XNodeLike where Element == XNodeLike {}
-
 extension XNodeSequence: XNodeLike {}
 extension XElementSequence: XNodeLike {}
+extension XNodeLikeSequence: XNodeLike {}
+
+extension Array where Element == XNodeLike? {
+    var xml: XNodeLikeSequence {
+        get { return XNodeLikeSequenceFromArray(formArray: self) }
+    }
+}
 
 final class XAttribute: XNode, Named {
     
@@ -706,7 +711,7 @@ final class XAttribute: XNode, Named {
 
 final class XNodeSampler {
     
-    var nodes: [XNodeLike] = [XNode]()
+    var nodes: [XNode] = [XNode]()
     
     func add(_ thing: XNodeLike) {
         if let node = thing as? XNode {
@@ -721,18 +726,15 @@ final class XNodeSampler {
         else if let sequence = thing as? XElementSequence {
             sequence.forEach { self.add($0) }
         }
-        else if let p = thing as? CustomStringConvertible {
-            nodes.append(XText(p.description))
-        }
-        else {
-            nodes.append(XText("[\(type(of: thing))]"))
+        else if let sequence = thing as? XNodeLikeSequence {
+            sequence.forEach { self.add($0) }
         }
     }
 }
 
 @resultBuilder
 public struct XNodeBuilder {
-    public static func buildBlock(_ components: XNodeLike?...) -> XNodeLike {
+    public static func buildBlock(_ components: XNodeLike?...) -> [XNode] {
         let sampler = XNodeSampler()
         components.forEach { if let nodeLike = $0 { sampler.add(nodeLike) } }
         return sampler.nodes
@@ -770,7 +772,7 @@ public class Attachments {
 
 public final class XElement: XBranch, CustomStringConvertible {
     
-    var _treeIterators = WeakList<XElementTreeIterator>()
+    var _treeIterators = WeakList<XBidirectionalElementIterator>()
     var _nameIterators = WeakList<XElementNameIterator>()
     
     var _attributes: [String:XAttribute]? = nil
@@ -926,13 +928,13 @@ public final class XElement: XBranch, CustomStringConvertible {
         }
     }
     
-    public init(_ name: String, _ attributes: [String:String?]? = nil, adjustDocument _adjustDocument: Bool = false, @XNodeBuilder builder: () -> XNodeLike) {
+    public init(_ name: String, _ attributes: [String:String?]? = nil, adjustDocument _adjustDocument: Bool = false, @XNodeBuilder builder: () -> [XNode]) {
         self._name = name
         super.init()
         if let theAttributes = attributes {
             setAttributes(attributes: theAttributes)
         }
-        (builder() as? [XNode])?.forEach { node in
+        builder().forEach { node in
             add(node)
         }
         if _adjustDocument {

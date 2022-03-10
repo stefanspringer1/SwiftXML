@@ -564,13 +564,12 @@ let myElement = XElement("div") {
 }
 ```
 
-Sometimes the compiler needs a hint for the type (use `XNodeLike`):
+For resulting arrays of more complex content, use the property `xml` to insert them (`xml` also flattens arrays of sequences):
 
 ```Swift
 let myElement = XElement("div") {
-    XElement("hr")
-    ["Hallo ", "Welt"] as [XNodeLike]
-    XElement("hr")
+    ["Hello ", " ", "World"].xml
+    document.children.map { $0.children }.xml
 }
 ```
 

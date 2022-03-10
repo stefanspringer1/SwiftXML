@@ -56,10 +56,10 @@ public final class XBidirectionalNodeIterator: XNodeIterator {
     }
 }
 
-public final class XElementTreeIterator: IteratorProtocol {
+public final class XBidirectionalElementIterator: XElementIterator {
     
-    var previousIterator: XElementTreeIterator? = nil
-    var nextIterator: XElementTreeIterator? = nil
+    var previousIterator: XBidirectionalElementIterator? = nil
+    var nextIterator: XBidirectionalElementIterator? = nil
     
     public typealias Element = XElement
     
@@ -72,7 +72,7 @@ public final class XElementTreeIterator: IteratorProtocol {
     weak var current: XElement? = nil
     var prefetched = false
     
-    public func next() -> XElement? {
+    public override func next() -> XElement? {
         if prefetched {
             prefetched = false
             return current
@@ -99,7 +99,7 @@ public final class XElementTreeIterator: IteratorProtocol {
     }
 }
 
-public final class XElementNameIterator: IteratorProtocol {
+public final class XElementNameIterator: XElementIterator {
     
     var previousIterator: XElementNameIterator? = nil
     var nextIterator: XElementNameIterator? = nil
@@ -118,7 +118,7 @@ public final class XElementNameIterator: IteratorProtocol {
     weak var current: XElement? = nil
     var prefetched = false
     
-    public func next() -> XElement? {
+    public override func next() -> XElement? {
         if prefetched {
             prefetched = false
             return current

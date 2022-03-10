@@ -56,8 +56,8 @@ public final class XNextElementsSequence: XElementSequence {
         self.node = node
     }
     
-    public func makeIterator() -> XElementTreeIterator {
-        return XElementTreeIterator(elementIterator: XNextElementsIterator(node: node))
+    public override func makeIterator() -> XBidirectionalElementIterator {
+        return XBidirectionalElementIterator(elementIterator: XNextElementsIterator(node: node))
     }
 }
 
@@ -69,8 +69,8 @@ public final class XPreviousElementsSequence: XElementSequence {
         self.node = node
     }
     
-    public func makeIterator() -> XElementTreeIterator {
-        return XElementTreeIterator(elementIterator: XPreviousElementsIterator(node: node))
+    public override func makeIterator() -> XBidirectionalElementIterator {
+        return XBidirectionalElementIterator(elementIterator: XPreviousElementsIterator(node: node))
     }
 }
 
@@ -95,8 +95,8 @@ public final class XChildrenSequence: XElementSequence {
         self.node = node
     }
     
-    public func makeIterator() -> XElementTreeIterator {
-        return XElementTreeIterator(elementIterator: XChildrenIterator(node: node))
+    public override func makeIterator() -> XElementIterator {
+        return XBidirectionalElementIterator(elementIterator: XChildrenIterator(node: node))
     }
 }
 
@@ -108,8 +108,8 @@ public final class XAncestorsSequence: XElementSequence {
         self.node = node
     }
     
-    public func makeIterator() -> XElementTreeIterator {
-        return XElementTreeIterator(elementIterator: XAncestorsIterator(startNode: node))
+    public override func makeIterator() -> XBidirectionalElementIterator {
+        return XBidirectionalElementIterator(elementIterator: XAncestorsIterator(startNode: node))
     }
 }
 
@@ -147,8 +147,8 @@ public final class XDescendantsSequence: XElementSequence {
         self.node = node
     }
     
-    public func makeIterator() -> XElementTreeIterator {
-        return XElementTreeIterator(elementIterator: XDescendantsIterator(node: node))
+    public override func makeIterator() -> XBidirectionalElementIterator {
+        return XBidirectionalElementIterator(elementIterator: XDescendantsIterator(node: node))
     }
 }
 
@@ -160,8 +160,8 @@ public final class XDescendantsIncludingSelfSequence: XElementSequence {
         self.element = element
     }
     
-    public func makeIterator() -> XElementTreeIterator {
-        return XElementTreeIterator(elementIterator: XDescendantsIncludingSelfIterator(element: element))
+    public override func makeIterator() -> XBidirectionalElementIterator {
+        return XBidirectionalElementIterator(elementIterator: XDescendantsIncludingSelfIterator(element: element))
     }
 }
 
@@ -175,7 +175,7 @@ public final class XElementsOfSameNameSequence: XElementSequence {
         self.name = name
     }
     
-    public func makeIterator() -> XElementNameIterator {
+    public override func makeIterator() -> XElementIterator {
         return XElementNameIterator(
             elementIterator: XElementsOfSameNameIterator(
                 document: document,

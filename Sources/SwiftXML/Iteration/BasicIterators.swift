@@ -45,6 +45,55 @@ public class XAttributeSequence: Sequence {
     }
 }
 
+public class XNodeLikeIterator: IteratorProtocol {
+    public typealias Element = XNodeLike
+    public func next() -> XNodeLike? {
+        return nil
+    }
+}
+
+public class XNodeLikeSequence: Sequence {
+    public func makeIterator() -> XNodeLikeIterator {
+        return XNodeLikeIterator()
+    }
+}
+
+public class XNodeLikeSequenceFromArray: XNodeLikeSequence {
+    let array: Array<XNodeLike?>
+    
+    public init(formArray array: Array<XNodeLike?>) {
+        self.array = array
+    }
+    
+    public override func makeIterator() -> XNodeLikeIterator {
+        return XNodesLikeIteratorFromArray(formArray: array)
+    }
+}
+    
+    
+public class XNodesLikeIteratorFromArray: XNodeLikeIterator {
+    let array: Array<XNodeLike?>
+    var nextIndex = -1
+    
+    public init(formArray array: Array<XNodeLike?>) {
+        self.array = array
+    }
+    
+    public override func next() -> XNodeLike? {
+        var result: XNodeLike? = nil
+        repeat {
+            nextIndex += 1
+            if nextIndex < array.count {
+                result = array[nextIndex]
+            }
+            else {
+                return nil
+            }
+        } while result == nil
+        return result
+    }
+}
+
 /**
  Iterates though the elements of a specified name.
  */
