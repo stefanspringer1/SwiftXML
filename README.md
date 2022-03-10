@@ -474,6 +474,25 @@ myElement.descendants.forEach { descendant in
     print("the name of the descendant is \(descendant.name)")
 }
 ```
+## Finding related nodes with filters
+
+All of the methods in the previous section that return a sequence also allow a condition as first argument for filtering, e.g. (`element["take"]` returns the value of the attribute with name `take` of `element`):
+
+```Swift
+let document = try parseXML(fromText: """
+<a><b/><c take="true"/><d/><e take="true"/></a>
+""")
+
+document
+    .descendants { element in element["take"] == "true" }
+    .forEach { descendant in print(descendant) }
+```
+
+Output:
+```text
+<c take="true">
+<e take="true">
+```
 
 ## Node properties
 

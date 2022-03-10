@@ -13,6 +13,28 @@ public class XNodeIterator: IteratorProtocol {
     }
 }
 
+public class XNodeIteratorWithCondition: XNodeIterator {
+    
+    let iterator: XNodeIterator
+    let condition: (XNode) -> Bool
+    
+    init(iterator: XNodeIterator, condition: @escaping (XNode) -> Bool) {
+        self.iterator = iterator
+        self.condition = condition
+    }
+    
+    public override func next() -> XNode? {
+        var _next: XNode? = nil
+        repeat {
+            _next = iterator.next()
+            if let node = _next, condition(node) {
+                return node
+            }
+        } while _next != nil
+        return nil
+    }
+}
+
 public class XNodeSequence: Sequence {
     public func makeIterator() -> XNodeIterator {
         return XNodeIterator()
@@ -26,6 +48,28 @@ public class XElementIterator: IteratorProtocol {
     }
 }
 
+public class XElementIteratorWithCondition: XElementIterator {
+    
+    let iterator: XElementIterator
+    let condition: (XElement) -> Bool
+    
+    init(iterator: XElementIterator, condition: @escaping (XElement) -> Bool) {
+        self.iterator = iterator
+        self.condition = condition
+    }
+    
+    public override func next() -> XElement? {
+        var _next: XElement? = nil
+        repeat {
+            _next = iterator.next()
+            if let element = _next, condition(element) {
+                return element
+            }
+        } while _next != nil
+        return nil
+    }
+}
+
 public class XElementSequence: Sequence {
     public func makeIterator() -> XElementIterator {
         return XElementIterator()
@@ -35,6 +79,28 @@ public class XElementSequence: Sequence {
 public class XAttributeIterator: IteratorProtocol {
     public typealias Element = XAttributeSpot
     public func next() -> XAttributeSpot? {
+        return nil
+    }
+}
+
+public class XAttributeIteratorWithCondition: XAttributeIterator {
+    
+    let iterator: XAttributeIterator
+    let condition: (XAttributeSpot) -> Bool
+    
+    init(iterator: XAttributeIterator, condition: @escaping (XAttributeSpot) -> Bool) {
+        self.iterator = iterator
+        self.condition = condition
+    }
+    
+    public override func next() -> XAttributeSpot? {
+        var _next: XAttributeSpot? = nil
+        repeat {
+            _next = iterator.next()
+            if let attributeSpot = _next, condition(attributeSpot) {
+                return attributeSpot
+            }
+        } while _next != nil
         return nil
     }
 }

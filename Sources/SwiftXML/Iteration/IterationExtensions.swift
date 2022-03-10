@@ -10,71 +10,88 @@ import Foundation
 extension XNode {
     
     public var ancestors: XElementSequence {
-        get {
-            return XAncestorsSequence(node: self)
-        }
+        get { XAncestorsSequence(node: self) }
+    }
+    
+    public func ancestors(with condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XAncestorsSequence(node: self), condition: condition)
     }
     
     public var content: XNodeSequence {
-        get {
-            return XContentSequence(node: self)
-        }
+        get { XContentSequence(node: self) }
+    }
+    
+    public func content(with condition: @escaping (XNode) -> Bool) -> XNodeSequence {
+        return XNodeSequenceWithCondition(sequence: XContentSequence(node: self), condition: condition)
     }
     
     public var children: XElementSequence {
-        get {
-            return XChildrenSequence(node: self)
-        }
+        get { return XChildrenSequence(node: self) }
+    }
+    
+    public func children(with condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XChildrenSequence(node: self), condition: condition)
     }
     
     public var next: XNodeSequence {
-        get {
-            return XNextSequence(node: self)
-        }
+        get { XNextSequence(node: self) }
+    }
+    
+    public func next(with condition: @escaping (XNode) -> Bool) -> XNodeSequence {
+        return XNodeSequenceWithCondition(sequence: XNextSequence(node: self), condition: condition)
     }
     
     public var previous: XNodeSequence {
-        get {
-            return XPreviousSequence(node: self)
-        }
+        get { XPreviousSequence(node: self) }
+    }
+    
+    public func previous(with condition: @escaping (XNode) -> Bool) -> XNodeSequence {
+        return XNodeSequenceWithCondition(sequence: XPreviousSequence(node: self), condition: condition)
     }
     
     public var nextElements: XElementSequence {
-        get {
-            return XNextElementsSequence(node: self)
-        }
+        get { XNextElementsSequence(node: self) }
+    }
+    
+    public func nextElements(with condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XNextElementsSequence(node: self), condition: condition)
     }
     
     public var previousElements: XElementSequence {
-        get {
-            return XPreviousElementsSequence(node: self)
-        }
+        get { XPreviousElementsSequence(node: self) }
     }
     
     public var allContent: XNodeSequence {
-        get {
-            return XAllContentSequence(node: self)
-        }
+        get { XAllContentSequence(node: self) }
     }
+    
+    public func allContent(with condition: @escaping (XNode) -> Bool) -> XNodeSequence {
+        return XNodeSequenceWithCondition(sequence: XAllContentSequence(node: self), condition: condition)
+    }
+    
     public var allContentIncludingSelf: XNodeSequence {
-        get {
-            return XAllContentIncludingSelfSequence(node: self)
-        }
+        get { XAllContentIncludingSelfSequence(node: self) }
+    }
+    
+    public func allContentIncludingSelf(with condition: @escaping (XNode) -> Bool) -> XNodeSequence {
+        return XNodeSequenceWithCondition(sequence: XAllContentIncludingSelfSequence(node: self), condition: condition)
     }
     
     public var descendants: XElementSequence {
-        get {
-            return XDescendantsSequence(node: self)
-        }
+        get { XDescendantsSequence(node: self) }
+    }
+    
+    public func descendants(with condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XDescendantsSequence(node: self), condition: condition)
     }
 }
 
 extension XElement {
     
-    public var descendantsIncludingSelf: XElementSequence {
-        get {
-            return XDescendantsIncludingSelfSequence(element: self)
-        }
+    public var descendantsIncludingSelf: XElementSequence { get { XDescendantsIncludingSelfSequence(element: self) } }
+    
+    public func descendantsIncludingSelf(with condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XDescendantsIncludingSelfSequence(element: self), condition: condition)
     }
     
 }

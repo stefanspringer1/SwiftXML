@@ -7,6 +7,65 @@
 
 import Foundation
 
+// >>>>>>>>>>>>>>>>
+// with conditions:
+
+public final class XElementSequenceWithCondition: XElementSequence {
+    
+    let sequence: XElementSequence
+    let condition: (XElement) -> Bool
+    
+    init(sequence: XElementSequence, condition: @escaping (XElement) -> Bool) {
+        self.sequence = sequence
+        self.condition = condition
+    }
+    
+    public override func makeIterator() -> XElementIterator {
+        return XElementIteratorWithCondition(
+            iterator: sequence.makeIterator(),
+            condition: condition
+        )
+    }
+}
+
+public final class XNodeSequenceWithCondition: XNodeSequence {
+    
+    let sequence: XNodeSequence
+    let condition: (XNode) -> Bool
+    
+    init(sequence: XNodeSequence, condition: @escaping (XNode) -> Bool) {
+        self.sequence = sequence
+        self.condition = condition
+    }
+    
+    public override func makeIterator() -> XNodeIterator {
+        return XNodeIteratorWithCondition(
+            iterator: sequence.makeIterator(),
+            condition: condition
+        )
+    }
+}
+
+public final class XAttributeSequenceWithCondition: XAttributeSequence {
+    
+    let sequence: XAttributeSequence
+    let condition: (XAttributeSpot) -> Bool
+    
+    init(sequence: XAttributeSequence, condition: @escaping (XAttributeSpot) -> Bool) {
+        self.sequence = sequence
+        self.condition = condition
+    }
+    
+    public override func makeIterator() -> XAttributeIterator {
+        return XAttributeIteratorWithCondition(
+            iterator: sequence.makeIterator(),
+            condition: condition
+        )
+    }
+}
+
+// <<<<<<<<<<<<<<<<
+
 public final class XTraversalSequence: XNodeSequence {
     
     let node: XNode
@@ -17,7 +76,7 @@ public final class XTraversalSequence: XNodeSequence {
         self.directionIndicator = directionIndicator
     }
     
-    public override func makeIterator() -> XBidirectionalNodeIterator {
+    public override func makeIterator() -> XNodeIterator {
         return XBidirectionalNodeIterator(nodeIterator: XTreeIterator(startNode: node, directionIndicator: directionIndicator))
     }
 }
@@ -30,7 +89,7 @@ public final class XNextSequence: XNodeSequence {
         self.node = node
     }
     
-    public override func makeIterator() -> XBidirectionalNodeIterator {
+    public override func makeIterator() -> XNodeIterator {
         return XBidirectionalNodeIterator(nodeIterator: XNextIterator(node: node))
     }
 }
@@ -82,7 +141,7 @@ public final class XContentSequence: XNodeSequence {
         self.node = node
     }
     
-    public override func makeIterator() -> XBidirectionalNodeIterator {
+    public override func makeIterator() -> XNodeIterator {
         return XBidirectionalNodeIterator(nodeIterator: XContentsIterator(node: node))
     }
 }
@@ -147,7 +206,7 @@ public final class XDescendantsSequence: XElementSequence {
         self.node = node
     }
     
-    public override func makeIterator() -> XBidirectionalElementIterator {
+    public override func makeIterator() -> XElementIterator {
         return XBidirectionalElementIterator(elementIterator: XDescendantsIterator(node: node))
     }
 }
