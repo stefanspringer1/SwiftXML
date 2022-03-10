@@ -545,6 +545,31 @@ Output:
 <e take="true">
 ```
 
+## Chained iterators
+
+Iterators can also be chained.
+
+Example:
+
+```Swift
+let document = try parseXML(fromText: """
+<a><b><c><d/></c></b></a>
+""")
+
+document.descendants.descendants.forEach { print($0) }
+```
+
+Output:
+
+```text
+<b>
+<c>
+<d>
+<c>
+<d>
+<d>
+```
+
 ## Constructing XML
 
 ### Constructing an empty element

@@ -61,6 +61,10 @@ extension XNode {
         get { XPreviousElementsSequence(node: self) }
     }
     
+    public func previousElements(with condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XPreviousElementsSequence(node: self), condition: condition)
+    }
+    
     public var allContent: XNodeSequence {
         get { XAllContentSequence(node: self) }
     }
@@ -84,6 +88,7 @@ extension XNode {
     public func descendants(with condition: @escaping (XElement) -> Bool) -> XElementSequence {
         return XElementSequenceWithCondition(sequence: XDescendantsSequence(node: self), condition: condition)
     }
+    
 }
 
 extension XElement {
