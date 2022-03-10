@@ -107,6 +107,8 @@ document.descendants
     }
 ```
 
+But it might be better to use conditions on the node iterators (see the section on finding related nodes with filters) or chaining of node iterators (see the section on chained iterators).
+
 The user of the library can also provide sets of rules to be applied (see the code at the beginning and a full example in the section about rules). In such a rule, the user defines what to do with an element or attribute with a certain name. A set of rules can then be applied to a document, i.e. the rules are applied in the order of their definition. This is repeated, guaranteeing that a rule is only applied once to the same object (if not fully removed from the document and added again, cf. the section below on document membership), until no more application takes places. So elements can be added during application of a rule and then later be processed by the same or another rule.
 
 ### Other properties
