@@ -270,6 +270,57 @@ Sometimes, only a “shallow” clone is needed, i.e. the node itself without th
 func shallowClone(forwardref: Bool) -> XNode
 ```
 
+## Node properties
+
+### Element names
+
+Element names can be read and set by the using the property `name` of an element.
+
+### Text 
+
+For a text node (`XText`) its text can be read and set via its property `value`. So there is no need to replace a `XText` node by another to change text. Please also see the section below on handling of text.
+
+### Changing and reading attributes
+
+The attributes of an element can be read and set via the “index notation”. If an attribute is not set, `nil` is returned; reversely, setting an attribute to `nil` results in removing it.
+
+Example:
+
+```Swift
+// setting the "id" attribute to "1":
+myElement["id"] = "1"
+
+// reading an attribute:
+if let id = myElement["id"] {
+    print("the ID is \(id)")
+}
+```
+
+### Attachments
+
+Branches (i.e. element and documents) can have “attachments”. Those are objects that can be attached via a textual key to those branches but that not considered as belonging to the actual XML tree.
+
+The attachments can be reached by the property `attached`, and accessing and setting them is analogous to attributes:
+
+Example: attaching a “note” by attaching it with key `"note"` (it uses an element constructed with content as explained in the next section):
+
+```Swift
+myElement.attached["note"] = "this is a note"
+
+// replacing the attached note by a more complex object:
+myElement.attached["note"] = XElement("note") {
+    "this is a note as element instead"
+}
+
+// getting the attached note:
+if let note = myElement.attached["note"] as? XElement {
+    print("note: \((note.first as? XText)?.value ?? "")")
+}
+
+// removing the attached note:
+myElement.attached["note"] = nil
+```
+
 ## Traversals
 
 Traversing a tree depth-first starting from a node (including a document) can be done by the following methods:
@@ -476,7 +527,7 @@ myElement.descendants.forEach { descendant in
 ```
 ## Finding related nodes with filters
 
-All of the methods in the previous section that return a sequence also allow a condition as first argument for filtering, e.g. (`element["take"]` returns the value of the attribute with name `take` of `element`):
+All of the methods in the previous section that return a sequence also allow a condition as first argument for filtering:
 
 ```Swift
 let document = try parseXML(fromText: """
@@ -492,57 +543,6 @@ Output:
 ```text
 <c take="true">
 <e take="true">
-```
-
-## Node properties
-
-### Element names
-
-Element names can be read and set by the using the property `name` of an element.
-
-### Text 
-
-For a text node (`XText`) its text can be read and set via its property `value`. So there is no need to replace a `XText` node by another to change text. Please also see the section below on handling of text.
-
-### Changing and reading attributes
-
-The attributes of an element can be read and set via the “index notation”. If an attribute is not set, `nil` is returned; reversely, setting an attribute to `nil` results in removing it.
-
-Example:
-
-```Swift
-// setting the "id" attribute to "1":
-myElement["id"] = "1"
-
-// reading an attribute:
-if let id = myElement["id"] {
-    print("the ID is \(id)")
-}
-```
-
-### Attachments
-
-Branches (i.e. element and documents) can have “attachments”. Those are objects that can be attached via a textual key to those branches but that not considered as belonging to the actual XML tree.
-
-The attachments can be reached by the property `attached`, and accessing and setting them is analogous to attributes:
-
-Example: attaching a “note” by attaching it with key `"note"` (it uses an element constructed with content as explained in the next section):
-
-```Swift
-myElement.attached["note"] = "this is a note"
-
-// replacing the attached note by a more complex object:
-myElement.attached["note"] = XElement("note") {
-    "this is a note as element instead"
-}
-
-// getting the attached note:
-if let note = myElement.attached["note"] as? XElement {
-    print("note: \((note.first as? XText)?.value ?? "")")
-}
-
-// removing the attached note:
-myElement.attached["note"] = nil
 ```
 
 ## Constructing XML
