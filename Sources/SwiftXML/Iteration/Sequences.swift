@@ -126,6 +126,19 @@ public final class XAllContentSequence: Sequence {
     }
 }
 
+public final class XAllContentIncludingSelfSequence: Sequence {
+    
+    let node: XNode
+    
+    init(node: XNode) {
+        self.node = node
+    }
+    
+    public func makeIterator() -> XNodeIterator {
+        return XNodeIterator(nodeIterator: XAllContentsIterator(node: node))
+    }
+}
+
 public final class XDescendantsSequence: Sequence {
     
     let node: XNode

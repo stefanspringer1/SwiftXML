@@ -343,7 +343,9 @@ myDocument.attributes(ofName: "id").forEach { (value,element) in
 
 ## Finding related nodes
 
-Starting from some node, you might want to find related nodes, e.g. its children. The following methods are provided. Sequences returned are always lazy sequences, iterating through them gives items of the obvious type. As mentioned in the general description of the library, manipulating the XML tree during such an iteration is allowed.
+Starting from some node, you might want to find related nodes, e.g. its children. The names chosen for the accordings methods come from the idea that all nodes have a natural order, namely the order of a depth-first traversal, which is the same order in which the content of an XML document is stored in a text file. This order gives a meaning to method names such a `nextSibling`.
+
+Sequences returned are always lazy sequences, iterating through them gives items of the obvious type. As mentioned in the general description of the library, manipulating the XML tree during such an iteration is allowed.
 
 Finding the document the node is contained in:
 
@@ -363,25 +365,43 @@ All its ancestor elements:
 var ancestors: XAncestorsSequence
 ```
 
-The content of a document or an element:
+Get the first content of a branch:
+
+```Swift
+var first: XNode?
+```
+
+Get the last content of a branch:
+
+```Swift
+var last: XNode?
+```
+
+The direct content of a document or an element (“direct” means that their parent is this document or element):
 
 ```Swift
 var content: XContentSequence
 ```
 
-The content that is an element, i.e. all the children:
+The direct content that is an element, i.e. all the children:
 
 ```Swift
 var children: XChildrenSequence
 ```
 
-All content in the tree of nodes that is started by the node itself, without the node itself:
+All content in the tree of nodes that is started by the node itself, without the node itself, in the order of a depth-first traversal:
 
 ```Swift
 var allContent: XAllContentSequence
 ```
 
-The descendants, i.e. all content in the tree of nodes that is started by the node itself, without the node itself, that is an element:
+All content in the tree of nodes that is started by the node, starting with the node itself:
+
+```Swift
+var allContentIncludingSelf: XAllContentIncludingSelfSequence
+```
+
+The descendants, i.e. all content in the tree of nodes that is started by the node, without the node itself, that is an element:
 
 ```Swift
 var descendants: XDescendantsSequence
@@ -391,6 +411,34 @@ If a node is an element, the element itself and the descendants, starting with t
 
 ```Swift
 var descendantsIncludingSelf: XDescendantsIncludingSelfSequence
+```
+
+The (direct) content of an branch (element or document) are “siblings” to each other.
+
+The previous sibling of a node:
+
+```Swift
+var previousNode: XNode?
+```
+
+The next sibling:
+
+```Swift
+var nextNode: XNode?
+```
+
+The following very short method names `previous` and `next` actually mean “the previous siblings” and “the next siblings”, repectively. Those method names are chosen to be so short because they are such a common use case.
+
+All nodes previous to the node (i.e. the previous siblings), in the order from the node:
+
+```Swift
+var previous: XPreviousSequence
+```
+
+All previous siblings that are elements:
+
+```Swift
+var previousElements: XPreviousElementsSequence
 ```
 
 All nodes next to the node (i.e. the next siblings):
@@ -405,28 +453,18 @@ All next siblings that are elements:
 var nextElements: XNextElementsSequence
 ```
 
-All nodes previous to the node (i.e. the previous siblings), in the order from the node:
+You may also ask for the previous or next node in the tree, in the order of a depth-first traversal. E.g. if a node is the last node of a subtree starting at a certain element and the element has a next sibling, this next sibling is “the next node in the tree” for that last node of the subtree. Getting the next or previous node in the tree is very efficient, as the library keep track of them anyway.
+
+The next node in the tree:
 
 ```Swift
-var previous: XPreviousSequence
+var nextNodeInTree: XNode?
 ```
 
-All previous siblings that are elements:
+The previous node in the tree:
 
 ```Swift
-var previousElements: XPreviousElementsSequence
-```
-
-Get the first content of a branch:
-
-```Swift
-var first: XNode?
-```
-
-Get the last content of a branch:
-
-```Swift
-var last: XNode?
+var previousNodeInTree: XNode?
 ```
 
 Example:

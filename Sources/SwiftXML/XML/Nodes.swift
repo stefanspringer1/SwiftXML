@@ -272,8 +272,14 @@ public class XNode {
     weak var _previous: XNode? = nil
     var _next: XNode? = nil
     
+    public var previousNode: XNode? { get { _next } }
+    public var nextNode: XNode? { get { _next } }
+    
     weak var _previousInTree: XNode? = nil
     weak var _nextInTree: XNode? = nil
+    
+    public var previousNodeInTree: XNode? { get { _previousInTree } }
+    public var nextNodeInTree: XNode? { get { _nextInTree } }
     
     /**
      Removes the node from the tree structure and the tree order,
@@ -667,6 +673,7 @@ extension XPreviousElementsSequence: XNodeLike {}
 extension XContentSequence: XNodeLike {}
 extension XChildrenSequence: XNodeLike {}
 extension XAncestorsSequence: XNodeLike {}
+extension XAllContentIncludingSelfSequence: XNodeLike {}
 extension XAllContentSequence: XNodeLike {}
 extension XDescendantsSequence: XNodeLike {}
 extension XDescendantsIncludingSelfSequence: XNodeLike {}
@@ -745,6 +752,9 @@ final class XNodeSampler {
             sequence.forEach { self.add($0) }
         }
         else if let sequence = thing as? XAllContentSequence {
+            sequence.forEach { self.add($0) }
+        }
+        else if let sequence = thing as? XAllContentIncludingSelfSequence {
             sequence.forEach { self.add($0) }
         }
         else if let sequence = thing as? XDescendantsSequence {

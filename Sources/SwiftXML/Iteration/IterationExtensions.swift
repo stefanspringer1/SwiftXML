@@ -56,6 +56,11 @@ extension XNode {
             return XAllContentSequence(node: self)
         }
     }
+    public var allContentIncludingSelf: XAllContentIncludingSelfSequence {
+        get {
+            return XAllContentIncludingSelfSequence(node: self)
+        }
+    }
     
     public var descendants: XDescendantsSequence {
         get {

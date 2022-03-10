@@ -408,6 +408,48 @@ public final class XAllContentsIterator: XNodeIteratorProtocol {
 }
 
 /**
+ Iterates though all content (tree traversal) of a branch.
+ */
+public final class XAllContentsIncludingSelfIterator: XNodeIteratorProtocol {
+    
+    weak var startNode: XNode?
+    weak var currentNode: XNode? = nil
+    var started = false
+    
+    public init(
+        node: XNode
+    ) {
+        self.startNode = node
+    }
+    
+    public func next() -> XNode? {
+        if startNode?.getLastInTree() === currentNode {
+            currentNode = nil
+        }
+        else if started == false {
+            currentNode = startNode
+            started = true
+        }
+        else {
+            currentNode = currentNode?._nextInTree
+        }
+        return currentNode
+    }
+    
+    public func previous() -> XNode? {
+        if currentNode === startNode {
+            currentNode = nil
+            started = false
+            return nil
+        }
+        else {
+            currentNode = currentNode?._previousInTree
+            return currentNode
+        }
+    }
+}
+
+/**
  Iterates though all elements (tree traversal) of a branch.
  */
 public final class XDescendantsIterator: XElementIteratorProtocol {
