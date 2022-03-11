@@ -555,7 +555,13 @@ Example:
 
 ```Swift
 let document = try parseXML(fromText: """
-<a><b><c><d/></c></b></a>
+<a>
+    <b>
+        <c>
+            <d/>
+        </c>
+    </b>
+</a>
 """)
 
 document.descendants.descendants.forEach { print($0) }
