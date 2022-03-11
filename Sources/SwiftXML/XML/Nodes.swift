@@ -45,6 +45,16 @@ public class XNode {
         }
     }
     
+    public func r(where condition: (XNode) -> Bool) -> XNode? {
+        let node = _r
+        if let theNode = node, condition(theNode) {
+            return node
+        }
+        else {
+            return nil
+        }
+    }
+    
     /**
      The oldest source of cloning.
      */
@@ -55,6 +65,16 @@ public class XNode {
                 ref = further
             }
             return ref
+        }
+    }
+    
+    public func rr(where condition: (XNode) -> Bool) -> XNode? {
+        let node = rr
+        if let theNode = node, condition(theNode) {
+            return node
+        }
+        else {
+            return nil
         }
     }
     
@@ -269,6 +289,16 @@ public class XNode {
         }
     }
     
+    public func parent(where condition: (XElement) -> Bool) -> XElement? {
+        let node = parent
+        if let theNode = node, condition(theNode) {
+            return node
+        }
+        else {
+            return nil
+        }
+    }
+    
     weak var _previous: XNode? = nil
     var _next: XNode? = nil
     
@@ -280,6 +310,26 @@ public class XNode {
     
     public var previousNodeInTree: XNode? { get { _previousInTree } }
     public var nextNodeInTree: XNode? { get { _nextInTree } }
+    
+    public func previousNodeInTree(where condition: (XNode) -> Bool) -> XNode? {
+        let node = previousNodeInTree
+        if let theNode = node, condition(theNode) {
+            return node
+        }
+        else {
+            return nil
+        }
+    }
+    
+    public func nextNodeInTree(where condition: (XNode) -> Bool) -> XNode? {
+        let node = nextNodeInTree
+        if let theNode = node, condition(theNode) {
+            return node
+        }
+        else {
+            return nil
+        }
+    }
     
     /**
      Removes the node from the tree structure and the tree order,
@@ -471,9 +521,29 @@ public class XBranch: XNode {
         }
     }
     
+    public func first(where condition: (XNode) -> Bool) -> XNode? {
+        let node = _firstChild
+        if let theNode = node, condition(theNode) {
+            return node
+        }
+        else {
+            return nil
+        }
+    }
+    
     public var last: XNode? {
         get {
             return _lastChild
+        }
+    }
+    
+    public func last(where condition: (XNode) -> Bool) -> XNode? {
+        let node = _lastChild
+        if let theNode = node, condition(theNode) {
+            return node
+        }
+        else {
+            return nil
         }
     }
     

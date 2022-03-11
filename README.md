@@ -90,24 +90,7 @@ The output is:
 <a><item id="2"/><item id="4"/></a>
 ```
 
-Of course, since those iterations are regular sequences, all according Swift library functions like `map` and `filter` can be used. E.g., the `multiply` example could also have been implemented as follows:
-
-```Swift
-document.descendants
-    .filter { element in element.name == "item" }
-    .map { item in (item,Int(item["multiply"] ?? "") ?? 1) }
-    .filter { (item,multiply) in multiply > 1 }
-    .forEach { (item,multiply) in
-        item.insertNext {
-            XElement("item", [
-                "multiply": multiply > 2 ? String(multiply-1) : nil
-            ])
-        }
-        item["multiply"] = nil
-    }
-```
-
-But it might be better to use conditions on the node iterators (see the section on finding related nodes with filters) or chaining of node iterators (see the section on chained iterators).
+Of course, since those iterations are regular sequences, all according Swift library functions like `map` and `filter` can be used. But in mmany cases, it might be better to use conditions on the node iterators (see the section on finding related nodes with filters) or chaining of node iterators (see the section on chained iterators).
 
 The user of the library can also provide sets of rules to be applied (see the code at the beginning and a full example in the section about rules). In such a rule, the user defines what to do with an element or attribute with a certain name. A set of rules can then be applied to a document, i.e. the rules are applied in the order of their definition. This is repeated, guaranteeing that a rule is only applied once to the same object (if not fully removed from the document and added again, cf. the section below on document membership), until no more application takes places. So elements can be added during application of a rule and then later be processed by the same or another rule.
 
@@ -577,6 +560,8 @@ Output:
 <d>
 <d>
 ```
+
+Also, in those chains operations resulting in single nodes like `parent` can be used.
 
 ## Constructing XML
 
