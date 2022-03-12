@@ -714,8 +714,11 @@ public class XBranch: XNode {
      If "forward", then detaching prefetches the next node in iterators.
      */
     public func set(forward: Bool = false, @XNodeBuilder builder: () -> [XNodeLike]) {
-        clear(forward: forward)
-        (builder() as? [XNode])?.forEach { add($0) }
+        let endMarker = XNode()
+        add(endMarker)
+        (builder() as? [XNode])?.forEach { endMarker.insertPrevious($0) }
+        endMarker.previous.forEach { $0.remove() }
+        endMarker.remove()
     }
     
     func produceLeaving(production: XProduction) {
