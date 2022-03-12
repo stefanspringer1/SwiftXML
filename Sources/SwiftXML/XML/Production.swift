@@ -368,4 +368,27 @@ open class XHTMLProduction: XPrettyPrintProduction {
     open override func hasMixedContent(element: XElement) -> Bool {
         return element.content.contains(where: { isInline($0) })
     }
+    
+    public func sort(texts: [String], preferring preferred: String) -> [String] {
+        return texts.sorted { name1, name2 in
+            if name2 == preferred {
+                return false
+            }
+            else {
+                return name1 == preferred || name1 < name2
+            }
+        }
+    }
+    
+    open override func sortAttributeNames(attributeNames: [String], element: XElement) -> [String] {
+        if element.name == "meta" {
+            return sort(texts: attributeNames, preferring: "name")
+        }
+        else if element.name == "script" {
+            return sort(texts: attributeNames, preferring: "src")
+        }
+        else {
+            return super.sortAttributeNames(attributeNames: attributeNames, element: element)
+        }
+    }
 }
