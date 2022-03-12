@@ -515,13 +515,13 @@ public class XBranch: XNode {
         }
     }
     
-    public var first: XNode? {
+    public var firstContent: XNode? {
         get {
             return _firstChild
         }
     }
     
-    public func first(where condition: (XNode) -> Bool) -> XNode? {
+    public func firstContent(where condition: (XNode) -> Bool) -> XNode? {
         let node = _firstChild
         if let theNode = node, condition(theNode) {
             return node
@@ -531,13 +531,13 @@ public class XBranch: XNode {
         }
     }
     
-    public var last: XNode? {
+    public var lastContent: XNode? {
         get {
             return _lastChild
         }
     }
     
-    public func last(where condition: (XNode) -> Bool) -> XNode? {
+    public func lastContent(where condition: (XNode) -> Bool) -> XNode? {
         let node = _lastChild
         if let theNode = node, condition(theNode) {
             return node
@@ -611,7 +611,7 @@ public class XBranch: XNode {
      Else, the iterator will iterate through the inserted content.
      */
     func add(_ node: XNode, skip: Bool = false) {
-        if let lastAsText = last as? XText, let newAsText = node as? XText {
+        if let lastAsText = lastContent as? XText, let newAsText = node as? XText {
             lastAsText._value = lastAsText._value + newAsText._value
             lastAsText.whitespace = .UNKNOWN
         }
@@ -645,7 +645,7 @@ public class XBranch: XNode {
     
     func add(_ text: String) {
         if !text.isEmpty {
-            if let lastAsText = last as? XText {
+            if let lastAsText = lastContent as? XText {
                 lastAsText._value = lastAsText._value + text
                 lastAsText.whitespace = .UNKNOWN
             }
@@ -665,7 +665,7 @@ public class XBranch: XNode {
      Else, the iterator will iterate through the inserted content.
      */
     func addFirst(_ node: XNode, skip: Bool = false) {
-        if let firstAsText = first as? XText, let newAsText = node as? XText {
+        if let firstAsText = firstContent as? XText, let newAsText = node as? XText {
             firstAsText._value = newAsText._value + firstAsText._value
             firstAsText.whitespace = .UNKNOWN
         }
@@ -699,7 +699,7 @@ public class XBranch: XNode {
     
     func addFirst(_ text: String) {
         if !text.isEmpty {
-            if let firstAsText = first as? XText {
+            if let firstAsText = firstContent as? XText {
                 firstAsText._value = text + firstAsText._value
                 firstAsText.whitespace = .UNKNOWN
             }

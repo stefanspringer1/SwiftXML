@@ -599,20 +599,20 @@ extension XElementSequence {
         return XElementDependingOnElementSequence(sequence: self, elementGetter: { node in node.parent(where: condition) })
     }
     
-    public var first: XNodeSequence {
-        get { XNodeDependingOnElementSequence(sequence: self, nodeGetter: { node in node.first }) }
+    public var firstContent: XNodeSequence {
+        get { XNodeDependingOnElementSequence(sequence: self, nodeGetter: { node in node.firstContent }) }
     }
     
-    public func first(with condition: @escaping (XNode) -> Bool) -> XNodeSequence {
-        return XNodeDependingOnElementSequence(sequence: self, nodeGetter: { node in node.first(where: condition) })
+    public func firstContent(with condition: @escaping (XNode) -> Bool) -> XNodeSequence {
+        return XNodeDependingOnElementSequence(sequence: self, nodeGetter: { node in node.firstContent(where: condition) })
     }
     
-    public var last: XNodeSequence {
-        get { XNodeDependingOnElementSequence(sequence: self, nodeGetter: { node in node.last }) }
+    public var lastContent: XNodeSequence {
+        get { XNodeDependingOnElementSequence(sequence: self, nodeGetter: { node in node.lastContent }) }
     }
     
-    public func last(with condition: @escaping (XNode) -> Bool) -> XNodeSequence {
-        return XNodeDependingOnElementSequence(sequence: self, nodeGetter: { node in node.last(where: condition) })
+    public func lastContent(with condition: @escaping (XNode) -> Bool) -> XNodeSequence {
+        return XNodeDependingOnElementSequence(sequence: self, nodeGetter: { node in node.lastContent(where: condition) })
     }
     
 }
