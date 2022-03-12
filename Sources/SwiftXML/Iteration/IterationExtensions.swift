@@ -101,10 +101,10 @@ extension XElement {
     
 }
 
-extension XNodeSequence {
-    var firstNode: XNode? { get { makeIterator().next() } }
+public extension XNodeSequence {
+    var first: XNode? { get { makeIterator().next() } }
 }
 
-extension XElementSequence {
-    var firstElement: XElement? { get { makeIterator().next() } }
+public extension XElementSequence {
+    var first: XElement? { get { makeIterator().next() } }
 }
