@@ -737,7 +737,7 @@ extension XNodeSequence: XNodeLike {}
 extension XElementSequence: XNodeLike {}
 extension XNodeLikeSequence: XNodeLike {}
 
-extension Array where Element == XNodeLike? {
+public extension Array where Element == XNodeLike? {
     var xml: XNodeLikeSequence {
         get { return XNodeLikeSequenceFromArray(formArray: self) }
     }
