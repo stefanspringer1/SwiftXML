@@ -493,21 +493,11 @@ Once you have such a sequnce, you can get the first or the n'th itme in the sequ
 
 ```Swift
 func findFirst() -> XNode?
-```
-
-respectively
-
-```Swift
 func findFirst() -> XElement?
 ```
 
 ```Swift
 func find(index: Int) -> XNode?
-```
-
-respectively
-
-```Swift
 func find(index: Int) -> XElement?
 ```
 
