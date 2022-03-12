@@ -59,7 +59,7 @@ document.elements(ofName: "item").forEach { item in
     }
 }
 
-document.first?.echo()
+document.firstContent?.echo()
 ```
 
 The output is:
@@ -81,7 +81,7 @@ document.traverse { node in
     }
 }
 
-document.first?.echo()
+document.firstContent?.echo()
 ```
 
 The output is:
@@ -299,7 +299,7 @@ myElement.attached["note"] = XElement("note") {
 
 // getting the attached note:
 if let note = myElement.attached["note"] as? XElement {
-    print("note: \((note.first as? XText)?.value ?? "")")
+    print("note: \((note.firstContent as? XText)?.value ?? "")")
 }
 
 // removing the attached note:
@@ -404,13 +404,13 @@ var ancestors: XElementSequence
 Get the first content of a branch:
 
 ```Swift
-var first: XNode?
+var firstContent: XNode?
 ```
 
 Get the last content of a branch:
 
 ```Swift
-var last: XNode?
+var lastContent: XNode?
 ```
 
 The direct content of a document or an element (“direct” means that their parent is this document or element):
@@ -638,7 +638,7 @@ document.elements(ofName: "b").forEach { element in
 
 print("\n-----------------\n")
 
-document.first?.echo()
+document.firstContent?.echo()
 ```
 
 Output:
@@ -782,7 +782,7 @@ transformation.execute(inDocument: document)
 
 print("\n----------------------------------------\n")
 
-document.first?.echo()
+document.firstContent?.echo()
 ```
 
 ```text
