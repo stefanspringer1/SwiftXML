@@ -338,6 +338,10 @@ open class XHTMLProduction: XPrettyPrintProduction {
     public init(indentation: String = "  ", linebreak: String = "\n") {
         super.init(writeEmptyTags: false, indentation: indentation, linebreak: linebreak)
     }
+    
+    open override func writeXMLDeclaration(version: String, encoding: String?, standalone: String?) {
+        // do not write the XML declaration for HTML
+    }
 
     public var htmlEmptyTags = [
         "area", "base", "br", "col", "embed", "hr", "img", "input",
