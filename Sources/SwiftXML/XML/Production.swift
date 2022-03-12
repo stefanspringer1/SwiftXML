@@ -120,19 +120,18 @@ open class XDefaultProduction: XProduction {
         _writer?.write(text)
     }
     
-    public init() {
-    }
+    private let writeEmptyTags: Bool
     
-    private var _linebreak = "\n"
+    private let _linebreak: String
     
     public var linebreak: String {
-            set {
-                _linebreak = newValue
-            }
-            get {
-                return _linebreak
-            }
-        }
+        get { _linebreak }
+    }
+    
+    public init(writeEmptyTags: Bool = true, linebreak: String = "\n") {
+        self.writeEmptyTags = writeEmptyTags
+        self._linebreak = linebreak
+    }
     
     private var _declarationInInternalSubsetIndentation = " "
     
@@ -204,8 +203,12 @@ open class XDefaultProduction: XProduction {
         write("\"")
     }
     
+    open func writeAsEmptyTagIfEmpty(element: XElement) -> Bool {
+        return writeEmptyTags
+    }
+    
     open func writeElementStartAfterAttributes(element: XElement) {
-        if element.isEmpty {
+        if element.isEmpty && writeAsEmptyTagIfEmpty(element: element) {
             write("/>")
         }
         else {
@@ -214,7 +217,7 @@ open class XDefaultProduction: XProduction {
     }
     
     open func writeElementEnd(element: XElement) {
-        if !element.isEmpty {
+        if !(element.isEmpty && writeAsEmptyTagIfEmpty(element: element)) {
             write("</\(element.name)>")
         }
     }
@@ -273,5 +276,96 @@ open class XDefaultProduction: XProduction {
     
     open func writeDocumentEnd(document: XDocument) {
         
+    }
+}
+
+open class XPrettyPrintProduction: XDefaultProduction {
+
+    private var _indentation: String
+    
+    public init(writeEmptyTags: Bool = true, indentation: String = "  ", linebreak: String = "\n") {
+        self._indentation = indentation
+        super.init(writeEmptyTags: writeEmptyTags, linebreak: linebreak)
+    }
+    
+    private var indentationLevel = 0
+    
+    private var mixed = [Bool]()
+    
+    open func hasMixedContent(element: XElement) -> Bool {
+        return element.content.contains(where: { $0 is XText })
+    }
+    
+    open override func writeElementStartBeforeAttributes(element: XElement) {
+        if mixed.last != true {
+            if indentationLevel > 0 {
+                write(linebreak)
+                for _ in 1...indentationLevel {
+                    write(_indentation)
+                }
+            }
+        }
+        super.writeElementStartBeforeAttributes(element: element)
+    }
+    
+    open override func writeElementStartAfterAttributes(element: XElement) {
+        super.writeElementStartAfterAttributes(element: element)
+        if !element.isEmpty {
+            mixed.append(hasMixedContent(element: element))
+            indentationLevel += 1
+        }
+    }
+    
+    open override func writeElementEnd(element: XElement) {
+        if !element.isEmpty {
+            indentationLevel -= 1
+            if mixed.last != true {
+                write(linebreak)
+                if indentationLevel > 0 {
+                    for _ in 1...indentationLevel {
+                        write(_indentation)
+                    }
+                }
+            }
+            mixed.removeLast()
+        }
+        super.writeElementEnd(element: element)
+    }
+}
+
+open class XHTMLProduction: XPrettyPrintProduction {
+
+    public init(indentation: String = "  ", linebreak: String = "\n") {
+        super.init(writeEmptyTags: false, indentation: indentation, linebreak: linebreak)
+    }
+
+    public var htmlEmptyTags = [
+        "area", "base", "br", "col", "embed", "hr", "img", "input",
+        "link", "meta", "param", "source", "track", "wbr"
+    ]
+    
+    open override func writeAsEmptyTagIfEmpty(element: XElement) -> Bool {
+        return htmlEmptyTags.contains(element.name)
+    }
+    
+    public var htmlStrictInlines = [
+        "a", "abbr", "acronym", "b", "bdo", "big", "br", "cite", "code", "dfn", "em", "i",
+        "kbd", "output", "q", "samp", "small", "span", "strong", "sub",
+        "sup", "time", "var"
+    ]
+    
+    private func isInline(_ node: XNode) -> Bool {
+        return node is XText || {
+            if let element = node as? XElement {
+                return htmlStrictInlines.contains(element.name)
+            }
+            else {
+                return false
+            }
+        }()
+    }
+    
+    open override func hasMixedContent(element: XElement) -> Bool {
+        return element.content.contains(where: { isInline($0) })
     }
 }
