@@ -102,11 +102,43 @@ extension XElement {
 }
 
 public extension XNodeSequence {
-    var firstInSequence: XNode? { get { makeIterator().next() } }
-    var exist: Bool { get { first != nil } }
+    
+    func findFirst() -> XNode? {
+        return makeIterator().next()
+    }
+    
+    func find(index: Int) -> XNode? {
+        let iterator = makeIterator()
+        var position = 0
+        var node: XNode? = nil
+        while position <= index {
+            node = iterator.next()
+            position += 1
+        }
+        return node
+    }
+    
+    var exist: Bool { get { makeIterator().next() != nil } }
+    
 }
 
 public extension XElementSequence {
-    var firstInSequence: XElement? { get { makeIterator().next() } }
-    var exist: Bool { get { first != nil } }
+    
+    func findFirst() -> XElement? {
+        return makeIterator().next()
+    }
+    
+    func find(index: Int) -> XElement? {
+        let iterator = makeIterator()
+        var position = 0
+        var node: XElement? = nil
+        while position <= index {
+            node = iterator.next()
+            position += 1
+        }
+        return node
+    }
+    
+    var exist: Bool { get { makeIterator().next() != nil } }
+    
 }
