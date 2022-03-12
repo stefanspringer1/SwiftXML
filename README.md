@@ -489,6 +489,32 @@ All next siblings that are elements:
 var nextElements: XElementSequence
 ```
 
+Once you have such a sequnce, you can get the first or the n'th itme in the sequnce or just test if an item exists at all via:
+
+```Swift
+func findFirst() -> XNode?
+```
+
+respectively
+
+```Swift
+func findFirst() -> XElement?
+```
+
+```Swift
+func find(index: Int) -> XNode?
+```
+
+respectively
+
+```Swift
+func find(index: Int) -> XElement?
+```
+
+```Swift
+var exist: Bool
+```
+
 You may also ask for the previous or next node in the tree, in the order of a depth-first traversal. E.g. if a node is the last node of a subtree starting at a certain element and the element has a next sibling, this next sibling is “the next node in the tree” for that last node of the subtree. Getting the next or previous node in the tree is very efficient, as the library keep track of them anyway.
 
 The next node in the tree:
