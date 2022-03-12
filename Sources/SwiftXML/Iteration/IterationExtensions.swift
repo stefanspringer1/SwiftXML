@@ -103,8 +103,10 @@ extension XElement {
 
 public extension XNodeSequence {
     var first: XNode? { get { makeIterator().next() } }
+    var exist: Bool { get { first != nil } }
 }
 
 public extension XElementSequence {
     var first: XElement? { get { makeIterator().next() } }
+    var exist: Bool { get { first != nil } }
 }
