@@ -259,7 +259,7 @@ func shallowClone(forwardref: Bool) -> XNode
 
 ### Element names
 
-Element names can be read and set by the using the property `name` of an element.
+Element names can be read and set by the using the property `name` of an element. After setting of a new name different from the existing one, the element is registered with the new name in the document, if it is part of a document. Setting the same name does not change anything (it is an efficient non-change).
 
 ### Text 
 
@@ -267,7 +267,7 @@ For a text node (`XText`) its text can be read and set via its property `value`.
 
 ### Changing and reading attributes
 
-The attributes of an element can be read and set via the “index notation”. If an attribute is not set, `nil` is returned; reversely, setting an attribute to `nil` results in removing it.
+The attributes of an element can be read and set via the “index notation”. If an attribute is not set, `nil` is returned; reversely, setting an attribute to `nil` results in removing it. Setting an attribute with a new name or removing an attribute changes the registering of attributes in the document, if the element is part of a document. Setting a non-nil value of an attribute that already exists is an efficient non-change concerning the registering if attributes.
 
 Example:
 
