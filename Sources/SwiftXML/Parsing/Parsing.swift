@@ -91,7 +91,7 @@ public func parseXML(
 // JSON:
 
 public func parseJSON(
-    path: String,
+    fromPath path: String,
     rootName: String? = nil,
     arrayItemName: String? = nil,
     eventHandlers: [XEventHandler]? = nil
@@ -109,7 +109,25 @@ public func parseJSON(
 }
 
 public func parseJSON(
-    text: String,
+    fromURL url: URL,
+    rootName: String? = nil,
+    arrayItemName: String? = nil,
+    eventHandlers: [XEventHandler]? = nil
+) throws -> XDocument {
+    let document = XDocument()
+    
+    let parser = ConvenienceParser(
+        parser: JParser(rootName: rootName, arrayItemName: arrayItemName),
+        mainEventHandler: XParseBuilder(document: document)
+    )
+    
+    try parser.parse(fromURL: url, eventHandlers: eventHandlers)
+    
+    return document
+}
+
+public func parseJSON(
+    fromText text: String,
     sourceInfo: String? = nil,
     rootName: String? = nil,
     arrayItemName: String? = nil,
@@ -128,7 +146,7 @@ public func parseJSON(
 }
 
 public func parseJSON(
-    data: Data,
+    fromData data: Data,
     sourceInfo: String? = nil,
     rootName: String? = nil,
     arrayItemName: String? = nil,
