@@ -58,6 +58,11 @@ public class XElementIteratorWithCondition: XElementIterator {
         self.condition = condition
     }
     
+    init(iterator: XElementIterator, elementName: String) {
+        self.iterator = iterator
+        self.condition = { $0.name == elementName }
+    }
+    
     public override func next() -> XElement? {
         var _next: XElement? = nil
         repeat {

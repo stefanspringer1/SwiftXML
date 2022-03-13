@@ -17,6 +17,10 @@ extension XNode {
         return XElementSequenceWithCondition(sequence: XAncestorsSequence(node: self), condition: condition)
     }
     
+    public func ancestors(_ name: String) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XAncestorsSequence(node: self), elementName: name)
+    }
+    
     public var content: XNodeSequence {
         get { XContentSequence(node: self) }
     }
@@ -31,6 +35,10 @@ extension XNode {
     
     public func children(with condition: @escaping (XElement) -> Bool) -> XElementSequence {
         return XElementSequenceWithCondition(sequence: XChildrenSequence(node: self), condition: condition)
+    }
+    
+    public func children(_ name: String) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XChildrenSequence(node: self), elementName: name)
     }
     
     public var next: XNodeSequence {
@@ -57,12 +65,20 @@ extension XNode {
         return XElementSequenceWithCondition(sequence: XNextElementsSequence(node: self), condition: condition)
     }
     
+    public func nextElements(_ name: String) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XNextElementsSequence(node: self), elementName: name)
+    }
+    
     public var previousElements: XElementSequence {
         get { XPreviousElementsSequence(node: self) }
     }
     
     public func previousElements(with condition: @escaping (XElement) -> Bool) -> XElementSequence {
         return XElementSequenceWithCondition(sequence: XPreviousElementsSequence(node: self), condition: condition)
+    }
+    
+    public func previousElements(_ name: String) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XPreviousElementsSequence(node: self), elementName: name)
     }
     
     public var allContent: XNodeSequence {
@@ -89,6 +105,10 @@ extension XNode {
         return XElementSequenceWithCondition(sequence: XDescendantsSequence(node: self), condition: condition)
     }
     
+    public func descendants(_ name: String) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XDescendantsSequence(node: self), elementName: name)
+    }
+    
 }
 
 extension XElement {
@@ -99,6 +119,9 @@ extension XElement {
         return XElementSequenceWithCondition(sequence: XDescendantsIncludingSelfSequence(element: self), condition: condition)
     }
     
+    public func descendantsIncludingSelf(_ name: String) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XDescendantsIncludingSelfSequence(element: self), elementName: name)
+    }
 }
 
 public extension XNodeSequence {

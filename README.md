@@ -10,17 +10,17 @@ let transformation = XTransformation {
     XRule(forElements: ["table"]) { table in
         table.insertNext {
             XElement("caption") {
-                table.children{ $0.name == "title }.contents
+                table.children{ $0.name.contains("title") }.contents
             }
         }
     }
     
     XRule(forElements: ["tbody", "tfoot"]) { tablePart in
         tablePart
-            .children{ $0.name == "tr" }
-            .children{ $0.name == "th" }
-            .forEach {
-                $0.name = "td"
+            .children("tr")
+            .children("th")
+            .forEach { cell in
+                cell.name = "td"
             }
     }
     
@@ -547,8 +547,8 @@ let document = try parseXML(fromText: """
 
 document
     .descendants{ element in element["take"] == "true" }
-    .forEach {
-        descendant in print(descendant)
+    .forEach { descendant in 
+        print(descendant)
     }
 ```
 
@@ -558,10 +558,20 @@ Output:
 <e take="true">
 ```
 
+There also exist a shortcut for the common of filtering elements according to a name:
+
+```Swift
+document
+    .descendants("paragraph")
+    .forEach { _ in
+        print("found a paragraph!")"
+    }
+```
+
 A short note on coding style: It is recommended to not use spaces around the parantheses `{...}` describing the filter, the same recommendation applies to `map` etc., other than before the parantheses defining element content or a terminating closure that is not a filter as in the case of `forEach`, and it is recommended to write the content of a terminating closure in a new line separate from the parantheses. The reaaon os that after such a filter, there might be a dot continuing the expression:
 
 ```Swift
-myElement.descendants{ $0.name == "a" }.contents
+myElement.descendants{ $0.name.contains("title") }.contents
 ```
 
 You might not want to set a space before `.contents`, and it would then look quite asymmetric to put a space before the opening paranthese. Whereas defining content of an element in parantheses `{...}` or the closure of a `forEach` is more like defining a code block in the traditional sense. (Of course, this is just a recommendation. You may choose your own style.)
@@ -569,7 +579,7 @@ You might not want to set a space before `.contents`, and it would then look qui
 Also note that if a filter is part of the condition of an `if` statement, you may get the warning “Trailing closure in this context is confusable with the body of the statement...” if you do not use the following notation:+
 
 ```Swift
-if let label = paragraph.children(with: { $0.name == "label" }).findFirst() {
+if let label = section.children(with: { $0.name.contains("label") }).findFirst() {
    // ... 
 }
 ```

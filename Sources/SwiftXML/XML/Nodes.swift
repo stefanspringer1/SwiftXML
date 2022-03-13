@@ -286,9 +286,19 @@ public class XNode {
     }
     
     public func parent(where condition: (XElement) -> Bool) -> XElement? {
-        let node = parent
-        if let theNode = node, condition(theNode) {
-            return node
+        let element = parent
+        if let theElement = element, condition(theElement) {
+            return theElement
+        }
+        else {
+            return nil
+        }
+    }
+    
+    public func parent(_ name: String) -> XElement? {
+        let element = parent
+        if let theElement = element, theElement.name == name {
+            return theElement
         }
         else {
             return nil

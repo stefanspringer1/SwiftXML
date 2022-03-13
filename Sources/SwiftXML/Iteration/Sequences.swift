@@ -20,6 +20,11 @@ public final class XElementSequenceWithCondition: XElementSequence {
         self.condition = condition
     }
     
+    init(sequence: XElementSequence, elementName: String) {
+        self.sequence = sequence
+        self.condition = { $0.name == elementName }
+    }
+    
     public override func makeIterator() -> XElementIterator {
         return XElementIteratorWithCondition(
             iterator: sequence.makeIterator(),
