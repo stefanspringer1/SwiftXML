@@ -7,18 +7,27 @@ This library is published under the Apache License 2.0.
 ```Swift
 let transformation = XTransformation {
     
-    XRule(forElement: "table") { table in
+    XRule(forElements: ["table"]) { table in
         table.insertNext {
             XElement("caption") {
-                "this is the table caption"
+                table.children{ $0.name == "title }.contents
             }
         }
     }
     
-    XRule(forAttribute: "label") { (value,element) in
+    XRule(forElements: ["tbody", "tfoot"]) { tablePart in
+        tablePart
+            .children{ $0.name == "tr" }
+            .children{ $0.name == "th" }
+            .forEach {
+                $0.name = "td"
+            }
+    }
+    
+    XRule(forAttributes: ["label"]) { (value,element) in
         element["label"] = value + ")"
     }
-
+    
 }
 ```
 
@@ -526,6 +535,7 @@ myElement.descendants.forEach { descendant in
     print("the name of the descendant is \(descendant.name)")
 }
 ```
+
 ## Finding related nodes with filters
 
 All of the methods in the previous section that return a sequence also allow a condition as first argument for filtering:
@@ -536,14 +546,32 @@ let document = try parseXML(fromText: """
 """)
 
 document
-    .descendants { element in element["take"] == "true" }
-    .forEach { descendant in print(descendant) }
+    .descendants{ element in element["take"] == "true" }
+    .forEach {
+        descendant in print(descendant)
+    }
 ```
 
 Output:
 ```text
 <c take="true">
 <e take="true">
+```
+
+A short note on coding style: It is recommended to not use spaces around the parantheses `{...}` describing the filter, the same recommendation applies to `map` etc., other than before the parantheses defining element content or a terminating closure that is not a filter as in the case of `forEach`, and it is recommended to write the content of a terminating closure in a new line separate from the parantheses. The reaaon os that after such a filter, there might be a dot continuing the expression:
+
+```Swift
+myElement.descendants{ $0.name == "a" }.contents
+```
+
+You might not want to set a space before `.contents`, and it would then look quite asymmetric to put a space before the opening paranthese. Whereas defining content of an element in parantheses `{...}` or the closure of a `forEach` is more like defining a code block in the traditional sense. (Of course, this is just a recommendation. You may choose your own style.)
+
+Also note that if a filter is part of the condition of an `if` statement, you may get the warning “Trailing closure in this context is confusable with the body of the statement...” if you do not use the following notation:+
+
+```Swift
+if let child = paragraph.children(with: { $0.name == "label" }).findFirst() {
+   // ... 
+}
 ```
 
 ## Chained iterators
@@ -622,7 +650,7 @@ For resulting arrays of more complex content, use the property `xml` to insert t
 ```Swift
 let myElement = XElement("div") {
     ["Hello ", " ", "World"].xml
-    document.children.map { $0.children }.xml
+    document.children.map{ $0.children }.xml
 }
 ```
 
@@ -747,7 +775,7 @@ Subsequent text nodes (`XText`) are always automatically combined, and text node
 
 As mentioned in the general description, a set of rules `XRule` in the form of a transformation instance of type `XTransformation` can be used as follows.
 
-In a rule, the user defines what to do with an element or attribute with a certain name. The set of rules can then be applied to a document, i.e. the rules are applied in the order of their definition. This is repeated, guaranteeing that a rule is only applied once to the same object (if not removed from the document and added again), until no application takes place. So elements can be added during application of a rule and then later be processed by the same or another rule.
+In a rule, the user defines what to do with elements or attributes certain names. The set of rules can then be applied to a document, i.e. the rules are applied in the order of their definition. This is repeated, guaranteeing that a rule is only applied once to the same object (if not removed from the document and added again), until no application takes place. So elements can be added during application of a rule and then later be processed by the same or another rule.
 
 Example:
 
@@ -760,7 +788,7 @@ var count = 1
 
 let transformation = XTransformation {
     
-    XRule(forElement: "formula") { element in
+    XRule(forElements: ["formula"]) { element in
         print("\n----- Rule for element \"formula\" -----\n")
         print("  \(element)")
         if count == 1 {
@@ -773,7 +801,7 @@ let transformation = XTransformation {
         }
     }
     
-    XRule(forElement: "image") { element in
+    XRule(forElements: ["image"]) { element in
         print("\n----- Rule for element \"image\" -----\n")
         print("  \(element)")
         if count == 2 {
@@ -785,7 +813,7 @@ let transformation = XTransformation {
         }
     }
     
-    XRule(forAttribute: "id") { (value,element) in
+    XRule(forAttributes: ["id"]) { (value,element) in
         print("\n----- Rule for attribute \"id\" -----\n")
         print("  \(element) --> ", terminator: "")
         element["id"] = "done-" + value
