@@ -113,6 +113,9 @@ public extension XNodeSequence {
         var node: XNode? = nil
         while position <= index {
             node = iterator.next()
+            if node == nil {
+                return nil
+            }
             position += 1
         }
         return node
@@ -134,6 +137,9 @@ public extension XElementSequence {
         var node: XElement? = nil
         while position <= index {
             node = iterator.next()
+            if node == nil {
+                return nil
+            }
             position += 1
         }
         return node

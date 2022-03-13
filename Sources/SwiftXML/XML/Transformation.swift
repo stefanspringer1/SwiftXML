@@ -12,16 +12,16 @@ public typealias XAttributeAction = (XAttributeSpot)->()
 
 public struct XRule {
     
-    public let name: String
+    public let names: [String]
     public let action: Any
     
-    public init(forElement name: String, action: @escaping XElementAction) {
-        self.name = name
+    public init(forElement names: [String], action: @escaping XElementAction) {
+        self.names = names
         self.action = action
     }
     
-    public init(forAttribute name: String, action: @escaping XAttributeAction) {
-        self.name = name
+    public init(forAttribute names: [String], action: @escaping XAttributeAction) {
+        self.names = names
         self.action = action
     }
 }
@@ -47,16 +47,20 @@ public class XTransformation {
         
         rules.forEach { rule in
             if let elementAction = rule.action as? XElementAction {
-                iteratorsWithActions.append((
-                    XElementNameIterator(elementIterator: XElementsOfSameNameIterator(document: document, name: rule.name, keepLast: true), keepLast: true),
-                    elementAction
-                ))
+                rule.names.forEach { name in
+                    iteratorsWithActions.append((
+                        XElementNameIterator(elementIterator: XElementsOfSameNameIterator(document: document, name: name, keepLast: true), keepLast: true),
+                        elementAction
+                    ))
+                }
             }
             else if let attributeAction = rule.action as? XAttributeAction {
-                iteratorsWithActions.append((
-                    XBidirectionalAttributeIterator(attributeIterator: XAttributesOfSameNameIterator(document: document, attributeName: rule.name, keepLast: true), keepLast: true),
-                    attributeAction
-                ))
+                rule.names.forEach { name in
+                    iteratorsWithActions.append((
+                        XBidirectionalAttributeIterator(attributeIterator: XAttributesOfSameNameIterator(document: document, attributeName: name, keepLast: true), keepLast: true),
+                        attributeAction
+                    ))
+                }
             }
             
         }
