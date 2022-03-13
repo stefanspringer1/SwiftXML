@@ -569,7 +569,7 @@ You might not want to set a space before `.contents`, and it would then look qui
 Also note that if a filter is part of the condition of an `if` statement, you may get the warning “Trailing closure in this context is confusable with the body of the statement...” if you do not use the following notation:+
 
 ```Swift
-if let child = paragraph.children(with: { $0.name == "label" }).findFirst() {
+if let label = paragraph.children(with: { $0.name == "label" }).findFirst() {
    // ... 
 }
 ```
