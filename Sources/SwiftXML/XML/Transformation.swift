@@ -15,12 +15,12 @@ public struct XRule {
     public let names: [String]
     public let action: Any
     
-    public init(forElement names: [String], action: @escaping XElementAction) {
+    public init(forElements names: [String], action: @escaping XElementAction) {
         self.names = names
         self.action = action
     }
     
-    public init(forAttribute names: [String], action: @escaping XAttributeAction) {
+    public init(forAttributes names: [String], action: @escaping XAttributeAction) {
         self.names = names
         self.action = action
     }
