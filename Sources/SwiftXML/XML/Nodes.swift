@@ -413,6 +413,20 @@ public class XNode {
         }
     }
     
+    public func traverseThrowing(down: @escaping (XNode) throws -> (), up: ((XBranch) throws -> ())? = nil) throws {
+        let directionIndicator = XDirectionIndicator()
+        try XTraversalSequence(node: self, directionIndicator: directionIndicator).forEach { node in
+            if directionIndicator.up {
+                if let branch = node as? XBranch {
+                    try up?(branch)
+                }
+            }
+            else {
+                try down(node)
+            }
+        }
+    }
+    
     public func traverseAsync(down: @escaping (XNode) async -> (), up: ((XBranch) async -> ())? = nil) async {
         let directionIndicator = XDirectionIndicator()
         await XTraversalSequence(node: self, directionIndicator: directionIndicator).forEachAsync { node in
@@ -441,34 +455,34 @@ public class XNode {
         }
     }
     
-    func produceEntering(production: XProduction) {
+    func produceEntering(production: XProduction) throws {
         // to be implemented by subclass
     }
     
-    public func applyProduction(production: XProduction) {
-        traverse { node in
-            node.produceEntering(production: production)
+    public func applyProduction(production: XProduction) throws {
+        try traverseThrowing { node in
+            try node.produceEntering(production: production)
         } up: { branch in
-            branch.produceLeaving(production: production)
+            try branch.produceLeaving(production: production)
         }
     }
     
-    public func write(toWriter writer: Writer, production: XProduction = XDefaultProduction()) {
+    public func write(toWriter writer: Writer, production: XProduction = XDefaultProduction()) throws {
         production.setWriter(writer)
-        self.applyProduction(production: production)
+        try self.applyProduction(production: production)
     }
     
-    public func write(toFileHandle fileHandle: FileHandle, production: XProduction = XDefaultProduction()) {
-        write(toWriter: FileWriter(fileHandle), production: production)
+    public func write(toFileHandle fileHandle: FileHandle, production: XProduction = XDefaultProduction()) throws {
+        try write(toWriter: FileWriter(fileHandle), production: production)
     }
     
-    public func write(toFile path: String, production: XProduction = XDefaultProduction()) {
+    public func write(toFile path: String, production: XProduction = XDefaultProduction()) throws {
         let fileManager = FileManager.default
     
         fileManager.createFile(atPath: path,  contents:Data("".utf8), attributes: nil)
         
         if let fileHandle = FileHandle(forWritingAtPath: path) {
-            write(toFileHandle: fileHandle, production: production)
+            try write(toFileHandle: fileHandle, production: production)
             fileHandle.closeFile()
         }
         else {
@@ -477,17 +491,27 @@ public class XNode {
         
     }
     
-    public func write(toURL url: URL, production: XProduction = XDefaultProduction()) {
-        write(toFile: url.path, production: production)
+    public func write(toURL url: URL, production: XProduction = XDefaultProduction()) throws {
+        try write(toFile: url.path, production: production)
     }
     
     public func echo(usingProduction production: XProduction = XDefaultProduction(), terminator: String = "\n") {
-        write(toFileHandle: FileHandle.standardOutput, production: production); print(terminator, terminator: "")
+        do {
+            try write(toFileHandle: FileHandle.standardOutput, production: production); print(terminator, terminator: "")
+        }
+        catch {
+            // writing to standard output does not really throw
+        }
     }
     
     public func serialized(usingProduction production: XProduction = XDefaultProduction()) -> String {
         let writer = CollectingWriter()
-        write(toWriter: writer, production: production)
+        do {
+            try write(toWriter: writer, production: production)
+        }
+        catch {
+            // CollectingWriter does not really throw
+        }
         return writer.description
     }
 }
@@ -731,7 +755,7 @@ public class XBranch: XNode {
         endMarker.remove()
     }
     
-    func produceLeaving(production: XProduction) {
+    func produceLeaving(production: XProduction) throws {
         // to be implemented by subclass
     }
 }
@@ -1072,20 +1096,20 @@ public final class XElement: XBranch, CustomStringConvertible {
         } while node != nil
     }
     
-    override func produceEntering(production: XProduction) {
-        production.writeElementStartBeforeAttributes(element: self)
+    override func produceEntering(production: XProduction) throws {
+        try production.writeElementStartBeforeAttributes(element: self)
         if let theAttributes = _attributes {
-            production.sortAttributeNames(attributeNames: Array(theAttributes.keys), element: self).forEach { attributeName in
+            try production.sortAttributeNames(attributeNames: Array(theAttributes.keys), element: self).forEach { attributeName in
                 if let theAttribute = theAttributes[attributeName] {
-                    production.writeAttribute(name: theAttribute.name, value: theAttribute.value, element: self)
+                    try production.writeAttribute(name: theAttribute.name, value: theAttribute.value, element: self)
                 }
             }
         }
-        production.writeElementStartAfterAttributes(element: self)
+        try production.writeElementStartAfterAttributes(element: self)
     }
     
-    override func produceLeaving(production: XProduction) {
-        production.writeElementEnd(element: self)
+    override func produceLeaving(production: XProduction) throws {
+        try production.writeElementEnd(element: self)
     }
 }
 
@@ -1121,8 +1145,8 @@ public final class XText: XNode, CustomStringConvertible {
         self.whitespace = whitespace
     }
     
-    public override func produceEntering(production: XProduction) {
-        production.writeText(text: self)
+    public override func produceEntering(production: XProduction) throws {
+        try production.writeText(text: self)
     }
     
     public override func shallowClone(forwardref: Bool = false) -> XText {
@@ -1159,8 +1183,8 @@ public final class XInternalEntity: XNode {
         self._name = name
     }
     
-    override func produceEntering(production: XProduction) {
-        production.writeInternalEntity(internalEntity: self)
+    override func produceEntering(production: XProduction) throws {
+        try production.writeInternalEntity(internalEntity: self)
     }
     
     public override func shallowClone(forwardref: Bool = false) -> XInternalEntity {
@@ -1197,8 +1221,8 @@ public final class XExternalEntity: XNode {
         self._name = name
     }
     
-    override func produceEntering(production: XProduction) {
-        production.writeExternalEntity(externalEntity: self)
+    override func produceEntering(production: XProduction) throws {
+        try production.writeExternalEntity(externalEntity: self)
     }
     
     public override func shallowClone(forwardref: Bool = false) -> XExternalEntity {
@@ -1254,8 +1278,8 @@ public final class XProcessingInstruction: XNode, CustomStringConvertible {
         self._data = data
     }
     
-    override func produceEntering(production: XProduction) {
-        production.writeProcessingInstruction(processingInstruction: self)
+    override func produceEntering(production: XProduction) throws {
+        try production.writeProcessingInstruction(processingInstruction: self)
     }
     
     public override func shallowClone(forwardref: Bool = false) -> XProcessingInstruction {
@@ -1292,8 +1316,8 @@ public final class XComment: XNode {
         self._value = text
     }
     
-    override func produceEntering(production: XProduction) {
-        production.writeComment(comment: self)
+    override func produceEntering(production: XProduction) throws {
+        try production.writeComment(comment: self)
     }
     
     public override func shallowClone(forwardref: Bool = false) -> XComment {
@@ -1330,8 +1354,8 @@ public final class XCDATASection: XNode {
         self._value = text
     }
     
-    override func produceEntering(production: XProduction) {
-        production.writeCDATASection(cdataSection: self)
+    override func produceEntering(production: XProduction) throws {
+        try production.writeCDATASection(cdataSection: self)
     }
     
     public override func shallowClone(forwardref: Bool = false) -> XCDATASection {
@@ -1368,7 +1392,7 @@ public class XDeclarationInInternalSubset {
         self._name = name
     }
     
-    func produceEntering(production: XProduction) {}
+    func produceEntering(production: XProduction) throws {}
     
     func shallowClone() -> XDeclarationInInternalSubset {
         return XDeclarationInInternalSubset(name: _name)
@@ -1396,8 +1420,8 @@ public final class XInternalEntityDeclaration: XDeclarationInInternalSubset {
         super.init(name: name)
     }
     
-    override func produceEntering(production: XProduction) {
-        production.writeInternalEntityDeclaration(internalEntityDeclaration: self)
+    override func produceEntering(production: XProduction) throws {
+        try production.writeInternalEntityDeclaration(internalEntityDeclaration: self)
     }
     
     public override func shallowClone() -> XInternalEntityDeclaration {
@@ -1436,8 +1460,8 @@ public final class XExternalEntityDeclaration: XDeclarationInInternalSubset {
         super.init(name: name)
     }
     
-    override func produceEntering(production: XProduction) {
-        production.writeExternalEntityDeclaration(externalEntityDeclaration: self)
+    override func produceEntering(production: XProduction) throws {
+        try production.writeExternalEntityDeclaration(externalEntityDeclaration: self)
     }
     
     public override func shallowClone() -> XExternalEntityDeclaration {
@@ -1487,8 +1511,8 @@ public final class XUnparsedEntityDeclaration: XDeclarationInInternalSubset {
         super.init(name: name)
     }
     
-    override func produceEntering(production: XProduction) {
-        production.writeUnparsedEntityDeclaration(unparsedEntityDeclaration: self)
+    override func produceEntering(production: XProduction) throws {
+        try production.writeUnparsedEntityDeclaration(unparsedEntityDeclaration: self)
     }
     
     public override func shallowClone() -> XUnparsedEntityDeclaration {
@@ -1528,8 +1552,8 @@ public final class XNotationDeclaration: XDeclarationInInternalSubset {
         super.init(name: name)
     }
     
-    override func produceEntering(production: XProduction) {
-        production.writeNotationDeclaration(notationDeclaration: self)
+    override func produceEntering(production: XProduction) throws {
+        try production.writeNotationDeclaration(notationDeclaration: self)
     }
     
     public override func shallowClone() -> XNotationDeclaration {
@@ -1558,8 +1582,8 @@ public final class XElementDeclaration: XDeclarationInInternalSubset {
         super.init(name: name)
     }
     
-    override func produceEntering(production: XProduction) {
-        production.writeElementDeclaration(elementDeclaration: self)
+    override func produceEntering(production: XProduction) throws {
+        try production.writeElementDeclaration(elementDeclaration: self)
     }
     
     public override func shallowClone() -> XElementDeclaration {
@@ -1588,8 +1612,8 @@ public final class XAttributeListDeclaration: XDeclarationInInternalSubset {
         super.init(name: name)
     }
     
-    override func produceEntering(production: XProduction) {
-        production.writeAttributeListDeclaration(attributeListDeclaration: self)
+    override func produceEntering(production: XProduction) throws {
+        try production.writeAttributeListDeclaration(attributeListDeclaration: self)
     }
     
     public override func shallowClone() -> XAttributeListDeclaration {
@@ -1618,8 +1642,8 @@ public final class XParameterEntityDeclaration: XDeclarationInInternalSubset {
         super.init(name: name)
     }
     
-    override func produceEntering(production: XProduction) {
-        production.writeParameterEntityDeclaration(parameterEntityDeclaration: self)
+    override func produceEntering(production: XProduction) throws {
+        try production.writeParameterEntityDeclaration(parameterEntityDeclaration: self)
     }
     
     public override func shallowClone() -> XParameterEntityDeclaration {

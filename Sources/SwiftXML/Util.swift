@@ -223,9 +223,9 @@ public func writeSimplePropertiesList(properties: [String:String], path: String,
         else
         {
             if let theTitle = title {
-                fileHandle!.write("# \(theTitle)\(lineEnding)".data(using: .utf8)!)
+                try fileHandle!._write("# \(theTitle)\(lineEnding)")
             }
-            properties.keys.sorted{
+            try properties.keys.sorted{
                 let caseInsensitive = $0.compare($1, options: .caseInsensitive)
                 if caseInsensitive == ComparisonResult.orderedSame {
                     return $0.compare($1) == .orderedAscending
@@ -234,7 +234,7 @@ public func writeSimplePropertiesList(properties: [String:String], path: String,
                  return caseInsensitive == .orderedAscending
                 }
             }.forEach { key in
-                fileHandle!.write("\(escapeInSimplePropertiesList(key))=\(escapeInSimplePropertiesList(properties[key]!))\(lineEnding)".data(using: .utf8)!)
+                try fileHandle!._write("\(escapeInSimplePropertiesList(key))=\(escapeInSimplePropertiesList(properties[key]!))\(lineEnding)")
             }
             
             fileHandle!.closeFile()

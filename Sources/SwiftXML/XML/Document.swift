@@ -219,32 +219,32 @@ public final class XDocument: XBranch {
         !attributeListDeclarations.isEmpty
     }
     
-    override func produceEntering(production: XProduction) {
-        production.writeDocumentStart(document: self)
-        production.writeXMLDeclaration(version: xmlVersion, encoding: encoding, standalone: standalone)
+    override func produceEntering(production: XProduction) throws {
+        try production.writeDocumentStart(document: self)
+        try production.writeXMLDeclaration(version: xmlVersion, encoding: encoding, standalone: standalone)
         let _hasInternalSubset = hasInternalSubset()
-        production.writeDocumentTypeDeclarationBeforeInternalSubset(type: getType() ?? "?", publicID: publicID, systemID: systemID, hasInternalSubset: _hasInternalSubset)
+        try production.writeDocumentTypeDeclarationBeforeInternalSubset(type: getType() ?? "?", publicID: publicID, systemID: systemID, hasInternalSubset: _hasInternalSubset)
         if _hasInternalSubset {
-            production.writeDocumentTypeDeclarationInternalSubsetStart()
-            production.sortDeclarationsInInternalSubset(document: self).forEach { declaration in
+            try production.writeDocumentTypeDeclarationInternalSubsetStart()
+            try production.sortDeclarationsInInternalSubset(document: self).forEach { declaration in
                 switch declaration {
-                case let internalEntityDeclaration as XInternalEntityDeclaration: production.writeInternalEntityDeclaration(internalEntityDeclaration: internalEntityDeclaration)
-                case let parameterEntityDeclaration as XParameterEntityDeclaration: production.writeParameterEntityDeclaration(parameterEntityDeclaration: parameterEntityDeclaration)
-                case let externalEntityDeclaration as XExternalEntityDeclaration: production.writeExternalEntityDeclaration(externalEntityDeclaration: externalEntityDeclaration)
-                case let unparsedEntityDeclaration as XUnparsedEntityDeclaration: production.writeUnparsedEntityDeclaration(unparsedEntityDeclaration: unparsedEntityDeclaration)
-                case let notationDeclaration as XNotationDeclaration: production.writeNotationDeclaration(notationDeclaration: notationDeclaration)
-                case let elementDeclaration as XElementDeclaration: production.writeElementDeclaration(elementDeclaration: elementDeclaration)
-                case let attributeListDeclaration as XAttributeListDeclaration: production.writeAttributeListDeclaration(attributeListDeclaration: attributeListDeclaration)
+                case let internalEntityDeclaration as XInternalEntityDeclaration: try production.writeInternalEntityDeclaration(internalEntityDeclaration: internalEntityDeclaration)
+                case let parameterEntityDeclaration as XParameterEntityDeclaration: try production.writeParameterEntityDeclaration(parameterEntityDeclaration: parameterEntityDeclaration)
+                case let externalEntityDeclaration as XExternalEntityDeclaration: try production.writeExternalEntityDeclaration(externalEntityDeclaration: externalEntityDeclaration)
+                case let unparsedEntityDeclaration as XUnparsedEntityDeclaration: try production.writeUnparsedEntityDeclaration(unparsedEntityDeclaration: unparsedEntityDeclaration)
+                case let notationDeclaration as XNotationDeclaration: try production.writeNotationDeclaration(notationDeclaration: notationDeclaration)
+                case let elementDeclaration as XElementDeclaration: try production.writeElementDeclaration(elementDeclaration: elementDeclaration)
+                case let attributeListDeclaration as XAttributeListDeclaration: try production.writeAttributeListDeclaration(attributeListDeclaration: attributeListDeclaration)
                 default:
                     break
                 }
             }
-            production.writeDocumentTypeDeclarationInternalSubsetEnd()
+            try production.writeDocumentTypeDeclarationInternalSubsetEnd()
         }
-        production.writeDocumentTypeDeclarationAfterInternalSubset(hasInternalSubset: _hasInternalSubset)
+        try production.writeDocumentTypeDeclarationAfterInternalSubset(hasInternalSubset: _hasInternalSubset)
     }
 
-    override func produceLeaving(production: XProduction) {
-        production.writeDocumentEnd(document: self)
+    override func produceLeaving(production: XProduction) throws {
+        try production.writeDocumentEnd(document: self)
     }
 }

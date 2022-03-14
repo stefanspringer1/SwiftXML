@@ -14,7 +14,17 @@ import Foundation
  */
 
 public protocol Writer {
-    func write(_ text: String)
+    func write(_ text: String) throws
+}
+
+extension FileHandle {
+    func _write(_ text: String) throws {
+        if #available(macOS 10.15.4, *) {
+            try self.write(contentsOf: text.data(using: .utf8)!)
+        } else {
+            self.write(text.data(using: .utf8)!)
+        }
+    }
 }
 
 public class FileWriter: Writer {
@@ -25,8 +35,8 @@ public class FileWriter: Writer {
         self._file = file
     }
     
-    open func write(_ text: String) {
-        _file.write(text.data(using: .utf8)!)
+    open func write(_ text: String) throws {
+        try _file._write(text)
     }
 }
 
@@ -47,61 +57,61 @@ public protocol XProduction {
     
     func getWriter() -> Writer?
     
-    func write(_ text: String)
+    func write(_ text: String) throws
     
     func sortDeclarationsInInternalSubset(document: XDocument) -> [XDeclarationInInternalSubset]
     
-    func writeDocumentStart(document: XDocument)
+    func writeDocumentStart(document: XDocument) throws
     
-    func writeXMLDeclaration(version: String, encoding: String?, standalone: String?)
+    func writeXMLDeclaration(version: String, encoding: String?, standalone: String?) throws
     
-    func writeDocumentTypeDeclarationBeforeInternalSubset(type: String, publicID: String?, systemID: String?, hasInternalSubset: Bool)
+    func writeDocumentTypeDeclarationBeforeInternalSubset(type: String, publicID: String?, systemID: String?, hasInternalSubset: Bool) throws
     
-    func writeDocumentTypeDeclarationInternalSubsetStart()
+    func writeDocumentTypeDeclarationInternalSubsetStart() throws
     
-    func writeDocumentTypeDeclarationInternalSubsetEnd()
+    func writeDocumentTypeDeclarationInternalSubsetEnd() throws
     
-    func writeDocumentTypeDeclarationAfterInternalSubset(hasInternalSubset: Bool)
+    func writeDocumentTypeDeclarationAfterInternalSubset(hasInternalSubset: Bool) throws
     
-    func writeElementStartBeforeAttributes(element: XElement)
+    func writeElementStartBeforeAttributes(element: XElement) throws
     
     func sortAttributeNames(attributeNames: [String], element: XElement) -> [String]
     
-    func writeAttributeValue(name: String, value: String, element: XElement)
+    func writeAttributeValue(name: String, value: String, element: XElement) throws
     
-    func writeAttribute(name: String, value: String, element: XElement)
+    func writeAttribute(name: String, value: String, element: XElement) throws
     
-    func writeElementStartAfterAttributes(element: XElement)
+    func writeElementStartAfterAttributes(element: XElement) throws
     
-    func writeElementEnd(element: XElement)
+    func writeElementEnd(element: XElement) throws
     
-    func writeText(text: XText)
+    func writeText(text: XText) throws
     
-    func writeCDATASection(cdataSection: XCDATASection)
+    func writeCDATASection(cdataSection: XCDATASection) throws
     
-    func writeProcessingInstruction(processingInstruction: XProcessingInstruction)
+    func writeProcessingInstruction(processingInstruction: XProcessingInstruction) throws
     
-    func writeComment(comment: XComment)
+    func writeComment(comment: XComment) throws
     
-    func writeInternalEntityDeclaration(internalEntityDeclaration: XInternalEntityDeclaration)
+    func writeInternalEntityDeclaration(internalEntityDeclaration: XInternalEntityDeclaration) throws
     
-    func writeExternalEntityDeclaration(externalEntityDeclaration: XExternalEntityDeclaration)
+    func writeExternalEntityDeclaration(externalEntityDeclaration: XExternalEntityDeclaration) throws
     
-    func writeUnparsedEntityDeclaration(unparsedEntityDeclaration: XUnparsedEntityDeclaration)
+    func writeUnparsedEntityDeclaration(unparsedEntityDeclaration: XUnparsedEntityDeclaration) throws
     
-    func writeNotationDeclaration(notationDeclaration: XNotationDeclaration)
+    func writeNotationDeclaration(notationDeclaration: XNotationDeclaration) throws
     
-    func writeParameterEntityDeclaration(parameterEntityDeclaration: XParameterEntityDeclaration)
+    func writeParameterEntityDeclaration(parameterEntityDeclaration: XParameterEntityDeclaration) throws
     
-    func writeInternalEntity(internalEntity: XInternalEntity)
+    func writeInternalEntity(internalEntity: XInternalEntity) throws
     
-    func writeExternalEntity(externalEntity: XExternalEntity)
+    func writeExternalEntity(externalEntity: XExternalEntity) throws
     
-    func writeElementDeclaration(elementDeclaration: XElementDeclaration)
+    func writeElementDeclaration(elementDeclaration: XElementDeclaration) throws
     
-    func writeAttributeListDeclaration(attributeListDeclaration: XAttributeListDeclaration)
+    func writeAttributeListDeclaration(attributeListDeclaration: XAttributeListDeclaration) throws
 
-    func writeDocumentEnd(document: XDocument)
+    func writeDocumentEnd(document: XDocument) throws
 }
 
 open class XDefaultProduction: XProduction {
@@ -116,8 +126,8 @@ open class XDefaultProduction: XProduction {
         return _writer
     }
     
-    public func write(_ text: String) {
-        _writer?.write(text)
+    public func write(_ text: String) throws {
+        try _writer?.write(text)
     }
     
     private let writeEmptyTags: Bool
@@ -162,119 +172,119 @@ open class XDefaultProduction: XProduction {
         return sorted
     }
     
-    open func writeDocumentStart(document: XDocument) {
+    open func writeDocumentStart(document: XDocument) throws {
     }
     
-    open func writeXMLDeclaration(version: String, encoding: String?, standalone: String?) {
-        write("<?xml version=\"\(version)\"\(encoding != nil ? " encoding=\"\(encoding ?? "?")\"" : "")\(standalone != nil ? " standalone=\"\(standalone ?? "?")\"" : "")?>\(linebreak)")
+    open func writeXMLDeclaration(version: String, encoding: String?, standalone: String?) throws {
+        try write("<?xml version=\"\(version)\"\(encoding != nil ? " encoding=\"\(encoding ?? "?")\"" : "")\(standalone != nil ? " standalone=\"\(standalone ?? "?")\"" : "")?>\(linebreak)")
     }
     
-    open func writeDocumentTypeDeclarationBeforeInternalSubset(type: String, publicID: String?, systemID: String?, hasInternalSubset: Bool) {
-        write("<!DOCTYPE \(type)\(publicID != nil ? " PUBLIC \"\(publicID ?? "")\"" : "")\(systemID != nil ? "\(publicID == nil ? " SYSTEM" : "") \"\(systemID ?? "")\"" : "")")
+    open func writeDocumentTypeDeclarationBeforeInternalSubset(type: String, publicID: String?, systemID: String?, hasInternalSubset: Bool) throws {
+        try write("<!DOCTYPE \(type)\(publicID != nil ? " PUBLIC \"\(publicID ?? "")\"" : "")\(systemID != nil ? "\(publicID == nil ? " SYSTEM" : "") \"\(systemID ?? "")\"" : "")")
     }
     
-    open func writeDocumentTypeDeclarationInternalSubsetStart() {
-        write("\(linebreak)[\(linebreak)")
+    open func writeDocumentTypeDeclarationInternalSubsetStart() throws {
+        try write("\(linebreak)[\(linebreak)")
     }
     
-    open func writeDocumentTypeDeclarationInternalSubsetEnd() {
-        write("]")
+    open func writeDocumentTypeDeclarationInternalSubsetEnd() throws {
+        try write("]")
     }
     
-    open func writeDocumentTypeDeclarationAfterInternalSubset(hasInternalSubset: Bool) {
-        write(">\(linebreak)")
+    open func writeDocumentTypeDeclarationAfterInternalSubset(hasInternalSubset: Bool) throws {
+        try write(">\(linebreak)")
     }
     
-    open func writeElementStartBeforeAttributes(element: XElement) {
-        write("<\(element.name)")
+    open func writeElementStartBeforeAttributes(element: XElement) throws {
+        try write("<\(element.name)")
     }
     
     open func sortAttributeNames(attributeNames: [String], element: XElement) -> [String] {
         return attributeNames.sorted{ $0.caseInsensitiveCompare($1) == .orderedAscending }
     }
     
-    open func writeAttributeValue(name: String, value: String, element: XElement) {
-        write(escapeDoubleQuotedValue(value))
+    open func writeAttributeValue(name: String, value: String, element: XElement) throws {
+        try write(escapeDoubleQuotedValue(value))
     }
     
-    open func writeAttribute(name: String, value: String, element: XElement) {
-        write(" \(name)=\"")
-        writeAttributeValue(name: name, value: value, element: element)
-        write("\"")
+    open func writeAttribute(name: String, value: String, element: XElement) throws {
+        try write(" \(name)=\"")
+        try writeAttributeValue(name: name, value: value, element: element)
+        try write("\"")
     }
     
     open func writeAsEmptyTagIfEmpty(element: XElement) -> Bool {
         return writeEmptyTags
     }
     
-    open func writeElementStartAfterAttributes(element: XElement) {
+    open func writeElementStartAfterAttributes(element: XElement) throws {
         if element.isEmpty && writeAsEmptyTagIfEmpty(element: element) {
-            write("/>")
+            try write("/>")
         }
         else {
-            write(">")
+            try write(">")
         }
     }
     
-    open func writeElementEnd(element: XElement) {
+    open func writeElementEnd(element: XElement) throws {
         if !(element.isEmpty && writeAsEmptyTagIfEmpty(element: element)) {
-            write("</\(element.name)>")
+            try write("</\(element.name)>")
         }
     }
     
-    open func writeText(text: XText) {
-        write(escapeText(text._value))
+    open func writeText(text: XText) throws {
+        try write(escapeText(text._value))
     }
     
-    open func writeCDATASection(cdataSection: XCDATASection) {
-        write("<![CDATA[\(cdataSection._value)]]>")
+    open func writeCDATASection(cdataSection: XCDATASection) throws {
+        try write("<![CDATA[\(cdataSection._value)]]>")
     }
     
-    open func writeProcessingInstruction(processingInstruction: XProcessingInstruction) {
-        write("<?\(processingInstruction._target)\(processingInstruction._data != nil ? " \(processingInstruction._data ?? "")" : "")?>")
+    open func writeProcessingInstruction(processingInstruction: XProcessingInstruction) throws {
+        try write("<?\(processingInstruction._target)\(processingInstruction._data != nil ? " \(processingInstruction._data ?? "")" : "")?>")
     }
     
-    open func writeComment(comment: XComment) {
-        write("<!--\(comment._value)-->")
+    open func writeComment(comment: XComment) throws {
+        try write("<!--\(comment._value)-->")
     }
     
-    open func writeInternalEntityDeclaration(internalEntityDeclaration: XInternalEntityDeclaration) {
-        write("\(declarationInInternalSubsetIndentation)<!ENTITY \(internalEntityDeclaration._name) \"\(escapeDoubleQuotedValue(internalEntityDeclaration._value))\">\(linebreak)")
+    open func writeInternalEntityDeclaration(internalEntityDeclaration: XInternalEntityDeclaration) throws {
+        try write("\(declarationInInternalSubsetIndentation)<!ENTITY \(internalEntityDeclaration._name) \"\(escapeDoubleQuotedValue(internalEntityDeclaration._value))\">\(linebreak)")
     }
     
-    open func writeExternalEntityDeclaration(externalEntityDeclaration: XExternalEntityDeclaration) {
-        write("\(declarationInInternalSubsetIndentation)<!ENTITY \(externalEntityDeclaration._name)\(externalEntityDeclaration._publicID != nil ? " PUBLIC \"\(externalEntityDeclaration._publicID ?? "")\"" : " SYSTEM") \"\(externalEntityDeclaration._systemID)\">\(linebreak)")
+    open func writeExternalEntityDeclaration(externalEntityDeclaration: XExternalEntityDeclaration) throws {
+        try write("\(declarationInInternalSubsetIndentation)<!ENTITY \(externalEntityDeclaration._name)\(externalEntityDeclaration._publicID != nil ? " PUBLIC \"\(externalEntityDeclaration._publicID ?? "")\"" : " SYSTEM") \"\(externalEntityDeclaration._systemID)\">\(linebreak)")
     }
     
-    open func writeUnparsedEntityDeclaration(unparsedEntityDeclaration: XUnparsedEntityDeclaration) {
-        write("\(declarationInInternalSubsetIndentation)<!ENTITY \(unparsedEntityDeclaration._name)\(unparsedEntityDeclaration._publicID != nil ? " PUBLIC \"\(unparsedEntityDeclaration._publicID ?? "")\"" : " SYSTEM") \"\(unparsedEntityDeclaration._systemID)\" NDATA \(unparsedEntityDeclaration._notationName)>\(linebreak)")
+    open func writeUnparsedEntityDeclaration(unparsedEntityDeclaration: XUnparsedEntityDeclaration) throws {
+        try write("\(declarationInInternalSubsetIndentation)<!ENTITY \(unparsedEntityDeclaration._name)\(unparsedEntityDeclaration._publicID != nil ? " PUBLIC \"\(unparsedEntityDeclaration._publicID ?? "")\"" : " SYSTEM") \"\(unparsedEntityDeclaration._systemID)\" NDATA \(unparsedEntityDeclaration._notationName)>\(linebreak)")
     }
     
-    open func writeNotationDeclaration(notationDeclaration: XNotationDeclaration) {
-        write("\(declarationInInternalSubsetIndentation)<!NOTATION \(notationDeclaration._name)\(notationDeclaration._publicID != nil ? " PUBLIC \"\(notationDeclaration._publicID ?? "")\"" : "")\(notationDeclaration._systemID != nil ? "\(notationDeclaration._publicID == nil ? " SYSTEM" : "") \"\(notationDeclaration._systemID ?? "")\"" : "")\(linebreak)>")
+    open func writeNotationDeclaration(notationDeclaration: XNotationDeclaration) throws {
+        try write("\(declarationInInternalSubsetIndentation)<!NOTATION \(notationDeclaration._name)\(notationDeclaration._publicID != nil ? " PUBLIC \"\(notationDeclaration._publicID ?? "")\"" : "")\(notationDeclaration._systemID != nil ? "\(notationDeclaration._publicID == nil ? " SYSTEM" : "") \"\(notationDeclaration._systemID ?? "")\"" : "")\(linebreak)>")
     }
     
-    open func writeParameterEntityDeclaration(parameterEntityDeclaration: XParameterEntityDeclaration) {
-        write("\(declarationInInternalSubsetIndentation)<!ENTITY % \(parameterEntityDeclaration._name) \"\(escapeDoubleQuotedValue(parameterEntityDeclaration._value))\"\(linebreak)>")
+    open func writeParameterEntityDeclaration(parameterEntityDeclaration: XParameterEntityDeclaration) throws {
+        try write("\(declarationInInternalSubsetIndentation)<!ENTITY % \(parameterEntityDeclaration._name) \"\(escapeDoubleQuotedValue(parameterEntityDeclaration._value))\"\(linebreak)>")
     }
     
-    open func writeInternalEntity(internalEntity: XInternalEntity) {
-        write("&\(internalEntity._name);")
+    open func writeInternalEntity(internalEntity: XInternalEntity) throws {
+        try write("&\(internalEntity._name);")
     }
     
-    open func writeExternalEntity(externalEntity: XExternalEntity) {
-        write("&\(externalEntity._name);")
+    open func writeExternalEntity(externalEntity: XExternalEntity) throws {
+        try write("&\(externalEntity._name);")
     }
     
-    open func writeElementDeclaration(elementDeclaration: XElementDeclaration) {
-        write("\(declarationInInternalSubsetIndentation)\(elementDeclaration._literal)\(linebreak)")
+    open func writeElementDeclaration(elementDeclaration: XElementDeclaration) throws {
+        try write("\(declarationInInternalSubsetIndentation)\(elementDeclaration._literal)\(linebreak)")
     }
     
-    open func writeAttributeListDeclaration(attributeListDeclaration: XAttributeListDeclaration) {
-        write("\(declarationInInternalSubsetIndentation)\(attributeListDeclaration._literal)\(linebreak)")
+    open func writeAttributeListDeclaration(attributeListDeclaration: XAttributeListDeclaration) throws {
+        try write("\(declarationInInternalSubsetIndentation)\(attributeListDeclaration._literal)\(linebreak)")
     }
     
-    open func writeDocumentEnd(document: XDocument) {
+    open func writeDocumentEnd(document: XDocument) throws {
         
     }
 }
@@ -296,40 +306,40 @@ open class XPrettyPrintProduction: XDefaultProduction {
         return element.content.contains(where: { $0 is XText })
     }
     
-    open override func writeElementStartBeforeAttributes(element: XElement) {
+    open override func writeElementStartBeforeAttributes(element: XElement) throws {
         if mixed.last != true {
             if indentationLevel > 0 {
-                write(linebreak)
+                try write(linebreak)
                 for _ in 1...indentationLevel {
-                    write(_indentation)
+                    try write(_indentation)
                 }
             }
         }
-        super.writeElementStartBeforeAttributes(element: element)
+        try super.writeElementStartBeforeAttributes(element: element)
     }
     
-    open override func writeElementStartAfterAttributes(element: XElement) {
-        super.writeElementStartAfterAttributes(element: element)
+    open override func writeElementStartAfterAttributes(element: XElement) throws {
+        try super.writeElementStartAfterAttributes(element: element)
         if !element.isEmpty {
             mixed.append(hasMixedContent(element: element))
             indentationLevel += 1
         }
     }
     
-    open override func writeElementEnd(element: XElement) {
+    open override func writeElementEnd(element: XElement) throws {
         if !element.isEmpty {
             indentationLevel -= 1
             if mixed.last != true {
-                write(linebreak)
+                try write(linebreak)
                 if indentationLevel > 0 {
                     for _ in 1...indentationLevel {
-                        write(_indentation)
+                        try write(_indentation)
                     }
                 }
             }
             mixed.removeLast()
         }
-        super.writeElementEnd(element: element)
+        try super.writeElementEnd(element: element)
     }
 }
 
