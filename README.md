@@ -10,7 +10,8 @@ let transformation = XTransformation {
     XRule(forElements: ["table"]) { table in
         table.insertNext {
             XElement("caption") {
-                table.children{ $0.name.contains("title") }.contents
+                "Table: "
+                table.children{ $0.name.contains("title") }.content
             }
         }
     }
