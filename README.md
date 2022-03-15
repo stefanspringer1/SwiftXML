@@ -36,6 +36,7 @@ let transformation = XTransformation {
 **NOTE**
 
 **This library is not in a “final” state yet** despite its high version number, i.e. there might still be serious bugs, or maybe breaking changes will happen without the major version getting augmented. Also, when such a final state is reached, the library might be further developed using a new repository URL (and the version number set back to a lower one). Further notice will be added here. See [there](https://stefanspringer.com) for contact information.
+
 ---
 
 ## Properties of the library
@@ -127,6 +128,7 @@ The library is not to be used in concurrent contexts. –
 **NOTE**
 
 The description of the library that follows might not include all types and methods. Please see the documentation produced by DocC or use autocompletion in an according integrated development environment (IDE).
+
 ---
 
 ## Reading XML
