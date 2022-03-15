@@ -35,7 +35,7 @@ let transformation = XTransformation {
 ---
 **NOTE**
 
-**This library is not in a “final” state yet** despite the high version number, i.e. there might be bugs or maybe breaking changes will happen. Also, when such a final state is reached, the library might be further developed using a new repository URL (and the version number set back to a lower one). Further notice will be added here. See [there](https://stefanspringer.com) for contact information.
+**This library is not in a “final” state yet** despite the high version number, i.e. there might be bugs, or maybe breaking changes will happen without augmenting the major version. Also, when such a final state is reached, the library might be further developed using a new repository URL (and the version number set back to a lower one). Further notice will be added here. See [there](https://stefanspringer.com) for contact information.
 
 ---
 
