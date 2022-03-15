@@ -837,6 +837,8 @@ Output:
 <a>Hello <span style="background:LightGreen">world</span>, the <span style="background:LightGreen">world</span> is nice.</a>
 ```
 
+An `XSpot` can also have attachments.
+
 ## Rules
 
 As mentioned in the general description, a set of rules `XRule` in the form of a transformation instance of type `XTransformation` can be used as follows.

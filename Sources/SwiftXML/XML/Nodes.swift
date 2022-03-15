@@ -519,6 +519,9 @@ public class XNode {
 }
 
 public class XSpot: XNode {
+    
+    public var attached = Attachments()
+    
     public override init() {
         super.init()
     }
