@@ -780,7 +780,7 @@ myDocument.elements(ofName: "table").forEach { table in
 }
 ```
 
-## Handling of text
+## `XSpot` and handling of text
 
 Subsequent text nodes (`XText`) are always automatically combined, and text nodes with empty text are automatically removed.
 
