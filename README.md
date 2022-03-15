@@ -787,7 +787,7 @@ Subsequent text nodes (`XText`) are always automatically combined, and text node
 This can be very convenient when processing text, e.g. it is then very straightforward to apply regular expressions to the text in the document. But there might be some stumbling blocks involved here, when the different behaviour of text nodes and other nodes 
 affects the result of your manipulations.
 
-In those cases, you may use a `XSpot` node as a separator to a text. An `XSpot` “does nothing” besides existing at a certain spot in the XML tree (hence its name), it invisible when using a production. Consider e.g. the following example where the occurrences of a search text gets a greenish background. In this example, you do not want `part` to be added to `text` in the iteration:
+In those cases, you may use an `XSpot` node as a separator to a text. An `XSpot` “does nothing” besides existing at a certain spot in the XML tree (hence its name), it invisible when using a production. Consider e.g. the following example where the occurrences of a search text gets a greenish background. In this example, you do not want `part` to be added to `text` in the iteration:
 
 ```Swift
 let document = try parseXML(fromText: """
