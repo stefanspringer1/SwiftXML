@@ -102,7 +102,7 @@ The output is:
 
 Of course, since those iterations are regular sequences, all according Swift library functions like `map` and `filter` can be used. But in many cases, it might be better to use conditions on the node iterators (see the section on finding related nodes with filters) or chaining of node iterators (see the section on chained iterators).
 
-The user of the library can also provide sets of rules to be applied (see the code at the beginning and a full example in the section about rules). In such a rule, the user defines what to do with an element or attribute with a certain name. A set of rules can then be applied to a document, i.e. the rules are applied in the order of their definition. This is repeated, guaranteeing that a rule is only applied once to the same object (if not fully removed from the document and added again, cf. the section below on document membership), until no more application takes places. So elements can be added during application of a rule and then later be processed by the same or another rule.
+The user of the library can also provide sets of rules to be applied (see the code at the beginning and a full example in the section about rules). In such a rule, the user defines what to do with an element or attribute with a certain name. A set of rules can then be applied to a document, i.e. the rules are applied in the order of their definition. This is repeated, guaranteeing that a rule is only applied once to the same object (if not fully removed from the document and added again, see the section below on document membership), until no more application takes places. So elements can be added during application of a rule and then later be processed by the same or another rule.
 
 ### Other properties
 
@@ -300,7 +300,7 @@ if let id = myElement["id"] {
 
 ### Attachments
 
-Branches (i.e. element and documents) can have “attachments”. Those are objects that can be attached via a textual key to those branches but that not considered as belonging to the actual XML tree.
+Branches (i.e. element and documents) and `XSpot` nodes (see the section below on `XSpot` and handling of text) can have “attachments”. Those are objects that can be attached via a textual key to those branches but that not considered as belonging to the actual XML tree.
 
 The attachments can be reached by the property `attached`, and accessing and setting them is analogous to attributes:
 
