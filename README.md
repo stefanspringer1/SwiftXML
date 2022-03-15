@@ -941,3 +941,19 @@ To stop the notification, use
 ```Swift
 func removeChangedAction(forAttributeName: String)
 ```
+
+## Facilities for testing
+
+For our tests of the library, we implemented the following properties to get a sequence iterating over a single element or node.
+
+For any node:
+
+```Swift
+var asNodeSequence: XNodeSequence
+```
+
+For an element:
+
+```Swift
+var asElementSequence: XElementSequence
+```
