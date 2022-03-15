@@ -641,7 +641,8 @@ public final class XDescendantsIterator: XElementIteratorProtocol {
     public func previous() -> XElement? {
         repeat {
             if currentNode === startNode {
-                currentNode = nil
+                currentNode = startNode
+                return nil
             }
             else {
                 currentNode = currentNode?._previousInTree
@@ -672,7 +673,8 @@ public final class XDescendantsIncludingSelfIterator: XElementIteratorProtocol {
     public func next() -> XElement? {
         repeat {
             if startNode?.getLastInTree() === currentNode {
-                currentNode = nil
+                currentNode = startNode
+                return nil
             }
             else if started == false {
                 currentNode = startNode
