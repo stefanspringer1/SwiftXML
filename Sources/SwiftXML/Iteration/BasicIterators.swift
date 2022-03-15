@@ -35,7 +35,7 @@ public class XNodeIteratorWithCondition: XNodeIterator {
     }
 }
 
-public class XNodeSequence: Sequence {
+public class XNodeSequence: LazySequenceProtocol {
     public func makeIterator() -> XNodeIterator {
         return XNodeIterator()
     }
@@ -75,7 +75,7 @@ public class XElementIteratorWithCondition: XElementIterator {
     }
 }
 
-public class XElementSequence: Sequence {
+public class XElementSequence: LazySequenceProtocol {
     public func makeIterator() -> XElementIterator {
         return XElementIterator()
     }
@@ -110,7 +110,7 @@ public class XAttributeIteratorWithCondition: XAttributeIterator {
     }
 }
 
-public class XAttributeSequence: Sequence {
+public class XAttributeSequence: LazySequenceProtocol {
     public func makeIterator() -> XAttributeIterator {
         return XAttributeIterator()
     }
@@ -123,7 +123,7 @@ public class XNodeLikeIterator: IteratorProtocol {
     }
 }
 
-public class XNodeLikeSequence: Sequence {
+public class XNodeLikeSequence: LazySequenceProtocol {
     public func makeIterator() -> XNodeLikeIterator {
         return XNodeLikeIterator()
     }

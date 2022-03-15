@@ -95,7 +95,7 @@ public final class WeaklyListed<T: AnyObject> {
  A list that stores its elements weakly. It looks for zombies whenever operating
  on it; therefore it is only suitable for a small number of elements.
  */
-public final class WeakList<T: AnyObject>: Sequence {
+public final class WeakList<T: AnyObject>: LazySequenceProtocol {
     
     var first: WeaklyListed<T>? = nil
     
