@@ -806,3 +806,57 @@ public final class XTreeIterator: XNodeIteratorProtocol {
     }
     
 }
+
+/**
+Iterator that iterates over exactly one node. This ist mainly for testing.
+ */
+public final class XNodeSelfIterator: XNodeIteratorProtocol {
+    
+    weak var node: XNode?
+    private var done: Bool = false
+    
+    public init(node: XNode) {
+        self.node = node
+    }
+    
+    public func next() -> XNode? {
+        if done {
+            return nil
+        }
+        else {
+            done = true
+            return node
+        }
+    }
+    
+    public func previous() -> XNode? {
+        return nil // do nothing
+    }
+}
+
+/**
+Iterator that iterates over exactly one element. This ist mainly for testing.
+ */
+public final class XElementSelfIterator: XElementIteratorProtocol {
+    
+    weak var element: XElement?
+    private var done: Bool = false
+    
+    public init(element: XElement) {
+        self.element = element
+    }
+    
+    public func next() -> XElement? {
+        if done {
+            return nil
+        }
+        else {
+            done = true
+            return element
+        }
+    }
+    
+    public func previous() -> XElement? {
+        return nil // do nothing
+    }
+}

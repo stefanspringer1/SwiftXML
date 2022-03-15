@@ -305,6 +305,8 @@ public class XNode {
         }
     }
     
+    public var asNodeSequence: XNodeSequence { get { return XNodeSelfSequence(node: self) } }
+    
     weak var _previous: XNode? = nil
     var _next: XNode? = nil
     
@@ -966,6 +968,8 @@ public final class XElement: XBranch, CustomStringConvertible {
     
     weak var previousWithSameName: XElement? = nil
     var nextWithSameName: XElement? = nil
+    
+    public var asElementSequence: XElementSequence { get { return XElementSelfSequence(element: self) } }
     
     // prevent stack overflow when destroying the list of elements with same name,
     // to be applied on the first element in that list,

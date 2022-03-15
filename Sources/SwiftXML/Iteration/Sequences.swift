@@ -268,3 +268,43 @@ public final class XAttributesOfSameNameSequence: XAttributeSequence {
         )
     }
 }
+
+/**
+ A sequence iterating only over one element. This ist mainly for testing.
+ */
+public final class XElementSelfSequence: XElementSequence {
+    
+    let element: XElement
+    
+    init(element: XElement) {
+        self.element = element
+    }
+    
+    public override func makeIterator() -> XBidirectionalElementIterator {
+        return XBidirectionalElementIterator(
+            elementIterator: XElementSelfIterator(
+                element: element
+            )
+        )
+    }
+}
+
+/**
+ A sequence iterating only over one node. This ist mainly for testing.
+ */
+public final class XNodeSelfSequence: XNodeSequence {
+    
+    let node: XNode
+    
+    init(node: XNode) {
+        self.node = node
+    }
+    
+    public override func makeIterator() -> XBidirectionalNodeIterator {
+        return XBidirectionalNodeIterator(
+            nodeIterator: XNodeSelfIterator(
+                node: node
+            )
+        )
+    }
+}
