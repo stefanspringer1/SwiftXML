@@ -784,6 +784,45 @@ myDocument.elements(ofName: "table").forEach { table in
 
 Subsequent text nodes (`XText`) are always automatically combined, and text nodes with empty text are automatically removed.
 
+This can be very convenient when processing text, e.g. it is then very straightforward to apply regular expressions to the text in the document. But there might be some stumbling blocks involved here. You then may use a `XSpot` element as a separator to a text. An `XSpot` “does nothing” besides existing at a certain spot in the XML tree, it invisible using the default production. Consider e.g. the following example where the occurrences of a search text gets a greenish background. In this example, you do not want `part` to be added to `text` in the iteration:
+
+```Swift
+let document = try parseXML(fromText: """
+<a>Hello world, the world is nice.</a>
+""")
+
+let searchText = "world"
+
+document.traverse { node in
+    if let text = node as? XText {
+        if text.value.contains(searchText) {
+            let spot = XSpot()
+            text.insertPrevious { spot }
+            var addSearchText = false
+            text.value.components(separatedBy: searchText).forEach { part in
+                spot.insertPrevious {
+                    addSearchText ? XElement("span", ["style": "background:LightGreen"]) {
+                        searchText
+                    } : nil
+                    part
+                }
+                addSearchText = true
+            }
+            text.remove()
+            spot.remove()
+        }
+    }
+}
+
+document.firstContent?.echo()
+```
+
+Output:
+
+```text
+<a>Hello <span style="background:LightGreen">world</span>, the <span style="background:LightGreen">world</span> is nice.</a>
+```
+
 ## Rules
 
 As mentioned in the general description, a set of rules `XRule` in the form of a transformation instance of type `XTransformation` can be used as follows.

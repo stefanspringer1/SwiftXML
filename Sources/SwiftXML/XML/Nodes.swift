@@ -516,6 +516,12 @@ public class XNode {
     }
 }
 
+public class XSpot: XNode {
+    public override init() {
+        super.init()
+    }
+}
+
 //public protocol XNodeLike: CustomStringConvertible {}
 
 public class XBranch: XNode {
