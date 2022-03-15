@@ -100,7 +100,7 @@ The output is:
 <a><item id="2"/><item id="4"/></a>
 ```
 
-Of course, since those iterations are regular sequences, all according Swift library functions like `map` and `filter` can be used. But in mmany cases, it might be better to use conditions on the node iterators (see the section on finding related nodes with filters) or chaining of node iterators (see the section on chained iterators).
+Of course, since those iterations are regular sequences, all according Swift library functions like `map` and `filter` can be used. But in many cases, it might be better to use conditions on the node iterators (see the section on finding related nodes with filters) or chaining of node iterators (see the section on chained iterators).
 
 The user of the library can also provide sets of rules to be applied (see the code at the beginning and a full example in the section about rules). In such a rule, the user defines what to do with an element or attribute with a certain name. A set of rules can then be applied to a document, i.e. the rules are applied in the order of their definition. This is repeated, guaranteeing that a rule is only applied once to the same object (if not fully removed from the document and added again, cf. the section below on document membership), until no more application takes places. So elements can be added during application of a rule and then later be processed by the same or another rule.
 
@@ -389,7 +389,7 @@ myDocument.attributes(ofName: "id").forEach { (value,element) in
 
 ## Finding related nodes
 
-Starting from some node, you might want to find related nodes, e.g. its children. The names chosen for the accordings methods come from the idea that all nodes have a natural order, namely the order of a depth-first traversal, which is the same order in which the content of an XML document is stored in a text file. This order gives a meaning to method names such a `nextSibling`.
+Starting from some node, you might want to find related nodes, e.g. its children. The names chosen for the accordings methods come from the idea that all nodes have a natural order, namely the order of a depth-first traversal, which is the same order in which the content of an XML document is stored in a text file. This order gives a meaning to method names such a `nextSibling`. Note that, other than for the iterations you get via `elements(ofName:)` and `attributes(ofName:)`, even nodes that stay in the same document can occur in such an iteration sevaral times if moved accordingly.
 
 Sequences returned are always lazy sequences, iterating through them gives items of the obvious type. As mentioned in the general description of the library, manipulating the XML tree during such an iteration is allowed.
 
