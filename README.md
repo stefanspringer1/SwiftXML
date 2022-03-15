@@ -325,6 +325,10 @@ func traverse(down: (XNode) -> (), up: ((XBranch) -> ())?)
 ```
 
 ```Swift
+func traverseThrowing(down: (XNode) throws -> (), up: ((XBranch) throws -> ())?) throws
+```
+
+```Swift
 func traverseAsync(down: (XNode) async -> (), up: ((XBranch) async -> ())?) async
 ```
 
