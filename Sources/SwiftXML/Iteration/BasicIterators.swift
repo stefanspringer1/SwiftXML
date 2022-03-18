@@ -777,6 +777,9 @@ public final class XTreeIterator: XContentIteratorProtocol {
         }
         else {
             currentNode = startNode
+            if let document = currentNode as? XDocument {
+                currentNode = document._firstContent
+            }
             started = true
             return currentNode as? XContent
         }
