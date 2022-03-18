@@ -76,7 +76,7 @@ public final class XDocument: XNode, XBranchInternal {
     }
     
     @discardableResult public func addFirst(skip: Bool = false, @XNodeBuilder builder: () -> [XContent]) -> XDocument {
-        _ = (self as XBranch).add(skip: skip, builder: builder)
+        _ = (self as XBranch).addFirst(skip: skip, builder: builder)
         return self
     }
     
