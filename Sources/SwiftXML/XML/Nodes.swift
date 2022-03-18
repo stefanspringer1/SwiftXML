@@ -225,8 +225,8 @@ public class XNode {
         theLastInTree._nextInTree?._previousInTree = _previousInTree
         theLastInTree._nextInTree = nil
         var ancestor = _parent
-        while let theAncestor = ancestor, theAncestor.lastInTree === theLastInTree {
-            theAncestor.lastInTree = _previousInTree ?? theAncestor
+        while let theAncestor = ancestor, theAncestor._lastInTree === theLastInTree {
+            theAncestor._lastInTree = _previousInTree ?? theAncestor
             ancestor = ancestor?._parent
         }
         _previousInTree = nil
@@ -554,7 +554,7 @@ protocol XBranch: XNode {
     var _firstContent: XContent? { get set }
     var _lastContent: XContent? { get set }
     var _document: XDocument? { get set }
-    var lastInTree: XNode! { get set }
+    var _lastInTree: XNode! { get set }
 }
 
 extension XBranch {
@@ -642,22 +642,22 @@ extension XBranch {
         if newChild === _lastContent {
             let newLastInTree = newChild.getLastInTree()
             
-            newChild._previousInTree = lastInTree
-            newLastInTree._nextInTree = lastInTree._nextInTree
-            lastInTree._nextInTree?._previousInTree = newChild
-            lastInTree._nextInTree = newChild
+            newChild._previousInTree = _lastInTree
+            newLastInTree._nextInTree = _lastInTree._nextInTree
+            _lastInTree._nextInTree?._previousInTree = newChild
+            _lastInTree._nextInTree = newChild
             
             if _firstContent === newChild {
                 _nextInTree = newChild
             }
             
             var ancestor: XBranch? = self._parent
-            while let theAncestor = ancestor, theAncestor.lastInTree === lastInTree {
-                theAncestor.lastInTree = newLastInTree
+            while let theAncestor = ancestor, theAncestor._lastInTree === _lastInTree {
+                theAncestor._lastInTree = newLastInTree
                 ancestor = theAncestor._parent ?? theAncestor._document
             }
             
-            lastInTree = newLastInTree
+            _lastInTree = newLastInTree
             
             return true
         }
@@ -918,7 +918,7 @@ public final class XElement: XContent, XBranch, CustomStringConvertible {
     
     public var _lastContent: XContent?
     
-    public var lastInTree: XNode!
+    public var _lastInTree: XNode!
     
     public var _document: XDocument? = nil
     
@@ -1113,7 +1113,7 @@ public final class XElement: XContent, XBranch, CustomStringConvertible {
     public init(_ name: String, _ attributes: [String:String?]? = nil) {
         self._name = name
         super.init()
-        self.lastInTree = self
+        self._lastInTree = self
         if let theAttributes = attributes {
             setAttributes(attributes: theAttributes)
         }
@@ -1122,6 +1122,7 @@ public final class XElement: XContent, XBranch, CustomStringConvertible {
     public init(_ name: String, _ attributes: [String:String?]? = nil, adjustDocument _adjustDocument: Bool = false, @XNodeBuilder builder: () -> [XContent]) {
         self._name = name
         super.init()
+        self._lastInTree = self
         if let theAttributes = attributes {
             setAttributes(attributes: theAttributes)
         }

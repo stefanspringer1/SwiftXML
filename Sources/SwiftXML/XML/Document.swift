@@ -22,7 +22,7 @@ public final class XDocument: XNode, XBranch {
     
     public var _document: XDocument?
     
-    public var lastInTree: XNode!
+    public var _lastInTree: XNode!
     
     var _sourcePath: String? = nil
     
@@ -232,6 +232,7 @@ public final class XDocument: XNode, XBranch {
     public override init() {
         super.init()
         _document = self
+        self._lastInTree = self
     }
     
     func getType() -> String? {
