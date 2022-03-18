@@ -956,7 +956,31 @@ public class Attachments {
 }
 
 public final class XElement: XContent, XBranchInternal, CustomStringConvertible {
+    
+    func setDocument(document newDocument: XDocument?) {
 
+        print("SET DOC FOR \(self)")
+        
+        // set document:
+        var node: XNode? = self
+        repeat {
+            if let element = node as? XElement {
+                if !(newDocument === element._document) {
+                    print("    ... FOR \(element)")
+                    element._document?.unregisterElement(element: element)
+                    element._document = newDocument
+                    newDocument?.registerElement(element: element)
+                }
+            }
+            if self._lastInTree === node {
+                print("    >>> SUBTREE FINISHED")
+                break
+            }
+            node = node?._nextInTree
+        } while node != nil
+        print("    >>> NO MORE NODE")
+    }
+    
     var _firstContent: XContent?
     
     var _lastContent: XContent?
@@ -1220,25 +1244,6 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     
     public func adjustDocument() {
         setDocument(document: _document)
-    }
-    
-    func setDocument(document newDocument: XDocument?) {
-
-        // set document:
-        var node: XNode? = self
-        repeat {
-            if let element = node as? XElement {
-                if !(newDocument === element._document) {
-                    element._document?.unregisterElement(element: element)
-                    element._document = newDocument
-                    newDocument?.registerElement(element: element)
-                }
-            }
-            if self.getLastInTree() === node {
-                break
-            }
-            node = node?._nextInTree
-        } while node != nil
     }
     
     override func produceEntering(production: XProduction) throws {
