@@ -352,6 +352,14 @@ open class XHTMLProduction: XPrettyPrintProduction {
     open override func writeXMLDeclaration(version: String, encoding: String?, standalone: String?) {
         // do not write the XML declaration for HTML
     }
+    
+    open override func writeDocumentTypeDeclarationBeforeInternalSubset(type: String, publicID: String?, systemID: String?, hasInternalSubset: Bool) throws {
+        try write("<!DOCTYPE html")
+    }
+    
+    override open func writeDocumentTypeDeclarationAfterInternalSubset(hasInternalSubset: Bool) throws {
+        try write(">\(linebreak)")
+    }
 
     public var htmlEmptyTags = [
         "area", "base", "br", "col", "embed", "hr", "img", "input",
