@@ -581,7 +581,7 @@ extension XBranch {
         }
     }
     
-    var firstContent: XContent? {
+    public var firstContent: XContent? {
         get {
             return _firstContent
         }
@@ -597,7 +597,7 @@ extension XBranch {
         }
     }
     
-    var lastContent: XContent? {
+    public var lastContent: XContent? {
         get {
             return _lastContent
         }
