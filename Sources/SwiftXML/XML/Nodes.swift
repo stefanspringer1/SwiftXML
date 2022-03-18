@@ -928,6 +928,8 @@ public final class XElement: XContent, XBranch, CustomStringConvertible {
     var _attributes: [String:XAttribute]? = nil
     var _attributeNames: [String]? = nil
     
+    public var attached = Attachments()
+    
     public var description: String {
         get {
             """

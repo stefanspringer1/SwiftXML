@@ -26,6 +26,8 @@ public final class XDocument: XNode, XBranch {
     
     var _sourcePath: String? = nil
     
+    public var attached = Attachments()
+    
     public var sourcePath: String? {
         get {
             return _sourcePath
