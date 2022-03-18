@@ -18,7 +18,7 @@ public func parseXML(
     textAllowedInElementWithName: ((String) -> Bool)? = nil
 ) throws -> XDocument {
     let document = XDocument()
-    document._source = path
+    document._sourcePath = path
     
     let parser = ConvenienceParser(
         parser: XParser(internalEntityResolver: internalEntityResolver, textAllowedInElementWithName: textAllowedInElementWithName),
@@ -38,7 +38,7 @@ public func parseXML(
     textAllowedInElementWithName: ((String) -> Bool)? = nil
 ) throws -> XDocument {
     let document = XDocument()
-    document._source = url.path
+    document._sourcePath = url.path
     
     let parser = ConvenienceParser(
         parser: XParser(internalEntityResolver: internalEntityResolver, textAllowedInElementWithName: textAllowedInElementWithName),

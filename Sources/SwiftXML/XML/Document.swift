@@ -16,11 +16,11 @@ final class XValue {
 
 public final class XDocument: XBranch {
     
-    var _source: String? = nil
+    var _sourcePath: String? = nil
     
-    public var source: String? {
+    public var sourcePath: String? {
         get {
-            return _source
+            return _sourcePath
         }
     }
     
@@ -50,6 +50,34 @@ public final class XDocument: XBranch {
         attributeValueChangedActions[attributeName] = nil
     }
     
+    @discardableResult public func add(skip: Bool = false, @XNodeBuilder builder: () -> [XNode]) -> XDocument {
+        _add(skip: skip, builder: builder)
+        return self
+    }
+    
+    @discardableResult public func addFirst(skip: Bool = false, @XNodeBuilder builder: () -> [XNode]) -> XDocument {
+        _addFirst(skip: skip, builder: builder)
+        return self
+    }
+    
+    /**
+     Clear the contents of the document.
+     If "forward", then detaching prefetches the next node in iterators.
+     */
+    @discardableResult public func clear(forward: Bool = false) -> XDocument {
+        _clear(forward: forward)
+        return self
+    }
+    
+    /**
+     Set the contents of the document.
+     If "forward", then detaching prefetches the next node in iterators.
+     */
+    @discardableResult public func setContent(forward: Bool = false, @XNodeBuilder builder: () -> [XNodeLike]) -> XDocument {
+        _setContent(forward: forward, builder: builder)
+        return self
+    }
+    
     public override func shallowClone(forwardref: Bool = false) -> XDocument {
         let theClone = XDocument()
         if forwardref {
@@ -64,7 +92,7 @@ public final class XDocument: XBranch {
         theClone.type = type
         theClone.publicID = publicID
         theClone.systemID = systemID
-        theClone._source = _source
+        theClone._sourcePath = _sourcePath
         internalEntityDeclarations.forEach { name, declaration in theClone.internalEntityDeclarations[name] = declaration.shallowClone() }
         parameterEntityDeclarations.forEach { name, declaration in theClone.parameterEntityDeclarations[name] = declaration.shallowClone() }
         externalEntityDeclarations.forEach { name, declaration in theClone.externalEntityDeclarations[name] = declaration.shallowClone() }

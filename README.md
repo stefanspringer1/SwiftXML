@@ -191,6 +191,41 @@ This method is always called when a named entity reference is encountered (eithe
 
 One a more event handlers can be given a `parseXML` call, which implement `XEventHandler` from [XMLInterfaces](https://github.com/stefanspringer1/SwiftXMLInterfaces). This allows for the user of the library to catch any event during parsing like entering or leaving an element. E.g., the resolving of an internal entity reference could depend on the location inside the document (and not only on the name of the element or attribute), so this information can be collected by such an event handler.
 
+## Content of a document
+
+An XML document (`XDocument`) can contain the following content:
+
+- `XDocument`
+- `XElement`
+- `XText`
+- `XInternalEntity`
+- `XExternalEntity`
+- `XCDATASection`
+- `XProcessingInstruction`
+- `XComment`
+- `XSpot`
+
+The following is read from the internal subset:
+
+- `XInternalEntityDeclaration`
+- `XExternalEntityDeclaration`
+- `XUnparsedEntityDeclaration`
+- `XNotationDeclaration`
+- `XParameterEntityDeclaration`
+- `XElementDeclaration`
+- `XAttributeListDeclaration`
+
+They can be accessed via property `declarationsInInternalSubset`.
+
+A document has the following additional properties:
+
+- `encoding`
+- `publicID`
+- `sourcePath`
+- `standalone`
+- `systemID`
+- `xmlVersion`
+
 ## Displaying XML
 
 When printing a node via `print(...)`, only a top-level represenation like the start tag is printed and never the whole tree. When you would like to print the whole tree or document, use:
@@ -724,31 +759,28 @@ As you can see from the `print` commands in the last example, the element `<b id
 
 ## Tree manipulations
 
-Besides changing the node properties, an XML tree can be changed by the following methods.
+Besides changing the node properties, an XML tree can be changed by the following methods. Some of them return the subject itself as a discardable result. For the content specified in `{...}` (the builder) the order is preserved.
 
-Add nodes to the end of the content of a branch:
+Add nodes to the start of the content of an element or a document respectively:
 
 ```Swift
-func add(skip: Bool, builder: () -> XNodeLike)
+func add(skip: Bool, builder: () -> [XNode]) -> XElement
+func add(skip: Bool, builder: () -> [XNode]) -> XDocument
 ```
 
-Add nodes to the start of the content of a branch (their order is kept):
+Add nodes as the nodes previous to the node:
 
 ```Swift
-func addFirst(skip: Bool, builder: () -> XNodeLike)
+func insertPrevious(builder: () -> XNodeLike)
 ```
 
 Add nodes as the nodes next to the node:
 
 ```Swift
-func insertNext(builder: () -> XNodeLike)
+func insertNext(builder: () -> [XNode]) -> XNode
 ```
 
-Add nodes as the nodes previous to the node (their order is kept):
-
-```Swift
-func insertPrevious(builder: () -> XNodeLike)
-```
+A more precise type is returned from `insertPrevious` and `insertNext` if the type of the subject is more precisely known.
 
 By using the next two methods, a node gets removed. If the argument `forward` is set to `true` (default is `false`), such an operation prefetches the next node in iterators that have the node as active node, else, the iterators all told to go to the previous node.
 
@@ -764,16 +796,18 @@ Replace the node by other nodes; if `forward`, then detaching prefetches the nex
 func replace(forward: Bool, builder: () -> XNodeLike)
 ```
 
-Clear the contents of the node:
+Clear the contents of an element or a document respectively:
 
 ```Swift
-func clear(forward: Bool)
+func clear(forward: Bool) -> XElement
+func clear(forward: Bool) -> XDocument
 ```
 
-Set the contents of the branch:
+Set the contents of an element or a document respectively:
 
 ```Swift
-func set(forward: Bool, builder: () -> XNodeLike)
+func setContent(forward: Bool, builder: () -> [XNodeLike]) -> XElement
+func setContent(forward: Bool, builder: () -> [XNodeLike]) -> XDocument
 ```
 
 Example:

@@ -102,8 +102,24 @@ public class XNode {
         }
     }
     
-    public func detached() -> XNode {
-        self.remove()
+    /**
+     Removes the node from the tree structure and the tree order and
+     the document.
+     If "forward", then detaching prefetches the next node in iterators.
+     Else, the iterators all told to go to the previous node.
+     */
+    @discardableResult public func remove(forward: Bool = false) -> XNode {
+        _remove(forward: forward)
+        return self
+    }
+    
+    @discardableResult public func insertPrevious(@XNodeBuilder builder: () -> [XNode]) -> XNode {
+        _insertNext(builder: builder)
+        return self
+    }
+    
+    @discardableResult public func insertNext(@XNodeBuilder builder: () -> [XNode]) -> XNode {
+        _insertNext(builder: builder)
         return self
     }
     
@@ -186,7 +202,7 @@ public class XNode {
         }
     }
     
-    public func insertPrevious(@XNodeBuilder builder: () -> [XNode]) {
+    func _insertPrevious(@XNodeBuilder builder: () -> [XNode]) {
         builder().forEach { insertPrevious($0) }
     }
     
@@ -229,7 +245,7 @@ public class XNode {
         }
     }
     
-    public func insertNext(@XNodeBuilder builder: () -> [XNode]) {
+    func _insertNext(@XNodeBuilder builder: () -> [XNode]) {
         builder().reversed().forEach { insertNext($0) }
     }
     
@@ -240,9 +256,9 @@ public class XNode {
     public func replace(forward: Bool = false, @XNodeBuilder builder: () -> [XNode]) {
         let placeholder = XNode() // do not use text as a place holder!
         insertNext(placeholder)
-        remove(forward: forward)
+        _remove(forward: forward)
         builder().forEach { placeholder.insertPrevious($0) }
-        placeholder.remove(forward: forward)
+        placeholder._remove()
     }
     
     /**
@@ -265,12 +281,12 @@ public class XNode {
      Clear the contents of the node.
      If "forward", then detaching prefetches the next node in iterators.
      */
-    public func clear(forward: Bool = false) {
+    func _clear(forward: Bool = false) {
         if let meAsBranch = self as? XBranch {
             var node = meAsBranch._firstChild
             var nextNode = node?._next
             while let toRemove = node {
-                toRemove.remove(forward: forward)
+                toRemove._remove(forward: forward)
                 node = nextNode
                 nextNode = node?._next
             }
@@ -390,7 +406,7 @@ public class XNode {
      If "forward", then detaching prefetches the next node in iterators.
      Else, the iterators all told to go to the previous node.
      */
-    public func remove(forward: Bool = false) {
+    func _remove(forward: Bool = false) {
         removeKeep(forward: forward)
         if let meAsElement = self as? XElement {
             meAsElement.document?.unregisterElement(element: meAsElement)
@@ -525,9 +541,17 @@ public class XSpot: XNode {
     public override init() {
         super.init()
     }
+    
+    @discardableResult public override func insertPrevious(@XNodeBuilder builder: () -> [XNode]) -> XSpot {
+        _insertNext(builder: builder)
+        return self
+    }
+    
+    @discardableResult public override func insertNext(@XNodeBuilder builder: () -> [XNode]) -> XSpot {
+        _insertNext(builder: builder)
+        return self
+    }
 }
-
-//public protocol XNodeLike: CustomStringConvertible {}
 
 public class XBranch: XNode {
     
@@ -696,7 +720,7 @@ public class XBranch: XNode {
         }
     }
     
-    public func add(skip: Bool = false, @XNodeBuilder builder: () -> [XNode]) {
+    func _add(skip: Bool = false, @XNodeBuilder builder: () -> [XNode]) {
         builder().forEach { add($0, skip: skip) }
     }
     
@@ -750,7 +774,7 @@ public class XBranch: XNode {
         }
     }
     
-    public func addFirst(skip: Bool = false, @XNodeBuilder builder: () -> [XNode]) {
+    func _addFirst(skip: Bool = false, @XNodeBuilder builder: () -> [XNode]) {
         builder().reversed().forEach { addFirst($0, skip: skip) }
     }
     
@@ -758,12 +782,12 @@ public class XBranch: XNode {
      Set the contents of the node.
      If "forward", then detaching prefetches the next node in iterators.
      */
-    public func set(forward: Bool = false, @XNodeBuilder builder: () -> [XNodeLike]) {
-        let endMarker = XNode()
+    func _setContent(forward: Bool = false, @XNodeBuilder builder: () -> [XNodeLike]) {
+        let endMarker = XSpot()
         add(endMarker)
         (builder() as? [XNode])?.forEach { endMarker.insertPrevious($0) }
-        endMarker.previous.forEach { $0.remove() }
-        endMarker.remove()
+        endMarker.previous.forEach { $0._remove(forward: forward) }
+        endMarker._remove()
     }
     
     func produceLeaving(production: XProduction) throws {
@@ -974,6 +998,44 @@ public final class XElement: XBranch, CustomStringConvertible {
     
     public var asElementSequence: XElementSequence { get { return XElementSelfSequence(element: self) } }
     
+    @discardableResult public override func insertPrevious(@XNodeBuilder builder: () -> [XNode]) -> XElement {
+        _insertNext(builder: builder)
+        return self
+    }
+    
+    @discardableResult public override func insertNext(@XNodeBuilder builder: () -> [XNode]) -> XElement {
+        _insertNext(builder: builder)
+        return self
+    }
+    
+    @discardableResult public func add(skip: Bool = false, @XNodeBuilder builder: () -> [XNode]) -> XElement {
+        _add(skip: skip, builder: builder)
+        return self
+    }
+    
+    @discardableResult public func addFirst(skip: Bool = false, @XNodeBuilder builder: () -> [XNode]) -> XElement {
+        _addFirst(skip: skip, builder: builder)
+        return self
+    }
+    
+    /**
+     Clear the contents of the element.
+     If "forward", then detaching prefetches the next node in iterators.
+     */
+    @discardableResult public func clear(forward: Bool = false) -> XElement {
+        _clear(forward: forward)
+        return self
+    }
+    
+    /**
+     Set the contents of the element.
+     If "forward", then detaching prefetches the next node in iterators.
+     */
+    @discardableResult public func setContent(forward: Bool = false, @XNodeBuilder builder: () -> [XNodeLike]) -> XElement {
+        _setContent(forward: forward, builder: builder)
+        return self
+    }
+    
     // prevent stack overflow when destroying the list of elements with same name,
     // to be applied on the first element in that list,
     // cf. https://forums.swift.org/t/deep-recursion-in-deinit-should-not-happen/54987
@@ -1136,7 +1198,7 @@ public final class XText: XNode, CustomStringConvertible {
         }
         set (newText) {
             if newText.isEmpty {
-                self.remove()
+                self._remove()
             }
             else {
                 _value = newText
@@ -1156,6 +1218,16 @@ public final class XText: XNode, CustomStringConvertible {
     public init(_ text: String, whitespace: WhitespaceIndicator = .UNKNOWN) {
         self._value = text
         self.whitespace = whitespace
+    }
+    
+    @discardableResult public override func insertPrevious(@XNodeBuilder builder: () -> [XNode]) -> XText {
+        _insertNext(builder: builder)
+        return self
+    }
+    
+    @discardableResult public override func insertNext(@XNodeBuilder builder: () -> [XNode]) -> XText {
+        _insertNext(builder: builder)
+        return self
     }
     
     public override func produceEntering(production: XProduction) throws {
@@ -1196,6 +1268,16 @@ public final class XInternalEntity: XNode {
         self._name = name
     }
     
+    @discardableResult public override func insertPrevious(@XNodeBuilder builder: () -> [XNode]) -> XInternalEntity {
+        _insertNext(builder: builder)
+        return self
+    }
+    
+    @discardableResult public override func insertNext(@XNodeBuilder builder: () -> [XNode]) -> XInternalEntity {
+        _insertNext(builder: builder)
+        return self
+    }
+    
     override func produceEntering(production: XProduction) throws {
         try production.writeInternalEntity(internalEntity: self)
     }
@@ -1232,6 +1314,16 @@ public final class XExternalEntity: XNode {
     
     init(_ name: String) {
         self._name = name
+    }
+    
+    @discardableResult public override func insertPrevious(@XNodeBuilder builder: () -> [XNode]) -> XExternalEntity {
+        _insertNext(builder: builder)
+        return self
+    }
+    
+    @discardableResult public override func insertNext(@XNodeBuilder builder: () -> [XNode]) -> XExternalEntity {
+        _insertNext(builder: builder)
+        return self
     }
     
     override func produceEntering(production: XProduction) throws {
@@ -1291,6 +1383,16 @@ public final class XProcessingInstruction: XNode, CustomStringConvertible {
         self._data = data
     }
     
+    @discardableResult public override func insertPrevious(@XNodeBuilder builder: () -> [XNode]) -> XProcessingInstruction {
+        _insertNext(builder: builder)
+        return self
+    }
+    
+    @discardableResult public override func insertNext(@XNodeBuilder builder: () -> [XNode]) -> XProcessingInstruction {
+        _insertNext(builder: builder)
+        return self
+    }
+    
     override func produceEntering(production: XProduction) throws {
         try production.writeProcessingInstruction(processingInstruction: self)
     }
@@ -1329,6 +1431,16 @@ public final class XComment: XNode {
         self._value = text
     }
     
+    @discardableResult public override func insertPrevious(@XNodeBuilder builder: () -> [XNode]) -> XComment {
+        _insertNext(builder: builder)
+        return self
+    }
+    
+    @discardableResult public override func insertNext(@XNodeBuilder builder: () -> [XNode]) -> XComment {
+        _insertNext(builder: builder)
+        return self
+    }
+    
     override func produceEntering(production: XProduction) throws {
         try production.writeComment(comment: self)
     }
@@ -1365,6 +1477,16 @@ public final class XCDATASection: XNode {
     
     init(text: String) {
         self._value = text
+    }
+    
+    @discardableResult public override func insertPrevious(@XNodeBuilder builder: () -> [XNode]) -> XCDATASection {
+        _insertNext(builder: builder)
+        return self
+    }
+    
+    @discardableResult public override func insertNext(@XNodeBuilder builder: () -> [XNode]) -> XCDATASection {
+        _insertNext(builder: builder)
+        return self
     }
     
     override func produceEntering(production: XProduction) throws {
