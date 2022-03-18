@@ -813,13 +813,13 @@ public final class XTreeIterator: XContentIteratorProtocol {
 /**
 Iterator that iterates over exactly one node. This ist mainly for testing.
  */
-public final class XNodeSelfIterator: XContentIteratorProtocol {
+public final class XContentSelfIterator: XContentIteratorProtocol {
     
-    weak var node: XNode?
+    weak var theContent: XContent?
     private var done: Bool = false
     
-    public init(node: XNode) {
-        self.node = node
+    public init(content: XContent) {
+        self.theContent = content
     }
     
     public func next() -> XContent? {
@@ -828,7 +828,7 @@ public final class XNodeSelfIterator: XContentIteratorProtocol {
         }
         else {
             done = true
-            return node as? XContent
+            return theContent
         }
     }
     

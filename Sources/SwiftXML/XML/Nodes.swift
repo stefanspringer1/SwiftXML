@@ -155,8 +155,6 @@ public class XNode {
         }
     }
     
-    public var asContentSequence: XContentSequence { get { return XNodeSelfSequence(node: self) } }
-    
     weak var _previous: XContent? = nil
     var _next: XContent? = nil
     
@@ -566,6 +564,8 @@ public class XContent: XNode {
             theParent.add(node)
         }
     }
+    
+    public var asContentSequence: XContentSequence { get { return XContentSelfSequence(content: self) } }
     
 }
 

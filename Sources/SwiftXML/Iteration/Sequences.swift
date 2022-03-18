@@ -292,18 +292,18 @@ public final class XElementSelfSequence: XElementSequence {
 /**
  A sequence iterating only over one node. This ist mainly for testing.
  */
-public final class XNodeSelfSequence: XContentSequence {
+public final class XContentSelfSequence: XContentSequence {
     
-    let node: XNode
+    let theContent: XContent
     
-    init(node: XNode) {
-        self.node = node
+    init(content: XContent) {
+        self.theContent = content
     }
     
     public override func makeIterator() -> XBidirectionalContentIterator {
         return XBidirectionalContentIterator(
-            nodeIterator: XNodeSelfIterator(
-                node: node
+            nodeIterator: XContentSelfIterator(
+                content: theContent
             )
         )
     }
