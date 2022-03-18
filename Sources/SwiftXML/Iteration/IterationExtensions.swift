@@ -9,43 +9,55 @@ import Foundation
 
 extension XBranch {
     
-    public var content: XContentSequence {
+    var content: XContentSequence {
         get { XSequenceOfContent(node: self) }
     }
     
-    public func content(where condition: @escaping (XNode) -> Bool) -> XContentSequence {
-        return XNodeSequenceWithCondition(sequence: XSequenceOfContent(node: self), condition: condition)
-    }
-    
-    public var children: XElementSequence {
-        get { return XChildrenSequence(node: self) }
-    }
-    
-    public func children(where condition: @escaping (XElement) -> Bool) -> XElementSequence {
-        return XElementSequenceWithCondition(sequence: XChildrenSequence(node: self), condition: condition)
-    }
-    
-    public func children(_ name: String) -> XElementSequence {
-        return XElementSequenceWithCondition(sequence: XChildrenSequence(node: self), elementName: name)
-    }
-    
-    public var allContent: XContentSequence {
+    var allContent: XContentSequence {
         get { XAllContentSequence(node: self) }
     }
     
-    public func allContent(where condition: @escaping (XNode) -> Bool) -> XContentSequence {
+}
+
+public extension XDocument {
+    
+    var content: XContentSequence {
+        get { XSequenceOfContent(node: self) }
+    }
+    
+    func content(where condition: @escaping (XNode) -> Bool) -> XContentSequence {
+        return XNodeSequenceWithCondition(sequence: XSequenceOfContent(node: self), condition: condition)
+    }
+    
+    var children: XElementSequence {
+        get { return XChildrenSequence(node: self) }
+    }
+    
+    func children(where condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XChildrenSequence(node: self), condition: condition)
+    }
+    
+    func children(_ name: String) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XChildrenSequence(node: self), elementName: name)
+    }
+    
+    var allContent: XContentSequence {
+        get { XAllContentSequence(node: self) }
+    }
+    
+    func allContent(where condition: @escaping (XNode) -> Bool) -> XContentSequence {
         return XNodeSequenceWithCondition(sequence: XAllContentSequence(node: self), condition: condition)
     }
     
-    public var descendants: XElementSequence {
+    var descendants: XElementSequence {
         get { XDescendantsSequence(node: self) }
     }
     
-    public func descendants(where condition: @escaping (XElement) -> Bool) -> XElementSequence {
+    func descendants(where condition: @escaping (XElement) -> Bool) -> XElementSequence {
         return XElementSequenceWithCondition(sequence: XDescendantsSequence(node: self), condition: condition)
     }
     
-    public func descendants(_ name: String) -> XElementSequence {
+    func descendants(_ name: String) -> XElementSequence {
         return XElementSequenceWithCondition(sequence: XDescendantsSequence(node: self), elementName: name)
     }
     
