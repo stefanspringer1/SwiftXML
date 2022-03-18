@@ -14,7 +14,7 @@ public final class XParseBuilder: XEventHandler {
     }
 
     let document: XDocument
-    var currentBranch: XBranch
+    var currentBranch: XBranchInternal
     
     public init(document: XDocument) {
         self.document = document
