@@ -21,14 +21,27 @@ public class XNode {
     /**
      Correct the tree order after this node has been inserted.
      */
-    func setTreeOrder() {
-        // first check if self is the first or last child of a parent:
-        if _parent?.setTreeOrderForParent(withNewChild: self) != true {
-            // if not, do simple correction:
-            _previous?.getLastInTree()._nextInTree = self
-            _previousInTree = _previous ?? _parent
-            getLastInTree()._nextInTree = _next
-            _next?._previousInTree = getLastInTree()
+    func setTreeOrderWhenInserted() {
+        
+        // set _previousInTree & _nextInTree for self:
+        self._previousInTree = _previous?.getLastInTree() ?? _parent
+        self._nextInTree = self._previousInTree?._nextInTree
+        
+        // set _previousInTree or _nextInTree for them:
+        self._previousInTree?._nextInTree = self
+        self._nextInTree?._previousInTree = self
+        
+        // set _lastInTree:
+        if let theParent = _parent {
+            
+            // put new last tree on ancestors if self is new last content:
+            if self === theParent._lastContent {
+                var node: XBranchInternal? = theParent
+                while let theNode = node {
+                    theNode._lastInTree = self
+                    node = theNode._parent
+                }
+            }
         }
     }
     
@@ -415,7 +428,7 @@ public class XContent: XNode {
             node._parent = _parent
             
             // set tree order:
-            node.setTreeOrder()
+            node.setTreeOrderWhenInserted()
             
             // set document:
             if let theDocument = _parent?._document, let element = node as? XElement, !(element._document === theDocument) {
@@ -463,7 +476,7 @@ public class XContent: XNode {
             node._parent = _parent
             
             // set tree order:
-            node.setTreeOrder()
+            node.setTreeOrderWhenInserted()
             
             // set document:
             if let theDocument = _parent?._document, let element = node as? XElement, !(element._document === theDocument) {
@@ -667,47 +680,6 @@ extension XBranchInternal {
     }
     
     /**
-     Correct the tree order after a new child
-     has been inserted as the last child.
-     Return true iff a correction has been done.
-     */
-    func setTreeOrderForParent(withNewChild newChild: XNode) -> Bool {
-        if newChild === _lastContent {
-            let newLastInTree = newChild.getLastInTree()
-            
-            newChild._previousInTree = _lastInTree
-            newLastInTree._nextInTree = _lastInTree._nextInTree
-            _lastInTree._nextInTree?._previousInTree = newChild
-            _lastInTree._nextInTree = newChild
-            
-            if _firstContent === newChild {
-                _nextInTree = newChild
-            }
-            
-            var ancestor: XBranchInternal? = self._parent
-            while let theAncestor = ancestor, theAncestor._lastInTree === _lastInTree {
-                theAncestor._lastInTree = newLastInTree
-                ancestor = theAncestor._parent ?? theAncestor._document
-            }
-            
-            _lastInTree = newLastInTree
-            
-            return true
-        }
-        else if newChild === _firstContent {
-            newChild._previousInTree = self
-            _nextInTree?._previousInTree = newChild.getLastInTree()
-            newChild.getLastInTree()._nextInTree = _nextInTree
-            _nextInTree = newChild
-            
-            return true
-        }
-        else {
-            return false
-        }
-    }
-    
-    /**
      When adding content, setting skip = true let iterators continue _after_ the
      inserted content.
      Else, the iterator will iterate through the inserted content.
@@ -736,7 +708,7 @@ extension XBranchInternal {
             node._parent = self
             
             // set tree order:
-            node.setTreeOrder()
+            node.setTreeOrderWhenInserted()
             
             // set document:
             if _document != nil, let element = node as? XElement, !(element._document === _document) {
@@ -795,7 +767,7 @@ extension XBranchInternal {
             node._parent = self
             
             // set tree order:
-            node.setTreeOrder()
+            node.setTreeOrderWhenInserted()
             
             // set document:
             if _document != nil, let element = node as? XElement, !(element._document === _document) {
