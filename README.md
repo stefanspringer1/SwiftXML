@@ -195,36 +195,40 @@ One a more event handlers can be given a `parseXML` call, which implement `XEven
 
 An XML document (`XDocument`) can contain the following content:
 
-- `XDocument`
-- `XElement`
-- `XText`
-- `XInternalEntity`
-- `XExternalEntity`
-- `XCDATASection`
-- `XProcessingInstruction`
-- `XComment`
-- `XSpot`
+- `XDocument`: a whole document
+- `XElement`: an element
+- `XText`: a text
+- `XInternalEntity`: an internal entity reference
+- `XExternalEntity`: an external entity reference
+- `XCDATASection`: a CDATA section (they do not get resolved)
+- `XProcessingInstruction`: a processing instruction
+- `XComment`: a comment
+- `XSpot`: see the section below on `XSpot` and handling of text
+
+Those content are of type type `XContent`, whereas the more general type `XNode` might be content or an `XDocument`.
 
 The following is read from the internal subset:
 
-- `XInternalEntityDeclaration`
-- `XExternalEntityDeclaration`
-- `XUnparsedEntityDeclaration`
-- `XNotationDeclaration`
-- `XParameterEntityDeclaration`
-- `XElementDeclaration`
-- `XAttributeListDeclaration`
+- `XInternalEntityDeclaration`: an internal entity declaration
+- `XExternalEntityDeclaration`: an external entity declaration
+- `XUnparsedEntityDeclaration`: a declaration of an unparsed external entity
+- `XNotationDeclaration`: a notation declaration
+- `XParameterEntityDeclaration`: a parameter entity declaration
+- `XElementDeclaration`: an element declaration
+- `XAttributeListDeclaration`: an attribute list declaration
 
 They can be accessed via property `declarationsInInternalSubset`.
 
-A document has the following additional properties:
+A document gets the following additional properties from the XML source (some values might be `nil`:
 
-- `encoding`
-- `publicID`
-- `sourcePath`
-- `standalone`
-- `systemID`
-- `xmlVersion`
+- `encoding`: the encoding from the XML declaration
+- `publicID`: the public identifier from the document type declaration
+- `sourcePath`: the source to the XML document
+- `standalone`: the standalone value from the XML declaration
+- `systemID`: the system identifier from the document type declaration
+- `xmlVersion`: the XML version from the XML declaration
+
+When not set explicitely in the XML source, some of those values are set to a sensible value.
 
 ## Displaying XML
 
