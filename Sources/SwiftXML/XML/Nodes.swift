@@ -551,6 +551,19 @@ public class XSpot: XContent {
 }
 
 public protocol XBranch: XNode {
+    var firstContent: XContent? { get }
+    func firstContent(where condition: (XNode) -> Bool) -> XContent?
+    var lastContent: XContent? { get }
+    func lastContent(where condition: (XNode) -> Bool) -> XContent?
+    var isEmpty: Bool { get }
+    @discardableResult func add(@XNodeBuilder builder: () -> [XContent]) -> XBranch
+    @discardableResult func add(skip: Bool, @XNodeBuilder builder: () -> [XContent]) -> XBranch
+    @discardableResult func addFirst(@XNodeBuilder builder: () -> [XContent]) -> XBranch
+    @discardableResult func addFirst(skip: Bool, @XNodeBuilder builder: () -> [XContent]) -> XBranch
+    @discardableResult func setContent(@XNodeBuilder builder: () -> [XContent]) -> XBranch
+    @discardableResult func setContent(forward: Bool, @XNodeBuilder builder: () -> [XContent]) -> XBranch
+    @discardableResult func clear() -> XBranch
+    @discardableResult func clear(forward: Bool) -> XBranch
 }
 
 protocol XBranchInternal: XBranch {
@@ -590,7 +603,7 @@ extension XBranchInternal {
         }
     }
     
-    func firstContent(where condition: (XNode) -> Bool) -> XContent? {
+    public func firstContent(where condition: (XNode) -> Bool) -> XContent? {
         let node = _firstContent
         if let theNode = node, condition(theNode) {
             return node
@@ -606,7 +619,7 @@ extension XBranchInternal {
         }
     }
     
-    func lastContent(where condition: (XNode) -> Bool) -> XContent? {
+    public func lastContent(where condition: (XNode) -> Bool) -> XContent? {
         let node = _lastContent
         if let theNode = node, condition(theNode) {
             return node
@@ -616,7 +629,7 @@ extension XBranchInternal {
         }
     }
     
-    var isEmpty: Bool {
+    public var isEmpty: Bool {
         get {
             return _firstContent == nil
         }
@@ -626,7 +639,7 @@ extension XBranchInternal {
      Clear the contents of the node.
      If "forward", then detaching prefetches the next node in iterators.
      */
-    func _clear(forward: Bool = false) {
+    public func clear(forward: Bool) -> XBranch {
         var node = self._firstContent
         var nextNode = node?._next
         while let toRemove = node {
@@ -634,6 +647,16 @@ extension XBranchInternal {
             node = nextNode
             nextNode = node?._next
         }
+        return self
+    }
+    
+    /**
+     Clear the contents of the node.
+     If "forward", then detaching prefetches the next node in iterators.
+     */
+    public func clear() -> XBranch {
+        clear(forward: false)
+        return self
     }
     
     /**
@@ -727,8 +750,13 @@ extension XBranchInternal {
         }
     }
     
-    func _add(skip: Bool = false, @XNodeBuilder builder: () -> [XContent]) {
+    @discardableResult public func add(skip: Bool, @XNodeBuilder builder: () -> [XContent]) -> XBranch {
         builder().forEach { add($0, skip: skip) }
+        return self
+    }
+    
+    @discardableResult public func add(@XNodeBuilder builder: () -> [XContent]) -> XBranch {
+        return add(skip: false, builder: builder)
     }
     
     /**
@@ -781,20 +809,34 @@ extension XBranchInternal {
         }
     }
     
-    func _addFirst(skip: Bool = false, @XNodeBuilder builder: () -> [XContent]) {
+    @discardableResult public func addFirst(skip: Bool, @XNodeBuilder builder: () -> [XContent]) -> XBranch {
         builder().reversed().forEach { addFirst($0, skip: skip) }
+        return self
+    }
+    
+    @discardableResult public func addFirst(@XNodeBuilder builder: () -> [XContent]) -> XBranch {
+        addFirst(skip: false, builder: builder)
+        return self
     }
     
     /**
-     Set the contents of the node.
+     Set the contents of the branch.
      If "forward", then detaching prefetches the next node in iterators.
      */
-    func _setContent(forward: Bool = false, @XNodeBuilder builder: () -> [XContent]) {
+    @discardableResult public func setContent(forward: Bool = false, @XNodeBuilder builder: () -> [XContent]) -> XBranch {
         let endMarker = XSpot()
         add(endMarker)
         builder().forEach { endMarker.insertPrevious($0) }
         endMarker.previous.forEach { $0._remove(forward: forward) }
         endMarker._remove()
+        return self
+    }
+    
+    /**
+     Set the contents of the branch.
+     */
+    @discardableResult public func setContent(@XNodeBuilder builder: () -> [XContent]) -> XBranch {
+        return setContent(forward: false, builder: builder)
     }
     
     func produceLeaving(production: XProduction) throws {
@@ -916,7 +958,7 @@ public class Attachments {
 }
 
 public final class XElement: XContent, XBranchInternal, CustomStringConvertible {
-    
+
     public var _firstContent: XContent?
     
     public var _lastContent: XContent?
@@ -1015,6 +1057,9 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     
     public var asElementSequence: XElementSequence { get { return XElementSelfSequence(element: self) } }
     
+    // ------------------------------------------------------------------------
+    // more precisely typed versions for methods from XContent:
+    
     @discardableResult public override func insertPrevious(@XNodeBuilder builder: () -> [XContent]) -> XElement {
         _insertNext(builder: builder)
         return self
@@ -1025,22 +1070,16 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         return self
     }
     
+    // ------------------------------------------------------------------------
+    // more precisely typed versions for methods from XBranch:
+    
     @discardableResult public func add(skip: Bool = false, @XNodeBuilder builder: () -> [XContent]) -> XElement {
-        _add(skip: skip, builder: builder)
+        _ = (self as XBranch).add(skip: skip, builder: builder)
         return self
     }
     
     @discardableResult public func addFirst(skip: Bool = false, @XNodeBuilder builder: () -> [XContent]) -> XElement {
-        _addFirst(skip: skip, builder: builder)
-        return self
-    }
-    
-    /**
-     Clear the contents of the element.
-     If "forward", then detaching prefetches the next node in iterators.
-     */
-    @discardableResult public func clear(forward: Bool = false) -> XElement {
-        _clear(forward: forward)
+        _ = (self as XBranch).add(skip: skip, builder: builder)
         return self
     }
     
@@ -1049,9 +1088,16 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
      If "forward", then detaching prefetches the next node in iterators.
      */
     @discardableResult public func setContent(forward: Bool = false, @XNodeBuilder builder: () -> [XContent]) -> XElement {
-        _setContent(forward: forward, builder: builder)
+        _ = (self as XBranch).setContent(forward: forward, builder: builder)
         return self
     }
+    
+    @discardableResult func clear(forward: Bool) -> XElement {
+        _ = (self as XBranch).clear(forward: forward)
+        return self
+    }
+    
+    // ------------------------------------------------------------------------
     
     // prevent stack overflow when destroying the list of elements with same name,
     // to be applied on the first element in that list,

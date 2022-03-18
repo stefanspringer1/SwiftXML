@@ -60,22 +60,16 @@ public final class XDocument: XNode, XBranchInternal {
         attributeValueChangedActions[attributeName] = nil
     }
     
+    // ------------------------------------------------------------------------
+    // more precisely typed versions for methods from XBranch:
+    
     @discardableResult public func add(skip: Bool = false, @XNodeBuilder builder: () -> [XContent]) -> XDocument {
-        _add(skip: skip, builder: builder)
+        _ = (self as XBranch).add(skip: skip, builder: builder)
         return self
     }
     
     @discardableResult public func addFirst(skip: Bool = false, @XNodeBuilder builder: () -> [XContent]) -> XDocument {
-        _addFirst(skip: skip, builder: builder)
-        return self
-    }
-    
-    /**
-     Clear the contents of the document.
-     If "forward", then detaching prefetches the next node in iterators.
-     */
-    @discardableResult public func clear(forward: Bool = false) -> XDocument {
-        _clear(forward: forward)
+        _ = (self as XBranch).add(skip: skip, builder: builder)
         return self
     }
     
@@ -84,9 +78,16 @@ public final class XDocument: XNode, XBranchInternal {
      If "forward", then detaching prefetches the next node in iterators.
      */
     @discardableResult public func setContent(forward: Bool = false, @XNodeBuilder builder: () -> [XContent]) -> XDocument {
-        _setContent(forward: forward, builder: builder)
+        _ = (self as XBranch).setContent(forward: forward, builder: builder)
         return self
     }
+    
+    @discardableResult func clear(forward: Bool) -> XDocument {
+        _ = (self as XBranch).clear(forward: forward)
+        return self
+    }
+    
+    // ------------------------------------------------------------------------
     
     public override func shallowClone(forwardref: Bool = false) -> XDocument {
         let theClone = XDocument()
