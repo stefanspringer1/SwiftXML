@@ -265,6 +265,8 @@ public class XNode {
         return self
     }
     
+    public var lastInTree: XNode { get { return getLastInTree() } }
+    
     public func traverse(down: @escaping (XNode) -> (), up: ((XNode) -> ())? = nil) {
         let directionIndicator = XDirectionIndicator()
         XTraversalSequence(node: self, directionIndicator: directionIndicator).forEach { node in
@@ -391,6 +393,8 @@ public class XContent: XNode {
     
     public override var previousContentInTree: XContent? { get { _previousInTree as? XContent } }
     public override var nextContentInTree: XContent? { get { _nextInTree as? XContent } }
+    
+    public override var lastInTree: XContent { get { return getLastInTree() as! XContent } }
     
     func insertPrevious(_ node: XContent) {
         if let selfAsText = self as? XText, let newAsText = node as? XText {
