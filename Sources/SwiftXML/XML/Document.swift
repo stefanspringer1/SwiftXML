@@ -16,13 +16,13 @@ final class XValue {
 
 public final class XDocument: XNode, XBranchInternal {
 
-    public var _firstContent: XContent? = nil
+    var _firstContent: XContent? = nil
     
-    public var _lastContent: XContent? = nil
+    var _lastContent: XContent? = nil
     
-    public var _document: XDocument?
+    var _document: XDocument?
     
-    public var _lastInTree: XNode!
+    var _lastInTree: XNode!
     
     var _sourcePath: String? = nil
     

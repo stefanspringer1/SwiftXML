@@ -962,13 +962,13 @@ public class Attachments {
 
 public final class XElement: XContent, XBranchInternal, CustomStringConvertible {
 
-    public var _firstContent: XContent?
+    var _firstContent: XContent?
     
-    public var _lastContent: XContent?
+    var _lastContent: XContent?
     
-    public var _lastInTree: XNode!
+    var _lastInTree: XNode!
     
-    public var _document: XDocument? = nil
+    var _document: XDocument? = nil
     
     var _treeIterators = WeakList<XBidirectionalElementIterator>()
     var _nameIterators = WeakList<XElementNameIterator>()
