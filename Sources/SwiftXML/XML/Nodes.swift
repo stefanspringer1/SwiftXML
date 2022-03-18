@@ -17,33 +17,6 @@ protocol Named: AnyObject {
 }
 
 public class XNode {
-
-    /**
-     Correct the tree order after this node has been inserted.
-     */
-    func setTreeOrderWhenInserted() {
-        
-        // set _previousInTree & _nextInTree for self:
-        self._previousInTree = _previous?.getLastInTree() ?? _parent
-        self._nextInTree = self._previousInTree?._nextInTree
-        
-        // set _previousInTree or _nextInTree for them:
-        self._previousInTree?._nextInTree = self
-        self._nextInTree?._previousInTree = self
-        
-        // set _lastInTree:
-        if let theParent = _parent {
-            
-            // put new last tree on ancestors if self is new last content:
-            if self === theParent._lastContent {
-                var node: XBranchInternal? = theParent
-                while let theNode = node {
-                    theNode._lastInTree = self
-                    node = theNode._parent
-                }
-            }
-        }
-    }
     
     /**
      The reference to the original node after cloning.
@@ -216,64 +189,6 @@ public class XNode {
         }
     }
     
-    /**
-     Removes the node from the tree structure and the tree order,
-     but keeps it in the document.
-     If "forward", then detaching prefetches the next node in iterators.
-     Else, the iterators all told to go to the previous node.
-     */
-    func removeKeep(forward: Bool = false) {
-        
-        // correction in iterators:
-        if forward {
-            prefetchOnContentIterators()
-        }
-        else {
-            gotoPreviousOnContentIterators()
-        }
-        
-        // tree order:
-        let theLastInTree = getLastInTree()
-        _previousInTree?._nextInTree = theLastInTree._nextInTree
-        theLastInTree._nextInTree?._previousInTree = _previousInTree
-        theLastInTree._nextInTree = nil
-        var ancestor = _parent
-        while let theAncestor = ancestor, theAncestor._lastInTree === theLastInTree {
-            theAncestor._lastInTree = _previousInTree ?? theAncestor
-            ancestor = ancestor?._parent
-        }
-        _previousInTree = nil
-        
-        // tree structure:
-        if let thePrevious = _previous {
-            thePrevious._next = _next
-        }
-        if let theNext = _next {
-            theNext._previous = _previous
-        }
-        if let theParent = _parent {
-            if theParent._firstContent === self {
-                theParent._firstContent = _next
-            }
-            if theParent._lastContent === self {
-                theParent._lastContent = _previous
-            }
-        }
-    }
-    
-    /**
-     Removes the node from the tree structure and the tree order and
-     the document.
-     If "forward", then detaching prefetches the next node in iterators.
-     Else, the iterators all told to go to the previous node.
-     */
-    func _remove(forward: Bool = false) {
-        removeKeep(forward: forward)
-        if let meAsElement = self as? XElement {
-            meAsElement.document?.unregisterElement(element: meAsElement)
-        }
-    }
-    
     func getLastInTree() -> XNode {
         return self
     }
@@ -404,6 +319,99 @@ public class XNode {
 
 public class XContent: XNode {
     
+    /**
+     Correct the tree order after this node has been inserted.
+     */
+    func setTreeOrderWhenInserting() {
+        
+        let theLastInTree = getLastInTree()
+        
+        // set _previousInTree & _nextInTree for self:
+        self._previousInTree = _previous?.getLastInTree() ?? _parent
+        self._nextInTree = self._previousInTree?._nextInTree
+        
+        // set _previousInTree or _nextInTree for them:
+        self._previousInTree?._nextInTree = self
+        self._nextInTree?._previousInTree = self
+        
+        // set _lastInTree:
+        var ancestor = _parent
+        while let theAncestor = ancestor, theAncestor._lastInTree === theLastInTree {
+            theAncestor._lastInTree = _previousInTree ?? theAncestor
+            ancestor = ancestor?._parent
+        }
+    }
+    
+    func setTreeOrderWhenRemoving() {
+        
+        let theLastInTree = getLastInTree()
+        
+        // correct _previousInTree and _nextInTree for remaining tree:
+        _previousInTree?._nextInTree = theLastInTree._nextInTree
+        theLastInTree._nextInTree?._previousInTree = _previousInTree
+        
+        // set _lastInTree for remaining tree:
+        var ancestor = _parent
+        while let theAncestor = ancestor, theAncestor._lastInTree === theLastInTree {
+            theAncestor._lastInTree = _previousInTree ?? theAncestor
+            ancestor = ancestor?._parent
+        }
+        
+        // correct in onw tree:
+        _previousInTree = nil
+        theLastInTree._nextInTree = nil
+    }
+    
+    /**
+     Removes the node from the tree structure and the tree order,
+     but keeps it in the document.
+     If "forward", then detaching prefetches the next node in iterators.
+     Else, the iterators all told to go to the previous node.
+     */
+    func removeKeep(forward: Bool = false) {
+        
+        // correction in iterators:
+        if forward {
+            prefetchOnContentIterators()
+        }
+        else {
+            gotoPreviousOnContentIterators()
+        }
+        
+        // tree order:
+        
+        setTreeOrderWhenRemoving()
+        
+        // tree structure:
+        if let thePrevious = _previous {
+            thePrevious._next = _next
+        }
+        if let theNext = _next {
+            theNext._previous = _previous
+        }
+        if let theParent = _parent {
+            if theParent._firstContent === self {
+                theParent._firstContent = _next
+            }
+            if theParent._lastContent === self {
+                theParent._lastContent = _previous
+            }
+        }
+    }
+    
+    /**
+     Removes the content from the tree structure and the tree order and
+     the document.
+     If "forward", then detaching prefetches the next node in iterators.
+     Else, the iterators all told to go to the previous node.
+     */
+    func _remove(forward: Bool = false) {
+        removeKeep(forward: forward)
+        if let meAsElement = self as? XElement {
+            meAsElement.document?.unregisterElement(element: meAsElement)
+        }
+    }
+    
     public override var previousContentInTree: XContent? { get { _previousInTree as? XContent } }
     public override var nextContentInTree: XContent? { get { _nextInTree as? XContent } }
     
@@ -428,7 +436,7 @@ public class XContent: XNode {
             node._parent = _parent
             
             // set tree order:
-            node.setTreeOrderWhenInserted()
+            node.setTreeOrderWhenInserting()
             
             // set document:
             if let theDocument = _parent?._document, let element = node as? XElement, !(element._document === theDocument) {
@@ -476,7 +484,7 @@ public class XContent: XNode {
             node._parent = _parent
             
             // set tree order:
-            node.setTreeOrderWhenInserted()
+            node.setTreeOrderWhenInserting()
             
             // set document:
             if let theDocument = _parent?._document, let element = node as? XElement, !(element._document === theDocument) {
@@ -708,7 +716,7 @@ extension XBranchInternal {
             node._parent = self
             
             // set tree order:
-            node.setTreeOrderWhenInserted()
+            node.setTreeOrderWhenInserting()
             
             // set document:
             if _document != nil, let element = node as? XElement, !(element._document === _document) {
@@ -767,7 +775,7 @@ extension XBranchInternal {
             node._parent = self
             
             // set tree order:
-            node.setTreeOrderWhenInserted()
+            node.setTreeOrderWhenInserting()
             
             // set document:
             if _document != nil, let element = node as? XElement, !(element._document === _document) {
