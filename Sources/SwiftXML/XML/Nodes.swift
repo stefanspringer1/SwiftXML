@@ -324,8 +324,6 @@ public class XContent: XNode {
      */
     func setTreeOrderWhenInserting() {
         
-        let theLastInTree = getLastInTree()
-        
         // set _previousInTree & _nextInTree for self:
         self._previousInTree = _previous?.getLastInTree() ?? _parent
         self._nextInTree = self._previousInTree?._nextInTree
@@ -335,10 +333,18 @@ public class XContent: XNode {
         self._nextInTree?._previousInTree = self
         
         // set _lastInTree:
-        var ancestor = _parent
-        while let theAncestor = ancestor, theAncestor._lastInTree === theLastInTree {
-            theAncestor._lastInTree = _previousInTree ?? theAncestor
-            ancestor = ancestor?._parent
+        if self === _parent?._lastContent, let oldParentLastInTree = _parent?.lastInTree {
+            let newLastInTree = getLastInTree()
+            var ancestor = _parent
+            repeat {
+                if let element = ancestor as? XElement {
+                    element._lastInTree = newLastInTree
+                }
+                else if let document = ancestor as? XDocument {
+                    document._lastInTree = newLastInTree
+                }
+                ancestor = ancestor?._parent
+            } while ancestor?.getLastInTree() === oldParentLastInTree
         }
     }
     
@@ -352,12 +358,17 @@ public class XContent: XNode {
         
         // set _lastInTree for remaining tree:
         var ancestor = _parent
-        while let theAncestor = ancestor, theAncestor._lastInTree === theLastInTree {
-            theAncestor._lastInTree = _previousInTree ?? theAncestor
+        while let theAncestor = ancestor, theAncestor.getLastInTree() === theLastInTree {
+            if let element = theAncestor as? XElement {
+                element._lastInTree = _previousInTree ?? theAncestor
+            }
+            else if let document = theAncestor as? XDocument {
+                document._lastInTree = _previousInTree ?? theAncestor
+            }
             ancestor = ancestor?._parent
         }
         
-        // correct in onw tree:
+        // correct in own tree:
         _previousInTree = nil
         theLastInTree._nextInTree = nil
     }
@@ -598,7 +609,7 @@ protocol XBranchInternal: XBranch {
     var _firstContent: XContent? { get set }
     var _lastContent: XContent? { get set }
     var _document: XDocument? { get set }
-    var _lastInTree: XNode! { get set }
+    //var _lastInTree: XNode! { get set }
 }
 
 extension XBranchInternal {
