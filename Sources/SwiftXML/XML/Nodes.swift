@@ -876,7 +876,7 @@ final class XNodeSampler {
 
 @resultBuilder
 public struct XNodeBuilder {
-    public static func buildBlock(_ components: XContentLike?...) -> [XNode] {
+    public static func buildBlock(_ components: XContentLike?...) -> [XContent] {
         let sampler = XNodeSampler()
         components.forEach { if let nodeLike = $0 { sampler.add(nodeLike) } }
         return sampler.nodes
