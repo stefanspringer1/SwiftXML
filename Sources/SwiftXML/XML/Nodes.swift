@@ -324,24 +324,25 @@ public class XContent: XNode {
      */
     func setTreeOrderWhenInserting() {
         
+        let lastInMyTree = getLastInTree()
+        
         // set _previousInTree & _nextInTree for self:
         self._previousInTree = _previous?.getLastInTree() ?? _parent
-        self._nextInTree = self._previousInTree?._nextInTree
+        lastInMyTree._nextInTree = self._previousInTree?._nextInTree
         
         // set _previousInTree or _nextInTree for them:
         self._previousInTree?._nextInTree = self
-        self._nextInTree?._previousInTree = self
+        lastInMyTree._nextInTree?._previousInTree = lastInMyTree
         
         // set _lastInTree:
         if self === _parent?._lastContent, let oldParentLastInTree = _parent?.lastInTree {
-            let newLastInTree = getLastInTree()
             var ancestor = _parent
             repeat {
                 if let element = ancestor as? XElement {
-                    element._lastInTree = newLastInTree
+                    element._lastInTree = lastInMyTree
                 }
                 else if let document = ancestor as? XDocument {
-                    document._lastInTree = newLastInTree
+                    document._lastInTree = lastInMyTree
                 }
                 ancestor = ancestor?._parent
             } while ancestor?.getLastInTree() === oldParentLastInTree
@@ -958,27 +959,22 @@ public class Attachments {
 public final class XElement: XContent, XBranchInternal, CustomStringConvertible {
     
     func setDocument(document newDocument: XDocument?) {
-
-        print("SET DOC FOR \(self)")
         
         // set document:
         var node: XNode? = self
         repeat {
             if let element = node as? XElement {
                 if !(newDocument === element._document) {
-                    print("    ... FOR \(element)")
                     element._document?.unregisterElement(element: element)
                     element._document = newDocument
                     newDocument?.registerElement(element: element)
                 }
             }
             if self._lastInTree === node {
-                print("    >>> SUBTREE FINISHED")
                 break
             }
             node = node?._nextInTree
         } while node != nil
-        print("    >>> NO MORE NODE")
     }
     
     var _firstContent: XContent?
