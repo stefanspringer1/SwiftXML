@@ -24,6 +24,10 @@ public final class XDocument: XNode, XBranchInternal {
     
     var _lastInTree: XNode!
     
+    override func getLastInTree() -> XNode {
+        return _lastInTree
+    }
+    
     var _sourcePath: String? = nil
     
     public override var r: XDocument? { get { super.r as? XDocument } }

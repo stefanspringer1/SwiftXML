@@ -603,10 +603,6 @@ protocol XBranchInternal: XBranch {
 
 extension XBranchInternal {
     
-    func getLastInTree() -> XNode {
-        return _lastInTree
-    }
-    
     func addClones(from source: XBranchInternal, forwardref: Bool = false) {
         source.content.forEach { node in
             if let content = node.shallowClone() as? XContent {
@@ -955,6 +951,10 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     var _lastContent: XContent?
     
     var _lastInTree: XNode!
+    
+    override func getLastInTree() -> XNode {
+        return _lastInTree
+    }
     
     var _document: XDocument? = nil
     
