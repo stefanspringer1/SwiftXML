@@ -14,7 +14,7 @@ final class XValue {
     }
 }
 
-public final class XDocument: XNode, XBranchInternal {
+public final class XDocument: XNode, XBranch {
 
     public var _firstContent: XContent? = nil
     

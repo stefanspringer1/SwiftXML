@@ -279,7 +279,7 @@ public final class XContentsIterator: XContentIteratorProtocol {
             currentNode = currentNode?._next
         }
         else {
-            currentNode = (node as? XBranchInternal)?._firstContent
+            currentNode = (node as? XBranch)?._firstContent
             started = true
         }
         return currentNode
@@ -462,7 +462,7 @@ public final class XChildrenIterator: XElementIteratorProtocol {
                 currentNode = currentNode?._next
             }
             else {
-                currentNode = (node as? XBranchInternal)?._firstContent
+                currentNode = (node as? XBranch)?._firstContent
                 started = true
             }
         } while currentNode != nil && !(currentNode! is XElement)
@@ -738,7 +738,7 @@ public final class XTreeIterator: XContentIteratorProtocol {
         if started {
             while true {
                 if downDirection,
-                   let branch = currentNode as? XBranchInternal {
+                   let branch = currentNode as? XBranch {
                     if let firstChild = branch._firstContent {
                         currentNode = firstChild
                         directionIndicator.up = false
@@ -765,7 +765,7 @@ public final class XTreeIterator: XContentIteratorProtocol {
                         downDirection = false
                     }
                     currentNode = currentNode?._parent
-                    if let theCurrentNode = currentNode as? XBranchInternal {
+                    if let theCurrentNode = currentNode as? XBranch {
                         directionIndicator.up = true
                         return theCurrentNode as? XContent
                     }

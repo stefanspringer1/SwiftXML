@@ -7,7 +7,7 @@
 
 import Foundation
 
-public extension XBranch {
+public extension XContentHolder {
     
     var content: XContentSequence {
         get { XSequenceOfContent(node: self) }

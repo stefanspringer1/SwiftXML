@@ -98,7 +98,7 @@ public class XNode {
     
     public var document: XDocument? {
         get {
-            return (self as? XBranchInternal)?._document ?? self.parent?._document
+            return (self as? XBranch)?._document ?? self.parent?._document
         }
     }
     
@@ -141,7 +141,7 @@ public class XNode {
         _contentIterators.forEach { $0.prefetch() }
     }
     
-    weak var _parent: XBranchInternal? = nil
+    weak var _parent: XBranch? = nil
     
     public var parent: XElement? {
         get {
@@ -269,7 +269,7 @@ public class XNode {
         let directionIndicator = XDirectionIndicator()
         XTraversalSequence(node: self, directionIndicator: directionIndicator).forEach { node in
             if directionIndicator.up {
-                if let branch = node as? XBranchInternal {
+                if let branch = node as? XBranch {
                     up?(branch)
                 }
             }
@@ -283,7 +283,7 @@ public class XNode {
         let directionIndicator = XDirectionIndicator()
         try XTraversalSequence(node: self, directionIndicator: directionIndicator).forEach { node in
             if directionIndicator.up {
-                if let branch = node as? XBranchInternal {
+                if let branch = node as? XBranch {
                     try up?(branch)
                 }
             }
@@ -297,7 +297,7 @@ public class XNode {
         let directionIndicator = XDirectionIndicator()
         await XTraversalSequence(node: self, directionIndicator: directionIndicator).forEachAsync { node in
             if directionIndicator.up {
-                if let branch = node as? XBranchInternal {
+                if let branch = node as? XBranch {
                     await up?(branch)
                 }
             }
@@ -311,7 +311,7 @@ public class XNode {
         let directionIndicator = XDirectionIndicator()
         try await XTraversalSequence(node: self, directionIndicator: directionIndicator).forEachAsyncThrowing { node in
             if directionIndicator.up {
-                if let branch = node as? XBranchInternal {
+                if let branch = node as? XBranch {
                     try await up?(branch)
                 }
             }
@@ -550,19 +550,19 @@ public class XSpot: XContent {
     
 }
 
-public protocol XBranch: XNode {
+public protocol XContentHolder: XNode {
 }
 
-protocol XBranchInternal: XBranch {
+protocol XBranch: XContentHolder {
     var _firstContent: XContent? { get set }
     var _lastContent: XContent? { get set }
     var _document: XDocument? { get set }
     var _lastInTree: XNode! { get set }
 }
 
-extension XBranchInternal {
+extension XBranch {
     
-    func addClones(from source: XBranchInternal, forwardref: Bool = false) {
+    func addClones(from source: XBranch, forwardref: Bool = false) {
         source.content.forEach { node in
             if let content = node.shallowClone() as? XContent {
                 add(content)
@@ -570,7 +570,7 @@ extension XBranchInternal {
         }
         allContent.forEach { node in
             if let element = node as? XElement {
-                (element._r as? XBranchInternal)?.content.forEach { node in
+                (element._r as? XBranch)?.content.forEach { node in
                     if let content = node.shallowClone() as? XContent {
                         element.add(content)
                     }
@@ -654,7 +654,7 @@ extension XBranchInternal {
                 _nextInTree = newChild
             }
             
-            var ancestor: XBranchInternal? = self._parent
+            var ancestor: XBranch? = self._parent
             while let theAncestor = ancestor, theAncestor._lastInTree === _lastInTree {
                 theAncestor._lastInTree = newLastInTree
                 ancestor = theAncestor._parent ?? theAncestor._document
@@ -915,7 +915,7 @@ public class Attachments {
     }
 }
 
-public final class XElement: XContent, XBranchInternal, CustomStringConvertible {
+public final class XElement: XContent, XBranch, CustomStringConvertible {
     
     public var _firstContent: XContent?
     
