@@ -532,6 +532,9 @@ public class XContent: XNode {
 
 public class XSpot: XContent {
     
+    public override var r: XSpot? { get { super.r as? XSpot } }
+    public override var rr: XSpot? { get { super.rr as? XSpot } }
+    
     public var attached = Attachments()
     
     public override init() {
@@ -973,6 +976,9 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     var _attributes: [String:XAttribute]? = nil
     var _attributeNames: [String]? = nil
     
+    public override var r: XElement? { get { super.r as? XElement } }
+    public override var rr: XElement? { get { super.rr as? XElement } }
+    
     public var attached = Attachments()
     
     public var description: String {
@@ -1255,6 +1261,9 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
 
 public final class XText: XContent, CustomStringConvertible {
     
+    public override var r: XText? { get { super.r as? XText } }
+    public override var rr: XText? { get { super.rr as? XText } }
+    
     var _value: String
     
     public var value: String {
@@ -1318,6 +1327,9 @@ public final class XText: XContent, CustomStringConvertible {
 
 public final class XInternalEntity: XContent {
     
+    public override var r: XInternalEntity? { get { super.r as? XInternalEntity } }
+    public override var rr: XInternalEntity? { get { super.rr as? XInternalEntity } }
+    
     var _name: String
     
     public var name: String {
@@ -1366,6 +1378,9 @@ public final class XInternalEntity: XContent {
 
 public final class XExternalEntity: XContent {
     
+    public override var r: XExternalEntity? { get { super.r as? XExternalEntity } }
+    public override var rr: XExternalEntity? { get { super.rr as? XExternalEntity } }
+    
     var _name: String
     
     public var name: String {
@@ -1413,6 +1428,9 @@ public final class XExternalEntity: XContent {
 }
 
 public final class XProcessingInstruction: XContent, CustomStringConvertible {
+    
+    public override var r: XProcessingInstruction? { get { super.r as? XProcessingInstruction } }
+    public override var rr: XProcessingInstruction? { get { super.rr as? XProcessingInstruction } }
     
     var _target: String
     var _data: String?
@@ -1481,6 +1499,9 @@ public final class XProcessingInstruction: XContent, CustomStringConvertible {
 
 public final class XComment: XContent {
     
+    public override var r: XComment? { get { super.r as? XComment } }
+    public override var rr: XComment? { get { super.rr as? XComment } }
+    
     var _value: String
     
     public var value: String {
@@ -1528,6 +1549,9 @@ public final class XComment: XContent {
 }
 
 public final class XCDATASection: XContent {
+    
+    public override var r: XCDATASection? { get { super.r as? XCDATASection } }
+    public override var rr: XCDATASection? { get { super.rr as? XCDATASection } }
     
     var _value: String
     

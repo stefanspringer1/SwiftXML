@@ -26,6 +26,9 @@ public final class XDocument: XNode, XBranchInternal {
     
     var _sourcePath: String? = nil
     
+    public override var r: XDocument? { get { super.r as? XDocument } }
+    public override var rr: XDocument? { get { super.rr as? XDocument } }
+    
     public var attached = Attachments()
     
     public var sourcePath: String? {
