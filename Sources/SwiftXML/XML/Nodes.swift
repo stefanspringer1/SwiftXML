@@ -542,7 +542,7 @@ public class XSpot: XContent {
     }
     
     @discardableResult public override func insertPrevious(@XNodeBuilder builder: () -> [XContent]) -> XSpot {
-        _insertNext(builder: builder)
+        _insertPrevious(builder: builder)
         return self
     }
     
@@ -1067,7 +1067,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     // more precisely typed versions for methods from XContent:
     
     @discardableResult public override func insertPrevious(@XNodeBuilder builder: () -> [XContent]) -> XElement {
-        _insertNext(builder: builder)
+        _insertPrevious(builder: builder)
         return self
     }
     
@@ -1295,7 +1295,7 @@ public final class XText: XContent, CustomStringConvertible {
     }
     
     @discardableResult public override func insertPrevious(@XNodeBuilder builder: () -> [XContent]) -> XText {
-        _insertNext(builder: builder)
+        _insertPrevious(builder: builder)
         return self
     }
     
@@ -1346,7 +1346,7 @@ public final class XInternalEntity: XContent {
     }
     
     @discardableResult public override func insertPrevious(@XNodeBuilder builder: () -> [XContent]) -> XInternalEntity {
-        _insertNext(builder: builder)
+        _insertPrevious(builder: builder)
         return self
     }
     
@@ -1397,7 +1397,7 @@ public final class XExternalEntity: XContent {
     }
     
     @discardableResult public override func insertPrevious(@XNodeBuilder builder: () -> [XContent]) -> XExternalEntity {
-        _insertNext(builder: builder)
+        _insertPrevious(builder: builder)
         return self
     }
     
@@ -1467,7 +1467,7 @@ public final class XProcessingInstruction: XContent, CustomStringConvertible {
     }
     
     @discardableResult public override func insertPrevious(@XNodeBuilder builder: () -> [XContent]) -> XProcessingInstruction {
-        _insertNext(builder: builder)
+        _insertPrevious(builder: builder)
         return self
     }
     
@@ -1518,7 +1518,7 @@ public final class XComment: XContent {
     }
     
     @discardableResult public override func insertPrevious(@XNodeBuilder builder: () -> [XContent]) -> XComment {
-        _insertNext(builder: builder)
+        _insertPrevious(builder: builder)
         return self
     }
     
@@ -1569,7 +1569,7 @@ public final class XCDATASection: XContent {
     }
     
     @discardableResult public override func insertPrevious(@XNodeBuilder builder: () -> [XContent]) -> XCDATASection {
-        _insertNext(builder: builder)
+        _insertPrevious(builder: builder)
         return self
     }
     
