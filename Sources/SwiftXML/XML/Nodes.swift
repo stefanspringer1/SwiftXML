@@ -256,6 +256,7 @@ public class XNode {
     }
     
     public func applyProduction(production: XProduction) throws {
+        try (self as? XDocument)?.produceEntering(production: production)
         try traverseThrowing { node in
             try node.produceEntering(production: production)
         } up: { branch in
@@ -266,6 +267,7 @@ public class XNode {
                 try document.produceLeaving(production: production)
             }
         }
+        try (self as? XDocument)?.produceLeaving(production: production)
     }
     
     public func write(toWriter writer: Writer, production: XProduction = XDefaultProduction()) throws {
