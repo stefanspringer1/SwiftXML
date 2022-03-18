@@ -14,7 +14,15 @@ final class XValue {
     }
 }
 
-public final class XDocument: XBranch {
+public final class XDocument: XNode, XBranch {
+
+    public var _firstContent: XContent? = nil
+    
+    public var _lastContent: XContent? = nil
+    
+    public var _document: XDocument?
+    
+    public var lastInTree: XNode!
     
     var _sourcePath: String? = nil
     
@@ -50,12 +58,12 @@ public final class XDocument: XBranch {
         attributeValueChangedActions[attributeName] = nil
     }
     
-    @discardableResult public func add(skip: Bool = false, @XNodeBuilder builder: () -> [XNode]) -> XDocument {
+    @discardableResult public func add(skip: Bool = false, @XNodeBuilder builder: () -> [XContent]) -> XDocument {
         _add(skip: skip, builder: builder)
         return self
     }
     
-    @discardableResult public func addFirst(skip: Bool = false, @XNodeBuilder builder: () -> [XNode]) -> XDocument {
+    @discardableResult public func addFirst(skip: Bool = false, @XNodeBuilder builder: () -> [XContent]) -> XDocument {
         _addFirst(skip: skip, builder: builder)
         return self
     }
@@ -73,7 +81,7 @@ public final class XDocument: XBranch {
      Set the contents of the document.
      If "forward", then detaching prefetches the next node in iterators.
      */
-    @discardableResult public func setContent(forward: Bool = false, @XNodeBuilder builder: () -> [XNodeLike]) -> XDocument {
+    @discardableResult public func setContent(forward: Bool = false, @XNodeBuilder builder: () -> [XContent]) -> XDocument {
         _setContent(forward: forward, builder: builder)
         return self
     }
@@ -227,7 +235,7 @@ public final class XDocument: XBranch {
     }
     
     func getType() -> String? {
-        var node = _firstChild
+        var node = _firstContent
         while let theNode = node {
             if let element = node as? XElement {
                 return element.name
@@ -272,7 +280,7 @@ public final class XDocument: XBranch {
         try production.writeDocumentTypeDeclarationAfterInternalSubset(hasInternalSubset: _hasInternalSubset)
     }
 
-    override func produceLeaving(production: XProduction) throws {
+    func produceLeaving(production: XProduction) throws {
         try production.writeDocumentEnd(document: self)
     }
 }

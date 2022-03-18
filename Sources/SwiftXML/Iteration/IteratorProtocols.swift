@@ -11,9 +11,9 @@ import Foundation
  The XNodeIteratorProtocol implements one more features over the IteratorProtocol,
  it can go backwards via the function "previous".
  */
-public protocol XNodeIteratorProtocol {
-    mutating func next() -> XNode?
-    mutating func previous() -> XNode?
+public protocol XContentIteratorProtocol {
+    mutating func next() -> XContent?
+    mutating func previous() -> XContent?
 }
 
 /**

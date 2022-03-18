@@ -85,8 +85,8 @@ let document = try parseXML(fromText: """
 <a><item id="1" remove="true"/><item id="2"/><item id="3" remove="true"/><item id="4"/></a>
 """)
 
-document.traverse { node in
-    if let element = node as? XElement, element["remove"] == "true" {
+document.traverse { content in
+    if let element = content as? XElement, element["remove"] == "true" {
         element.remove()
     }
 }
@@ -100,7 +100,7 @@ The output is:
 <a><item id="2"/><item id="4"/></a>
 ```
 
-Of course, since those iterations are regular sequences, all according Swift library functions like `map` and `filter` can be used. But in many cases, it might be better to use conditions on the node iterators (see the section on finding related nodes with filters) or chaining of node iterators (see the section on chained iterators).
+Of course, since those iterations are regular sequences, all according Swift library functions like `map` and `filter` can be used. But in many cases, it might be better to use conditions on the content iterators (see the section on finding related content with filters) or chaining of content iterators (see the section on chained iterators).
 
 The user of the library can also provide sets of rules to be applied (see the code at the beginning and a full example in the section about rules). In such a rule, the user defines what to do with an element or attribute with a certain name. A set of rules can then be applied to a document, i.e. the rules are applied in the order of their definition. This is repeated, guaranteeing that a rule is only applied once to the same object (if not fully removed from the document and added again, see the section below on document membership), until no more application takes places. So elements can be added during application of a rule and then later be processed by the same or another rule.
 
@@ -228,7 +228,7 @@ A document has the following additional properties:
 
 ## Displaying XML
 
-When printing a node via `print(...)`, only a top-level represenation like the start tag is printed and never the whole tree. When you would like to print the whole tree or document, use:
+When printing a content via `print(...)`, only a top-level represenation like the start tag is printed and never the whole tree. When you would like to print the whole tree or document, use:
 
 ```Swift
 func echo(usingProduction: XProduction, terminator: String)
@@ -307,7 +307,7 @@ Sometimes, only a “shallow” clone is needed, i.e. the node itself without th
 func shallowClone(forwardref: Bool) -> XNode
 ```
 
-## Node properties
+## Content properties
 
 ### Element names
 
@@ -315,7 +315,7 @@ Element names can be read and set by the using the property `name` of an element
 
 ### Text 
 
-For a text node (`XText`) its text can be read and set via its property `value`. So there is no need to replace a `XText` node by another to change text. Please also see the section below on handling of text.
+For a text content (`XText`) its text can be read and set via its property `value`. So there is no need to replace a `XText` content by another to change text. Please also see the section below on handling of text.
 
 ### Changing and reading attributes
 
@@ -335,7 +335,7 @@ if let id = myElement["id"] {
 
 ### Attachments
 
-Branches (i.e. element and documents) and `XSpot` nodes (see the section below on `XSpot` and handling of text) can have “attachments”. Those are objects that can be attached via a textual key to those branches but that not considered as belonging to the actual XML tree.
+Element, documents, and `XSpot` (see the section below on `XSpot` and handling of text) can have “attachments”. Those are objects that can be attached via a textual key to those branches but that not considered as belonging to the actual XML tree.
 
 The attachments can be reached by the property `attached`, and accessing and setting them is analogous to attributes:
 
@@ -363,19 +363,19 @@ myElement.attached["note"] = nil
 Traversing a tree depth-first starting from a node (including a document) can be done by the following methods:
 
 ```Swift
-func traverse(down: (XNode) -> (), up: ((XBranch) -> ())?)
+func traverse(down: (XNode) -> (), up: ((XNode) -> ())?)
 ```
 
 ```Swift
-func traverseThrowing(down: (XNode) throws -> (), up: ((XBranch) throws -> ())?) throws
+func traverseThrowing(down: (XNode) throws -> (), up: ((XNode) throws -> ())?) throws
 ```
 
 ```Swift
-func traverseAsync(down: (XNode) async -> (), up: ((XBranch) async -> ())?) async
+func traverseAsync(down: (XNode) async -> (), up: ((XNode) async -> ())?) async
 ```
 
 ```Swift
-func traverseAsyncThrowing(down: (XNode) async throws -> (), up: ((XBranch) async throws -> ())?) async throws
+func traverseAsyncThrowing(down: (XNode) async throws -> (), up: ((XNode) async throws -> ())?) async throws
 ```
 
 For a “branch”, i.e. a node that might contain other nodes (like an element, opposed to e.g. text, which does not contain other nodes), when returning from the traversal of its content (also in the case of an empty branch) the closure given the optional `up:` argument is called.
@@ -388,8 +388,8 @@ document.traverse { node in
         print("entering element \(element.name)")
     }
 }
-up: { branch in
-    if let element = branch as? XElement {
+up: { node in
+    if let element = node as? XElement {
         print("leaving element \(element.name)")
     }
 }
@@ -433,9 +433,9 @@ myDocument.attributes(ofName: "id").forEach { (value,element) in
 }
 ```
 
-## Finding related nodes
+## Finding related content
 
-Starting from some node, you might want to find related nodes, e.g. its children. The names chosen for the accordings methods come from the idea that all nodes have a natural order, namely the order of a depth-first traversal, which is the same order in which the content of an XML document is stored in a text file. This order gives a meaning to method names such a `nextSibling`. Note that, other than for the iterations you get via `elements(ofName:)` and `attributes(ofName:)`, even nodes that stay in the same document can occur in such an iteration sevaral times if moved accordingly during the iteration.
+Starting from some content, you might want to find related content, e.g. its children. The names chosen for the accordings methods come from the idea that all content have a natural order, namely the order of a depth-first traversal, which is the same order in which the content of an XML document is stored in a text file. This order gives a meaning to method names such a `nextSibling`. Note that, other than for the iterations you get via `elements(ofName:)` and `attributes(ofName:)`, even nodes that stay in the same document can occur in such an iteration sevaral times if moved accordingly during the iteration.
 
 Sequences returned are always lazy sequences, iterating through them gives items of the obvious type. As mentioned in the general description of the library, manipulating the XML tree during such an iteration is allowed.
 
@@ -460,19 +460,19 @@ var ancestors: XElementSequence
 Get the first content of a branch:
 
 ```Swift
-var firstContent: XNode?
+var firstContent: XContent?
 ```
 
 Get the last content of a branch:
 
 ```Swift
-var lastContent: XNode?
+var lastContent: XContent?
 ```
 
 The direct content of a document or an element (“direct” means that their parent is this document or element):
 
 ```Swift
-var content: XNodeSequence
+var content: XContentSequence
 ```
 
 The direct content that is an element, i.e. all the children:
@@ -484,13 +484,13 @@ var children: XElementSequence
 All content in the tree of nodes that is started by the node itself, without the node itself, in the order of a depth-first traversal:
 
 ```Swift
-var allContent: XNodeSequence
+var allContent: XContentSequence
 ```
 
 All content in the tree of nodes that is started by the node, starting with the node itself:
 
 ```Swift
-var allContentIncludingSelf: XNodeSequence
+var allContentIncludingSelf: XContentSequence
 ```
 
 The descendants, i.e. all content in the tree of nodes that is started by the node, without the node itself, that is an element:
@@ -510,13 +510,13 @@ The (direct) content of an branch (element or document) are “siblings” to ea
 The previous sibling of a node:
 
 ```Swift
-var previousNode: XNode?
+var previousNode: XContent?
 ```
 
 The next sibling:
 
 ```Swift
-var nextNode: XNode?
+var nextNode: XContent?
 ```
 
 The following very short method names `previous` and `next` actually mean “the previous siblings” and “the next siblings”, repectively. Those method names are chosen to be so short because they are such a common use case.
@@ -524,7 +524,7 @@ The following very short method names `previous` and `next` actually mean “the
 All nodes previous to the node (i.e. the previous siblings), in the order from the node:
 
 ```Swift
-var previous: XNodeSequence
+var previous: XContentSequence
 ```
 
 All previous siblings that are elements:
@@ -536,7 +536,7 @@ var previousElements: XElementSequence
 All nodes next to the node (i.e. the next siblings):
 
 ```Swift
-var next: XNodeSequence
+var next: XContentSequence
 ```
 
 All next siblings that are elements:
@@ -545,15 +545,15 @@ All next siblings that are elements:
 var nextElements: XElementSequence
 ```
 
-Once you have such a sequnce, you can get the first or the n'th itme in the sequnce or just test if an item exists at all via:
+Once you have such a sequence, you can get the first or the n'th itme in the sequence or just test if an item exists at all via:
 
 ```Swift
-func findFirst() -> XNode?
+func findFirst() -> XContent?
 func findFirst() -> XElement?
 ```
 
 ```Swift
-func find(index: Int) -> XNode?
+func find(index: Int) -> XContent?
 func find(index: Int) -> XElement?
 ```
 
@@ -566,13 +566,13 @@ You may also ask for the previous or next node in the tree, in the order of a de
 The next node in the tree:
 
 ```Swift
-var nextNodeInTree: XNode?
+var nextContentInTree: XContent?
 ```
 
 The previous node in the tree:
 
 ```Swift
-var previousNodeInTree: XNode?
+var previousContentInTree: XContent?
 ```
 
 Example:
@@ -764,20 +764,20 @@ Besides changing the node properties, an XML tree can be changed by the followin
 Add nodes to the start of the content of an element or a document respectively:
 
 ```Swift
-func add(skip: Bool, builder: () -> [XNode]) -> XElement
-func add(skip: Bool, builder: () -> [XNode]) -> XDocument
+func add(skip: Bool, builder: () -> [XContent]) -> XElement
+func add(skip: Bool, builder: () -> [XContent]) -> XDocument
 ```
 
 Add nodes as the nodes previous to the node:
 
 ```Swift
-func insertPrevious(builder: () -> XNodeLike)
+func insertPrevious(builder: () -> [XContent]) -> XContent
 ```
 
 Add nodes as the nodes next to the node:
 
 ```Swift
-func insertNext(builder: () -> [XNode]) -> XNode
+func insertNext(builder: () -> [XContent]) -> XContent
 ```
 
 A more precise type is returned from `insertPrevious` and `insertNext` if the type of the subject is more precisely known.
@@ -793,7 +793,7 @@ func remove(forward: Bool)
 Replace the node by other nodes; if `forward`, then detaching prefetches the next node in iterators:
 
 ```Swift
-func replace(forward: Bool, builder: () -> XNodeLike)
+func replace(forward: Bool, builder: () -> [XContent])
 ```
 
 Clear the contents of an element or a document respectively:
@@ -806,8 +806,8 @@ func clear(forward: Bool) -> XDocument
 Set the contents of an element or a document respectively:
 
 ```Swift
-func setContent(forward: Bool, builder: () -> [XNodeLike]) -> XElement
-func setContent(forward: Bool, builder: () -> [XNodeLike]) -> XDocument
+func setContent(forward: Bool, builder: () -> [XContent]) -> XElement
+func setContent(forward: Bool, builder: () -> [XContent]) -> XDocument
 ```
 
 Example:
@@ -991,12 +991,12 @@ func removeChangedAction(forAttributeName: String)
 
 ## Facilities for testing
 
-For our tests of the library, we implemented the following properties to get a sequence iterating over a single element or node.
+For our tests of the library, we implemented the following properties to get a sequence iterating over a single element or content.
 
-For any node:
+For any content:
 
 ```Swift
-var asNodeSequence: XNodeSequence
+var asContentSequence: XContentSequence
 ```
 
 For an element:

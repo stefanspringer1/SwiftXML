@@ -103,27 +103,6 @@ public class XNode {
     }
     
     /**
-     Removes the node from the tree structure and the tree order and
-     the document.
-     If "forward", then detaching prefetches the next node in iterators.
-     Else, the iterators all told to go to the previous node.
-     */
-    @discardableResult public func remove(forward: Bool = false) -> XNode {
-        _remove(forward: forward)
-        return self
-    }
-    
-    @discardableResult public func insertPrevious(@XNodeBuilder builder: () -> [XNode]) -> XNode {
-        _insertNext(builder: builder)
-        return self
-    }
-    
-    @discardableResult public func insertNext(@XNodeBuilder builder: () -> [XNode]) -> XNode {
-        _insertNext(builder: builder)
-        return self
-    }
-    
-    /**
      Usually the clone will have "r" pointed to the original node.
      If "forwardref", then this direction will be inversed, i.e.
      the original node is pointing to the clone.
@@ -144,153 +123,22 @@ public class XNode {
         return shallowClone(forwardref: pointingFromClone)
     }
     
-    private var _nodeIterators = WeakList<XBidirectionalNodeIterator>()
+    private var _contentIterators = WeakList<XBidirectionalContentIterator>()
     
-    func addNodeIterator(_ nodeIterator: XBidirectionalNodeIterator) {
-        _nodeIterators.append(nodeIterator)
+    func addContentIterator(_ nodeIterator: XBidirectionalContentIterator) {
+        _contentIterators.append(nodeIterator)
     }
     
-    func removeNodeIterator(_ nodeIterator: XBidirectionalNodeIterator) {
-        _nodeIterators.remove(nodeIterator)
+    func removeContentIterator(_ nodeIterator: XBidirectionalContentIterator) {
+        _contentIterators.remove(nodeIterator)
     }
     
-    func gotoPreviousOnNodeIterators() {
-        _nodeIterators.forEach { _ = $0.previous() }
+    func gotoPreviousOnContentIterators() {
+        _contentIterators.forEach { _ = $0.previous() }
     }
     
-    func prefetchOnNodeIterators() {
-        _nodeIterators.forEach { $0.prefetch() }
-    }
-    
-    func insertPrevious(_ node: XNode) {
-        if let selfAsText = self as? XText, let newAsText = node as? XText {
-            selfAsText._value = newAsText._value + selfAsText._value
-            selfAsText.whitespace = .UNKNOWN
-        }
-        else {
-            if _parent?._firstChild === self {
-                _parent?._firstChild = node
-            }
-            
-            node.removeKeep()
-            
-            _previous?._next = node
-            node._previous = _previous
-            node._next = self
-            _previous = node
-            node._parent = _parent
-            
-            // set tree order:
-            node.setTreeOrder()
-            
-            // set document:
-            if let theDocument = _parent?._document, let element = node as? XElement, !(element._document === theDocument) {
-                element.setDocument(document: theDocument)
-            }
-        }
-    }
-    
-    func insertPrevious(_ text: String) {
-        if !text.isEmpty {
-            if let selfAsText = self as? XText {
-                selfAsText._value = text + selfAsText._value
-                selfAsText.whitespace = .UNKNOWN
-            }
-            else {
-                insertPrevious(XText(text))
-            }
-        }
-    }
-    
-    func _insertPrevious(@XNodeBuilder builder: () -> [XNode]) {
-        builder().forEach { insertPrevious($0) }
-    }
-    
-    func insertNext(_ node: XNode) {
-        if let selfAsText = self as? XText, let newAsText = node as? XText {
-            selfAsText._value = selfAsText._value + newAsText._value
-            selfAsText.whitespace = .UNKNOWN
-        }
-        else if _parent?._lastChild === self {
-            _parent?.add(node)
-        }
-        else {
-            node.removeKeep()
-            
-            _next?._previous = node
-            node._previous = self
-            node._next = _next
-            _next = node
-            node._parent = _parent
-            
-            // set tree order:
-            node.setTreeOrder()
-            
-            // set document:
-            if let theDocument = _parent?._document, let element = node as? XElement, !(element._document === theDocument) {
-                element.setDocument(document: theDocument)
-            }
-        }
-    }
-    
-    func insertNext(_ text: String) {
-        if !text.isEmpty {
-            if let selfAsText = self as? XText {
-                selfAsText._value = selfAsText._value + text
-                selfAsText.whitespace = .UNKNOWN
-            }
-            else {
-                insertNext(XText(text))
-            }
-        }
-    }
-    
-    func _insertNext(@XNodeBuilder builder: () -> [XNode]) {
-        builder().reversed().forEach { insertNext($0) }
-    }
-    
-    /**
-     Replace the node by other nodes.
-     If "forward", then detaching prefetches the next node in iterators.
-     */
-    public func replace(forward: Bool = false, @XNodeBuilder builder: () -> [XNode]) {
-        let placeholder = XNode() // do not use text as a place holder!
-        insertNext(placeholder)
-        _remove(forward: forward)
-        builder().forEach { placeholder.insertPrevious($0) }
-        placeholder._remove()
-    }
-    
-    /**
-     Replace the node by another node.
-     If "forward", then detaching prefetches the next node in iterators.
-     */
-    func replace1(forward: Bool = false, _ node: XNode) {
-        if let theNext = _next {
-            remove(forward: forward)
-            theNext.insertPrevious(node)
-            
-        }
-        else if let theParent = _parent {
-            remove(forward: forward)
-            theParent.add(node)
-        }
-    }
-    
-    /**
-     Clear the contents of the node.
-     If "forward", then detaching prefetches the next node in iterators.
-     */
-    func _clear(forward: Bool = false) {
-        if let meAsBranch = self as? XBranch {
-            var node = meAsBranch._firstChild
-            var nextNode = node?._next
-            while let toRemove = node {
-                toRemove._remove(forward: forward)
-                node = nextNode
-                nextNode = node?._next
-            }
-        }
+    func prefetchOnContentIterators() {
+        _contentIterators.forEach { $0.prefetch() }
     }
     
     weak var _parent: XBranch? = nil
@@ -321,34 +169,34 @@ public class XNode {
         }
     }
     
-    public var asNodeSequence: XNodeSequence { get { return XNodeSelfSequence(node: self) } }
+    public var asContentSequence: XContentSequence { get { return XNodeSelfSequence(node: self) } }
     
-    weak var _previous: XNode? = nil
-    var _next: XNode? = nil
+    weak var _previous: XContent? = nil
+    var _next: XContent? = nil
     
-    public var previousNode: XNode? { get { _next } }
-    public var nextNode: XNode? { get { _next } }
+    public var previousContent: XNode? { get { _next } }
+    public var nextContent: XNode? { get { _next } }
     
     weak var _previousInTree: XNode? = nil
     weak var _nextInTree: XNode? = nil
     
-    public var previousNodeInTree: XNode? { get { _previousInTree } }
-    public var nextNodeInTree: XNode? { get { _nextInTree } }
+    public var previousContentInTree: XContent? { get { _previousInTree as? XContent } }
+    public var nextContentInTree: XContent? { get { _nextInTree as? XContent } }
     
-    public func previousNodeInTree(where condition: (XNode) -> Bool) -> XNode? {
-        let node = previousNodeInTree
-        if let theNode = node, condition(theNode) {
-            return node
+    public func previousContentInTree(where condition: (XContent) -> Bool) -> XContent? {
+        let content = previousContentInTree
+        if let theContent = content, condition(theContent) {
+            return theContent
         }
         else {
             return nil
         }
     }
     
-    public func nextNodeInTree(where condition: (XNode) -> Bool) -> XNode? {
-        let node = nextNodeInTree
-        if let theNode = node, condition(theNode) {
-            return node
+    public func nextContentInTree(where condition: (XContent) -> Bool) -> XContent? {
+        let content = nextContentInTree
+        if let theContent = content, condition(theContent) {
+            return theContent
         }
         else {
             return nil
@@ -365,10 +213,10 @@ public class XNode {
         
         // correction in iterators:
         if forward {
-            prefetchOnNodeIterators()
+            prefetchOnContentIterators()
         }
         else {
-            gotoPreviousOnNodeIterators()
+            gotoPreviousOnContentIterators()
         }
         
         // tree order:
@@ -391,11 +239,11 @@ public class XNode {
             theNext._previous = _previous
         }
         if let theParent = _parent {
-            if theParent._firstChild === self {
-                theParent._firstChild = _next
+            if theParent._firstContent === self {
+                theParent._firstContent = _next
             }
-            if theParent._lastChild === self {
-                theParent._lastChild = _previous
+            if theParent._lastContent === self {
+                theParent._lastContent = _previous
             }
         }
     }
@@ -417,7 +265,7 @@ public class XNode {
         return self
     }
     
-    public func traverse(down: @escaping (XNode) -> (), up: ((XBranch) -> ())? = nil) {
+    public func traverse(down: @escaping (XNode) -> (), up: ((XNode) -> ())? = nil) {
         let directionIndicator = XDirectionIndicator()
         XTraversalSequence(node: self, directionIndicator: directionIndicator).forEach { node in
             if directionIndicator.up {
@@ -431,7 +279,7 @@ public class XNode {
         }
     }
     
-    public func traverseThrowing(down: @escaping (XNode) throws -> (), up: ((XBranch) throws -> ())? = nil) throws {
+    public func traverseThrowing(down: @escaping (XNode) throws -> (), up: ((XNode) throws -> ())? = nil) throws {
         let directionIndicator = XDirectionIndicator()
         try XTraversalSequence(node: self, directionIndicator: directionIndicator).forEach { node in
             if directionIndicator.up {
@@ -445,7 +293,7 @@ public class XNode {
         }
     }
     
-    public func traverseAsync(down: @escaping (XNode) async -> (), up: ((XBranch) async -> ())? = nil) async {
+    public func traverseAsync(down: @escaping (XNode) async -> (), up: ((XNode) async -> ())? = nil) async {
         let directionIndicator = XDirectionIndicator()
         await XTraversalSequence(node: self, directionIndicator: directionIndicator).forEachAsync { node in
             if directionIndicator.up {
@@ -459,7 +307,7 @@ public class XNode {
         }
     }
     
-    public func traverseAsyncThrowing(down: @escaping (XNode) async throws -> (), up: ((XBranch) async throws -> ())? = nil) async throws {
+    public func traverseAsyncThrowing(down: @escaping (XNode) async throws -> (), up: ((XNode) async throws -> ())? = nil) async throws {
         let directionIndicator = XDirectionIndicator()
         try await XTraversalSequence(node: self, directionIndicator: directionIndicator).forEachAsyncThrowing { node in
             if directionIndicator.up {
@@ -481,7 +329,12 @@ public class XNode {
         try traverseThrowing { node in
             try node.produceEntering(production: production)
         } up: { branch in
-            try branch.produceLeaving(production: production)
+            if let element = branch as? XElement {
+                try element.produceLeaving(production: production)
+            }
+            else if let document = branch as? XDocument {
+                try document.produceLeaving(production: production)
+            }
         }
     }
     
@@ -534,7 +387,150 @@ public class XNode {
     }
 }
 
-public class XSpot: XNode {
+public class XContent: XNode {
+    
+    public override var previousContentInTree: XContent? { get { _previousInTree as? XContent } }
+    public override var nextContentInTree: XContent? { get { _nextInTree as? XContent } }
+    
+    func insertPrevious(_ node: XContent) {
+        if let selfAsText = self as? XText, let newAsText = node as? XText {
+            selfAsText._value = newAsText._value + selfAsText._value
+            selfAsText.whitespace = .UNKNOWN
+        }
+        else {
+            if _parent?._firstContent === self {
+                _parent?._firstContent = node
+            }
+            
+            node.removeKeep()
+            
+            _previous?._next = node
+            node._previous = _previous
+            node._next = self
+            _previous = node
+            node._parent = _parent
+            
+            // set tree order:
+            node.setTreeOrder()
+            
+            // set document:
+            if let theDocument = _parent?._document, let element = node as? XElement, !(element._document === theDocument) {
+                element.setDocument(document: theDocument)
+            }
+        }
+    }
+    
+    func insertPrevious(_ text: String) {
+        if !text.isEmpty {
+            if let selfAsText = self as? XText {
+                selfAsText._value = text + selfAsText._value
+                selfAsText.whitespace = .UNKNOWN
+            }
+            else {
+                insertPrevious(XText(text))
+            }
+        }
+    }
+    
+    func _insertPrevious(@XNodeBuilder builder: () -> [XContent]) {
+        builder().forEach { insertPrevious($0) }
+    }
+    
+    public func insertPrevious(@XNodeBuilder builder: () -> [XContent]) -> XContent {
+        _insertNext(builder: builder)
+        return self
+    }
+    
+    func insertNext(_ node: XContent) {
+        if let selfAsText = self as? XText, let newAsText = node as? XText {
+            selfAsText._value = selfAsText._value + newAsText._value
+            selfAsText.whitespace = .UNKNOWN
+        }
+        else if _parent?._lastContent === self {
+            _parent?.add(node)
+        }
+        else {
+            node.removeKeep()
+            
+            _next?._previous = node
+            node._previous = self
+            node._next = _next
+            _next = node
+            node._parent = _parent
+            
+            // set tree order:
+            node.setTreeOrder()
+            
+            // set document:
+            if let theDocument = _parent?._document, let element = node as? XElement, !(element._document === theDocument) {
+                element.setDocument(document: theDocument)
+            }
+        }
+    }
+    
+    func insertNext(_ text: String) {
+        if !text.isEmpty {
+            if let selfAsText = self as? XText {
+                selfAsText._value = selfAsText._value + text
+                selfAsText.whitespace = .UNKNOWN
+            }
+            else {
+                insertNext(XText(text))
+            }
+        }
+    }
+    
+    func _insertNext(@XNodeBuilder builder: () -> [XContent]) {
+        builder().reversed().forEach { insertNext($0) }
+    }
+    
+    public func insertNext(@XNodeBuilder builder: () -> [XContent]) -> XContent {
+        _insertNext(builder: builder)
+        return self
+    }
+    
+    /**
+     Removes the node from the tree structure and the tree order and
+     the document.
+     If "forward", then detaching prefetches the next node in iterators.
+     Else, the iterators all told to go to the previous node.
+     */
+    @discardableResult public func remove(forward: Bool = false) -> XContent {
+        _remove(forward: forward)
+        return self
+    }
+    
+    /**
+     Replace the node by other nodes.
+     If "forward", then detaching prefetches the next node in iterators.
+     */
+    public func replace(forward: Bool = false, @XNodeBuilder builder: () -> [XContent]) {
+        let placeholder = XSpot() // do not use text as a place holder!
+        insertNext(placeholder)
+        _remove(forward: forward)
+        builder().forEach { placeholder.insertPrevious($0) }
+        placeholder._remove()
+    }
+    
+    /**
+     Replace the node by another node.
+     If "forward", then detaching prefetches the next node in iterators.
+     */
+    func replace1(forward: Bool = false, _ node: XContent) {
+        if let theNext = _next {
+            _remove(forward: forward)
+            theNext.insertPrevious(node)
+            
+        }
+        else if let theParent = _parent {
+            _remove(forward: forward)
+            theParent.add(node)
+        }
+    }
+    
+}
+
+public class XSpot: XContent {
     
     public var attached = Attachments()
     
@@ -542,34 +538,39 @@ public class XSpot: XNode {
         super.init()
     }
     
-    @discardableResult public override func insertPrevious(@XNodeBuilder builder: () -> [XNode]) -> XSpot {
+    @discardableResult public override func insertPrevious(@XNodeBuilder builder: () -> [XContent]) -> XSpot {
         _insertNext(builder: builder)
         return self
     }
     
-    @discardableResult public override func insertNext(@XNodeBuilder builder: () -> [XNode]) -> XSpot {
+    @discardableResult public override func insertNext(@XNodeBuilder builder: () -> [XContent]) -> XSpot {
         _insertNext(builder: builder)
         return self
     }
+    
 }
 
-public class XBranch: XNode {
+protocol XBranch: XNode {
+    var _firstContent: XContent? { get set }
+    var _lastContent: XContent? { get set }
+    var _document: XDocument? { get set }
+    var lastInTree: XNode! { get set }
+}
+
+extension XBranch {
     
-    weak var _document: XDocument? = nil
-    
-    var _firstChild: XNode? = nil
-    var _lastChild: XNode? = nil
-    
-    public var attached = Attachments()
-    
-    public func addClones(from source: XBranch, forwardref: Bool = false) {
+    func addClones(from source: XBranch, forwardref: Bool = false) {
         source.content.forEach { node in
-            add(node.shallowClone())
+            if let content = node.shallowClone() as? XContent {
+                add(content)
+            }
         }
         allContent.forEach { node in
             if let element = node as? XElement {
-                element._r?.content.forEach { node in
-                    element.add(node.shallowClone())
+                (element._r as? XBranch)?.content.forEach { node in
+                    if let content = node.shallowClone() as? XContent {
+                        element.add(content)
+                    }
                 }
             }
             if forwardref {
@@ -580,14 +581,14 @@ public class XBranch: XNode {
         }
     }
     
-    public var firstContent: XNode? {
+    var firstContent: XContent? {
         get {
-            return _firstChild
+            return _firstContent
         }
     }
     
-    public func firstContent(where condition: (XNode) -> Bool) -> XNode? {
-        let node = _firstChild
+    func firstContent(where condition: (XNode) -> Bool) -> XContent? {
+        let node = _firstContent
         if let theNode = node, condition(theNode) {
             return node
         }
@@ -596,14 +597,14 @@ public class XBranch: XNode {
         }
     }
     
-    public var lastContent: XNode? {
+    var lastContent: XContent? {
         get {
-            return _lastChild
+            return _lastContent
         }
     }
     
-    public func lastContent(where condition: (XNode) -> Bool) -> XNode? {
-        let node = _lastChild
+    func lastContent(where condition: (XNode) -> Bool) -> XContent? {
+        let node = _lastContent
         if let theNode = node, condition(theNode) {
             return node
         }
@@ -612,21 +613,24 @@ public class XBranch: XNode {
         }
     }
     
-    weak var lastInTree: XNode!
-    
-    override init() {
-        super.init()
-        lastInTree = self
-    }
-    
-    public var isEmpty: Bool {
+    var isEmpty: Bool {
         get {
-            return _firstChild == nil
+            return _firstContent == nil
         }
     }
     
-    override func getLastInTree() -> XNode {
-        return lastInTree
+    /**
+     Clear the contents of the node.
+     If "forward", then detaching prefetches the next node in iterators.
+     */
+    func _clear(forward: Bool = false) {
+        var node = self._firstContent
+        var nextNode = node?._next
+        while let toRemove = node {
+            toRemove._remove(forward: forward)
+            node = nextNode
+            nextNode = node?._next
+        }
     }
     
     /**
@@ -635,7 +639,7 @@ public class XBranch: XNode {
      Return true iff a correction has been done.
      */
     func setTreeOrderForParent(withNewChild newChild: XNode) -> Bool {
-        if newChild === _lastChild {
+        if newChild === _lastContent {
             let newLastInTree = newChild.getLastInTree()
             
             newChild._previousInTree = lastInTree
@@ -643,7 +647,7 @@ public class XBranch: XNode {
             lastInTree._nextInTree?._previousInTree = newChild
             lastInTree._nextInTree = newChild
             
-            if _firstChild === newChild {
+            if _firstContent === newChild {
                 _nextInTree = newChild
             }
             
@@ -657,7 +661,7 @@ public class XBranch: XNode {
             
             return true
         }
-        else if newChild === _firstChild {
+        else if newChild === _firstContent {
             newChild._previousInTree = self
             _nextInTree?._previousInTree = newChild.getLastInTree()
             newChild.getLastInTree()._nextInTree = _nextInTree
@@ -675,7 +679,7 @@ public class XBranch: XNode {
      inserted content.
      Else, the iterator will iterate through the inserted content.
      */
-    func add(_ node: XNode, skip: Bool = false) {
+    func add(_ node: XContent, skip: Bool = false) {
         if let lastAsText = lastContent as? XText, let newAsText = node as? XText {
             lastAsText._value = lastAsText._value + newAsText._value
             lastAsText.whitespace = .UNKNOWN
@@ -684,15 +688,15 @@ public class XBranch: XNode {
             node.removeKeep(forward: skip)
             
             // insert into new chain:
-            if let theLastChild = _lastChild {
+            if let theLastChild = _lastContent {
                 theLastChild._next = node
                 node._previous = theLastChild
             }
             else {
-                _firstChild = node
+                _firstContent = node
                 node._previous = nil
             }
-            _lastChild = node
+            _lastContent = node
             node._next = nil
             
             // set parent:
@@ -720,7 +724,7 @@ public class XBranch: XNode {
         }
     }
     
-    func _add(skip: Bool = false, @XNodeBuilder builder: () -> [XNode]) {
+    func _add(skip: Bool = false, @XNodeBuilder builder: () -> [XContent]) {
         builder().forEach { add($0, skip: skip) }
     }
     
@@ -729,7 +733,7 @@ public class XBranch: XNode {
      inserted content.
      Else, the iterator will iterate through the inserted content.
      */
-    func addFirst(_ node: XNode, skip: Bool = false) {
+    func addFirst(_ node: XContent, skip: Bool = false) {
         if let firstAsText = firstContent as? XText, let newAsText = node as? XText {
             firstAsText._value = newAsText._value + firstAsText._value
             firstAsText.whitespace = .UNKNOWN
@@ -738,15 +742,15 @@ public class XBranch: XNode {
             node.removeKeep(forward: skip)
             
             // insert into new chain:
-            if let theFirstChild = _firstChild {
+            if let theFirstChild = _firstContent {
                 theFirstChild._previous = node
                 node._next = theFirstChild
             }
             else {
-                _lastChild = node
+                _lastContent = node
                 node._next = nil
             }
-            _firstChild = node
+            _firstContent = node
             node._previous = nil
             
             // set parent:
@@ -774,7 +778,7 @@ public class XBranch: XNode {
         }
     }
     
-    func _addFirst(skip: Bool = false, @XNodeBuilder builder: () -> [XNode]) {
+    func _addFirst(skip: Bool = false, @XNodeBuilder builder: () -> [XContent]) {
         builder().reversed().forEach { addFirst($0, skip: skip) }
     }
     
@@ -782,10 +786,10 @@ public class XBranch: XNode {
      Set the contents of the node.
      If "forward", then detaching prefetches the next node in iterators.
      */
-    func _setContent(forward: Bool = false, @XNodeBuilder builder: () -> [XNodeLike]) {
+    func _setContent(forward: Bool = false, @XNodeBuilder builder: () -> [XContent]) {
         let endMarker = XSpot()
         add(endMarker)
-        (builder() as? [XNode])?.forEach { endMarker.insertPrevious($0) }
+        builder().forEach { endMarker.insertPrevious($0) }
         endMarker.previous.forEach { $0._remove(forward: forward) }
         endMarker._remove()
     }
@@ -795,23 +799,23 @@ public class XBranch: XNode {
     }
 }
 
-public protocol XNodeLike {}
+public protocol XContentLike {}
 
-extension XNode: XNodeLike {}
+extension XContent: XContentLike {}
 
-extension String: XNodeLike {}
+extension String: XContentLike {}
 
-extension XNodeSequence: XNodeLike {}
-extension XElementSequence: XNodeLike {}
-extension XNodeLikeSequence: XNodeLike {}
+extension XContentSequence: XContentLike {}
+extension XElementSequence: XContentLike {}
+extension XContentLikeSequence: XContentLike {}
 
-public extension Array where Element == XNodeLike? {
-    var xml: XNodeLikeSequence {
-        get { return XNodeLikeSequenceFromArray(formArray: self) }
+public extension Array where Element == XContentLike? {
+    var xml: XContentLikeSequence {
+        get { return XContentLikeSequenceFromArray(formArray: self) }
     }
 }
 
-final class XAttribute: XNode, Named {
+final class XAttribute: Named {
     
     var attributeIterators = WeakList<XBidirectionalAttributeIterator>()
     
@@ -849,22 +853,22 @@ final class XAttribute: XNode, Named {
 
 final class XNodeSampler {
     
-    var nodes: [XNode] = [XNode]()
+    var nodes = [XContent]()
     
-    func add(_ thing: XNodeLike) {
-        if let node = thing as? XNode {
+    func add(_ thing: XContentLike) {
+        if let node = thing as? XContent {
             nodes.append(node)
         }
         else if let s = thing as? String {
             nodes.append(XText(s))
         }
-        else if let sequence = thing as? XNodeSequence {
+        else if let sequence = thing as? XContentSequence {
             sequence.forEach { self.add($0) }
         }
         else if let sequence = thing as? XElementSequence {
             sequence.forEach { self.add($0) }
         }
-        else if let sequence = thing as? XNodeLikeSequence {
+        else if let sequence = thing as? XContentLikeSequence {
             sequence.forEach { self.add($0) }
         }
     }
@@ -872,7 +876,7 @@ final class XNodeSampler {
 
 @resultBuilder
 public struct XNodeBuilder {
-    public static func buildBlock(_ components: XNodeLike?...) -> [XNode] {
+    public static func buildBlock(_ components: XContentLike?...) -> [XNode] {
         let sampler = XNodeSampler()
         components.forEach { if let nodeLike = $0 { sampler.add(nodeLike) } }
         return sampler.nodes
@@ -908,7 +912,15 @@ public class Attachments {
     }
 }
 
-public final class XElement: XBranch, CustomStringConvertible {
+public final class XElement: XContent, XBranch, CustomStringConvertible {
+    
+    public var _firstContent: XContent?
+    
+    public var _lastContent: XContent?
+    
+    public var lastInTree: XNode!
+    
+    public var _document: XDocument? = nil
     
     var _treeIterators = WeakList<XBidirectionalElementIterator>()
     var _nameIterators = WeakList<XElementNameIterator>()
@@ -998,22 +1010,22 @@ public final class XElement: XBranch, CustomStringConvertible {
     
     public var asElementSequence: XElementSequence { get { return XElementSelfSequence(element: self) } }
     
-    @discardableResult public override func insertPrevious(@XNodeBuilder builder: () -> [XNode]) -> XElement {
+    @discardableResult public override func insertPrevious(@XNodeBuilder builder: () -> [XContent]) -> XElement {
         _insertNext(builder: builder)
         return self
     }
     
-    @discardableResult public override func insertNext(@XNodeBuilder builder: () -> [XNode]) -> XElement {
+    @discardableResult public override func insertNext(@XNodeBuilder builder: () -> [XContent]) -> XElement {
         _insertNext(builder: builder)
         return self
     }
     
-    @discardableResult public func add(skip: Bool = false, @XNodeBuilder builder: () -> [XNode]) -> XElement {
+    @discardableResult public func add(skip: Bool = false, @XNodeBuilder builder: () -> [XContent]) -> XElement {
         _add(skip: skip, builder: builder)
         return self
     }
     
-    @discardableResult public func addFirst(skip: Bool = false, @XNodeBuilder builder: () -> [XNode]) -> XElement {
+    @discardableResult public func addFirst(skip: Bool = false, @XNodeBuilder builder: () -> [XContent]) -> XElement {
         _addFirst(skip: skip, builder: builder)
         return self
     }
@@ -1031,7 +1043,7 @@ public final class XElement: XBranch, CustomStringConvertible {
      Set the contents of the element.
      If "forward", then detaching prefetches the next node in iterators.
      */
-    @discardableResult public func setContent(forward: Bool = false, @XNodeBuilder builder: () -> [XNodeLike]) -> XElement {
+    @discardableResult public func setContent(forward: Bool = false, @XNodeBuilder builder: () -> [XContent]) -> XElement {
         _setContent(forward: forward, builder: builder)
         return self
     }
@@ -1101,12 +1113,13 @@ public final class XElement: XBranch, CustomStringConvertible {
     public init(_ name: String, _ attributes: [String:String?]? = nil) {
         self._name = name
         super.init()
+        self.lastInTree = self
         if let theAttributes = attributes {
             setAttributes(attributes: theAttributes)
         }
     }
     
-    public init(_ name: String, _ attributes: [String:String?]? = nil, adjustDocument _adjustDocument: Bool = false, @XNodeBuilder builder: () -> [XNode]) {
+    public init(_ name: String, _ attributes: [String:String?]? = nil, adjustDocument _adjustDocument: Bool = false, @XNodeBuilder builder: () -> [XContent]) {
         self._name = name
         super.init()
         if let theAttributes = attributes {
@@ -1183,12 +1196,12 @@ public final class XElement: XBranch, CustomStringConvertible {
         try production.writeElementStartAfterAttributes(element: self)
     }
     
-    override func produceLeaving(production: XProduction) throws {
+    func produceLeaving(production: XProduction) throws {
         try production.writeElementEnd(element: self)
     }
 }
 
-public final class XText: XNode, CustomStringConvertible {
+public final class XText: XContent, CustomStringConvertible {
     
     var _value: String
     
@@ -1220,12 +1233,12 @@ public final class XText: XNode, CustomStringConvertible {
         self.whitespace = whitespace
     }
     
-    @discardableResult public override func insertPrevious(@XNodeBuilder builder: () -> [XNode]) -> XText {
+    @discardableResult public override func insertPrevious(@XNodeBuilder builder: () -> [XContent]) -> XText {
         _insertNext(builder: builder)
         return self
     }
     
-    @discardableResult public override func insertNext(@XNodeBuilder builder: () -> [XNode]) -> XText {
+    @discardableResult public override func insertNext(@XNodeBuilder builder: () -> [XContent]) -> XText {
         _insertNext(builder: builder)
         return self
     }
@@ -1251,7 +1264,7 @@ public final class XText: XNode, CustomStringConvertible {
     }
 }
 
-public final class XInternalEntity: XNode {
+public final class XInternalEntity: XContent {
     
     var _name: String
     
@@ -1268,12 +1281,12 @@ public final class XInternalEntity: XNode {
         self._name = name
     }
     
-    @discardableResult public override func insertPrevious(@XNodeBuilder builder: () -> [XNode]) -> XInternalEntity {
+    @discardableResult public override func insertPrevious(@XNodeBuilder builder: () -> [XContent]) -> XInternalEntity {
         _insertNext(builder: builder)
         return self
     }
     
-    @discardableResult public override func insertNext(@XNodeBuilder builder: () -> [XNode]) -> XInternalEntity {
+    @discardableResult public override func insertNext(@XNodeBuilder builder: () -> [XContent]) -> XInternalEntity {
         _insertNext(builder: builder)
         return self
     }
@@ -1299,7 +1312,7 @@ public final class XInternalEntity: XNode {
     }
 }
 
-public final class XExternalEntity: XNode {
+public final class XExternalEntity: XContent {
     
     var _name: String
     
@@ -1316,12 +1329,12 @@ public final class XExternalEntity: XNode {
         self._name = name
     }
     
-    @discardableResult public override func insertPrevious(@XNodeBuilder builder: () -> [XNode]) -> XExternalEntity {
+    @discardableResult public override func insertPrevious(@XNodeBuilder builder: () -> [XContent]) -> XExternalEntity {
         _insertNext(builder: builder)
         return self
     }
     
-    @discardableResult public override func insertNext(@XNodeBuilder builder: () -> [XNode]) -> XExternalEntity {
+    @discardableResult public override func insertNext(@XNodeBuilder builder: () -> [XContent]) -> XExternalEntity {
         _insertNext(builder: builder)
         return self
     }
@@ -1347,7 +1360,7 @@ public final class XExternalEntity: XNode {
     }
 }
 
-public final class XProcessingInstruction: XNode, CustomStringConvertible {
+public final class XProcessingInstruction: XContent, CustomStringConvertible {
     
     var _target: String
     var _data: String?
@@ -1383,12 +1396,12 @@ public final class XProcessingInstruction: XNode, CustomStringConvertible {
         self._data = data
     }
     
-    @discardableResult public override func insertPrevious(@XNodeBuilder builder: () -> [XNode]) -> XProcessingInstruction {
+    @discardableResult public override func insertPrevious(@XNodeBuilder builder: () -> [XContent]) -> XProcessingInstruction {
         _insertNext(builder: builder)
         return self
     }
     
-    @discardableResult public override func insertNext(@XNodeBuilder builder: () -> [XNode]) -> XProcessingInstruction {
+    @discardableResult public override func insertNext(@XNodeBuilder builder: () -> [XContent]) -> XProcessingInstruction {
         _insertNext(builder: builder)
         return self
     }
@@ -1414,7 +1427,7 @@ public final class XProcessingInstruction: XNode, CustomStringConvertible {
     }
 }
 
-public final class XComment: XNode {
+public final class XComment: XContent {
     
     var _value: String
     
@@ -1431,12 +1444,12 @@ public final class XComment: XNode {
         self._value = text
     }
     
-    @discardableResult public override func insertPrevious(@XNodeBuilder builder: () -> [XNode]) -> XComment {
+    @discardableResult public override func insertPrevious(@XNodeBuilder builder: () -> [XContent]) -> XComment {
         _insertNext(builder: builder)
         return self
     }
     
-    @discardableResult public override func insertNext(@XNodeBuilder builder: () -> [XNode]) -> XComment {
+    @discardableResult public override func insertNext(@XNodeBuilder builder: () -> [XContent]) -> XComment {
         _insertNext(builder: builder)
         return self
     }
@@ -1462,7 +1475,7 @@ public final class XComment: XNode {
     }
 }
 
-public final class XCDATASection: XNode {
+public final class XCDATASection: XContent {
     
     var _value: String
     
@@ -1479,12 +1492,12 @@ public final class XCDATASection: XNode {
         self._value = text
     }
     
-    @discardableResult public override func insertPrevious(@XNodeBuilder builder: () -> [XNode]) -> XCDATASection {
+    @discardableResult public override func insertPrevious(@XNodeBuilder builder: () -> [XContent]) -> XCDATASection {
         _insertNext(builder: builder)
         return self
     }
     
-    @discardableResult public override func insertNext(@XNodeBuilder builder: () -> [XNode]) -> XCDATASection {
+    @discardableResult public override func insertNext(@XNodeBuilder builder: () -> [XContent]) -> XCDATASection {
         _insertNext(builder: builder)
         return self
     }

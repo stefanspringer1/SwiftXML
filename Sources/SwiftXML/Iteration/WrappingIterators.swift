@@ -13,45 +13,45 @@ import Foundation
  precise iteration is implemented in "iteratorImplementation" which implements
  the XIteratorProtocol.
  */
-public final class XBidirectionalNodeIterator: XNodeIterator {
+public final class XBidirectionalContentIterator: XContentIterator {
     
-    var previousIterator: XBidirectionalNodeIterator? = nil
-    var nextIterator: XBidirectionalNodeIterator? = nil
+    var previousIterator: XBidirectionalContentIterator? = nil
+    var nextIterator: XBidirectionalContentIterator? = nil
     
-    public typealias Element = XNode
+    public typealias Element = XContent
     
-    var nodeIterator: XNodeIteratorProtocol
+    var nodeIterator: XContentIteratorProtocol
     
-    public init(nodeIterator: XNodeIteratorProtocol) {
+    public init(nodeIterator: XContentIteratorProtocol) {
         self.nodeIterator = nodeIterator
     }
     
     weak var current: Element? = nil
     var prefetched = false
     
-    public override func next() -> XNode? {
+    public override func next() -> XContent? {
         if prefetched {
             prefetched = false
             return current
         }
-        current?.removeNodeIterator(self)
+        current?.removeContentIterator(self)
         current = nodeIterator.next()
-        current?.addNodeIterator(self)
+        current?.addContentIterator(self)
         return current
     }
     
-    public func previous() -> XNode? {
+    public func previous() -> XContent? {
         prefetched = false
-        current?.removeNodeIterator(self)
+        current?.removeContentIterator(self)
         current = nodeIterator.previous()
-        current?.addNodeIterator(self)
+        current?.addContentIterator(self)
         return current
     }
     
     public func prefetch() {
-        current?.removeNodeIterator(self)
+        current?.removeContentIterator(self)
         current = nodeIterator.next()
-        current?.addNodeIterator(self)
+        current?.addContentIterator(self)
         prefetched = true
     }
 }

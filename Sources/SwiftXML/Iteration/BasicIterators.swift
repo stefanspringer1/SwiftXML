@@ -6,25 +6,25 @@
 
 import Foundation
 
-public class XNodeIterator: IteratorProtocol {
-    public typealias Element = XNode
-    public func next() -> XNode? {
+public class XContentIterator: IteratorProtocol {
+    public typealias Element = XContent
+    public func next() -> XContent? {
         return nil
     }
 }
 
-public class XNodeIteratorWithCondition: XNodeIterator {
+public class XContentIteratorWithCondition: XContentIterator {
     
-    let iterator: XNodeIterator
-    let condition: (XNode) -> Bool
+    let iterator: XContentIterator
+    let condition: (XContent) -> Bool
     
-    init(iterator: XNodeIterator, condition: @escaping (XNode) -> Bool) {
+    init(iterator: XContentIterator, condition: @escaping (XContent) -> Bool) {
         self.iterator = iterator
         self.condition = condition
     }
     
-    public override func next() -> XNode? {
-        var _next: XNode? = nil
+    public override func next() -> XContent? {
+        var _next: XContent? = nil
         repeat {
             _next = iterator.next()
             if let node = _next, condition(node) {
@@ -35,9 +35,9 @@ public class XNodeIteratorWithCondition: XNodeIterator {
     }
 }
 
-public class XNodeSequence: LazySequenceProtocol {
-    public func makeIterator() -> XNodeIterator {
-        return XNodeIterator()
+public class XContentSequence: LazySequenceProtocol {
+    public func makeIterator() -> XContentIterator {
+        return XContentIterator()
     }
 }
 
@@ -116,42 +116,42 @@ public class XAttributeSequence: LazySequenceProtocol {
     }
 }
 
-public class XNodeLikeIterator: IteratorProtocol {
-    public typealias Element = XNodeLike
-    public func next() -> XNodeLike? {
+public class XContentLikeIterator: IteratorProtocol {
+    public typealias Element = XContentLike
+    public func next() -> XContentLike? {
         return nil
     }
 }
 
-public class XNodeLikeSequence: LazySequenceProtocol {
-    public func makeIterator() -> XNodeLikeIterator {
-        return XNodeLikeIterator()
+public class XContentLikeSequence: LazySequenceProtocol {
+    public func makeIterator() -> XContentLikeIterator {
+        return XContentLikeIterator()
     }
 }
 
-public class XNodeLikeSequenceFromArray: XNodeLikeSequence {
-    let array: Array<XNodeLike?>
+public class XContentLikeSequenceFromArray: XContentLikeSequence {
+    let array: Array<XContentLike?>
     
-    public init(formArray array: Array<XNodeLike?>) {
+    public init(formArray array: Array<XContentLike?>) {
         self.array = array
     }
     
-    public override func makeIterator() -> XNodeLikeIterator {
-        return XNodesLikeIteratorFromArray(formArray: array)
+    public override func makeIterator() -> XContentLikeIterator {
+        return XContentLikeIteratorFromArray(formArray: array)
     }
 }
     
     
-public class XNodesLikeIteratorFromArray: XNodeLikeIterator {
-    let array: Array<XNodeLike?>
+public class XContentLikeIteratorFromArray: XContentLikeIterator {
+    let array: Array<XContentLike?>
     var nextIndex = -1
     
-    public init(formArray array: Array<XNodeLike?>) {
+    public init(formArray array: Array<XContentLike?>) {
         self.array = array
     }
     
-    public override func next() -> XNodeLike? {
-        var result: XNodeLike? = nil
+    public override func next() -> XContentLike? {
+        var result: XContentLike? = nil
         repeat {
             nextIndex += 1
             if nextIndex < array.count {
@@ -262,11 +262,11 @@ final class XAttributesOfSameNameIterator: XAttributeIteratorProtocol {
 /**
  Iterates though the content of a branch.
  */
-public final class XContentsIterator: XNodeIteratorProtocol {
+public final class XContentsIterator: XContentIteratorProtocol {
     
     private var started = false
     let node: XNode
-    weak var currentNode: XNode? = nil
+    weak var currentNode: XContent? = nil
     
     public init(
         node: XNode
@@ -274,18 +274,18 @@ public final class XContentsIterator: XNodeIteratorProtocol {
         self.node = node
     }
     
-    public func next() -> XNode? {
+    public func next() -> XContent? {
         if started {
             currentNode = currentNode?._next
         }
         else {
-            currentNode = (node as? XBranch)?._firstChild
+            currentNode = (node as? XBranch)?._firstContent
             started = true
         }
         return currentNode
     }
     
-    public func previous() -> XNode? {
+    public func previous() -> XContent? {
         if started {
             currentNode = currentNode?._previous
             if currentNode == nil {
@@ -298,108 +298,70 @@ public final class XContentsIterator: XNodeIteratorProtocol {
 }
 
 /**
- Iterates though the nodes after a node.
+ Iterates though the content after a content.
  */
-public final class XNextIterator: XNodeIteratorProtocol {
+public final class XNextIterator: XContentIteratorProtocol {
     
-    let node: XNode
-    weak var currentNode: XNode? = nil
+    let content: XContent
+    weak var currentContent: XContent? = nil
     
     public init(
-        node: XNode
+        content: XContent
     ) {
-        self.node = node
-        currentNode = node
+        self.content = content
+        currentContent = content
     }
     
-    public func next() -> XNode? {
-        currentNode = currentNode?._next
-        return currentNode
+    public func next() -> XContent? {
+        currentContent = currentContent?._next
+        return currentContent
     }
     
-    public func previous() -> XNode? {
-        if currentNode === node {
+    public func previous() -> XContent? {
+        if currentContent === content {
             return nil
         }
         else {
-            currentNode = currentNode?._previous
-            if currentNode === node {
+            currentContent = currentContent?._previous
+            if currentContent === content {
                 return nil
             }
         }
-        return currentNode
+        return currentContent
     }
 }
 
 /**
- Iterates though the nodes before a node.
+ Iterates though the content before a content.
  */
-public final class XPreviousIterator: XNodeIteratorProtocol {
+public final class XPreviousIterator: XContentIteratorProtocol {
     
-    weak var node: XNode?
-    weak var currentNode: XNode? = nil
+    weak var content: XContent?
+    weak var currentContent: XContent? = nil
     
     public init(
-        node: XNode
+        node: XContent
     ) {
-        self.node = node
-        currentNode = node
+        self.content = node
+        currentContent = node
     }
     
-    public func next() -> XNode? {
-        currentNode = currentNode?._previous
-        return currentNode
+    public func next() -> XContent? {
+        currentContent = currentContent?._previous
+        return currentContent
     }
     
-    public func previous() -> XNode? {
-        if currentNode === node {
+    public func previous() -> XContent? {
+        if currentContent === content {
             return nil
         }
         else {
-            currentNode = currentNode?._next
-            if currentNode === node {
+            currentContent = currentContent?._next
+            if currentContent === content {
                 return nil
             }
         }
-        return currentNode
-    }
-}
-
-/**
- Iterates though the elements after a node.
- */
-public final class XNextElementsIterator: XElementIteratorProtocol {
-    
-    weak var node: XNode?
-    weak var currentNode: XNode? = nil
-    
-    public init(
-        node: XNode
-    ) {
-        self.node = node
-        currentNode = node
-    }
-    
-    public func next() -> XElement? {
-        repeat {
-            currentNode = currentNode?._next
-        } while currentNode != nil && !(currentNode! is XElement)
-        return currentNode as? XElement
-    }
-    
-    public func previous() -> XElement? {
-        repeat {
-            if currentNode === node {
-                return nil
-            }
-            else {
-                currentNode = currentNode?._previous
-                if currentNode === node {
-                    return nil
-                }
-            }
-        } while currentNode != nil && !(currentNode! is XElement)
-        return currentNode as? XElement
+        return currentContent
     }
 }
 
@@ -408,36 +370,74 @@ public final class XNextElementsIterator: XElementIteratorProtocol {
  */
 public final class XPreviousElementsIterator: XElementIteratorProtocol {
     
-    weak var node: XNode?
-    weak var currentNode: XNode? = nil
+    weak var content: XContent?
+    weak var currentContent: XContent? = nil
     
     public init(
-        node: XNode
+        content: XContent
     ) {
-        self.node = node
-        currentNode = node
+        self.content = content
+        currentContent = content
     }
     
     public func next() -> XElement? {
         repeat {
-            currentNode = currentNode?._previous
-        } while currentNode != nil && !(currentNode! is XElement)
-        return currentNode as? XElement
+            currentContent = currentContent?._previous
+        } while currentContent != nil && !(currentContent! is XElement)
+        return currentContent as? XElement
     }
     
     public func previous() -> XElement? {
         repeat {
-            if currentNode === node {
+            if currentContent === content {
                 return nil
             }
             else {
-                currentNode = currentNode?._next
-                if currentNode === node {
+                currentContent = currentContent?._next
+                if currentContent === content {
                     return nil
                 }
             }
-        } while currentNode != nil && !(currentNode! is XElement)
-        return currentNode as? XElement
+        } while currentContent != nil && !(currentContent! is XElement)
+        return currentContent as? XElement
+    }
+}
+
+/**
+ Iterates though the elements after a content.
+ */
+public final class XNextElementsIterator: XElementIteratorProtocol {
+    
+    weak var content: XContent?
+    weak var currentContent: XContent? = nil
+    
+    public init(
+        content: XContent
+    ) {
+        self.content = content
+        currentContent = content
+    }
+    
+    public func next() -> XElement? {
+        repeat {
+            currentContent = currentContent?._next
+        } while currentContent != nil && !(currentContent! is XElement)
+        return currentContent as? XElement
+    }
+    
+    public func previous() -> XElement? {
+        repeat {
+            if currentContent === content {
+                return nil
+            }
+            else {
+                currentContent = currentContent?._previous
+                if currentContent === content {
+                    return nil
+                }
+            }
+        } while currentContent != nil && !(currentContent! is XElement)
+        return currentContent as? XElement
     }
 }
 
@@ -462,7 +462,7 @@ public final class XChildrenIterator: XElementIteratorProtocol {
                 currentNode = currentNode?._next
             }
             else {
-                currentNode = (node as? XBranch)?._firstChild
+                currentNode = (node as? XBranch)?._firstContent
                 started = true
             }
         } while currentNode != nil && !(currentNode! is XElement)
@@ -533,7 +533,7 @@ public final class XAncestorsIterator: XElementIteratorProtocol {
 /**
  Iterates though all content (tree traversal) of a branch.
  */
-public final class XAllContentsIterator: XNodeIteratorProtocol {
+public final class XAllContentsIterator: XContentIteratorProtocol {
     
     weak var startNode: XNode?
     weak var currentNode: XNode? = nil
@@ -545,31 +545,31 @@ public final class XAllContentsIterator: XNodeIteratorProtocol {
         self.currentNode = node
     }
     
-    public func next() -> XNode? {
+    public func next() -> XContent? {
         if startNode?.getLastInTree() === currentNode {
             currentNode = nil
         }
         else {
             currentNode = currentNode?._nextInTree
         }
-        return currentNode
+        return currentNode as? XContent
     }
     
-    public func previous() -> XNode? {
+    public func previous() -> XContent? {
         if currentNode === startNode {
             currentNode = nil
         }
         else {
-            currentNode = currentNode?._previousInTree
+            currentNode = currentNode?._previousInTree as? XContent
         }
-        return currentNode
+        return currentNode as? XContent
     }
 }
 
 /**
  Iterates though all content (tree traversal) of a branch.
  */
-public final class XAllContentsIncludingSelfIterator: XNodeIteratorProtocol {
+public final class XAllContentsIncludingSelfIterator: XContentIteratorProtocol {
     
     weak var startNode: XNode?
     weak var currentNode: XNode? = nil
@@ -581,7 +581,7 @@ public final class XAllContentsIncludingSelfIterator: XNodeIteratorProtocol {
         self.startNode = node
     }
     
-    public func next() -> XNode? {
+    public func next() -> XContent? {
         if startNode?.getLastInTree() === currentNode {
             currentNode = nil
         }
@@ -592,10 +592,10 @@ public final class XAllContentsIncludingSelfIterator: XNodeIteratorProtocol {
         else {
             currentNode = currentNode?._nextInTree
         }
-        return currentNode
+        return currentNode as? XContent
     }
     
-    public func previous() -> XNode? {
+    public func previous() -> XContent? {
         if currentNode === startNode {
             currentNode = nil
             started = false
@@ -603,7 +603,7 @@ public final class XAllContentsIncludingSelfIterator: XNodeIteratorProtocol {
         }
         else {
             currentNode = currentNode?._previousInTree
-            return currentNode
+            return currentNode as? XContent
         }
     }
 }
@@ -717,7 +717,7 @@ public final class XDirectionIndicator {
  When progressing via next(), down and up events can be captured by the closures
  "down" amd "up".
  */
-public final class XTreeIterator: XNodeIteratorProtocol {
+public final class XTreeIterator: XContentIteratorProtocol {
     
     var started = false
     weak var startNode: XNode?
@@ -734,20 +734,20 @@ public final class XTreeIterator: XNodeIteratorProtocol {
     
     private var downDirection = true
     
-    public func next() -> XNode? {
+    public func next() -> XContent? {
         if started {
             while true {
                 if downDirection,
                    let branch = currentNode as? XBranch {
-                    if let firstChild = branch._firstChild {
+                    if let firstChild = branch._firstContent {
                         currentNode = firstChild
                         directionIndicator.up = false
-                        return currentNode
+                        return currentNode as? XContent
                     }
                     else {
                         downDirection = false
                         directionIndicator.up = true
-                        return branch
+                        return branch as? XContent
                     }
                 }
                 if currentNode === startNode {
@@ -767,7 +767,7 @@ public final class XTreeIterator: XNodeIteratorProtocol {
                     currentNode = currentNode?._parent
                     if let theCurrentNode = currentNode as? XBranch {
                         directionIndicator.up = true
-                        return theCurrentNode
+                        return theCurrentNode as? XContent
                     }
                     else {
                         return nil
@@ -778,11 +778,11 @@ public final class XTreeIterator: XNodeIteratorProtocol {
         else {
             currentNode = startNode
             started = true
-            return currentNode
+            return currentNode as? XContent
         }
     }
     
-    public func previous() -> XNode? {
+    public func previous() -> XContent? {
         if started {
             if currentNode === startNode {
                 currentNode = nil
@@ -800,7 +800,7 @@ public final class XTreeIterator: XNodeIteratorProtocol {
                 started = false
                 currentNode = nil
             }
-            return currentNode
+            return currentNode as? XContent
         }
         return nil
     }
@@ -810,7 +810,7 @@ public final class XTreeIterator: XNodeIteratorProtocol {
 /**
 Iterator that iterates over exactly one node. This ist mainly for testing.
  */
-public final class XNodeSelfIterator: XNodeIteratorProtocol {
+public final class XNodeSelfIterator: XContentIteratorProtocol {
     
     weak var node: XNode?
     private var done: Bool = false
@@ -819,17 +819,17 @@ public final class XNodeSelfIterator: XNodeIteratorProtocol {
         self.node = node
     }
     
-    public func next() -> XNode? {
+    public func next() -> XContent? {
         if done {
             return nil
         }
         else {
             done = true
-            return node
+            return node as? XContent
         }
     }
     
-    public func previous() -> XNode? {
+    public func previous() -> XContent? {
         return nil // do nothing
     }
 }

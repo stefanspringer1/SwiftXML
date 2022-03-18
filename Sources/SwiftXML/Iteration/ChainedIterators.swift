@@ -46,13 +46,13 @@ public class XElementIteratorDependingOnElementIterator: XElementIterator {
 
 public class XElementIteratorDependingOnNodeIterator: XElementIterator {
     
-    private let iterator1: XNodeIterator
-    private var node1: XNode? = nil
+    private let iterator1: XContentIterator
+    private var node1: XContent? = nil
     private var started = false
-    let nextSequenceGetter: (XNode) -> XElementSequence
+    let nextSequenceGetter: (XContent) -> XElementSequence
     private var iterator2: XElementIterator? = nil
     
-    init(sequence: XNodeSequence, nextSequenceGetter: @escaping (XNode) -> XElementSequence) {
+    init(sequence: XContentSequence, nextSequenceGetter: @escaping (XContent) -> XElementSequence) {
         iterator1 = sequence.makeIterator()
         self.nextSequenceGetter = nextSequenceGetter
     }
@@ -80,20 +80,20 @@ public class XElementIteratorDependingOnNodeIterator: XElementIterator {
     }
 }
 
-public class XNodeIteratorDependingOnElementIterator: XNodeIterator {
+public class XNodeIteratorDependingOnElementIterator: XContentIterator {
     
     private let iterator1: XElementIterator
     private var node1: XElement? = nil
     private var started = false
-    let nextSequenceGetter: (XElement) -> XNodeSequence
-    private var iterator2: XNodeIterator? = nil
+    let nextSequenceGetter: (XElement) -> XContentSequence
+    private var iterator2: XContentIterator? = nil
     
-    init(sequence: XElementSequence, nextSequenceGetter: @escaping (XElement) -> XNodeSequence) {
+    init(sequence: XElementSequence, nextSequenceGetter: @escaping (XElement) -> XContentSequence) {
         iterator1 = sequence.makeIterator()
         self.nextSequenceGetter = nextSequenceGetter
     }
     
-    public override func next() -> XNode? {
+    public override func next() -> XContent? {
         if !started {
             node1 = iterator1.next()
             started = true
@@ -116,20 +116,20 @@ public class XNodeIteratorDependingOnElementIterator: XNodeIterator {
     }
 }
 
-public class XNodeIteratorDependingOnNodeIterator: XNodeIterator {
+public class XNodeIteratorDependingOnNodeIterator: XContentIterator {
     
-    private let iterator1: XNodeIterator
-    private var node1: XNode? = nil
+    private let iterator1: XContentIterator
+    private var node1: XContent? = nil
     private var started = false
-    let nextSequenceGetter: (XNode) -> XNodeSequence
-    private var iterator2: XNodeIterator? = nil
+    let nextSequenceGetter: (XContent) -> XContentSequence
+    private var iterator2: XContentIterator? = nil
     
-    init(sequence: XNodeSequence, nextSequenceGetter: @escaping (XNode) -> XNodeSequence) {
+    init(sequence: XContentSequence, nextSequenceGetter: @escaping (XContent) -> XContentSequence) {
         iterator1 = sequence.makeIterator()
         self.nextSequenceGetter = nextSequenceGetter
     }
     
-    public override func next() -> XNode? {
+    public override func next() -> XContent? {
         if !started {
             node1 = iterator1.next()
             started = true
@@ -152,19 +152,19 @@ public class XNodeIteratorDependingOnNodeIterator: XNodeIterator {
     }
 }
 
-public class XNodeDependingOnNodeIterator: XNodeIterator {
+public class XNodeDependingOnNodeIterator: XContentIterator {
     
-    private let iterator1: XNodeIterator
-    private var node1: XNode? = nil
-    let nodeGetter: (XNode) -> XNode?
+    private let iterator1: XContentIterator
+    private var node1: XContent? = nil
+    let nodeGetter: (XContent) -> XContent?
     
-    init(sequence: XNodeSequence, nodeGetter: @escaping (XNode) -> XNode?) {
+    init(sequence: XContentSequence, nodeGetter: @escaping (XContent) -> XContent?) {
         iterator1 = sequence.makeIterator()
         self.nodeGetter = nodeGetter
     }
     
-    public override func next() -> XNode? {
-        var node2: XNode? = nil
+    public override func next() -> XContent? {
+        var node2: XContent? = nil
         while node2 == nil {
             node1 = iterator1.next()
             if let theNode1 = node1 {
@@ -178,19 +178,19 @@ public class XNodeDependingOnNodeIterator: XNodeIterator {
     }
 }
 
-public class XNodeDependingOnElementIterator: XNodeIterator {
+public class XNodeDependingOnElementIterator: XContentIterator {
     
     private let iterator1: XElementIterator
     private var element1: XElement? = nil
-    let nodeGetter: (XElement) -> XNode?
+    let nodeGetter: (XElement) -> XContent?
     
-    init(sequence: XElementSequence, nodeGetter: @escaping (XElement) -> XNode?) {
+    init(sequence: XElementSequence, nodeGetter: @escaping (XElement) -> XContent?) {
         iterator1 = sequence.makeIterator()
         self.nodeGetter = nodeGetter
     }
     
-    public override func next() -> XNode? {
-        var node2: XNode? = nil
+    public override func next() -> XContent? {
+        var node2: XContent? = nil
         while node2 == nil {
             element1 = iterator1.next()
             if let theNode1 = element1 {
@@ -207,11 +207,11 @@ public class XNodeDependingOnElementIterator: XNodeIterator {
 
 public class XElementDependingOnNodeIterator: XElementIterator {
     
-    private let iterator1: XNodeIterator
+    private let iterator1: XContentIterator
     private var node1: XNode? = nil
     let elementGetter: (XNode) -> XElement?
     
-    init(sequence: XNodeSequence, elementGetter: @escaping (XNode) -> XElement?) {
+    init(sequence: XContentSequence, elementGetter: @escaping (XNode) -> XElement?) {
         iterator1 = sequence.makeIterator()
         self.elementGetter = elementGetter
     }
@@ -274,10 +274,10 @@ public class XElementSequenceDependingOnElementSequence: XElementSequence {
 
 public class XElementSequenceDependingOnNodeSequence: XElementSequence {
     
-    let sequence: XNodeSequence
-    let nextSequenceGetter: (XNode) -> XElementSequence
+    let sequence: XContentSequence
+    let nextSequenceGetter: (XContent) -> XElementSequence
     
-    init(sequence: XNodeSequence, nextSequenceGetter: @escaping (XNode) -> XElementSequence) {
+    init(sequence: XContentSequence, nextSequenceGetter: @escaping (XContent) -> XElementSequence) {
         self.sequence = sequence
         self.nextSequenceGetter = nextSequenceGetter
     }
@@ -287,57 +287,57 @@ public class XElementSequenceDependingOnNodeSequence: XElementSequence {
     }
 }
 
-public class XNodeSequenceDependingOnElementSequence: XNodeSequence {
+public class XNodeSequenceDependingOnElementSequence: XContentSequence {
     
     let sequence: XElementSequence
-    let nextSequenceGetter: (XElement) -> XNodeSequence
+    let nextSequenceGetter: (XElement) -> XContentSequence
     
-    init(sequence: XElementSequence, nextSequenceGetter: @escaping (XElement) -> XNodeSequence) {
+    init(sequence: XElementSequence, nextSequenceGetter: @escaping (XElement) -> XContentSequence) {
         self.sequence = sequence
         self.nextSequenceGetter = nextSequenceGetter
     }
     
-    override public func makeIterator() -> XNodeIterator {
+    override public func makeIterator() -> XContentIterator {
         return XNodeIteratorDependingOnElementIterator(sequence: sequence, nextSequenceGetter: nextSequenceGetter)
     }
 }
 
-public class XNodeSequenceDependingOnNodeSequence: XNodeSequence {
+public class XNodeSequenceDependingOnNodeSequence: XContentSequence {
     
-    let sequence: XNodeSequence
-    let nextSequenceGetter: (XNode) -> XNodeSequence
+    let sequence: XContentSequence
+    let nextSequenceGetter: (XContent) -> XContentSequence
     
-    init(sequence: XNodeSequence, nextSequenceGetter: @escaping (XNode) -> XNodeSequence) {
+    init(sequence: XContentSequence, nextSequenceGetter: @escaping (XContent) -> XContentSequence) {
         self.sequence = sequence
         self.nextSequenceGetter = nextSequenceGetter
     }
     
-    override public func makeIterator() -> XNodeIterator {
+    override public func makeIterator() -> XContentIterator {
         return XNodeIteratorDependingOnNodeIterator(sequence: sequence, nextSequenceGetter: nextSequenceGetter)
     }
 }
 
-public class XNodeDependingOnNodeSequence: XNodeSequence {
+public class XNodeDependingOnNodeSequence: XContentSequence {
     
-    let sequence: XNodeSequence
-    let nodeGetter: (XNode) -> XNode?
+    let sequence: XContentSequence
+    let nodeGetter: (XContent) -> XContent?
     
-    init(sequence: XNodeSequence, nodeGetter: @escaping (XNode) -> XNode?) {
+    init(sequence: XContentSequence, nodeGetter: @escaping (XContent) -> XContent?) {
         self.sequence = sequence
         self.nodeGetter = nodeGetter
     }
     
-    override public func makeIterator() -> XNodeIterator {
+    override public func makeIterator() -> XContentIterator {
         return XNodeDependingOnNodeIterator(sequence: sequence, nodeGetter: nodeGetter)
     }
 }
 
 public class XElementDependingOnNodeSequence: XElementSequence {
     
-    let sequence: XNodeSequence
+    let sequence: XContentSequence
     let elementGetter: (XNode) -> XElement?
     
-    init(sequence: XNodeSequence, elementGetter: @escaping (XNode) -> XElement?) {
+    init(sequence: XContentSequence, elementGetter: @escaping (XNode) -> XElement?) {
         self.sequence = sequence
         self.elementGetter = elementGetter
     }
@@ -347,17 +347,17 @@ public class XElementDependingOnNodeSequence: XElementSequence {
     }
 }
 
-public class XNodeDependingOnElementSequence: XNodeSequence {
+public class XNodeDependingOnElementSequence: XContentSequence {
     
     let sequence: XElementSequence
-    let nodeGetter: (XElement) -> XNode?
+    let nodeGetter: (XElement) -> XContent?
     
-    init(sequence: XElementSequence, nodeGetter: @escaping (XElement) -> XNode?) {
+    init(sequence: XElementSequence, nodeGetter: @escaping (XElement) -> XContent?) {
         self.sequence = sequence
         self.nodeGetter = nodeGetter
     }
     
-    override public func makeIterator() -> XNodeIterator {
+    override public func makeIterator() -> XContentIterator {
         return XNodeDependingOnElementIterator(sequence: sequence, nodeGetter: nodeGetter)
     }
 }
@@ -377,7 +377,7 @@ public class XElementDependingOnElementSequence: XElementSequence {
     }
 }
 
-extension XNodeSequence {
+extension XContentSequence {
     
     public var ancestors: XElementSequence {
         get { XElementSequenceDependingOnNodeSequence(sequence: self, nextSequenceGetter: { node in node.ancestors }) }
@@ -391,11 +391,11 @@ extension XNodeSequence {
         return XElementSequenceDependingOnNodeSequence(sequence: self, nextSequenceGetter: { node in node.ancestors(name) })
     }
     
-    public var content: XNodeSequence {
+    public var content: XContentSequence {
         get { XNodeSequenceDependingOnNodeSequence(sequence: self, nextSequenceGetter: { node in node.content }) }
     }
     
-    public func content(where condition: @escaping (XNode) -> Bool) -> XNodeSequence {
+    public func content(where condition: @escaping (XNode) -> Bool) -> XContentSequence {
         return XNodeSequenceDependingOnNodeSequence(sequence: self, nextSequenceGetter: { node in node.content(where: condition) })
     }
     
@@ -411,19 +411,19 @@ extension XNodeSequence {
         return XElementSequenceDependingOnNodeSequence(sequence: self, nextSequenceGetter: { node in node.children(name) })
     }
     
-    public var next: XNodeSequence {
+    public var next: XContentSequence {
         get { XNodeSequenceDependingOnNodeSequence(sequence: self, nextSequenceGetter: { node in node.next }) }
     }
     
-    public func next(where condition: @escaping (XNode) -> Bool) -> XNodeSequence {
+    public func next(where condition: @escaping (XContent) -> Bool) -> XContentSequence {
         return XNodeSequenceDependingOnNodeSequence(sequence: self, nextSequenceGetter: { node in node.next(where: condition) })
     }
     
-    public var previous: XNodeSequence {
+    public var previous: XContentSequence {
         get { XNodeSequenceDependingOnNodeSequence(sequence: self, nextSequenceGetter: { node in node.previous }) }
     }
     
-    public func previous(where condition: @escaping (XNode) -> Bool) -> XNodeSequence {
+    public func previous(where condition: @escaping (XContent) -> Bool) -> XContentSequence {
         return XNodeSequenceDependingOnNodeSequence(sequence: self, nextSequenceGetter: { node in node.previous(where: condition) })
     }
     
@@ -451,19 +451,19 @@ extension XNodeSequence {
         return XElementSequenceDependingOnNodeSequence(sequence: self, nextSequenceGetter: { node in node.previousElements(name) })
     }
     
-    public var allContent: XNodeSequence {
+    public var allContent: XContentSequence {
         get { XNodeSequenceDependingOnNodeSequence(sequence: self, nextSequenceGetter: { node in node.allContent }) }
     }
     
-    public func allContent(where condition: @escaping (XNode) -> Bool) -> XNodeSequence {
+    public func allContent(where condition: @escaping (XContent) -> Bool) -> XContentSequence {
         return XNodeSequenceDependingOnNodeSequence(sequence: self, nextSequenceGetter: { node in node.allContent(where: condition) })
     }
     
-    public var allContentIncludingSelf: XNodeSequence {
+    public var allContentIncludingSelf: XContentSequence {
         get { XNodeSequenceDependingOnNodeSequence(sequence: self, nextSequenceGetter: { node in node.allContentIncludingSelf }) }
     }
     
-    public func allContentIncludingSelf(where condition: @escaping (XNode) -> Bool) -> XNodeSequence {
+    public func allContentIncludingSelf(where condition: @escaping (XContent) -> Bool) -> XContentSequence {
         return XNodeSequenceDependingOnNodeSequence(sequence: self, nextSequenceGetter: { node in node.allContentIncludingSelf(where: condition) })
     }
     
@@ -479,20 +479,20 @@ extension XNodeSequence {
         return XElementSequenceDependingOnNodeSequence(sequence: self, nextSequenceGetter: { node in node.descendants(name) })
     }
     
-    public var previousNodeInTree: XNodeSequence {
-        get { XNodeDependingOnNodeSequence(sequence: self, nodeGetter: { node in node.previousNodeInTree }) }
+    public var previousContentInTree: XContentSequence {
+        get { XNodeDependingOnNodeSequence(sequence: self, nodeGetter: { node in node.previousContentInTree }) }
     }
     
-    public func previousNodeInTree(where condition: @escaping (XNode) -> Bool) -> XNodeSequence {
-        return XNodeDependingOnNodeSequence(sequence: self, nodeGetter: { node in node.previousNodeInTree(where: condition) })
+    public func previousContentInTree(where condition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XNodeDependingOnNodeSequence(sequence: self, nodeGetter: { node in node.previousContentInTree(where: condition) })
     }
     
-    public var nextNodeInTree: XNodeSequence {
-        get { XNodeDependingOnNodeSequence(sequence: self, nodeGetter: { node in node.nextNodeInTree }) }
+    public var nextContentInTree: XContentSequence {
+        get { XNodeDependingOnNodeSequence(sequence: self, nodeGetter: { node in node.nextContentInTree }) }
     }
     
-    public func nextNodeInTree(where condition: @escaping (XNode) -> Bool) -> XNodeSequence {
-        return XNodeDependingOnNodeSequence(sequence: self, nodeGetter: { node in node.nextNodeInTree(where: condition) })
+    public func nextContentInTree(where condition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XNodeDependingOnNodeSequence(sequence: self, nodeGetter: { node in node.nextContentInTree(where: condition) })
     }
     
     public var parent: XElementSequence {
@@ -523,11 +523,11 @@ extension XElementSequence {
         return XElementSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { node in node.ancestors(name) })
     }
     
-    public var content: XNodeSequence {
+    public var content: XContentSequence {
         get { XNodeSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { node in node.content }) }
     }
     
-    public func content(where condition: @escaping (XNode) -> Bool) -> XNodeSequence {
+    public func content(where condition: @escaping (XNode) -> Bool) -> XContentSequence {
         return XNodeSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { node in node.content(where: condition) })
     }
     
@@ -543,19 +543,19 @@ extension XElementSequence {
         return XElementSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { node in node.children(name) })
     }
     
-    public var next: XNodeSequence {
+    public var next: XContentSequence {
         get { XNodeSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { node in node.next }) }
     }
     
-    public func next(where condition: @escaping (XNode) -> Bool) -> XNodeSequence {
+    public func next(where condition: @escaping (XNode) -> Bool) -> XContentSequence {
         return XNodeSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { node in node.next(where: condition) })
     }
     
-    public var previous: XNodeSequence {
+    public var previous: XContentSequence {
         get { XNodeSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { node in node.previous }) }
     }
     
-    public func previous(where condition: @escaping (XNode) -> Bool) -> XNodeSequence {
+    public func previous(where condition: @escaping (XNode) -> Bool) -> XContentSequence {
         return XNodeSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { node in node.previous(where: condition) })
     }
     
@@ -583,19 +583,19 @@ extension XElementSequence {
         return XElementSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { node in node.previousElements(name) })
     }
     
-    public var allContent: XNodeSequence {
+    public var allContent: XContentSequence {
         get { XNodeSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { node in node.allContent }) }
     }
     
-    public func allContent(where condition: @escaping (XNode) -> Bool) -> XNodeSequence {
+    public func allContent(where condition: @escaping (XNode) -> Bool) -> XContentSequence {
         return XNodeSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { node in node.allContent(where: condition) })
     }
     
-    public var allContentIncludingSelf: XNodeSequence {
+    public var allContentIncludingSelf: XContentSequence {
         get { XNodeSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { node in node.allContentIncludingSelf }) }
     }
     
-    public func allContentIncludingSelf(where condition: @escaping (XNode) -> Bool) -> XNodeSequence {
+    public func allContentIncludingSelf(where condition: @escaping (XNode) -> Bool) -> XContentSequence {
         return XNodeSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { node in node.allContentIncludingSelf(where: condition) })
     }
     
@@ -623,20 +623,20 @@ extension XElementSequence {
         return XElementSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { element in element.descendantsIncludingSelf(name) })
     }
     
-    public var previousNodeInTree: XNodeSequence {
-        get { XNodeDependingOnElementSequence(sequence: self, nodeGetter: { node in node.previousNodeInTree }) }
+    public var previousContentInTree: XContentSequence {
+        get { XNodeDependingOnElementSequence(sequence: self, nodeGetter: { node in node.previousContentInTree }) }
     }
     
-    public func previousNodeInTree(where condition: @escaping (XNode) -> Bool) -> XNodeSequence {
-        return XNodeDependingOnElementSequence(sequence: self, nodeGetter: { node in node.previousNodeInTree(where: condition) })
+    public func previousContentInTree(where condition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XNodeDependingOnElementSequence(sequence: self, nodeGetter: { node in node.previousContentInTree(where: condition) })
     }
     
-    public var nextNodeInTree: XNodeSequence {
-        get { XNodeDependingOnElementSequence(sequence: self, nodeGetter: { node in node.nextNodeInTree }) }
+    public var nextContentInTree: XContentSequence {
+        get { XNodeDependingOnElementSequence(sequence: self, nodeGetter: { node in node.nextContentInTree }) }
     }
     
-    public func nextNodeInTree(where condition: @escaping (XNode) -> Bool) -> XNodeSequence {
-        return XNodeDependingOnElementSequence(sequence: self, nodeGetter: { node in node.nextNodeInTree(where: condition) })
+    public func nextContentInTree(where condition: @escaping (XNode) -> Bool) -> XContentSequence {
+        return XNodeDependingOnElementSequence(sequence: self, nodeGetter: { node in node.nextContentInTree(where: condition) })
     }
     
     public var parent: XElementSequence {
@@ -651,19 +651,19 @@ extension XElementSequence {
         return XElementDependingOnElementSequence(sequence: self, elementGetter: { node in node.parent(name) })
     }
     
-    public var firstContent: XNodeSequence {
+    public var firstContent: XContentSequence {
         get { XNodeDependingOnElementSequence(sequence: self, nodeGetter: { node in node.firstContent }) }
     }
     
-    public func firstContent(where condition: @escaping (XNode) -> Bool) -> XNodeSequence {
+    public func firstContent(where condition: @escaping (XNode) -> Bool) -> XContentSequence {
         return XNodeDependingOnElementSequence(sequence: self, nodeGetter: { node in node.firstContent(where: condition) })
     }
     
-    public var lastContent: XNodeSequence {
+    public var lastContent: XContentSequence {
         get { XNodeDependingOnElementSequence(sequence: self, nodeGetter: { node in node.lastContent }) }
     }
     
-    public func lastContent(where condition: @escaping (XNode) -> Bool) -> XNodeSequence {
+    public func lastContent(where condition: @escaping (XNode) -> Bool) -> XContentSequence {
         return XNodeDependingOnElementSequence(sequence: self, nodeGetter: { node in node.lastContent(where: condition) })
     }
     
