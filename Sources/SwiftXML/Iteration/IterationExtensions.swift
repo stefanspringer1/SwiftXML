@@ -7,19 +7,7 @@
 
 import Foundation
 
-extension XBranch {
-    
-    var content: XContentSequence {
-        get { XSequenceOfContent(node: self) }
-    }
-    
-    var allContent: XContentSequence {
-        get { XAllContentSequence(node: self) }
-    }
-    
-}
-
-public extension XDocument {
+public extension XBranch {
     
     var content: XContentSequence {
         get { XSequenceOfContent(node: self) }
