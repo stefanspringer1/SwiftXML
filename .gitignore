@@ -4,8 +4,6 @@ Thumbs.db
 /Packages
 /Package.resolved
 /*.xcodeproj
-xcuserdata/
-DerivedData/
-/.swiftpm
 /.idea
+/.swiftpm
 /.vscode
