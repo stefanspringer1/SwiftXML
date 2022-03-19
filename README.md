@@ -511,39 +511,39 @@ var descendantsIncludingSelf: XElementSequence
 
 The (direct) content of an branch (element or document) are “siblings” to each other.
 
-The previous sibling of a node:
+The content item previous to the subject:
 
 ```Swift
-var previousNode: XContent?
+var previousTouching: XContent?
 ```
 
-The next sibling:
+The content item next to the subject:
 
 ```Swift
-var nextNode: XContent?
+var nextTouching: XContent?
 ```
 
-The following very short method names `previous` and `next` actually mean “the previous siblings” and “the next siblings”, repectively. Those method names are chosen to be so short because they are such a common use case.
+The following very short method names `previous` and `next` actually mean “the previous content” and “the next content”, repectively. Those method names are chosen to be so short because they are such a common use case.
 
-All nodes previous to the node (i.e. the previous siblings), in the order from the node:
+All nodes previous to the node (i.e. the previous siblings) _on the same level,_ i.e. of the same parent, in the order from the node:
 
 ```Swift
 var previous: XContentSequence
 ```
 
-All previous siblings that are elements:
+Of those, the ones that are elements:
 
 ```Swift
 var previousElements: XElementSequence
 ```
 
-All nodes next to the node (i.e. the next siblings):
+Analogously, the content next to the node:
 
 ```Swift
 var next: XContentSequence
 ```
 
-All next siblings that are elements:
+Of those, the ones that are elements:
 
 ```Swift
 var nextElements: XElementSequence
@@ -565,18 +565,18 @@ func find(index: Int) -> XElement?
 var exist: Bool
 ```
 
-You may also ask for the previous or next node in the tree, in the order of a depth-first traversal. E.g. if a node is the last node of a subtree starting at a certain element and the element has a next sibling, this next sibling is “the next node in the tree” for that last node of the subtree. Getting the next or previous node in the tree is very efficient, as the library keep track of them anyway.
+You may also ask for the previous or next content item in the tree, in the order of a depth-first traversal. E.g. if a node is the last node of a subtree starting at a certain element and the element has a next sibling, this next sibling is “the next node in the tree” for that last node of the subtree. Getting the next or previous node in the tree is very efficient, as the library keep track of them anyway.
 
-The next node in the tree:
+The next content item in the tree:
 
 ```Swift
-var nextContentInTree: XContent?
+var nextTouchingInTree: XContent?
 ```
 
-The previous node in the tree:
+The previous content item in the tree:
 
 ```Swift
-var previousContentInTree: XContent?
+var previousTouchingInTree: XContent?
 ```
 
 Example:

@@ -158,17 +158,17 @@ public class XNode {
     weak var _previous: XContent? = nil
     var _next: XContent? = nil
     
-    public var previousContent: XContent? { get { _next } }
-    public var nextContent: XContent? { get { _next } }
+    public var previousTouching: XContent? { get { _next } }
+    public var nextTouching: XContent? { get { _next } }
     
     weak var _previousInTree: XNode? = nil
     weak var _nextInTree: XNode? = nil
     
-    public var previousContentInTree: XContent? { get { _previousInTree as? XContent } }
-    public var nextContentInTree: XContent? { get { _nextInTree as? XContent } }
+    public var previousTouchingInTree: XContent? { get { _previousInTree as? XContent } }
+    public var nextTouchingInTree: XContent? { get { _nextInTree as? XContent } }
     
-    public func previousContentInTree(where condition: (XContent) -> Bool) -> XContent? {
-        let content = previousContentInTree
+    public func previousTouchingInTree(where condition: (XContent) -> Bool) -> XContent? {
+        let content = previousTouchingInTree
         if let theContent = content, condition(theContent) {
             return theContent
         }
@@ -177,8 +177,8 @@ public class XNode {
         }
     }
     
-    public func nextContentInTree(where condition: (XContent) -> Bool) -> XContent? {
-        let content = nextContentInTree
+    public func nextTouchingInTree(where condition: (XContent) -> Bool) -> XContent? {
+        let content = nextTouchingInTree
         if let theContent = content, condition(theContent) {
             return theContent
         }
@@ -424,8 +424,8 @@ public class XContent: XNode {
         }
     }
     
-    public override var previousContentInTree: XContent? { get { _previousInTree as? XContent } }
-    public override var nextContentInTree: XContent? { get { _nextInTree as? XContent } }
+    public override var previousTouchingInTree: XContent? { get { _previousInTree as? XContent } }
+    public override var nextTouchingInTree: XContent? { get { _nextInTree as? XContent } }
     
     public override var lastInTree: XContent { get { return getLastInTree() as! XContent } }
     
