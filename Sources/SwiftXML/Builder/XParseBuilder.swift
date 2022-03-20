@@ -14,11 +14,19 @@ public final class XParseBuilder: XEventHandler {
     }
 
     let document: XDocument
+    let keepComments: Bool
+    let keepCDATASections: Bool
+    
     var currentBranch: XBranchInternal
     
-    public init(document: XDocument) {
+    public init(document: XDocument, keepComments: Bool = false, keepCDATASections: Bool = false) {
+        
         self.document = document
+        self.keepComments = keepComments
+        self.keepCDATASections = keepCDATASections
+        
         self.currentBranch = document
+        
     }
     
     public func documentStart() {
@@ -66,7 +74,7 @@ public final class XParseBuilder: XEventHandler {
     }
     
     public func cdataSection(text: String, textRange _: XTextRange?, dataRange _: XDataRange?) {
-        currentBranch.add(XCDATASection(text: text))
+        currentBranch.add(keepCDATASections ? XCDATASection(text: text): XText(text))
     }
     
     public func internalEntity(name: String, textRange _: XTextRange?, dataRange _: XDataRange?) {
@@ -82,7 +90,9 @@ public final class XParseBuilder: XEventHandler {
     }
     
     public func comment(text: String, textRange _: XTextRange?, dataRange _: XDataRange?) {
-        currentBranch.add(XComment(text: text))
+        if keepComments {
+            currentBranch.add(XComment(text: text))
+        }
     }
     
     public func internalEntityDeclaration(name: String, value: String, textRange _: XTextRange?, dataRange _: XDataRange?) {

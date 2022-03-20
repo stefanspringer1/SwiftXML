@@ -15,14 +15,16 @@ public func parseXML(
     sourceInfo: String? = nil,
     internalEntityResolver: InternalEntityResolver? = nil,
     eventHandlers: [XEventHandler]? = nil,
-    textAllowedInElementWithName: ((String) -> Bool)? = nil
+    textAllowedInElementWithName: ((String) -> Bool)? = nil,
+    keepComments: Bool = false,
+    keepCDATASections: Bool = false
 ) throws -> XDocument {
     let document = XDocument()
     document._sourcePath = path
     
     let parser = ConvenienceParser(
         parser: XParser(internalEntityResolver: internalEntityResolver, textAllowedInElementWithName: textAllowedInElementWithName),
-        mainEventHandler: XParseBuilder(document: document)
+        mainEventHandler: XParseBuilder(document: document, keepComments: keepComments, keepCDATASections: keepCDATASections)
     )
     
     try parser.parse(fromPath: path, sourceInfo: sourceInfo, eventHandlers: eventHandlers)
@@ -35,14 +37,16 @@ public func parseXML(
     sourceInfo: String? = nil,
     internalEntityResolver: InternalEntityResolver? = nil,
     eventHandlers: [XEventHandler]? = nil,
-    textAllowedInElementWithName: ((String) -> Bool)? = nil
+    textAllowedInElementWithName: ((String) -> Bool)? = nil,
+    keepComments: Bool = false,
+    keepCDATASections: Bool = false
 ) throws -> XDocument {
     let document = XDocument()
     document._sourcePath = url.path
     
     let parser = ConvenienceParser(
         parser: XParser(internalEntityResolver: internalEntityResolver, textAllowedInElementWithName: textAllowedInElementWithName),
-        mainEventHandler: XParseBuilder(document: document)
+        mainEventHandler: XParseBuilder(document: document, keepComments: keepComments, keepCDATASections: keepCDATASections)
     )
     
     try parser.parse(fromURL: url, sourceInfo: sourceInfo, eventHandlers: eventHandlers)
@@ -55,13 +59,15 @@ public func parseXML(
     sourceInfo: String? = nil,
     internalEntityResolver: InternalEntityResolver? = nil,
     eventHandlers: [XEventHandler]? = nil,
-    textAllowedInElementWithName: ((String) -> Bool)? = nil
+    textAllowedInElementWithName: ((String) -> Bool)? = nil,
+    keepComments: Bool = false,
+    keepCDATASections: Bool = false
 ) throws -> XDocument {
     let document = XDocument()
     
     let parser = ConvenienceParser(
         parser: XParser(internalEntityResolver: internalEntityResolver, textAllowedInElementWithName: textAllowedInElementWithName),
-        mainEventHandler: XParseBuilder(document: document)
+        mainEventHandler: XParseBuilder(document: document, keepComments: keepComments, keepCDATASections: keepCDATASections)
     )
     
     try parser.parse(fromText: text, sourceInfo: sourceInfo, eventHandlers: eventHandlers)
@@ -74,13 +80,15 @@ public func parseXML(
     sourceInfo: String? = nil,
     internalEntityResolver: InternalEntityResolver? = nil,
     eventHandlers: [XEventHandler]? = nil,
-    textAllowedInElementWithName: ((String) -> Bool)? = nil
+    textAllowedInElementWithName: ((String) -> Bool)? = nil,
+    keepComments: Bool = false,
+    keepCDATASections: Bool = false
 ) throws -> XDocument {
     let document = XDocument()
     
     let parser = ConvenienceParser(
         parser: XParser(internalEntityResolver: internalEntityResolver, textAllowedInElementWithName: textAllowedInElementWithName),
-        mainEventHandler: XParseBuilder(document: document)
+        mainEventHandler: XParseBuilder(document: document, keepComments: keepComments, keepCDATASections: keepCDATASections)
     )
     
     try parser.parse(fromData: data, sourceInfo: sourceInfo, eventHandlers: eventHandlers)

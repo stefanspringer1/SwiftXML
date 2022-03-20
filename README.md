@@ -141,7 +141,9 @@ func parseXML(
     sourceInfo: String?,
     internalEntityResolver: InternalEntityResolver?,
     eventHandlers: [XEventHandler]?,
-    textAllowedInElementWithName: ((String) -> Bool)?
+    textAllowedInElementWithName: ((String) -> Bool)?,
+    keepComments: Bool,
+    keepCDATASections: Bool
 ) throws -> XDocument
 ```
 
@@ -152,6 +154,8 @@ func parseXML(
     internalEntityResolver: InternalEntityResolver?,
     eventHandlers: [XEventHandler]?,
     textAllowedInElementWithName: ((String) -> Bool)?
+    keepComments: Bool,
+    keepCDATASections: Bool
 ) throws -> XDocument
 ```
 
@@ -162,6 +166,8 @@ func parseXML(
     internalEntityResolver: InternalEntityResolver?,
     eventHandlers: [XEventHandler]?,
     textAllowedInElementWithName: ((String) -> Bool)?
+    keepComments: Bool,
+    keepCDATASections: Bool
 ) throws -> XDocument
 ```
 
@@ -172,6 +178,8 @@ func parseXML(
     internalEntityResolver: InternalEntityResolver?,
     eventHandlers: [XEventHandler]?,
     textAllowedInElementWithName: ((String) -> Bool)?
+    keepComments: Bool,
+    keepCDATASections: Bool
 ) throws -> XDocument
 ```
 
@@ -191,6 +199,8 @@ This method is always called when a named entity reference is encountered (eithe
 
 One a more event handlers can be given a `parseXML` call, which implement `XEventHandler` from [XMLInterfaces](https://github.com/stefanspringer1/SwiftXMLInterfaces). This allows for the user of the library to catch any event during parsing like entering or leaving an element. E.g., the resolving of an internal entity reference could depend on the location inside the document (and not only on the name of the element or attribute), so this information can be collected by such an event handler.
 
+`keepComments` (default: `false`) decides if a comment should be preserved (as `XComment`), else they will be discarded without notice. `keepCDATASections` (default: `false`) decides if a CDATA section should be preserved (as `XCDATASection`), else all CDATA sections get resolved as text.
+
 ## Content of a document
 
 An XML document (`XDocument`) can contain the following content:
@@ -200,7 +210,7 @@ An XML document (`XDocument`) can contain the following content:
 - `XText`: a text
 - `XInternalEntity`: an internal entity reference
 - `XExternalEntity`: an external entity reference
-- `XCDATASection`: a CDATA section (they do not get resolved)
+- `XCDATASection`: a CDATA section
 - `XProcessingInstruction`: a processing instruction
 - `XComment`: a comment
 - `XSpot`: see the section below on `XSpot` and handling of text
