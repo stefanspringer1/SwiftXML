@@ -153,7 +153,7 @@ func parseXML(
     sourceInfo: String?,
     internalEntityResolver: InternalEntityResolver?,
     eventHandlers: [XEventHandler]?,
-    textAllowedInElementWithName: ((String) -> Bool)?
+    textAllowedInElementWithName: ((String) -> Bool)?,
     keepComments: Bool,
     keepCDATASections: Bool
 ) throws -> XDocument
@@ -165,7 +165,7 @@ func parseXML(
     sourceInfo: String?,
     internalEntityResolver: InternalEntityResolver?,
     eventHandlers: [XEventHandler]?,
-    textAllowedInElementWithName: ((String) -> Bool)?
+    textAllowedInElementWithName: ((String) -> Bool)?,
     keepComments: Bool,
     keepCDATASections: Bool
 ) throws -> XDocument
@@ -177,7 +177,7 @@ func parseXML(
     sourceInfo: String?,
     internalEntityResolver: InternalEntityResolver?,
     eventHandlers: [XEventHandler]?,
-    textAllowedInElementWithName: ((String) -> Bool)?
+    textAllowedInElementWithName: ((String) -> Bool)?,
     keepComments: Bool,
     keepCDATASections: Bool
 ) throws -> XDocument
