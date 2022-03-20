@@ -296,7 +296,7 @@ public class XNode {
         try write(toFile: url.path, production: production)
     }
     
-    public func echo(usingProduction production: XProduction = XDefaultProduction(), terminator: String = "\n") {
+    public func echo(usingProduction production: XProduction, terminator: String = "\n") {
         do {
             try write(toFileHandle: FileHandle.standardOutput, production: production); print(terminator, terminator: "")
         }
@@ -305,7 +305,11 @@ public class XNode {
         }
     }
     
-    public func serialized(usingProduction production: XProduction = XDefaultProduction()) -> String {
+    public func echo(pretty: Bool = false, terminator: String = "\n") {
+        echo(usingProduction: pretty ? XPrettyPrintProduction() : XDefaultProduction(), terminator: terminator)
+    }
+    
+    public func serialized(usingProduction production: XProduction) -> String {
         let writer = CollectingWriter()
         do {
             try write(toWriter: writer, production: production)
@@ -314,6 +318,10 @@ public class XNode {
             // CollectingWriter does not really throw
         }
         return writer.description
+    }
+    
+    public func serialized(pretty: Bool = false) -> String {
+        serialized(usingProduction: pretty ? XPrettyPrintProduction() : XDefaultProduction())
     }
 }
 

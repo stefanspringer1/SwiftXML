@@ -245,20 +245,34 @@ When not set explicitely in the XML source, some of those values are set to a se
 When printing a content via `print(...)`, only a top-level represenation like the start tag is printed and never the whole tree. When you would like to print the whole tree or document, use:
 
 ```Swift
+func echo(pretty: Bool, terminator: String)
+```
+
+`pretty` defaults to `false`; if it is set to `true`, linebreaks and spaces are added for pretty print. The terminator defaults to `"\n"`, i.e. a linebreak is then printed after the output.
+
+With more control:
+
+```Swift
 func echo(usingProduction: XProduction, terminator: String)
 ```
 
-Productions are explained in the next section; as the `usingProduction` argument defaults to `XDefaultProduction`, you do not need to worry about them at the moment. The terminator defaults to `"\n"`, i.e. newlines are then printed after the output.
+Productions are explained in the next section. 
 
 When you want a serialization of a whole tree or document as text (`String`), use the following method:
+
+```Swift
+func serialized(pretty: Bool) -> String
+```
+
+`pretty` again defaults to `false` and has the same effect.
+
+With more control:
 
 ```Swift
 func serialized(usingProduction: XProduction) -> String
 ```
 
-The production again defaults to `XDefaultProduction`.
-
-But do not use `serialized` to print a tree or document, use `echo` instead, because using `echo` is more efficient in this case.
+Do not use `serialized` to print a tree or document, use `echo` instead, because using `echo` is more efficient in this case.
 
 ## Writing XML
 
