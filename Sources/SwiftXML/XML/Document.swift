@@ -68,6 +68,29 @@ public final class XDocument: XNode, XBranchInternal {
     }
     
     // ------------------------------------------------------------------------
+    // repeat methods from XBranch:
+    
+    public var firstContent: XContent? {
+        get { _firstContent }
+    }
+    
+    public func firstContent(where condition: (XContent) -> Bool) -> XContent? {
+        return (self as XBranch).firstContent(where: condition)
+    }
+    
+    public var lastContent: XContent? {
+        get { _lastContent }
+    }
+    
+    public func lastContent(where condition: (XContent) -> Bool) -> XContent? {
+        return (self as XBranch).lastContent(where: condition)
+    }
+    
+    public var isEmpty: Bool {
+        get { _firstContent == nil }
+    }
+    
+    // ------------------------------------------------------------------------
     // more precisely typed versions for methods from XBranch:
     
     @discardableResult public func add(skip: Bool = false, @XNodeBuilder builder: () -> [XContent]) -> XDocument {
@@ -89,8 +112,21 @@ public final class XDocument: XNode, XBranchInternal {
         return self
     }
     
+    /**
+     Clear the contents of the node.
+     If "forward", then detaching prefetches the next node in iterators.
+     */
     @discardableResult func clear(forward: Bool) -> XDocument {
         _ = (self as XBranch).clear(forward: forward)
+        return self
+    }
+    
+    /**
+     Clear the contents of the node.
+     If "forward", then detaching prefetches the next node in iterators.
+     */
+    @discardableResult public func clear() -> XDocument {
+        _ = (self as XBranch).clear()
         return self
     }
     

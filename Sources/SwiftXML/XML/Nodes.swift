@@ -602,9 +602,9 @@ public class XSpot: XContent {
 
 public protocol XBranch: XNode {
     var firstContent: XContent? { get }
-    func firstContent(where condition: (XNode) -> Bool) -> XContent?
+    func firstContent(where condition: (XContent) -> Bool) -> XContent?
     var lastContent: XContent? { get }
-    func lastContent(where condition: (XNode) -> Bool) -> XContent?
+    func lastContent(where condition: (XContent) -> Bool) -> XContent?
     var isEmpty: Bool { get }
     @discardableResult func add(@XNodeBuilder builder: () -> [XContent]) -> XBranch
     @discardableResult func add(skip: Bool, @XNodeBuilder builder: () -> [XContent]) -> XBranch
@@ -648,12 +648,10 @@ extension XBranchInternal {
     }
     
     public var firstContent: XContent? {
-        get {
-            return _firstContent
-        }
+        get { _firstContent }
     }
     
-    public func firstContent(where condition: (XNode) -> Bool) -> XContent? {
+    public func firstContent(where condition: (XContent) -> Bool) -> XContent? {
         let node = _firstContent
         if let theNode = node, condition(theNode) {
             return node
@@ -664,12 +662,10 @@ extension XBranchInternal {
     }
     
     public var lastContent: XContent? {
-        get {
-            return _lastContent
-        }
+        get { _lastContent }
     }
     
-    public func lastContent(where condition: (XNode) -> Bool) -> XContent? {
+    public func lastContent(where condition: (XContent) -> Bool) -> XContent? {
         let node = _lastContent
         if let theNode = node, condition(theNode) {
             return node
@@ -1106,6 +1102,29 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     }
     
     // ------------------------------------------------------------------------
+    // repeat methods from XBranch:
+    
+    public var firstContent: XContent? {
+        get { _firstContent }
+    }
+    
+    public func firstContent(where condition: (XContent) -> Bool) -> XContent? {
+        return (self as XBranch).firstContent(where: condition)
+    }
+    
+    public var lastContent: XContent? {
+        get { _lastContent }
+    }
+    
+    public func lastContent(where condition: (XContent) -> Bool) -> XContent? {
+        return (self as XBranch).lastContent(where: condition)
+    }
+    
+    public var isEmpty: Bool {
+        get { _firstContent == nil }
+    }
+    
+    // ------------------------------------------------------------------------
     // more precisely typed versions for methods from XBranch:
     
     @discardableResult public func add(skip: Bool = false, @XNodeBuilder builder: () -> [XContent]) -> XElement {
@@ -1129,6 +1148,15 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     
     @discardableResult func clear(forward: Bool) -> XElement {
         _ = (self as XBranch).clear(forward: forward)
+        return self
+    }
+    
+    /**
+     Clear the contents of the node.
+     If "forward", then detaching prefetches the next node in iterators.
+     */
+    @discardableResult public func clear() -> XElement {
+        _ = (self as XBranch).clear()
         return self
     }
     
