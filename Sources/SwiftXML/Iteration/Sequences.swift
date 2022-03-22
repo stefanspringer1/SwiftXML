@@ -199,7 +199,7 @@ public final class XAllContentIncludingSelfSequence: XContentSequence {
     }
     
     public override func makeIterator() -> XBidirectionalContentIterator {
-        return XBidirectionalContentIterator(nodeIterator: XAllContentsIterator(node: node))
+        return XBidirectionalContentIterator(nodeIterator: XAllContentsIncludingSelfIterator(node: node))
     }
 }
 
