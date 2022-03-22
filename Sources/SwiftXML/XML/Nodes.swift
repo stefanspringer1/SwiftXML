@@ -158,7 +158,7 @@ public class XNode {
     weak var _previous: XContent? = nil
     var _next: XContent? = nil
     
-    public var previousTouching: XContent? { get { _next } }
+    public var previousTouching: XContent? { get { _previous } }
     public var nextTouching: XContent? { get { _next } }
     
     weak var _previousInTree: XNode? = nil
