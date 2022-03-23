@@ -164,11 +164,11 @@ public class XNode {
     weak var _previousInTree: XNode? = nil
     weak var _nextInTree: XNode? = nil
     
-    public var previousTouchingInTree: XContent? { get { _previousInTree as? XContent } }
-    public var nextTouchingInTree: XContent? { get { _nextInTree as? XContent } }
+    public var previousInTreeTouching: XContent? { get { _previousInTree as? XContent } }
+    public var nextInTreeTouching: XContent? { get { _nextInTree as? XContent } }
     
-    public func previousTouchingInTree(where condition: (XContent) -> Bool) -> XContent? {
-        let content = previousTouchingInTree
+    public func previousInTreeTouching(where condition: (XContent) -> Bool) -> XContent? {
+        let content = previousInTreeTouching
         if let theContent = content, condition(theContent) {
             return theContent
         }
@@ -177,8 +177,8 @@ public class XNode {
         }
     }
     
-    public func nextTouchingInTree(where condition: (XContent) -> Bool) -> XContent? {
-        let content = nextTouchingInTree
+    public func nextInTreeTouching(where condition: (XContent) -> Bool) -> XContent? {
+        let content = nextInTreeTouching
         if let theContent = content, condition(theContent) {
             return theContent
         }
@@ -432,8 +432,8 @@ public class XContent: XNode {
         }
     }
     
-    public override var previousTouchingInTree: XContent? { get { _previousInTree as? XContent } }
-    public override var nextTouchingInTree: XContent? { get { _nextInTree as? XContent } }
+    public override var previousInTreeTouching: XContent? { get { _previousInTree as? XContent } }
+    public override var nextInTreeTouching: XContent? { get { _nextInTree as? XContent } }
     
     public override var lastInTree: XContent { get { return getLastInTree() as! XContent } }
     

@@ -594,13 +594,13 @@ You may also ask for the previous or next content item in the tree, in the order
 The next content item in the tree:
 
 ```Swift
-var nextTouchingInTree: XContent?
+var nextInTreeTouching: XContent?
 ```
 
 The previous content item in the tree:
 
 ```Swift
-var previousTouchingInTree: XContent?
+var previousInTreeTouching: XContent?
 ```
 
 Example:
