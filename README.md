@@ -745,7 +745,7 @@ Example:
 
 ```Swift
 let myDocument = XDocument {
-    myElement.applied { $0["level"] = "top" }
+    myElement.applied{ $0["level"] = "top" }
 }
 ```
 
