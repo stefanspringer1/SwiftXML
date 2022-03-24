@@ -739,7 +739,7 @@ let myElement = XElement("div") {
 }
 ```
 
-By using the method `applied(_ f: (XNode) -> ()) -> XNode` to a node (the argument and the return value are more specific if the subject is more specific) you can apply a function to a node before returning it:
+By using the method `applied((XNode) -> ()) -> XNode` to a node (the argument and the return value are more specific if the subject is more specific) you can apply a function to a node before returning it:
 
 Example:
 
