@@ -132,7 +132,7 @@ public final class XDocument: XNode, XBranchInternal {
     
     // ------------------------------------------------------------------------
     
-    public override func applied(_ f: (XDocument) -> ()) -> XDocument {
+    @discardableResult public override func apply(_ f: (XDocument) -> ()) -> XDocument {
         f(self)
         return self
     }

@@ -690,7 +690,7 @@ Output:
 <d>
 ```
 
-Also, in those chains operations resulting in single nodes like `parent` or `applied` (see the next section on constructing XML) can be used.
+Also, in those chains operations resulting in single nodes like `parent` (see above), `insertNext` (see the section on tree manipulations), or `apply` (see the next section on constructing XML) can be used.
 
 ## Constructing XML
 
@@ -739,13 +739,13 @@ let myElement = XElement("div") {
 }
 ```
 
-By using the method `applied((XNode) -> ()) -> XNode` to a node (the argument and the return value are more specific if the subject is more specific) you can apply a function to a node before returning it:
+By using the method `apply((XNode) -> ()) -> XNode` to a node (the argument and the return value are more specific if the subject is more specific) you can apply a function to a node before returning it:
 
 Example:
 
 ```Swift
 let myDocument = XDocument {
-    myElement.applied{ $0["level"] = "top" }
+    myElement.apply{ $0["level"] = "top" }
 }
 ```
 

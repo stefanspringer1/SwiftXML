@@ -193,7 +193,7 @@ public class XNode {
     
     public var lastInTree: XNode { get { return getLastInTree() } }
     
-    public func applied(_ f: (XNode) -> ()) -> XNode {
+    @discardableResult public func apply(_ f: (XNode) -> ()) -> XNode {
         f(self)
         return self
     }
@@ -603,7 +603,7 @@ public class XSpot: XContent {
         return self
     }
     
-    public override func applied(_ f: (XSpot) -> ()) -> XSpot {
+    @discardableResult public override func apply(_ f: (XSpot) -> ()) -> XSpot {
         f(self)
         return self
     }
@@ -1053,7 +1053,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         return theClone
     }
     
-    public override func applied(_ f: (XElement) -> ()) -> XElement {
+    @discardableResult public override func apply(_ f: (XElement) -> ()) -> XElement {
         f(self)
         return self
     }
@@ -1357,7 +1357,7 @@ public final class XText: XContent, CustomStringConvertible {
         return self
     }
     
-    public override func applied(_ f: (XText) -> ()) -> XText {
+    @discardableResult public override func apply(_ f: (XText) -> ()) -> XText {
         f(self)
         return self
     }
@@ -1413,7 +1413,7 @@ public final class XInternalEntity: XContent {
         return self
     }
     
-    public override func applied(_ f: (XInternalEntity) -> ()) -> XInternalEntity {
+    @discardableResult public override func apply(_ f: (XInternalEntity) -> ()) -> XInternalEntity {
         f(self)
         return self
     }
@@ -1469,7 +1469,7 @@ public final class XExternalEntity: XContent {
         return self
     }
     
-    public override func applied(_ f: (XExternalEntity) -> ()) -> XExternalEntity {
+    @discardableResult public override func apply(_ f: (XExternalEntity) -> ()) -> XExternalEntity {
         f(self)
         return self
     }
@@ -1544,7 +1544,7 @@ public final class XProcessingInstruction: XContent, CustomStringConvertible {
         return self
     }
     
-    public override func applied(_ f: (XProcessingInstruction) -> ()) -> XProcessingInstruction {
+    @discardableResult public override func apply(_ f: (XProcessingInstruction) -> ()) -> XProcessingInstruction {
         f(self)
         return self
     }
@@ -1600,7 +1600,7 @@ public final class XComment: XContent {
         return self
     }
     
-    public override func applied(_ f: (XComment) -> ()) -> XComment {
+    @discardableResult public override func apply(_ f: (XComment) -> ()) -> XComment {
         f(self)
         return self
     }
@@ -1656,7 +1656,7 @@ public final class XCDATASection: XContent {
         return self
     }
     
-    public override func applied(_ f: (XCDATASection) -> ()) -> XCDATASection {
+    @discardableResult public override func apply(_ f: (XCDATASection) -> ()) -> XCDATASection {
         f(self)
         return self
     }
