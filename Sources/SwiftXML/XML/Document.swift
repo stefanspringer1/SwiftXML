@@ -132,6 +132,11 @@ public final class XDocument: XNode, XBranchInternal {
     
     // ------------------------------------------------------------------------
     
+    public override func applied(_ f: (XDocument) -> ()) -> XDocument {
+        f(self)
+        return self
+    }
+    
     public override func shallowClone(forwardref: Bool = false) -> XDocument {
         let theClone = XDocument()
         if forwardref {
@@ -279,6 +284,13 @@ public final class XDocument: XNode, XBranchInternal {
         super.init()
         _document = self
         self._lastInTree = self
+    }
+    
+    public convenience init(@XNodeBuilder builder: () -> [XContent]) {
+        self.init()
+        builder().forEach { node in
+            add(node)
+        }
     }
     
     func getType() -> String? {

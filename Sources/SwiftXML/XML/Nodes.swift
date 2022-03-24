@@ -193,6 +193,11 @@ public class XNode {
     
     public var lastInTree: XNode { get { return getLastInTree() } }
     
+    public func applied(_ f: (XNode) -> ()) -> XNode {
+        f(self)
+        return self
+    }
+    
     public func traverse(down: @escaping (XNode) -> (), up: ((XNode) -> ())? = nil) {
         let directionIndicator = XDirectionIndicator()
         XTraversalSequence(node: self, directionIndicator: directionIndicator).forEach { node in
@@ -595,6 +600,11 @@ public class XSpot: XContent {
     
     @discardableResult public override func insertNext(@XNodeBuilder builder: () -> [XContent]) -> XSpot {
         _insertNext(builder: builder)
+        return self
+    }
+    
+    public override func applied(_ f: (XSpot) -> ()) -> XSpot {
+        f(self)
         return self
     }
     
@@ -1043,6 +1053,11 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         return theClone
     }
     
+    public override func applied(_ f: (XElement) -> ()) -> XElement {
+        f(self)
+        return self
+    }
+    
     var _name: String
     
     public var name: String {
@@ -1342,6 +1357,11 @@ public final class XText: XContent, CustomStringConvertible {
         return self
     }
     
+    public override func applied(_ f: (XText) -> ()) -> XText {
+        f(self)
+        return self
+    }
+    
     public override func produceEntering(production: XProduction) throws {
         try production.writeText(text: self)
     }
@@ -1393,6 +1413,11 @@ public final class XInternalEntity: XContent {
         return self
     }
     
+    public override func applied(_ f: (XInternalEntity) -> ()) -> XInternalEntity {
+        f(self)
+        return self
+    }
+    
     override func produceEntering(production: XProduction) throws {
         try production.writeInternalEntity(internalEntity: self)
     }
@@ -1441,6 +1466,11 @@ public final class XExternalEntity: XContent {
     
     @discardableResult public override func insertNext(@XNodeBuilder builder: () -> [XContent]) -> XExternalEntity {
         _insertNext(builder: builder)
+        return self
+    }
+    
+    public override func applied(_ f: (XExternalEntity) -> ()) -> XExternalEntity {
+        f(self)
         return self
     }
     
@@ -1514,6 +1544,11 @@ public final class XProcessingInstruction: XContent, CustomStringConvertible {
         return self
     }
     
+    public override func applied(_ f: (XProcessingInstruction) -> ()) -> XProcessingInstruction {
+        f(self)
+        return self
+    }
+    
     override func produceEntering(production: XProduction) throws {
         try production.writeProcessingInstruction(processingInstruction: self)
     }
@@ -1565,6 +1600,11 @@ public final class XComment: XContent {
         return self
     }
     
+    public override func applied(_ f: (XComment) -> ()) -> XComment {
+        f(self)
+        return self
+    }
+    
     override func produceEntering(production: XProduction) throws {
         try production.writeComment(comment: self)
     }
@@ -1613,6 +1653,11 @@ public final class XCDATASection: XContent {
     
     @discardableResult public override func insertNext(@XNodeBuilder builder: () -> [XContent]) -> XCDATASection {
         _insertNext(builder: builder)
+        return self
+    }
+    
+    public override func applied(_ f: (XCDATASection) -> ()) -> XCDATASection {
+        f(self)
         return self
     }
     

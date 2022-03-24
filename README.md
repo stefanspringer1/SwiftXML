@@ -739,6 +739,18 @@ let myElement = XElement("div") {
 }
 ```
 
+By using the method `applied(_ f: (XNode) -> ()) -> XNode` to a node (the argument and the return value are more specific if the subject is more specific) you can apply a function to a node before returning it:
+
+Example:
+
+```Swift
+let myDocument = XDocument {
+    myElement.applied { $0["level"] = "top" }
+}
+```
+
+You do not need to use this method if you would like to e.g. add other content to an element before rewturning it, as those methods always return the subject (see the section below on tree manipulations).
+
 ### Document membership in constructed elements
 
 Elements that are part of a document (`XDocument`) are registered in the document. The same is true for its attributes. The reason is that this allows fast access to elements and attributes of a certain name via `elements(ofName:)` and `attributes(ofName:)` and the exact functioning of rules (see the section below on rules).
