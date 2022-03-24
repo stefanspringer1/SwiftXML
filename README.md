@@ -690,7 +690,7 @@ Output:
 <d>
 ```
 
-Also, in those chains operations resulting in single nodes like `parent` or `applied` can be used.
+Also, in those chains operations resulting in single nodes like `parent` or `applied` (see the next section on constructing XML) can be used.
 
 ## Constructing XML
 
