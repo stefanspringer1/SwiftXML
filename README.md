@@ -749,7 +749,7 @@ let myDocument = XDocument {
 }
 ```
 
-You do not need to use this method if you would like to e.g. add other content to an element before rewturning it, as those methods always return the subject (see the section below on tree manipulations).
+You do not need to use this method if you would like to e.g. add other content to an element before returning it, as those methods always return the subject if nothing else (see the section below on tree manipulations).
 
 ### Document membership in constructed elements
 
