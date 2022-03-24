@@ -14,7 +14,7 @@ public extension XBranch {
     }
     
     func content(where condition: @escaping (XNode) -> Bool) -> XContentSequence {
-        return XNodeSequenceWithCondition(sequence: XSequenceOfContent(node: self), condition: condition)
+        return XContentSequenceWithCondition(sequence: XSequenceOfContent(node: self), condition: condition)
     }
     
     var children: XElementSequence {
@@ -34,7 +34,7 @@ public extension XBranch {
     }
     
     func allContent(where condition: @escaping (XNode) -> Bool) -> XContentSequence {
-        return XNodeSequenceWithCondition(sequence: XAllContentSequence(node: self), condition: condition)
+        return XContentSequenceWithCondition(sequence: XAllContentSequence(node: self), condition: condition)
     }
     
     var descendants: XElementSequence {
@@ -69,8 +69,8 @@ extension XContent {
         get { XSequenceOfContent(node: self) }
     }
     
-    public func content(where condition: @escaping (XNode) -> Bool) -> XContentSequence {
-        return XNodeSequenceWithCondition(sequence: XSequenceOfContent(node: self), condition: condition)
+    public func content(where condition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentSequenceWithCondition(sequence: XSequenceOfContent(node: self), condition: condition)
     }
     
     public var children: XElementSequence {
@@ -90,7 +90,7 @@ extension XContent {
     }
     
     public func next(where condition: @escaping (XContent) -> Bool) -> XContentSequence {
-        return XNodeSequenceWithCondition(sequence: XNextSequence(content: self), condition: condition)
+        return XContentSequenceWithCondition(sequence: XNextSequence(content: self), condition: condition)
     }
     
     public var previous: XContentSequence {
@@ -98,7 +98,7 @@ extension XContent {
     }
     
     public func previous(where condition: @escaping (XContent) -> Bool) -> XContentSequence {
-        return XNodeSequenceWithCondition(sequence: XPreviousSequence(content: self), condition: condition)
+        return XContentSequenceWithCondition(sequence: XPreviousSequence(content: self), condition: condition)
     }
     
     public var nextElements: XElementSequence {
@@ -130,7 +130,7 @@ extension XContent {
     }
     
     public func allContent(where condition: @escaping (XContent) -> Bool) -> XContentSequence {
-        return XNodeSequenceWithCondition(sequence: XAllContentSequence(node: self), condition: condition)
+        return XContentSequenceWithCondition(sequence: XAllContentSequence(node: self), condition: condition)
     }
     
     public var allContentIncludingSelf: XContentSequence {
@@ -138,7 +138,7 @@ extension XContent {
     }
     
     public func allContentIncludingSelf(where condition: @escaping (XContent) -> Bool) -> XContentSequence {
-        return XNodeSequenceWithCondition(sequence: XAllContentIncludingSelfSequence(node: self), condition: condition)
+        return XContentSequenceWithCondition(sequence: XAllContentIncludingSelfSequence(node: self), condition: condition)
     }
     
     public var descendants: XElementSequence {
@@ -170,22 +170,22 @@ extension XElement {
 
 public extension XContentSequence {
     
-    func findFirst() -> XNode? {
+    func findFirst() -> XContent? {
         return makeIterator().next()
     }
     
-    func find(index: Int) -> XNode? {
+    func find(index: Int) -> XContent? {
         let iterator = makeIterator()
         var position = 0
-        var node: XNode? = nil
+        var content: XContent? = nil
         while position <= index {
-            node = iterator.next()
-            if node == nil {
+            content = iterator.next()
+            if content == nil {
                 return nil
             }
             position += 1
         }
-        return node
+        return content
     }
     
     var exist: Bool { get { makeIterator().next() != nil } }
@@ -201,15 +201,15 @@ public extension XElementSequence {
     func find(index: Int) -> XElement? {
         let iterator = makeIterator()
         var position = 0
-        var node: XElement? = nil
+        var element: XElement? = nil
         while position <= index {
-            node = iterator.next()
-            if node == nil {
+            element = iterator.next()
+            if element == nil {
                 return nil
             }
             position += 1
         }
-        return node
+        return element
     }
     
     var exist: Bool { get { makeIterator().next() != nil } }

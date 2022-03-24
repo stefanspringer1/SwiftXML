@@ -33,7 +33,7 @@ public final class XElementSequenceWithCondition: XElementSequence {
     }
 }
 
-public final class XNodeSequenceWithCondition: XContentSequence {
+public final class XContentSequenceWithCondition: XContentSequence {
     
     let sequence: XContentSequence
     let condition: (XContent) -> Bool
