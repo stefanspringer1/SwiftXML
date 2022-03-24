@@ -49,8 +49,8 @@ Other than some other libraries for XML, the manipulation of the document as bui
 
 The following features are important:
 
-- All iteration over elements in the document using the according library functions are lazy by default, i.e. the iteration only looks at one item at a time and does not (!) collect all items in advance.
-- While iterating over elements in the document, the document tree can be changed without negatively affecting the iteration.
+- All iteration over content in the document using the according library functions are lazy by default, i.e. the iteration only looks at one item at a time and does not (!) collect all items in advance.
+- While lazily iterating over content in the document in this manner, the document tree can be changed without negatively affecting the iteration.
 - Elements or attributes of a certain name can be efficiently found without having to traverse the whole tree. An according iteration proceeds in the order by which the elements or attributes have been added to the document. When iterating in this manner, newly added elements or attributes are then also processed as part of the same iteration.
 
 The following code takes any `<item>` with an integer value of `multiply` larger than 1 and inserts an item with a `multiply` number one less than the next element (the library will be explained in more detail in subsequent sections):
