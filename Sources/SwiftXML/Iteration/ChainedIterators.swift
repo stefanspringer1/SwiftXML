@@ -398,6 +398,30 @@ extension XContentSequence {
         return XContentSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.content(condition) })
     }
     
+    public func content(while condition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.content(while: condition) })
+    }
+    
+    public func content(until condition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.content(until: condition) })
+    }
+    
+    public var contentReversed: XContentSequence {
+        get { XContentSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.contentReversed }) }
+    }
+    
+    public func contentReversed(_ condition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.contentReversed(condition) })
+    }
+    
+    public func contentReversed(while condition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.contentReversed(while: condition) })
+    }
+    
+    public func contentReversed(until condition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.contentReversed(until: condition) })
+    }
+    
     public var children: XElementSequence {
         get { XElementSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.children }) }
     }
@@ -410,6 +434,34 @@ extension XContentSequence {
         return XElementSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.children(name) })
     }
     
+    public func children(while condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.children(while: condition) })
+    }
+    
+    public func children(until condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.children(until: condition) })
+    }
+    
+    public var childrenReversed: XElementSequence {
+        get { XElementSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.childrenReversed }) }
+    }
+    
+    public func childrenReversed(_ condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.childrenReversed(condition) })
+    }
+    
+    public func childrenReversed(_ name: String) -> XElementSequence {
+        return XElementSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.childrenReversed(name) })
+    }
+    
+    public func childrenReversed(while condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.childrenReversed(while: condition) })
+    }
+    
+    public func childrenReversed(until condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.childrenReversed(until: condition) })
+    }
+    
     public var next: XContentSequence {
         get { XContentSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.next }) }
     }
@@ -418,12 +470,28 @@ extension XContentSequence {
         return XContentSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.next(condition) })
     }
     
+    public func next(while condition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.next(while: condition) })
+    }
+    
+    public func next(until condition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.next(until: condition) })
+    }
+    
     public var previous: XContentSequence {
         get { XContentSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.previous }) }
     }
     
     public func previous(_ condition: @escaping (XContent) -> Bool) -> XContentSequence {
         return XContentSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.previous(condition) })
+    }
+    
+    public func previous(while condition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.previous(while: condition) })
+    }
+    
+    public func previous(until condition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.previous(until: condition) })
     }
     
     public var nextElements: XElementSequence {
@@ -438,6 +506,14 @@ extension XContentSequence {
         return XElementSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.nextElements(name) })
     }
     
+    public func nextElements(while condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.nextElements(while: condition) })
+    }
+    
+    public func nextElements(until condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.nextElements(until: condition) })
+    }
+    
     public var previousElements: XElementSequence {
         get { XElementSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.previousElements }) }
     }
@@ -450,6 +526,10 @@ extension XContentSequence {
         return XElementSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.previousElements(name) })
     }
     
+    public func previousElements(while condition: @escaping (XContent) -> Bool) -> XElementSequence {
+        return XElementSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.previousElements(while: condition) })
+    }
+    
     public var allContent: XContentSequence {
         get { XContentSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.allContent }) }
     }
@@ -458,12 +538,28 @@ extension XContentSequence {
         return XContentSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.allContent(condition) })
     }
     
+    public func allContent(while condition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.allContent(while: condition) })
+    }
+    
+    public func allContent(until condition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.allContent(until: condition) })
+    }
+    
     public var allContentIncludingSelf: XContentSequence {
         get { XContentSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.allContentIncludingSelf }) }
     }
     
     public func allContentIncludingSelf(_ condition: @escaping (XContent) -> Bool) -> XContentSequence {
         return XContentSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.allContentIncludingSelf(condition) })
+    }
+    
+    public func allContentIncludingSelf(while condition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.allContentIncludingSelf(while: condition) })
+    }
+    
+    public func allContentIncludingSelf(until condition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.allContentIncludingSelf(until: condition) })
     }
     
     public var descendants: XElementSequence {
@@ -476,6 +572,14 @@ extension XContentSequence {
     
     public func descendants(_ name: String) -> XElementSequence {
         return XElementSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.descendants(name) })
+    }
+    
+    public func descendants(while condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.descendants(while: condition) })
+    }
+    
+    public func descendants(until condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.descendants(until: condition) })
     }
     
     public var previousInTreeTouching: XContentSequence {
@@ -526,12 +630,44 @@ extension XElementSequence {
         return XElementSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { content in content.ancestors(name) })
     }
     
+    public func ancestors(while condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { content in content.ancestors(while: condition) })
+    }
+    
+    public func ancestors(until condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { content in content.ancestors(until: condition) })
+    }
+    
     public var content: XContentSequence {
         get { XContentSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { content in content.content }) }
     }
     
     public func content(_ condition: @escaping (XContent) -> Bool) -> XContentSequence {
         return XContentSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { content in content.content(condition) })
+    }
+    
+    public func content(while condition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { content in content.content(while: condition) })
+    }
+    
+    public func content(until condition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { content in content.content(until: condition) })
+    }
+    
+    public var contentReversed: XContentSequence {
+        get { XContentSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { content in content.contentReversed }) }
+    }
+    
+    public func contentReversed(_ condition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { content in content.contentReversed(condition) })
+    }
+    
+    public func contentReversed(while condition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { content in content.contentReversed(while: condition) })
+    }
+    
+    public func contentReversed(until condition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { content in content.contentReversed(until: condition) })
     }
     
     public var children: XElementSequence {
@@ -546,6 +682,34 @@ extension XElementSequence {
         return XElementSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { content in content.children(name) })
     }
     
+    public func children(while condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { content in content.children(while: condition) })
+    }
+    
+    public func children(until condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { content in content.children(until: condition) })
+    }
+    
+    public var childrenReversed: XElementSequence {
+        get { XElementSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { content in content.childrenReversed }) }
+    }
+    
+    public func childrenReversed(_ condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { content in content.childrenReversed(condition) })
+    }
+    
+    public func childrenReversed(_ name: String) -> XElementSequence {
+        return XElementSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { content in content.childrenReversed(name) })
+    }
+    
+    public func childrenReversed(while condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { content in content.childrenReversed(while: condition) })
+    }
+    
+    public func childrenReversed(until condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { content in content.childrenReversed(until: condition) })
+    }
+    
     public var next: XContentSequence {
         get { XContentSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { content in content.next }) }
     }
@@ -554,12 +718,28 @@ extension XElementSequence {
         return XContentSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { content in content.next(condition) })
     }
     
+    public func next(while condition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { content in content.next(while: condition) })
+    }
+    
+    public func next(until condition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { content in content.next(until: condition) })
+    }
+    
     public var previous: XContentSequence {
         get { XContentSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { content in content.previous }) }
     }
     
     public func previous(_ condition: @escaping (XContent) -> Bool) -> XContentSequence {
         return XContentSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { content in content.previous(condition) })
+    }
+    
+    public func previous(while condition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { content in content.previous(while: condition) })
+    }
+    
+    public func previous(until condition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { content in content.previous(until: condition) })
     }
     
     public var nextElements: XElementSequence {
@@ -574,6 +754,14 @@ extension XElementSequence {
         return XElementSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { content in content.nextElements(name) })
     }
     
+    public func nextElements(while condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { content in content.nextElements(while: condition) })
+    }
+    
+    public func nextElements(until condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { content in content.nextElements(until: condition) })
+    }
+    
     public var previousElements: XElementSequence {
         get { XElementSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { content in content.previousElements }) }
     }
@@ -586,6 +774,14 @@ extension XElementSequence {
         return XElementSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { content in content.previousElements(name) })
     }
     
+    public func previousElements(while condition: @escaping (XContent) -> Bool) -> XElementSequence {
+        return XElementSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { content in content.previousElements(while: condition) })
+    }
+    
+    public func previousElements(until condition: @escaping (XContent) -> Bool) -> XElementSequence {
+        return XElementSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { content in content.previousElements(until: condition) })
+    }
+    
     public var allContent: XContentSequence {
         get { XContentSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { content in content.allContent }) }
     }
@@ -594,12 +790,28 @@ extension XElementSequence {
         return XContentSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { content in content.allContent(condition) })
     }
     
+    public func allContent(while condition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { content in content.allContent(while: condition) })
+    }
+    
+    public func allContent(until condition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { content in content.allContent(until: condition) })
+    }
+    
     public var allContentIncludingSelf: XContentSequence {
         get { XContentSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { content in content.allContentIncludingSelf }) }
     }
     
     public func allContentIncludingSelf(_ condition: @escaping (XContent) -> Bool) -> XContentSequence {
         return XContentSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { content in content.allContentIncludingSelf(condition) })
+    }
+    
+    public func allContentIncludingSelf(while condition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { content in content.allContentIncludingSelf(while: condition) })
+    }
+    
+    public func allContentIncludingSelf(until condition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { content in content.allContentIncludingSelf(until: condition) })
     }
     
     public var descendants: XElementSequence {
@@ -614,6 +826,14 @@ extension XElementSequence {
         return XElementSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { content in content.descendants(name) })
     }
     
+    public func descendants(while condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { content in content.descendants(while: condition) })
+    }
+    
+    public func descendants(until condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { content in content.descendants(until: condition) })
+    }
+    
     public var descendantsIncludingSelf: XElementSequence {
         get { XElementSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { element in element.descendantsIncludingSelf }) }
     }
@@ -624,6 +844,14 @@ extension XElementSequence {
     
     public func descendantsIncludingSelf(_ name: String) -> XElementSequence {
         return XElementSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { element in element.descendantsIncludingSelf(name) })
+    }
+    
+    public func descendantsIncludingSelf(while condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { element in element.descendantsIncludingSelf(while: condition) })
+    }
+    
+    public func descendantsIncludingSelf(until condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { element in element.descendantsIncludingSelf(until: condition) })
     }
     
     public var previousInTreeTouching: XContentSequence {
