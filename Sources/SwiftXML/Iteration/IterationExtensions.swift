@@ -174,6 +174,17 @@ public extension XContentSequence {
         return makeIterator().next()
     }
     
+    func findLast() -> XContent? {
+        let iterator = makeIterator()
+        var content: XContent? = nil
+        var next: XContent? = nil
+        repeat {
+            content = next
+            next = iterator.next()
+        } while next != nil
+        return content
+    }
+    
     func find(index: Int) -> XContent? {
         let iterator = makeIterator()
         var position = 0
@@ -196,6 +207,17 @@ public extension XElementSequence {
     
     func findFirst() -> XElement? {
         return makeIterator().next()
+    }
+    
+    func findLast() -> XElement? {
+        let iterator = makeIterator()
+        var element: XElement? = nil
+        var next: XElement? = nil
+        repeat {
+            element = next
+            next = iterator.next()
+        } while next != nil
+        return element
     }
     
     func find(index: Int) -> XElement? {

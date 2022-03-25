@@ -577,11 +577,16 @@ Of those, the ones that are elements:
 var nextElements: XElementSequence
 ```
 
-Once you have such a sequence, you can get the first or the n'th itme in the sequence or just test if an item exists at all via:
+Once you have such a sequence, you can get the first, the last, or the n'th item in the sequence or just test if an item exists at all via:
 
 ```Swift
 func findFirst() -> XContent?
 func findFirst() -> XElement?
+```
+
+```Swift
+func findLast() -> XContent?
+func findLast() -> XElement?
 ```
 
 ```Swift
