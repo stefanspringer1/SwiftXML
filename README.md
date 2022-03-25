@@ -62,7 +62,7 @@ let document = try parseXML(fromText: """
 
 document.elements(ofName: "item").forEach { item in
     if let multiply = item["multiply"], let n = Int(multiply), n > 1 {
-        item.insertNext {
+        item.insertPrevious {
             XElement("item", ["multiply": n > 2 ? String(n-1) : nil])
         }
         item["multiply"] = nil
@@ -77,6 +77,8 @@ The output is:
 ```text
 <a><item/><item/><item/></a>
 ```
+
+Note that in this example – just to show you that it works – the new items are being inserted _before_ the current node but are then still being processed.
 
 The elements returned by an iteration can even be removed without stopping the (lazy!) iteration:
 
