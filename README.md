@@ -78,7 +78,7 @@ The output is:
 <a><item/><item/><item/></a>
 ```
 
-Note that in this example – just to show you that it works – the each new item is being inserted _before_ the current node but is then still being processed.
+Note that in this example – just to show you that it works – each new item is being inserted _before_ the current node but is then still being processed.
 
 The elements returned by an iteration can even be removed without stopping the (lazy!) iteration:
 
