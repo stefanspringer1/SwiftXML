@@ -280,14 +280,15 @@ public final class XDocument: XNode, XBranchInternal {
     
     // -------------------------------------------------------------------------
     
-    public override init() {
+    public init(attached: [String:Any?]? = nil) {
         super.init()
         _document = self
         self._lastInTree = self
+        attached?.forEach{ (key,value) in self.attached[key] = value }
     }
     
-    public convenience init(@XNodeBuilder builder: () -> [XContent]) {
-        self.init()
+    public convenience init(attached: [String:Any?]? = nil, @XNodeBuilder builder: () -> [XContent]) {
+        self.init(attached: attached)
         builder().forEach { node in
             add(node)
         }

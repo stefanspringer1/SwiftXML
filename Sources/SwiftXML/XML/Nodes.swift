@@ -589,8 +589,9 @@ public class XSpot: XContent {
     
     public var attached = Attachments()
     
-    public override init() {
+    public init(attached: [String:Any?]? = nil) {
         super.init()
+        attached?.forEach{ (key,value) in self.attached[key] = value }
     }
     
     @discardableResult public override func insertPrevious(@XNodeBuilder builder: () -> [XContent]) -> XSpot {
@@ -1239,22 +1240,18 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         }
     }
     
-    public init(_ name: String, _ attributes: [String:String?]? = nil) {
+    public init(_ name: String, _ attributes: [String:String?]? = nil, attached: [String:Any?]? = nil) {
         self._name = name
         super.init()
         self._lastInTree = self
         if let theAttributes = attributes {
             setAttributes(attributes: theAttributes)
         }
+        attached?.forEach{ (key,value) in self.attached[key] = value }
     }
     
-    public init(_ name: String, _ attributes: [String:String?]? = nil, adjustDocument _adjustDocument: Bool = false, @XNodeBuilder builder: () -> [XContent]) {
-        self._name = name
-        super.init()
-        self._lastInTree = self
-        if let theAttributes = attributes {
-            setAttributes(attributes: theAttributes)
-        }
+    public convenience init(_ name: String, _ attributes: [String:String?]? = nil, attached: [String:Any?]? = nil, adjustDocument _adjustDocument: Bool = false, @XNodeBuilder builder: () -> [XContent]) {
+        self.init(name, attributes, attached: attached)
         builder().forEach { node in
             add(node)
         }

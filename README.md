@@ -388,6 +388,8 @@ if let note = myElement.attached["note"] as? XElement {
 myElement.attached["note"] = nil
 ```
 
+You can also set attachments immediately when creating en element, document, or `XSpot` by using the argument `attached:` of the initializer.
+
 ## Traversals
 
 Traversing a tree depth-first starting from a node (including a document) can be done by the following methods:
