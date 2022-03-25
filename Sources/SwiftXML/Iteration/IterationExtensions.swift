@@ -13,15 +13,23 @@ public extension XBranch {
         get { XSequenceOfContent(node: self) }
     }
     
-    func content(where condition: @escaping (XNode) -> Bool) -> XContentSequence {
+    func content(_ condition: @escaping (XNode) -> Bool) -> XContentSequence {
         return XContentSequenceWithCondition(sequence: XSequenceOfContent(node: self), condition: condition)
+    }
+    
+    func content(while condition: @escaping (XNode) -> Bool) -> XContentSequence {
+        return XContentSequenceWhileCondition(sequence: XSequenceOfContent(node: self), while: condition)
+    }
+    
+    func content(until condition: @escaping (XNode) -> Bool) -> XContentSequence {
+        return XContentSequenceUntilCondition(sequence: XSequenceOfContent(node: self), until: condition)
     }
     
     var children: XElementSequence {
         get { return XChildrenSequence(node: self) }
     }
     
-    func children(where condition: @escaping (XElement) -> Bool) -> XElementSequence {
+    func children(_ condition: @escaping (XElement) -> Bool) -> XElementSequence {
         return XElementSequenceWithCondition(sequence: XChildrenSequence(node: self), condition: condition)
     }
     
@@ -29,24 +37,48 @@ public extension XBranch {
         return XElementSequenceWithCondition(sequence: XChildrenSequence(node: self), elementName: name)
     }
     
+    func children(while condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWhileCondition(sequence: XChildrenSequence(node: self), while: condition)
+    }
+    
+    func children(until condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceUntilCondition(sequence: XChildrenSequence(node: self), until: condition)
+    }
+    
     var allContent: XContentSequence {
         get { XAllContentSequence(node: self) }
     }
     
-    func allContent(where condition: @escaping (XNode) -> Bool) -> XContentSequence {
+    func allContent(_ condition: @escaping (XNode) -> Bool) -> XContentSequence {
         return XContentSequenceWithCondition(sequence: XAllContentSequence(node: self), condition: condition)
+    }
+    
+    func allContent(while condition: @escaping (XNode) -> Bool) -> XContentSequence {
+        return XContentSequenceWhileCondition(sequence: XAllContentSequence(node: self), while: condition)
+    }
+    
+    func allContent(until condition: @escaping (XNode) -> Bool) -> XContentSequence {
+        return XContentSequenceUntilCondition(sequence: XAllContentSequence(node: self), until: condition)
     }
     
     var descendants: XElementSequence {
         get { XDescendantsSequence(node: self) }
     }
     
-    func descendants(where condition: @escaping (XElement) -> Bool) -> XElementSequence {
+    func descendants(_ condition: @escaping (XElement) -> Bool) -> XElementSequence {
         return XElementSequenceWithCondition(sequence: XDescendantsSequence(node: self), condition: condition)
     }
     
     func descendants(_ name: String) -> XElementSequence {
         return XElementSequenceWithCondition(sequence: XDescendantsSequence(node: self), elementName: name)
+    }
+    
+    func descendants(while condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWhileCondition(sequence: XDescendantsSequence(node: self), while: condition)
+    }
+    
+    func descendants(until condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceUntilCondition(sequence: XDescendantsSequence(node: self), until: condition)
     }
     
 }
@@ -57,7 +89,7 @@ extension XContent {
         get { XAncestorsSequence(node: self) }
     }
     
-    public func ancestors(where condition: @escaping (XElement) -> Bool) -> XElementSequence {
+    public func ancestors(_ condition: @escaping (XElement) -> Bool) -> XElementSequence {
         return XElementSequenceWithCondition(sequence: XAncestorsSequence(node: self), condition: condition)
     }
     
@@ -65,19 +97,35 @@ extension XContent {
         return XElementSequenceWithCondition(sequence: XAncestorsSequence(node: self), elementName: name)
     }
     
+    public func ancestors(while condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWhileCondition(sequence: XAncestorsSequence(node: self), while: condition)
+    }
+    
+    public func ancestors(until condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceUntilCondition(sequence: XAncestorsSequence(node: self), until: condition)
+    }
+    
     public var content: XContentSequence {
         get { XSequenceOfContent(node: self) }
     }
     
-    public func content(where condition: @escaping (XContent) -> Bool) -> XContentSequence {
+    public func content(_ condition: @escaping (XContent) -> Bool) -> XContentSequence {
         return XContentSequenceWithCondition(sequence: XSequenceOfContent(node: self), condition: condition)
+    }
+    
+    public func content(while condition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentSequenceWhileCondition(sequence: XSequenceOfContent(node: self), while: condition)
+    }
+    
+    public func content(until condition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentSequenceUntilCondition(sequence: XSequenceOfContent(node: self), until: condition)
     }
     
     public var children: XElementSequence {
         get { return XChildrenSequence(node: self) }
     }
     
-    public func children(where condition: @escaping (XElement) -> Bool) -> XElementSequence {
+    public func children(_ condition: @escaping (XElement) -> Bool) -> XElementSequence {
         return XElementSequenceWithCondition(sequence: XChildrenSequence(node: self), condition: condition)
     }
     
@@ -85,27 +133,51 @@ extension XContent {
         return XElementSequenceWithCondition(sequence: XChildrenSequence(node: self), elementName: name)
     }
     
+    public func children(while condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWhileCondition(sequence: XChildrenSequence(node: self), while: condition)
+    }
+    
+    public func children(until condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceUntilCondition(sequence: XChildrenSequence(node: self), until: condition)
+    }
+    
     public var next: XContentSequence {
         get { XNextSequence(content: self) }
     }
     
-    public func next(where condition: @escaping (XContent) -> Bool) -> XContentSequence {
+    public func next(_ condition: @escaping (XContent) -> Bool) -> XContentSequence {
         return XContentSequenceWithCondition(sequence: XNextSequence(content: self), condition: condition)
+    }
+    
+    public func next(while condition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentSequenceWhileCondition(sequence: XNextSequence(content: self), while: condition)
+    }
+    
+    public func next(until condition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentSequenceUntilCondition(sequence: XNextSequence(content: self), until: condition)
     }
     
     public var previous: XContentSequence {
         get { XPreviousSequence(content: self) }
     }
     
-    public func previous(where condition: @escaping (XContent) -> Bool) -> XContentSequence {
+    public func previous(_ condition: @escaping (XContent) -> Bool) -> XContentSequence {
         return XContentSequenceWithCondition(sequence: XPreviousSequence(content: self), condition: condition)
+    }
+    
+    public func previous(while condition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentSequenceWhileCondition(sequence: XPreviousSequence(content: self), while: condition)
+    }
+    
+    public func previous(until condition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentSequenceUntilCondition(sequence: XPreviousSequence(content: self), until: condition)
     }
     
     public var nextElements: XElementSequence {
         get { XNextElementsSequence(content: self) }
     }
     
-    public func nextElements(where condition: @escaping (XElement) -> Bool) -> XElementSequence {
+    public func nextElements(_ condition: @escaping (XElement) -> Bool) -> XElementSequence {
         return XElementSequenceWithCondition(sequence: XNextElementsSequence(content: self), condition: condition)
     }
     
@@ -113,11 +185,19 @@ extension XContent {
         return XElementSequenceWithCondition(sequence: XNextElementsSequence(content: self), elementName: name)
     }
     
+    public func nextElements(while condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWhileCondition(sequence: XNextElementsSequence(content: self), while: condition)
+    }
+    
+    public func nextElements(until condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceUntilCondition(sequence: XNextElementsSequence(content: self), until: condition)
+    }
+    
     public var previousElements: XElementSequence {
         get { XPreviousElementsSequence(content: self) }
     }
     
-    public func previousElements(where condition: @escaping (XElement) -> Bool) -> XElementSequence {
+    public func previousElements(_ condition: @escaping (XElement) -> Bool) -> XElementSequence {
         return XElementSequenceWithCondition(sequence: XPreviousElementsSequence(content: self), condition: condition)
     }
     
@@ -125,32 +205,64 @@ extension XContent {
         return XElementSequenceWithCondition(sequence: XPreviousElementsSequence(content: self), elementName: name)
     }
     
+    public func previousElements(while condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWhileCondition(sequence: XPreviousElementsSequence(content: self), while: condition)
+    }
+    
+    public func previousElements(until condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceUntilCondition(sequence: XPreviousElementsSequence(content: self), until: condition)
+    }
+    
     public var allContent: XContentSequence {
         get { XAllContentSequence(node: self) }
     }
     
-    public func allContent(where condition: @escaping (XContent) -> Bool) -> XContentSequence {
+    public func allContent(_ condition: @escaping (XContent) -> Bool) -> XContentSequence {
         return XContentSequenceWithCondition(sequence: XAllContentSequence(node: self), condition: condition)
+    }
+    
+    public func allContent(while condition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentSequenceWhileCondition(sequence: XAllContentSequence(node: self), while: condition)
+    }
+    
+    public func allContent(until condition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentSequenceUntilCondition(sequence: XAllContentSequence(node: self), until: condition)
     }
     
     public var allContentIncludingSelf: XContentSequence {
         get { XAllContentIncludingSelfSequence(node: self) }
     }
     
-    public func allContentIncludingSelf(where condition: @escaping (XContent) -> Bool) -> XContentSequence {
+    public func allContentIncludingSelf(_ condition: @escaping (XContent) -> Bool) -> XContentSequence {
         return XContentSequenceWithCondition(sequence: XAllContentIncludingSelfSequence(node: self), condition: condition)
+    }
+    
+    public func allContentIncludingSelf(while condition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentSequenceWhileCondition(sequence: XAllContentIncludingSelfSequence(node: self), while: condition)
+    }
+    
+    public func allContentIncludingSelf(until condition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentSequenceUntilCondition(sequence: XAllContentIncludingSelfSequence(node: self), until: condition)
     }
     
     public var descendants: XElementSequence {
         get { XDescendantsSequence(node: self) }
     }
     
-    public func descendants(where condition: @escaping (XElement) -> Bool) -> XElementSequence {
+    public func descendants(_ condition: @escaping (XElement) -> Bool) -> XElementSequence {
         return XElementSequenceWithCondition(sequence: XDescendantsSequence(node: self), condition: condition)
     }
     
     public func descendants(_ name: String) -> XElementSequence {
         return XElementSequenceWithCondition(sequence: XDescendantsSequence(node: self), elementName: name)
+    }
+    
+    public func descendants(while condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWhileCondition(sequence: XDescendantsSequence(node: self), while: condition)
+    }
+    
+    public func descendants(until condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceUntilCondition(sequence: XDescendantsSequence(node: self), until: condition)
     }
     
 }
@@ -159,12 +271,20 @@ extension XElement {
     
     public var descendantsIncludingSelf: XElementSequence { get { XDescendantsIncludingSelfSequence(element: self) } }
     
-    public func descendantsIncludingSelf(where condition: @escaping (XElement) -> Bool) -> XElementSequence {
+    public func descendantsIncludingSelf(_ condition: @escaping (XElement) -> Bool) -> XElementSequence {
         return XElementSequenceWithCondition(sequence: XDescendantsIncludingSelfSequence(element: self), condition: condition)
     }
     
     public func descendantsIncludingSelf(_ name: String) -> XElementSequence {
         return XElementSequenceWithCondition(sequence: XDescendantsIncludingSelfSequence(element: self), elementName: name)
+    }
+    
+    public func descendantsIncludingSelf(while condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWhileCondition(sequence: XDescendantsIncludingSelfSequence(element: self), while: condition)
+    }
+    
+    public func descendantsIncludingSelf(until condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceUntilCondition(sequence: XDescendantsIncludingSelfSequence(element: self), until: condition)
     }
 }
 

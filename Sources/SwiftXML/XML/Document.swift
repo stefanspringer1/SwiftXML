@@ -74,16 +74,16 @@ public final class XDocument: XNode, XBranchInternal {
         get { _firstContent }
     }
     
-    public func firstContent(where condition: (XContent) -> Bool) -> XContent? {
-        return (self as XBranch).firstContent(where: condition)
+    public func firstContent(_ condition: (XContent) -> Bool) -> XContent? {
+        return (self as XBranch).firstContent(condition)
     }
     
     public var lastContent: XContent? {
         get { _lastContent }
     }
     
-    public func lastContent(where condition: (XContent) -> Bool) -> XContent? {
-        return (self as XBranch).lastContent(where: condition)
+    public func lastContent(_ condition: (XContent) -> Bool) -> XContent? {
+        return (self as XBranch).lastContent(condition)
     }
     
     public var isEmpty: Bool {

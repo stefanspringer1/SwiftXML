@@ -11,7 +11,7 @@ let transformation = XTransformation {
         table.insertNext {
             XElement("caption") {
                 "Table: "
-                table.children{ $0.name.contains("title") }.content
+                table.children({ $0.name.contains("title") }).content
             }
         }
     }
@@ -620,9 +620,41 @@ myElement.descendants.forEach { descendant in
 }
 ```
 
+You might also turn a single content item or, more specifically, an element into an appropriate sequence using the following  methods:
+
+For any content:
+
+```Swift
+var asContentSequence: XContentSequence
+```
+
+For an element:
+
+```Swift
+var asElementSequence: XElementSequence
+```
+
+This can be convenient in cases where the same type is needed, but you might want to choose between a sequence or a single content item:
+
+```Swift
+let myElement = XElement("p") {
+    unpack ? myOtherElement.content : myOtherElement.asContentSequence
+}
+```
+
 ## Finding related nodes with filters
 
-All of the methods in the previous section that return a sequence also allow a condition as first argument for filtering:
+All of the methods in the previous section that return a sequence also allow a condition as a first argument for filtering. We distinguish between the case of all items of the sequence fullfilling a condition, the case of all items while a condition is fullfilled, and the case of all items until a condition is fullfilled (excluding the found item where the condition fullfilled):
+
+```Swift
+func content((XContent) -> Bool) -> XContentSequence
+func content(while: (XContent) -> Bool) -> XContentSequence
+func content(until: (XContent) -> Bool) -> XContentSequence
+```
+
+Sequences of a more specific type are returned in sensible cases.
+
+Example:
 
 ```Swift
 let document = try parseXML(fromText: """
@@ -630,7 +662,7 @@ let document = try parseXML(fromText: """
 """)
 
 document
-    .descendants{ element in element["take"] == "true" }
+    .descendants({ element in element["take"] == "true" })
     .forEach { descendant in 
         print(descendant)
     }
@@ -642,6 +674,8 @@ Output:
 <e take="true">
 ```
 
+Note that the round parentheses “(...)” around the condition in the example is needed to distinguish it from the `while:` and `until:` versions. (There is no `where:` argument name, because without it the less common case `where:` – and to a lesser degree `until:` – is more easily visually distinguished from it, the more common case being syntactically the shortest. This plays out well in actual code.)
+
 There also exist a shortcut for the common of filtering elements according to a name:
 
 ```Swift
@@ -650,22 +684,6 @@ document
     .forEach { _ in
         print("found a paragraph!")"
     }
-```
-
-A short note on coding style: It is recommended to not use spaces around the parantheses `{...}` describing the filter, the same recommendation applies to `map` etc., other than before the parantheses defining element content or a terminating closure that is not a filter as in the case of `forEach`, and it is recommended to write the content of a terminating closure in a new line separate from the parantheses. The reaaon os that after such a filter, there might be a dot continuing the expression:
-
-```Swift
-myElement.descendants{ $0.name.contains("title") }.contents
-```
-
-You might not want to set a space before `.contents`, and it would then look quite asymmetric to put a space before the opening paranthese. Whereas defining content of an element in parantheses `{...}` or the closure of a `forEach` is more like defining a code block in the traditional sense. (Of course, this is just a recommendation. You may choose your own style.)
-
-Also note that if a filter is part of the condition of an `if` statement, you may get the warning “Trailing closure in this context is confusable with the body of the statement...” if you do not use the following notation:+
-
-```Swift
-if let label = section.children(where: { $0.name.contains("label") }).findFirst() {
-   // ... 
-}
 ```
 
 ## Chained iterators
@@ -1036,20 +1054,4 @@ To stop the notification, use
 
 ```Swift
 func removeChangedAction(forAttributeName: String)
-```
-
-## Facilities for testing
-
-For our tests of the library, we implemented the following properties to get a sequence iterating over a single element or content.
-
-For any content:
-
-```Swift
-var asContentSequence: XContentSequence
-```
-
-For an element:
-
-```Swift
-var asElementSequence: XElementSequence
 ```

@@ -31,7 +31,7 @@ public class XNode {
         }
     }
     
-    public func r(where condition: (XNode) -> Bool) -> XNode? {
+    public func r(_ condition: (XNode) -> Bool) -> XNode? {
         let node = _r
         if let theNode = node, condition(theNode) {
             return node
@@ -54,7 +54,7 @@ public class XNode {
         }
     }
     
-    public func rr(where condition: (XNode) -> Bool) -> XNode? {
+    public func rr(_ condition: (XNode) -> Bool) -> XNode? {
         let node = rr
         if let theNode = node, condition(theNode) {
             return node
@@ -135,7 +135,7 @@ public class XNode {
         }
     }
     
-    public func parent(where condition: (XElement) -> Bool) -> XElement? {
+    public func parent(_ condition: (XElement) -> Bool) -> XElement? {
         let element = parent
         if let theElement = element, condition(theElement) {
             return theElement
@@ -167,7 +167,7 @@ public class XNode {
     public var previousInTreeTouching: XContent? { get { _previousInTree as? XContent } }
     public var nextInTreeTouching: XContent? { get { _nextInTree as? XContent } }
     
-    public func previousInTreeTouching(where condition: (XContent) -> Bool) -> XContent? {
+    public func previousInTreeTouching(_ condition: (XContent) -> Bool) -> XContent? {
         let content = previousInTreeTouching
         if let theContent = content, condition(theContent) {
             return theContent
@@ -177,7 +177,7 @@ public class XNode {
         }
     }
     
-    public func nextInTreeTouching(where condition: (XContent) -> Bool) -> XContent? {
+    public func nextInTreeTouching(_ condition: (XContent) -> Bool) -> XContent? {
         let content = nextInTreeTouching
         if let theContent = content, condition(theContent) {
             return theContent
@@ -613,9 +613,9 @@ public class XSpot: XContent {
 
 public protocol XBranch: XNode {
     var firstContent: XContent? { get }
-    func firstContent(where condition: (XContent) -> Bool) -> XContent?
+    func firstContent(_ condition: (XContent) -> Bool) -> XContent?
     var lastContent: XContent? { get }
-    func lastContent(where condition: (XContent) -> Bool) -> XContent?
+    func lastContent(_ condition: (XContent) -> Bool) -> XContent?
     var isEmpty: Bool { get }
     @discardableResult func add(@XNodeBuilder builder: () -> [XContent]) -> XBranch
     @discardableResult func add(skip: Bool, @XNodeBuilder builder: () -> [XContent]) -> XBranch
@@ -662,7 +662,7 @@ extension XBranchInternal {
         get { _firstContent }
     }
     
-    public func firstContent(where condition: (XContent) -> Bool) -> XContent? {
+    public func firstContent(_ condition: (XContent) -> Bool) -> XContent? {
         let node = _firstContent
         if let theNode = node, condition(theNode) {
             return node
@@ -676,7 +676,7 @@ extension XBranchInternal {
         get { _lastContent }
     }
     
-    public func lastContent(where condition: (XContent) -> Bool) -> XContent? {
+    public func lastContent(_ condition: (XContent) -> Bool) -> XContent? {
         let node = _lastContent
         if let theNode = node, condition(theNode) {
             return node
@@ -1124,16 +1124,16 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         get { _firstContent }
     }
     
-    public func firstContent(where condition: (XContent) -> Bool) -> XContent? {
-        return (self as XBranch).firstContent(where: condition)
+    public func firstContent(_ condition: (XContent) -> Bool) -> XContent? {
+        return (self as XBranch).firstContent(condition)
     }
     
     public var lastContent: XContent? {
         get { _lastContent }
     }
     
-    public func lastContent(where condition: (XContent) -> Bool) -> XContent? {
-        return (self as XBranch).lastContent(where: condition)
+    public func lastContent(_ condition: (XContent) -> Bool) -> XContent? {
+        return (self as XBranch).lastContent(condition)
     }
     
     public var isEmpty: Bool {

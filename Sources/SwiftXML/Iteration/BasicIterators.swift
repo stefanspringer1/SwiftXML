@@ -35,6 +35,46 @@ public class XContentIteratorWithCondition: XContentIterator {
     }
 }
 
+public class XContentIteratorWhileCondition: XContentIterator {
+    
+    let iterator: XContentIterator
+    let condition: (XContent) -> Bool
+    
+    init(iterator: XContentIterator, while condition: @escaping (XContent) -> Bool) {
+        self.iterator = iterator
+        self.condition = condition
+    }
+    
+    public override func next() -> XContent? {
+        if let node = iterator.next(), condition(node) {
+            return node
+        }
+        else {
+            return nil
+        }
+    }
+}
+
+public class XContentIteratorUntilCondition: XContentIterator {
+    
+    let iterator: XContentIterator
+    let condition: (XContent) -> Bool
+    
+    init(iterator: XContentIterator, until condition: @escaping (XContent) -> Bool) {
+        self.iterator = iterator
+        self.condition = condition
+    }
+    
+    public override func next() -> XContent? {
+        if let node = iterator.next(), !condition(node) {
+            return node
+        }
+        else {
+            return nil
+        }
+    }
+}
+
 public class XContentSequence: LazySequenceProtocol {
     public func makeIterator() -> XContentIterator {
         return XContentIterator()
@@ -75,6 +115,56 @@ public class XElementIteratorWithCondition: XElementIterator {
     }
 }
 
+public class XElementIteratorWhileCondition: XElementIterator {
+    
+    let iterator: XElementIterator
+    let condition: (XElement) -> Bool
+    
+    init(iterator: XElementIterator, while condition: @escaping (XElement) -> Bool) {
+        self.iterator = iterator
+        self.condition = condition
+    }
+    
+    init(iterator: XElementIterator, elementName: String) {
+        self.iterator = iterator
+        self.condition = { $0.name == elementName }
+    }
+    
+    public override func next() -> XElement? {
+        if let element = iterator.next(), condition(element) {
+            return element
+        }
+        else {
+            return nil
+        }
+    }
+}
+
+public class XElementIteratorUntilCondition: XElementIterator {
+    
+    let iterator: XElementIterator
+    let condition: (XElement) -> Bool
+    
+    init(iterator: XElementIterator, until condition: @escaping (XElement) -> Bool) {
+        self.iterator = iterator
+        self.condition = condition
+    }
+    
+    init(iterator: XElementIterator, elementName: String) {
+        self.iterator = iterator
+        self.condition = { $0.name == elementName }
+    }
+    
+    public override func next() -> XElement? {
+        if let element = iterator.next(), !condition(element) {
+            return element
+        }
+        else {
+            return nil
+        }
+    }
+}
+
 public class XElementSequence: LazySequenceProtocol {
     public func makeIterator() -> XElementIterator {
         return XElementIterator()
@@ -107,6 +197,46 @@ public class XAttributeIteratorWithCondition: XAttributeIterator {
             }
         } while _next != nil
         return nil
+    }
+}
+
+public class XAttributeIteratorWhileCondition: XAttributeIterator {
+    
+    let iterator: XAttributeIterator
+    let condition: (XAttributeSpot) -> Bool
+    
+    init(iterator: XAttributeIterator, while condition: @escaping (XAttributeSpot) -> Bool) {
+        self.iterator = iterator
+        self.condition = condition
+    }
+    
+    public override func next() -> XAttributeSpot? {
+        if let attributeSpot = iterator.next(), condition(attributeSpot) {
+            return attributeSpot
+        }
+        else {
+            return nil
+        }
+    }
+}
+
+public class XAttributeIteratorUntilCondition: XAttributeIterator {
+    
+    let iterator: XAttributeIterator
+    let condition: (XAttributeSpot) -> Bool
+    
+    init(iterator: XAttributeIterator, until condition: @escaping (XAttributeSpot) -> Bool) {
+        self.iterator = iterator
+        self.condition = condition
+    }
+    
+    public override func next() -> XAttributeSpot? {
+        if let attributeSpot = iterator.next(), !condition(attributeSpot) {
+            return attributeSpot
+        }
+        else {
+            return nil
+        }
     }
 }
 

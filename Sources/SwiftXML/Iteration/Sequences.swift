@@ -10,6 +10,60 @@ import Foundation
 // >>>>>>>>>>>>>>>>
 // with conditions:
 
+public final class XContentSequenceWithCondition: XContentSequence {
+    
+    let sequence: XContentSequence
+    let condition: (XContent) -> Bool
+    
+    init(sequence: XContentSequence, condition: @escaping (XContent) -> Bool) {
+        self.sequence = sequence
+        self.condition = condition
+    }
+    
+    public override func makeIterator() -> XContentIterator {
+        return XContentIteratorWithCondition(
+            iterator: sequence.makeIterator(),
+            condition: condition
+        )
+    }
+}
+
+public final class XContentSequenceWhileCondition: XContentSequence {
+    
+    let sequence: XContentSequence
+    let condition: (XContent) -> Bool
+    
+    init(sequence: XContentSequence, while condition: @escaping (XContent) -> Bool) {
+        self.sequence = sequence
+        self.condition = condition
+    }
+    
+    public override func makeIterator() -> XContentIterator {
+        return XContentIteratorWhileCondition(
+            iterator: sequence.makeIterator(),
+            while: condition
+        )
+    }
+}
+
+public final class XContentSequenceUntilCondition: XContentSequence {
+    
+    let sequence: XContentSequence
+    let condition: (XContent) -> Bool
+    
+    init(sequence: XContentSequence, until condition: @escaping (XContent) -> Bool) {
+        self.sequence = sequence
+        self.condition = condition
+    }
+    
+    public override func makeIterator() -> XContentIterator {
+        return XContentIteratorUntilCondition(
+            iterator: sequence.makeIterator(),
+            until: condition
+        )
+    }
+}
+
 public final class XElementSequenceWithCondition: XElementSequence {
     
     let sequence: XElementSequence
@@ -33,20 +87,48 @@ public final class XElementSequenceWithCondition: XElementSequence {
     }
 }
 
-public final class XContentSequenceWithCondition: XContentSequence {
+public final class XElementSequenceWhileCondition: XElementSequence {
     
-    let sequence: XContentSequence
-    let condition: (XContent) -> Bool
+    let sequence: XElementSequence
+    let condition: (XElement) -> Bool
     
-    init(sequence: XContentSequence, condition: @escaping (XContent) -> Bool) {
+    init(sequence: XElementSequence, while condition: @escaping (XElement) -> Bool) {
         self.sequence = sequence
         self.condition = condition
     }
     
-    public override func makeIterator() -> XContentIterator {
-        return XContentIteratorWithCondition(
+    init(sequence: XElementSequence, elementName: String) {
+        self.sequence = sequence
+        self.condition = { $0.name == elementName }
+    }
+    
+    public override func makeIterator() -> XElementIterator {
+        return XElementIteratorWhileCondition(
             iterator: sequence.makeIterator(),
-            condition: condition
+            while: condition
+        )
+    }
+}
+
+public final class XElementSequenceUntilCondition: XElementSequence {
+    
+    let sequence: XElementSequence
+    let condition: (XElement) -> Bool
+    
+    init(sequence: XElementSequence, until condition: @escaping (XElement) -> Bool) {
+        self.sequence = sequence
+        self.condition = condition
+    }
+    
+    init(sequence: XElementSequence, elementName: String) {
+        self.sequence = sequence
+        self.condition = { $0.name == elementName }
+    }
+    
+    public override func makeIterator() -> XElementIterator {
+        return XElementIteratorUntilCondition(
+            iterator: sequence.makeIterator(),
+            until: condition
         )
     }
 }
@@ -65,6 +147,42 @@ public final class XAttributeSequenceWithCondition: XAttributeSequence {
         return XAttributeIteratorWithCondition(
             iterator: sequence.makeIterator(),
             condition: condition
+        )
+    }
+}
+
+public final class XAttributeSequenceWhileCondition: XAttributeSequence {
+    
+    let sequence: XAttributeSequence
+    let condition: (XAttributeSpot) -> Bool
+    
+    init(sequence: XAttributeSequence, while condition: @escaping (XAttributeSpot) -> Bool) {
+        self.sequence = sequence
+        self.condition = condition
+    }
+    
+    public override func makeIterator() -> XAttributeIterator {
+        return XAttributeIteratorWhileCondition(
+            iterator: sequence.makeIterator(),
+            while: condition
+        )
+    }
+}
+
+public final class XAttributeSequenceUntilCondition: XAttributeSequence {
+    
+    let sequence: XAttributeSequence
+    let condition: (XAttributeSpot) -> Bool
+    
+    init(sequence: XAttributeSequence, until condition: @escaping (XAttributeSpot) -> Bool) {
+        self.sequence = sequence
+        self.condition = condition
+    }
+    
+    public override func makeIterator() -> XAttributeIterator {
+        return XAttributeIteratorUntilCondition(
+            iterator: sequence.makeIterator(),
+            until: condition
         )
     }
 }
