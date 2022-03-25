@@ -25,6 +25,22 @@ public extension XBranch {
         return XContentSequenceUntilCondition(sequence: XSequenceOfContent(node: self), until: condition)
     }
     
+    var contentReversed: XContentSequence {
+        get { XReversedSequenceOfContent(node: self) }
+    }
+    
+    func contentReversed(_ condition: @escaping (XNode) -> Bool) -> XContentSequence {
+        return XContentSequenceWithCondition(sequence: XReversedSequenceOfContent(node: self), condition: condition)
+    }
+    
+    func contentReversed(while condition: @escaping (XNode) -> Bool) -> XContentSequence {
+        return XContentSequenceWhileCondition(sequence: XReversedSequenceOfContent(node: self), while: condition)
+    }
+    
+    func contentReversed(until condition: @escaping (XNode) -> Bool) -> XContentSequence {
+        return XContentSequenceUntilCondition(sequence: XReversedSequenceOfContent(node: self), until: condition)
+    }
+    
     var children: XElementSequence {
         get { return XChildrenSequence(node: self) }
     }
@@ -43,6 +59,26 @@ public extension XBranch {
     
     func children(until condition: @escaping (XElement) -> Bool) -> XElementSequence {
         return XElementSequenceUntilCondition(sequence: XChildrenSequence(node: self), until: condition)
+    }
+    
+    var childrenReversed: XElementSequence {
+        get { return XReversedChildrenSequence(node: self) }
+    }
+    
+    func childrenReversed(_ condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XReversedChildrenSequence(node: self), condition: condition)
+    }
+    
+    func childrenReversed(_ name: String) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XReversedChildrenSequence(node: self), elementName: name)
+    }
+    
+    func childrenReversed(while condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWhileCondition(sequence: XReversedChildrenSequence(node: self), while: condition)
+    }
+    
+    func childrenReversed(until condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceUntilCondition(sequence: XReversedChildrenSequence(node: self), until: condition)
     }
     
     var allContent: XContentSequence {
@@ -121,6 +157,22 @@ extension XContent {
         return XContentSequenceUntilCondition(sequence: XSequenceOfContent(node: self), until: condition)
     }
     
+    public var contentReversed: XContentSequence {
+        get { XReversedSequenceOfContent(node: self) }
+    }
+    
+    public func contentReversed(_ condition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentSequenceWithCondition(sequence: XReversedSequenceOfContent(node: self), condition: condition)
+    }
+    
+    public func contentReversed(while condition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentSequenceWhileCondition(sequence: XReversedSequenceOfContent(node: self), while: condition)
+    }
+    
+    public func contentReversed(until condition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentSequenceUntilCondition(sequence: XReversedSequenceOfContent(node: self), until: condition)
+    }
+    
     public var children: XElementSequence {
         get { return XChildrenSequence(node: self) }
     }
@@ -139,6 +191,26 @@ extension XContent {
     
     public func children(until condition: @escaping (XElement) -> Bool) -> XElementSequence {
         return XElementSequenceUntilCondition(sequence: XChildrenSequence(node: self), until: condition)
+    }
+    
+    public var childrenReversed: XElementSequence {
+        get { return XReversedChildrenSequence(node: self) }
+    }
+    
+    public func childrenReversed(_ condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XReversedChildrenSequence(node: self), condition: condition)
+    }
+    
+    public func childrenReversed(_ name: String) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XReversedChildrenSequence(node: self), elementName: name)
+    }
+    
+    public func childrenReversed(while condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWhileCondition(sequence: XReversedChildrenSequence(node: self), while: condition)
+    }
+    
+    public func childrenReversed(until condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceUntilCondition(sequence: XReversedChildrenSequence(node: self), until: condition)
     }
     
     public var next: XContentSequence {

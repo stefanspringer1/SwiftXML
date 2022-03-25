@@ -269,6 +269,19 @@ public final class XSequenceOfContent: XContentSequence {
     }
 }
 
+public final class XReversedSequenceOfContent: XContentSequence {
+    
+    let node: XNode
+    
+    init(node: XNode) {
+        self.node = node
+    }
+    
+    public override func makeIterator() -> XContentIterator {
+        return XBidirectionalContentIterator(nodeIterator: XReversedContentsIterator(node: node))
+    }
+}
+
 public final class XChildrenSequence: XElementSequence {
     
     let node: XNode
@@ -279,6 +292,19 @@ public final class XChildrenSequence: XElementSequence {
     
     public override func makeIterator() -> XElementIterator {
         return XBidirectionalElementIterator(elementIterator: XChildrenIterator(node: node))
+    }
+}
+
+public final class XReversedChildrenSequence: XElementSequence {
+    
+    let node: XNode
+    
+    init(node: XNode) {
+        self.node = node
+    }
+    
+    public override func makeIterator() -> XElementIterator {
+        return XBidirectionalElementIterator(elementIterator: XReversedChildrenIterator(node: node))
     }
 }
 

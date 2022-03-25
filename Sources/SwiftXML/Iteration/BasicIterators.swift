@@ -428,6 +428,44 @@ public final class XContentsIterator: XContentIteratorProtocol {
 }
 
 /**
+ Iterates though the content of a branch.
+ */
+public final class XReversedContentsIterator: XContentIteratorProtocol {
+    
+    private var started = false
+    let node: XNode
+    weak var currentNode: XContent? = nil
+    
+    public init(
+        node: XNode
+    ) {
+        self.node = node
+    }
+    
+    public func next() -> XContent? {
+        if started {
+            currentNode = currentNode?._previous
+        }
+        else {
+            currentNode = (node as? XBranchInternal)?._lastContent
+            started = true
+        }
+        return currentNode
+    }
+    
+    public func previous() -> XContent? {
+        if started {
+            currentNode = currentNode?._next
+            if currentNode == nil {
+                started = false
+            }
+            return currentNode
+        }
+        return nil
+    }
+}
+
+/**
  Iterates though the content after a content.
  */
 public final class XNextIterator: XContentIteratorProtocol {
@@ -603,6 +641,48 @@ public final class XChildrenIterator: XElementIteratorProtocol {
         repeat {
             if started {
                 currentNode = currentNode?._previous
+                if currentNode == nil {
+                    started = false
+                }
+            }
+        } while currentNode != nil && !(currentNode! is XElement)
+        return currentNode as? XElement
+    }
+}
+
+
+/**
+ Iterates though the children of a branch, reversely.
+ */
+public final class XReversedChildrenIterator: XElementIteratorProtocol {
+    
+    private var started = false
+    weak var node: XNode?
+    weak var currentNode: XNode? = nil
+    
+    public init(
+        node: XNode
+    ) {
+        self.node = node
+    }
+    
+    public func next() -> XElement? {
+        repeat {
+            if started {
+                currentNode = currentNode?._previous
+            }
+            else {
+                currentNode = (node as? XBranchInternal)?._lastContent
+                started = true
+            }
+        } while currentNode != nil && !(currentNode! is XElement)
+        return currentNode as? XElement
+    }
+    
+    public func previous() -> XElement? {
+        repeat {
+            if started {
+                currentNode = currentNode?._next
                 if currentNode == nil {
                     started = false
                 }
