@@ -119,10 +119,6 @@ public class XNode {
         _contentIterators.remove(nodeIterator)
     }
     
-    func gotoPreviousOnContentIterators() {
-        _contentIterators.forEach { _ = $0.previous() }
-    }
-    
     func prefetchOnContentIterators() {
         _contentIterators.forEach { $0.prefetch() }
     }
@@ -393,15 +389,10 @@ public class XContent: XNode {
      If "forward", then detaching prefetches the next node in iterators.
      Else, the iterators all told to go to the previous node.
      */
-    func removeKeep(prefetch: Bool = false) {
+    func removeKeep() {
         
         // correction in iterators:
-        if prefetch {
-            prefetchOnContentIterators()
-        }
-        else {
-            gotoPreviousOnContentIterators()
-        }
+        prefetchOnContentIterators()
         
         // tree order:
         
@@ -430,8 +421,8 @@ public class XContent: XNode {
      If "forward", then detaching prefetches the next node in iterators.
      Else, the iterators all told to go to the previous node.
      */
-    func _remove(prefetch: Bool = false) {
-        removeKeep(prefetch: prefetch)
+    func _remove() {
+        removeKeep()
         if let meAsElement = self as? XElement {
             meAsElement.document?.unregisterElement(element: meAsElement)
         }
@@ -484,11 +475,6 @@ public class XContent: XNode {
     
     func _insertPrevious(_ content: [XContent]) {
         content.forEach { insertPrevious($0) }
-    }
-    
-    func _insertPreviousPrefetch(_ content: [XContent]) {
-        prefetchOnContentIterators()
-        _insertPrevious(content)
     }
     
     func _insertPrevious(@XNodeBuilder builder: () -> [XContent]) {
@@ -563,8 +549,8 @@ public class XContent: XNode {
      If "forward", then detaching prefetches the next node in iterators.
      Else, the iterators all told to go to the previous node.
      */
-    @discardableResult public func remove(prefetch: Bool = false) -> XContent {
-        _remove(prefetch: prefetch)
+    @discardableResult public func remove() -> XContent {
+        _remove()
         return self
     }
     
@@ -575,7 +561,7 @@ public class XContent: XNode {
     func _replace(by content: [XContent]) {
         let placeholder = XSpot() // do not use text as a place holder!
         insertNext(placeholder)
-        _remove(prefetch: true)
+        _remove()
         content.forEach { placeholder.insertPrevious($0) }
         placeholder._remove()
     }
@@ -592,14 +578,14 @@ public class XContent: XNode {
      Replace the node by another node.
      If "forward", then detaching prefetches the next node in iterators.
      */
-    func replace1(prefetch: Bool = false, _ node: XContent) {
+    func replace1(_ node: XContent) {
         if let theNext = _next {
-            _remove(prefetch: prefetch)
+            _remove()
             theNext.insertPrevious(node)
             
         }
         else if let theParent = _parent {
-            _remove(prefetch: prefetch)
+            _remove()
             theParent.add(node)
         }
     }
@@ -726,7 +712,7 @@ extension XBranchInternal {
         var node = self._firstContent
         var nextNode = node?._next
         while let toRemove = node {
-            toRemove._remove(prefetch: prefetch)
+            toRemove._remove()
             node = nextNode
             nextNode = node?._next
         }
@@ -738,7 +724,7 @@ extension XBranchInternal {
      If "forward", then detaching prefetches the next node in iterators.
      */
     public func clear() -> XBranch {
-        clear(prefetch: false)
+        clear()
         return self
     }
     
@@ -753,7 +739,7 @@ extension XBranchInternal {
             lastAsText.whitespace = .UNKNOWN
         }
         else {
-            node.removeKeep(prefetch: skip)
+            node.removeKeep()
             
             // insert into new chain:
             if let theLastChild = _lastContent {
@@ -816,7 +802,7 @@ extension XBranchInternal {
             firstAsText.whitespace = .UNKNOWN
         }
         else {
-            node.removeKeep(prefetch: skip)
+            node.removeKeep()
             
             // insert into new chain:
             if let theFirstChild = _firstContent {
@@ -877,7 +863,7 @@ extension XBranchInternal {
         let endMarker = XSpot()
         add(endMarker)
         builder().forEach { endMarker.insertPrevious($0) }
-        endMarker.previous.forEach { $0._remove(prefetch: prefetch) }
+        endMarker.previous.forEach { $0._remove() }
         endMarker._remove()
         return self
     }
@@ -1300,17 +1286,12 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         self._document = document
     }
     
-    public override func removeKeep(prefetch: Bool = false) {
+    public override func removeKeep() {
         
         // correction in iterators:
-        if prefetch {
-            _treeIterators.forEach { $0.prefetch() }
-        }
-        else {
-            _treeIterators.forEach { _ = $0.previous() }
-        }
+        _treeIterators.forEach { $0.prefetch() }
         
-        super.removeKeep(prefetch: prefetch)
+        super.removeKeep()
     }
     
     func setAttributes(attributes newAtttributeValues: [String:String?]? = nil) {
