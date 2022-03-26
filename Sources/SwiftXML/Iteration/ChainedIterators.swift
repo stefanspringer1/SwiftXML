@@ -932,11 +932,15 @@ extension XElementSequence {
     }
     
     public func add(_ contentGetter: @escaping (XContent) -> [XContent]) {
-        self.forEach { element in element.add(contentGetter(element)) }
+        self.forEach { element in element._add(contentGetter(element)) }
     }
     
     public func addFirst(_ contentGetter: @escaping (XContent) -> [XContent]) {
-        self.forEach { element in element.addFirst(contentGetter(element)) }
+        self.forEach { element in element._addFirst(contentGetter(element)) }
+    }
+    
+    public func setContent(_ contentGetter: @escaping (XContent) -> [XContent]) {
+        self.forEach { element in element._setContent(contentGetter(element)) }
     }
     
     public func insertPrevious(_ contentGetter: @escaping (XContent) -> [XContent]) {

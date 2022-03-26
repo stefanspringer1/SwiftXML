@@ -55,7 +55,7 @@ public final class XParseBuilder: XEventHandler {
     
     public func elementStart(name: String, attributes: [String:String]?, textRange _: XTextRange?, dataRange _: XDataRange?) {
         let element = XElement(name)
-        currentBranch.add(element)
+        currentBranch._add(element)
         element.setAttributes(attributes: attributes)
         currentBranch = element
     }
@@ -70,28 +70,28 @@ public final class XParseBuilder: XEventHandler {
     }
     
     public func text(text: String, whitespace: WhitespaceIndicator, textRange _: XTextRange?, dataRange _: XDataRange?) {
-        currentBranch.add(XText(text, whitespace: whitespace))
+        currentBranch._add(XText(text, whitespace: whitespace))
     }
     
     public func cdataSection(text: String, textRange _: XTextRange?, dataRange _: XDataRange?) {
-        currentBranch.add(keepCDATASections ? XCDATASection(text: text): XText(text))
+        currentBranch._add(keepCDATASections ? XCDATASection(text: text): XText(text))
     }
     
     public func internalEntity(name: String, textRange _: XTextRange?, dataRange _: XDataRange?) {
-        currentBranch.add(XInternalEntity(name))
+        currentBranch._add(XInternalEntity(name))
     }
     
     public func externalEntity(name: String, textRange _: XTextRange?, dataRange _: XDataRange?) {
-        currentBranch.add(XExternalEntity(name))
+        currentBranch._add(XExternalEntity(name))
     }
     
     public func processingInstruction(target: String, data: String?, textRange _: XTextRange?, dataRange _: XDataRange?) {
-        currentBranch.add(XProcessingInstruction(target: target, data: data))
+        currentBranch._add(XProcessingInstruction(target: target, data: data))
     }
     
     public func comment(text: String, textRange _: XTextRange?, dataRange _: XDataRange?) {
         if keepComments {
-            currentBranch.add(XComment(text: text))
+            currentBranch._add(XComment(text: text))
         }
     }
     

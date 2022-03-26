@@ -833,8 +833,8 @@ Besides changing the node properties, an XML tree can be changed by the followin
 Add nodes to the start of the content of an element or a document respectively:
 
 ```Swift
-func add(skip: Bool, builder: () -> [XContent]) -> XElement
-func add(skip: Bool, builder: () -> [XContent]) -> XDocument
+func add(builder: () -> [XContent]) -> XElement
+func add(builder: () -> [XContent]) -> XDocument
 ```
 
 Add nodes as the nodes previous to the node:

@@ -93,13 +93,13 @@ public final class XDocument: XNode, XBranchInternal {
     // ------------------------------------------------------------------------
     // more precisely typed versions for methods from XBranch:
     
-    @discardableResult public func add(skip: Bool = false, @XNodeBuilder builder: () -> [XContent]) -> XDocument {
-        _ = (self as XBranch).add(skip: skip, builder: builder)
+    @discardableResult public func add(@XNodeBuilder builder: () -> [XContent]) -> XDocument {
+        _ = (self as XBranch).add(builder: builder)
         return self
     }
     
-    @discardableResult public func addFirst(skip: Bool = false, @XNodeBuilder builder: () -> [XContent]) -> XDocument {
-        _ = (self as XBranch).addFirst(skip: skip, builder: builder)
+    @discardableResult public func addFirst(@XNodeBuilder builder: () -> [XContent]) -> XDocument {
+        _ = (self as XBranch).addFirst(builder: builder)
         return self
     }
     
@@ -107,8 +107,8 @@ public final class XDocument: XNode, XBranchInternal {
      Set the contents of the document.
      If "prefetch", then detaching prefetches the next node in iterators.
      */
-    @discardableResult public func setContent(prefetch: Bool = false, @XNodeBuilder builder: () -> [XContent]) -> XDocument {
-        _ = (self as XBranch).setContent(prefetch: prefetch, builder: builder)
+    @discardableResult public func setContent(@XNodeBuilder builder: () -> [XContent]) -> XDocument {
+        _ = (self as XBranch).setContent(builder: builder)
         return self
     }
     
@@ -117,7 +117,7 @@ public final class XDocument: XNode, XBranchInternal {
      If "prefetch", then detaching prefetches the next node in iterators.
      */
     @discardableResult func clear(prefetch: Bool) -> XDocument {
-        _ = (self as XBranch).clear(prefetch: prefetch)
+        _ = (self as XBranch).clear()
         return self
     }
     
@@ -290,7 +290,7 @@ public final class XDocument: XNode, XBranchInternal {
     public convenience init(attached: [String:Any?]? = nil, @XNodeBuilder builder: () -> [XContent]) {
         self.init(attached: attached)
         builder().forEach { node in
-            add(node)
+            _add(node)
         }
     }
     
