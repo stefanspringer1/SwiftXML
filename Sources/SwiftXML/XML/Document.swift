@@ -15,22 +15,6 @@ final class XValue {
 }
 
 public final class XDocument: XNode, XBranchInternal {
-
-    public func addFirst(@XNodeBuilder builder: () -> [XContent]) {
-        (self as XBranchInternal).addFirst(builder: builder)
-    }
-    
-    public func add(@XNodeBuilder builder: () -> [XContent]) {
-        (self as XBranchInternal).add(builder: builder)
-    }
-    
-    public func setContent(@XNodeBuilder builder: () -> [XContent]) {
-        (self as XBranchInternal).setContent(builder: builder)
-    }
-    
-    public func clear() {
-        (self as XBranchInternal).clear()
-    }
     
     var _firstContent: XContent? = nil
     
@@ -140,7 +124,7 @@ public final class XDocument: XNode, XBranchInternal {
     
     public override func clone(pointingFromClone: Bool = false) -> XDocument {
         let theClone = shallowClone(forwardref: pointingFromClone)
-        theClone.addClones(from: self, forwardref: pointingFromClone)
+        theClone._addClones(from: self, forwardref: pointingFromClone)
         return theClone
     }
     

@@ -590,7 +590,7 @@ protocol XBranchInternal: XBranch {
 
 extension XBranchInternal {
     
-    func addClones(from source: XBranchInternal, forwardref: Bool = false) {
+    func _addClones(from source: XBranchInternal, forwardref: Bool = false) {
         source.content.forEach { node in
             if let content = node.shallowClone() as? XContent {
                 _add(content)
@@ -649,23 +649,12 @@ extension XBranchInternal {
     /**
      Clear the contents of the node.
      */
-    public func clear(prefetch: Bool) -> XBranch {
-        var node = self._firstContent
-        var nextNode = node?._next
-        while let toRemove = node {
-            toRemove.remove()
-            node = nextNode
-            nextNode = node?._next
+    public func clear() {
+        var node = _firstContent
+        while let theNode = node {
+            theNode.remove()
+            node = theNode._next
         }
-        return self
-    }
-    
-    /**
-     Clear the contents of the node.
-     */
-    public func clear() -> XBranch {
-        clear()
-        return self
     }
     
     /**
@@ -918,22 +907,6 @@ public class Attachments {
 
 public final class XElement: XContent, XBranchInternal, CustomStringConvertible {
     
-    public func addFirst(@XNodeBuilder builder: () -> [XContent]) {
-        (self as XBranchInternal).addFirst(builder: builder)
-    }
-    
-    public func add(@XNodeBuilder builder: () -> [XContent]) {
-        (self as XBranchInternal).add(builder: builder)
-    }
-    
-    public func setContent(@XNodeBuilder builder: () -> [XContent]) {
-        (self as XBranchInternal).setContent(builder: builder)
-    }
-    
-    public func clear() {
-        (self as XBranchInternal).clear()
-    }
-    
     func setDocument(document newDocument: XDocument?) {
         
         // set document:
@@ -1009,7 +982,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     
     public override func clone(pointingFromClone: Bool = false) -> XElement {
         let theClone = shallowClone(forwardref: pointingFromClone)
-        theClone.addClones(from: self, forwardref: pointingFromClone)
+        theClone._addClones(from: self, forwardref: pointingFromClone)
         return theClone
     }
     
