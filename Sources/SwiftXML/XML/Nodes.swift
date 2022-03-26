@@ -550,7 +550,7 @@ public class XContent: XNode {
     /**
      Replace the node by other nodes.
      */
-    public func _replace(@XNodeBuilder builder: () -> [XContent]) {
+    public func replace(@XNodeBuilder builder: () -> [XContent]) {
         _replace(by: builder())
     }
     
