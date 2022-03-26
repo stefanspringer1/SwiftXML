@@ -376,6 +376,10 @@ public class XElementDependingOnElementSequence: XElementSequence {
     }
 }
 
+public func find(@XNodeBuilder builder: @escaping () -> [XContent]) -> [XContent] {
+    return builder()
+}
+
 extension XContentSequence {
     
     public var ancestors: XElementSequence {
@@ -614,6 +618,25 @@ extension XContentSequence {
         return XContentDependingOnContentSequence(sequence: self, contentGetter: { content in f(content); return content })
     }
     
+    public func insertPrevious(_ contentGetter: @escaping (XContent) -> [XContent]) {
+        self.forEach { content in content._insertPreviousPrefetch(contentGetter(content)) }
+    }
+    
+    public func insertNext(_ contentGetter: @escaping (XContent) -> [XContent]) {
+        self.forEach { content in content._insertNextPrefetch(contentGetter(content)) }
+    }
+    
+    public func replace(_ contentGetter: (XContent) -> [XContent]) {
+        self.forEach { content in content._replace(by: contentGetter(content)) }
+    }
+    
+    public func remove() {
+        self.forEach { content in content.remove() }
+    }
+    
+    public func echo() {
+        self.forEach { content in content.echo() }
+    }
 }
 
 extension XElementSequence {
@@ -900,6 +923,34 @@ extension XElementSequence {
     
     @discardableResult public func apply(_ f: @escaping (XElement) -> ()) -> XElementSequence {
         return XElementDependingOnElementSequence(sequence: self, elementGetter: { element in f(element); return element })
+    }
+    
+    public func add(_ contentGetter: @escaping (XContent) -> [XContent]) {
+        self.forEach { element in element.add(contentGetter(element)) }
+    }
+    
+    public func addFirst(_ contentGetter: @escaping (XContent) -> [XContent]) {
+        self.forEach { element in element.addFirst(contentGetter(element)) }
+    }
+    
+    public func insertPrevious(_ contentGetter: @escaping (XContent) -> [XContent]) {
+        self.forEach { element in element._insertPreviousPrefetch(contentGetter(element)) }
+    }
+    
+    public func insertNext(_ contentGetter: @escaping (XContent) -> [XContent]) {
+        self.forEach { element in element._insertNextPrefetch(contentGetter(element)) }
+    }
+    
+    public func replace(_ contentGetter: (XContent) -> [XContent]) {
+        self.forEach { element in element._replace(by: contentGetter(element)) }
+    }
+    
+    public func remove() {
+        self.forEach { element in element.remove() }
+    }
+    
+    public func echo() {
+        self.forEach { element in element.echo() }
     }
     
 }

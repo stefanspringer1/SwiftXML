@@ -105,25 +105,25 @@ public final class XDocument: XNode, XBranchInternal {
     
     /**
      Set the contents of the document.
-     If "forward", then detaching prefetches the next node in iterators.
+     If "prefetch", then detaching prefetches the next node in iterators.
      */
-    @discardableResult public func setContent(forward: Bool = false, @XNodeBuilder builder: () -> [XContent]) -> XDocument {
-        _ = (self as XBranch).setContent(forward: forward, builder: builder)
+    @discardableResult public func setContent(prefetch: Bool = false, @XNodeBuilder builder: () -> [XContent]) -> XDocument {
+        _ = (self as XBranch).setContent(prefetch: prefetch, builder: builder)
         return self
     }
     
     /**
      Clear the contents of the node.
-     If "forward", then detaching prefetches the next node in iterators.
+     If "prefetch", then detaching prefetches the next node in iterators.
      */
-    @discardableResult func clear(forward: Bool) -> XDocument {
-        _ = (self as XBranch).clear(forward: forward)
+    @discardableResult func clear(prefetch: Bool) -> XDocument {
+        _ = (self as XBranch).clear(prefetch: prefetch)
         return self
     }
     
     /**
      Clear the contents of the node.
-     If "forward", then detaching prefetches the next node in iterators.
+     If "prefetch", then detaching prefetches the next node in iterators.
      */
     @discardableResult public func clear() -> XDocument {
         _ = (self as XBranch).clear()
