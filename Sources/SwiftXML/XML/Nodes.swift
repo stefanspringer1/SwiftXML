@@ -482,7 +482,7 @@ public class XContent: XNode {
     
     public func insertPrevious(@XNodeBuilder builder: () -> [XContent]) {
         prefetchOnContentIterators()
-        _insertNext(builder: builder)
+        _insertPrevious(builder: builder)
     }
     
     func _insertNext(_ node: XContent) {
