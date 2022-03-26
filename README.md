@@ -931,7 +931,7 @@ element.echo(pretty: true)
 
 Output:
 
-```Swift
+```text
 <top>
   <a1>
     <a2/>
