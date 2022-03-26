@@ -719,7 +719,78 @@ Output:
 <d>
 ```
 
-Also, in those chains operations resulting in single nodes like `parent` (see above), `insertNext` (see the section on tree manipulations), or `apply` (see the next section on constructing XML) can be used.
+Also, in those chains operations resulting in single nodes like `parent` (see above), `insertNext` (see the section on tree manipulations), or `apply` (see the next section on constructing XML) can be used. Note that iterations continue while disregarding newly ny `insertPrevious` or `insertNext` inserted nodes, so that e.g. the following example works:
+
+```Swift
+let element = XElement("top") {
+    XElement("a1") {
+        XElement("a2")
+    }
+    XElement("b1") {
+        XElement("b2")
+    }
+    XElement("c1") {
+        XElement("c2")
+    }
+}
+
+element.echo(pretty: true)
+
+print("\n---- 1 ----\n")
+
+element.content.replace { content in
+    find {
+        content.content
+    }
+}
+
+element.echo(pretty: true)
+
+print("\n---- 2 ----\n")
+
+element.contentReversed.insertPrevious { content in
+    find {
+        XElement("I" + ((content as? XElement)?.name ?? "?"))
+    }
+}
+
+element.echo(pretty: true)
+```
+
+Output:
+
+```Swift
+<top>
+  <a1>
+    <a2/>
+  </a1>
+  <b1>
+    <b2/>
+  </b1>
+  <c1>
+    <c2/>
+  </c1>
+</top>
+
+---- 1 ----
+
+<top>
+  <a2/>
+  <b2/>
+  <c2/>
+</top>
+
+---- 2 ----
+
+<top>
+  <Ia2/>
+  <a2/>
+  <Ib2/>
+  <b2/>
+  <Ic2/>
+  <c2/>
+</top>
+```
 
 ## Constructing XML
 
@@ -851,32 +922,32 @@ func insertNext(builder: () -> [XContent]) -> XContent
 
 A more precise type is returned from `insertPrevious` and `insertNext` if the type of the subject is more precisely known.
 
-By using the next two methods, a node gets removed. If the argument `forward` is set to `true` (default is `false`), such an operation prefetches the next node in iterators that have the node as active node, else, the iterators all told to go to the previous node.
+By using the next two methods, a node gets removed.
 
 Remove the node from the tree structure and the document:
 
 ```Swift
-func remove(forward: Bool)
+func remove()
 ```
 
-Replace the node by other nodes; if `forward`, then detaching prefetches the next node in iterators:
+Replace the node by other nodes:
 
 ```Swift
-func replace(forward: Bool, builder: () -> [XContent])
+func replace(builder: () -> [XContent])
 ```
 
 Clear the contents of an element or a document respectively:
 
 ```Swift
-func clear(forward: Bool) -> XElement
-func clear(forward: Bool) -> XDocument
+func clear() -> XElement
+func clear() -> XDocument
 ```
 
 Set the contents of an element or a document respectively:
 
 ```Swift
-func setContent(forward: Bool, builder: () -> [XContent]) -> XElement
-func setContent(forward: Bool, builder: () -> [XContent]) -> XDocument
+func setContent(builder: () -> [XContent]) -> XElement
+func setContent(builder: () -> [XContent]) -> XDocument
 ```
 
 Example:

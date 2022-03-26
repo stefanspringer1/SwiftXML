@@ -529,11 +529,6 @@ public class XContent: XNode {
         content.reversed().forEach { insertNext($0) }
     }
     
-    func _insertNextPrefetch(_ content: [XContent]) {
-        prefetchOnContentIterators()
-        _insertNext(content)
-    }
-    
     func _insertNext(@XNodeBuilder builder: () -> [XContent]) {
         _insertNext(builder())
     }

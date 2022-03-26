@@ -7,7 +7,7 @@
 
 import Foundation
 
-let document = XDocument {
+let element = XElement("top") {
     XElement("a1") {
         XElement("a2")
     }
@@ -19,25 +19,24 @@ let document = XDocument {
     }
 }
 
+element.echo(pretty: true)
 
-document.echo()
+print("\n---- 1 ----\n")
 
-document.content.replace { content in
+element.content.replace { content in
     find {
         content.content
     }
 }
 
-print("\n---------\n")
+element.echo(pretty: true)
 
-document.echo()
+print("\n---- 2 ----\n")
 
-document.contentReversed.insertPrevious { content in
+element.contentReversed.insertPrevious { content in
     find {
         XElement("I" + ((content as? XElement)?.name ?? "?"))
     }
 }
 
-print("\n---------\n")
-
-document.echo()
+element.echo(pretty: true)

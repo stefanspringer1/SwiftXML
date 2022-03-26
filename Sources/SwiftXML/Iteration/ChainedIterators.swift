@@ -619,11 +619,17 @@ extension XContentSequence {
     }
     
     public func insertPrevious(_ contentGetter: @escaping (XContent) -> [XContent]) {
-        self.forEach { content in content._insertPrevious(contentGetter(content)) }
+        self.forEach { content in
+            content.prefetchOnContentIterators()
+            content._insertPrevious(contentGetter(content))
+        }
     }
     
     public func insertNext(_ contentGetter: @escaping (XContent) -> [XContent]) {
-        self.forEach { content in content._insertNextPrefetch(contentGetter(content)) }
+        self.forEach { content in
+            content.prefetchOnContentIterators()
+            content._insertNext(contentGetter(content))
+        }
     }
     
     public func replace(_ contentGetter: (XContent) -> [XContent]) {
@@ -634,8 +640,8 @@ extension XContentSequence {
         self.forEach { content in content.remove() }
     }
     
-    public func echo() {
-        self.forEach { content in content.echo() }
+    public func echo(pretty: Bool = false, terminator: String = "\n") {
+        self.forEach { content in content.echo(pretty: pretty, terminator: terminator) }
     }
 }
 
@@ -934,11 +940,17 @@ extension XElementSequence {
     }
     
     public func insertPrevious(_ contentGetter: @escaping (XContent) -> [XContent]) {
-        self.forEach { element in element._insertPrevious(contentGetter(element)) }
+        self.forEach { element in
+            element.prefetchOnContentIterators()
+            element._insertPrevious(contentGetter(element))
+        }
     }
     
     public func insertNext(_ contentGetter: @escaping (XContent) -> [XContent]) {
-        self.forEach { element in element._insertNextPrefetch(contentGetter(element)) }
+        self.forEach { element in
+            element.prefetchOnContentIterators()
+            element._insertNext(contentGetter(element))
+        }
     }
     
     public func replace(_ contentGetter: (XContent) -> [XContent]) {
@@ -953,8 +965,8 @@ extension XElementSequence {
         self.forEach { element in element.remove() }
     }
     
-    public func echo() {
-        self.forEach { element in element.echo() }
+    public func echo(pretty: Bool = false, terminator: String = "\n") {
+        self.forEach { element in element.echo(pretty: pretty, terminator: terminator) }
     }
     
 }
