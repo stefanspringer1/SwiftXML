@@ -189,7 +189,7 @@ public class XNode {
     
     public var lastInTree: XNode { get { return getLastInTree() } }
     
-    @discardableResult public func applied(_ f: (XNode) -> ()) -> XNode {
+    public func applied(_ f: (XNode) -> ()) -> XNode {
         f(self)
         return self
     }
@@ -417,7 +417,7 @@ public class XContent: XNode {
      Removes the content from the tree structure and the tree order and
      the document.
      */
-    func _remove() {
+    func remove() {
         removeKeep()
         if let meAsElement = self as? XElement {
             meAsElement.document?.unregisterElement(element: meAsElement)
@@ -429,7 +429,7 @@ public class XContent: XNode {
     
     public override var lastInTree: XContent { get { return getLastInTree() as! XContent } }
     
-    func insertPrevious(_ node: XContent) {
+    func _insertPrevious(_ node: XContent) {
         if let selfAsText = self as? XText, let newAsText = node as? XText {
             selfAsText._value = newAsText._value + selfAsText._value
             selfAsText.whitespace = .UNKNOWN
@@ -457,35 +457,34 @@ public class XContent: XNode {
         }
     }
     
-    func insertPrevious(_ text: String) {
+    func _insertPrevious(_ text: String) {
         if !text.isEmpty {
             if let selfAsText = self as? XText {
                 selfAsText._value = text + selfAsText._value
                 selfAsText.whitespace = .UNKNOWN
             }
             else {
-                insertPrevious(XText(text))
+                _insertPrevious(XText(text))
             }
         }
     }
     
     func _insertPrevious(_ content: [XContent]) {
-        content.forEach { insertPrevious($0) }
+        content.forEach { _insertPrevious($0) }
     }
     
     func _insertPrevious(@XNodeBuilder builder: () -> [XContent]) {
         _insertPrevious(builder())
     }
     
-    @discardableResult public func insertPrevious(@XNodeBuilder builder: () -> [XContent]) -> XContent {
+    public func insertPrevious(@XNodeBuilder builder: () -> [XContent]) {
         print("huhu")
         prefetchOnContentIterators()
         print("II")
         _insertNext(builder: builder)
-        return self
     }
     
-    func insertNext(_ node: XContent) {
+    func _insertNext(_ node: XContent) {
         if let selfAsText = self as? XText, let newAsText = node as? XText {
             selfAsText._value = selfAsText._value + newAsText._value
             selfAsText.whitespace = .UNKNOWN
@@ -512,38 +511,28 @@ public class XContent: XNode {
         }
     }
     
-    func insertNext(_ text: String) {
+    func _insertNext(_ text: String) {
         if !text.isEmpty {
             if let selfAsText = self as? XText {
                 selfAsText._value = selfAsText._value + text
                 selfAsText.whitespace = .UNKNOWN
             }
             else {
-                insertNext(XText(text))
+                _insertNext(XText(text))
             }
         }
     }
     
     func _insertNext(_ content: [XContent]) {
-        content.reversed().forEach { insertNext($0) }
+        content.reversed().forEach { _insertNext($0) }
     }
     
     func _insertNext(@XNodeBuilder builder: () -> [XContent]) {
         _insertNext(builder())
     }
     
-    public func insertNext(@XNodeBuilder builder: () -> [XContent]) -> XContent {
+    public func insertNext(@XNodeBuilder builder: () -> [XContent]) {
         _insertNext(builder: builder)
-        return self
-    }
-    
-    /**
-     Removes the node from the tree structure and the tree order and
-     the document.
-     */
-    @discardableResult public func remove() -> XContent {
-        _remove()
-        return self
     }
     
     /**
@@ -551,32 +540,17 @@ public class XContent: XNode {
      */
     func _replace(by content: [XContent]) {
         let placeholder = XSpot() // do not use text as a place holder!
-        insertNext(placeholder)
-        _remove()
-        content.forEach { placeholder.insertPrevious($0) }
-        placeholder._remove()
+        _insertNext(placeholder)
+        remove()
+        content.forEach { placeholder._insertPrevious($0) }
+        placeholder.remove()
     }
     
     /**
      Replace the node by other nodes.
      */
-    public func replace(@XNodeBuilder builder: () -> [XContent]) {
+    public func _replace(@XNodeBuilder builder: () -> [XContent]) {
         _replace(by: builder())
-    }
-    
-    /**
-     Replace the node by another node.
-     */
-    func replace1(_ node: XContent) {
-        if let theNext = _next {
-            _remove()
-            theNext.insertPrevious(node)
-            
-        }
-        else if let theParent = _parent {
-            _remove()
-            theParent._add(node)
-        }
     }
     
     public var asContentSequence: XContentSequence { get { return XContentSelfSequence(content: self) } }
@@ -593,23 +567,6 @@ public class XSpot: XContent {
     public init(attached: [String:Any?]? = nil) {
         super.init()
         attached?.forEach{ (key,value) in self.attached[key] = value }
-    }
-    
-    @discardableResult public override func insertPrevious(@XNodeBuilder builder: () -> [XContent]) -> XSpot {
-        prefetchOnContentIterators()
-        _insertPrevious(builder: builder)
-        return self
-    }
-    
-    @discardableResult public override func insertNext(@XNodeBuilder builder: () -> [XContent]) -> XSpot {
-        prefetchOnContentIterators()
-        _insertNext(builder: builder)
-        return self
-    }
-    
-    @discardableResult public override func applied(_ f: (XSpot) -> ()) -> XSpot {
-        f(self)
-        return self
     }
     
 }
@@ -698,7 +655,7 @@ extension XBranchInternal {
         var node = self._firstContent
         var nextNode = node?._next
         while let toRemove = node {
-            toRemove._remove()
+            toRemove.remove()
             node = nextNode
             nextNode = node?._next
         }
@@ -821,9 +778,8 @@ extension XBranchInternal {
         content.reversed().forEach { _addFirst($0) }
     }
     
-    @discardableResult public func addFirst(@XNodeBuilder builder: () -> [XContent]) -> XBranch {
+    public func addFirst(@XNodeBuilder builder: () -> [XContent]) {
         addFirst(builder: builder)
-        return self
     }
     
     /**
@@ -832,17 +788,16 @@ extension XBranchInternal {
     func _setContent(_ content: [XContent]) {
         let endMarker = XSpot()
         _add(endMarker)
-        content.forEach { endMarker.insertPrevious($0) }
-        endMarker.previous.forEach { $0._remove() }
-        endMarker._remove()
+        content.forEach { endMarker._insertPrevious($0) }
+        endMarker.previous.forEach { $0.remove() }
+        endMarker.remove()
     }
     
     /**
      Set the contents of the branch.
      */
-    @discardableResult public func setContent(@XNodeBuilder builder: () -> [XContent]) -> XBranch {
+    public func setContent(@XNodeBuilder builder: () -> [XContent]) {
         _setContent(builder())
-        return self
     }
     
     func produceLeaving(production: XProduction) throws {
@@ -1060,7 +1015,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         return theClone
     }
     
-    @discardableResult public override func applied(_ f: (XElement) -> ()) -> XElement {
+    public override func applied(_ f: (XElement) -> ()) -> XElement {
         f(self)
         return self
     }
@@ -1274,7 +1229,7 @@ public final class XText: XContent, CustomStringConvertible {
         }
         set (newText) {
             if newText.isEmpty {
-                self._remove()
+                self.remove()
             }
             else {
                 _value = newText
@@ -1296,19 +1251,7 @@ public final class XText: XContent, CustomStringConvertible {
         self.whitespace = whitespace
     }
     
-    @discardableResult public override func insertPrevious(@XNodeBuilder builder: () -> [XContent]) -> XText {
-        prefetchOnContentIterators()
-        _insertPrevious(builder: builder)
-        return self
-    }
-    
-    @discardableResult public override func insertNext(@XNodeBuilder builder: () -> [XContent]) -> XText {
-        prefetchOnContentIterators()
-        _insertNext(builder: builder)
-        return self
-    }
-    
-    @discardableResult public override func applied(_ f: (XText) -> ()) -> XText {
+    public override func applied(_ f: (XText) -> ()) -> XText {
         f(self)
         return self
     }
@@ -1354,19 +1297,7 @@ public final class XInternalEntity: XContent {
         self._name = name
     }
     
-    @discardableResult public override func insertPrevious(@XNodeBuilder builder: () -> [XContent]) -> XInternalEntity {
-        prefetchOnContentIterators()
-        _insertPrevious(builder: builder)
-        return self
-    }
-    
-    @discardableResult public override func insertNext(@XNodeBuilder builder: () -> [XContent]) -> XInternalEntity {
-        prefetchOnContentIterators()
-        _insertNext(builder: builder)
-        return self
-    }
-    
-    @discardableResult public override func applied(_ f: (XInternalEntity) -> ()) -> XInternalEntity {
+    public override func applied(_ f: (XInternalEntity) -> ()) -> XInternalEntity {
         f(self)
         return self
     }
@@ -1412,19 +1343,7 @@ public final class XExternalEntity: XContent {
         self._name = name
     }
     
-    @discardableResult public override func insertPrevious(@XNodeBuilder builder: () -> [XContent]) -> XExternalEntity {
-        prefetchOnContentIterators()
-        _insertPrevious(builder: builder)
-        return self
-    }
-    
-    @discardableResult public override func insertNext(@XNodeBuilder builder: () -> [XContent]) -> XExternalEntity {
-        prefetchOnContentIterators()
-        _insertNext(builder: builder)
-        return self
-    }
-    
-    @discardableResult public override func applied(_ f: (XExternalEntity) -> ()) -> XExternalEntity {
+    public override func applied(_ f: (XExternalEntity) -> ()) -> XExternalEntity {
         f(self)
         return self
     }
@@ -1489,19 +1408,7 @@ public final class XProcessingInstruction: XContent, CustomStringConvertible {
         self._data = data
     }
     
-    @discardableResult public override func insertPrevious(@XNodeBuilder builder: () -> [XContent]) -> XProcessingInstruction {
-        prefetchOnContentIterators()
-        _insertPrevious(builder: builder)
-        return self
-    }
-    
-    @discardableResult public override func insertNext(@XNodeBuilder builder: () -> [XContent]) -> XProcessingInstruction {
-        prefetchOnContentIterators()
-        _insertNext(builder: builder)
-        return self
-    }
-    
-    @discardableResult public override func applied(_ f: (XProcessingInstruction) -> ()) -> XProcessingInstruction {
+    public override func applied(_ f: (XProcessingInstruction) -> ()) -> XProcessingInstruction {
         f(self)
         return self
     }
@@ -1547,19 +1454,7 @@ public final class XComment: XContent {
         self._value = text
     }
     
-    @discardableResult public override func insertPrevious(@XNodeBuilder builder: () -> [XContent]) -> XComment {
-        prefetchOnContentIterators()
-        _insertPrevious(builder: builder)
-        return self
-    }
-    
-    @discardableResult public override func insertNext(@XNodeBuilder builder: () -> [XContent]) -> XComment {
-        prefetchOnContentIterators()
-        _insertNext(builder: builder)
-        return self
-    }
-    
-    @discardableResult public override func applied(_ f: (XComment) -> ()) -> XComment {
+    public override func applied(_ f: (XComment) -> ()) -> XComment {
         f(self)
         return self
     }
@@ -1605,19 +1500,7 @@ public final class XCDATASection: XContent {
         self._value = text
     }
     
-    @discardableResult public override func insertPrevious(@XNodeBuilder builder: () -> [XContent]) -> XCDATASection {
-        prefetchOnContentIterators()
-        _insertPrevious(builder: builder)
-        return self
-    }
-    
-    @discardableResult public override func insertNext(@XNodeBuilder builder: () -> [XContent]) -> XCDATASection {
-        prefetchOnContentIterators()
-        _insertNext(builder: builder)
-        return self
-    }
-    
-    @discardableResult public override func applied(_ f: (XCDATASection) -> ()) -> XCDATASection {
+    public override func applied(_ f: (XCDATASection) -> ()) -> XCDATASection {
         f(self)
         return self
     }
