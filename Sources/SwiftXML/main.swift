@@ -33,8 +33,14 @@ element.echo(pretty: true)
 
 print("\n---- 2 ----\n")
 
-element.contentReversed.insertPrevious { content in
+/*element.contentReversed.insertPrevious { content in
     find {
+        XElement("I" + ((content as? XElement)?.name ?? "?"))
+    }
+}*/
+
+element.contentReversed.forEach { content in
+    content.insertPrevious {
         XElement("I" + ((content as? XElement)?.name ?? "?"))
     }
 }

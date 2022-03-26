@@ -481,7 +481,10 @@ public class XContent: XNode {
         _insertPrevious(builder())
     }
     
-    public func insertPrevious(@XNodeBuilder builder: () -> [XContent]) -> XContent {
+    @discardableResult public func insertPrevious(@XNodeBuilder builder: () -> [XContent]) -> XContent {
+        print("huhu")
+        prefetchOnContentIterators()
+        print("II")
         _insertNext(builder: builder)
         return self
     }
@@ -602,11 +605,13 @@ public class XSpot: XContent {
     }
     
     @discardableResult public override func insertPrevious(@XNodeBuilder builder: () -> [XContent]) -> XSpot {
+        prefetchOnContentIterators()
         _insertPrevious(builder: builder)
         return self
     }
     
     @discardableResult public override func insertNext(@XNodeBuilder builder: () -> [XContent]) -> XSpot {
+        prefetchOnContentIterators()
         _insertNext(builder: builder)
         return self
     }
@@ -1123,11 +1128,13 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     // more precisely typed versions for methods from XContent:
     
     @discardableResult public override func insertPrevious(@XNodeBuilder builder: () -> [XContent]) -> XElement {
+        prefetchOnContentIterators()
         _insertPrevious(builder: builder)
         return self
     }
     
     @discardableResult public override func insertNext(@XNodeBuilder builder: () -> [XContent]) -> XElement {
+        prefetchOnContentIterators()
         _insertNext(builder: builder)
         return self
     }
@@ -1355,11 +1362,13 @@ public final class XText: XContent, CustomStringConvertible {
     }
     
     @discardableResult public override func insertPrevious(@XNodeBuilder builder: () -> [XContent]) -> XText {
+        prefetchOnContentIterators()
         _insertPrevious(builder: builder)
         return self
     }
     
     @discardableResult public override func insertNext(@XNodeBuilder builder: () -> [XContent]) -> XText {
+        prefetchOnContentIterators()
         _insertNext(builder: builder)
         return self
     }
@@ -1411,11 +1420,13 @@ public final class XInternalEntity: XContent {
     }
     
     @discardableResult public override func insertPrevious(@XNodeBuilder builder: () -> [XContent]) -> XInternalEntity {
+        prefetchOnContentIterators()
         _insertPrevious(builder: builder)
         return self
     }
     
     @discardableResult public override func insertNext(@XNodeBuilder builder: () -> [XContent]) -> XInternalEntity {
+        prefetchOnContentIterators()
         _insertNext(builder: builder)
         return self
     }
@@ -1467,11 +1478,13 @@ public final class XExternalEntity: XContent {
     }
     
     @discardableResult public override func insertPrevious(@XNodeBuilder builder: () -> [XContent]) -> XExternalEntity {
+        prefetchOnContentIterators()
         _insertPrevious(builder: builder)
         return self
     }
     
     @discardableResult public override func insertNext(@XNodeBuilder builder: () -> [XContent]) -> XExternalEntity {
+        prefetchOnContentIterators()
         _insertNext(builder: builder)
         return self
     }
@@ -1542,11 +1555,13 @@ public final class XProcessingInstruction: XContent, CustomStringConvertible {
     }
     
     @discardableResult public override func insertPrevious(@XNodeBuilder builder: () -> [XContent]) -> XProcessingInstruction {
+        prefetchOnContentIterators()
         _insertPrevious(builder: builder)
         return self
     }
     
     @discardableResult public override func insertNext(@XNodeBuilder builder: () -> [XContent]) -> XProcessingInstruction {
+        prefetchOnContentIterators()
         _insertNext(builder: builder)
         return self
     }
@@ -1598,11 +1613,13 @@ public final class XComment: XContent {
     }
     
     @discardableResult public override func insertPrevious(@XNodeBuilder builder: () -> [XContent]) -> XComment {
+        prefetchOnContentIterators()
         _insertPrevious(builder: builder)
         return self
     }
     
     @discardableResult public override func insertNext(@XNodeBuilder builder: () -> [XContent]) -> XComment {
+        prefetchOnContentIterators()
         _insertNext(builder: builder)
         return self
     }
@@ -1654,11 +1671,13 @@ public final class XCDATASection: XContent {
     }
     
     @discardableResult public override func insertPrevious(@XNodeBuilder builder: () -> [XContent]) -> XCDATASection {
+        prefetchOnContentIterators()
         _insertPrevious(builder: builder)
         return self
     }
     
     @discardableResult public override func insertNext(@XNodeBuilder builder: () -> [XContent]) -> XCDATASection {
+        prefetchOnContentIterators()
         _insertNext(builder: builder)
         return self
     }
