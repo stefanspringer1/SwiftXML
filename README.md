@@ -964,13 +964,13 @@ Output:
 </top>
 ```
 
-When using e.g. `insertNext` in chained iterators, you need the `find` function. E.g. in the laste example, you might use with the same result:
+When using e.g. `insertNext` in chained iterators, you need the `collect` function. E.g. in the laste example, you might use with the same result:
 
 ```Swift
 print("\n---- 1 ----\n")
 
 element.content.replace { content in
-    find {
+    collect {
         content.content
     }
 }
