@@ -109,7 +109,7 @@ public class XNode {
         return shallowClone(forwardref: pointingFromClone)
     }
     
-    private var _contentIterators = WeakList<XBidirectionalContentIterator>()
+    var _contentIterators = WeakList<XBidirectionalContentIterator>()
     
     func addContentIterator(_ nodeIterator: XBidirectionalContentIterator) {
         _contentIterators.append(nodeIterator)
@@ -383,6 +383,10 @@ public class XContent: XNode {
         theLastInTree._nextInTree = nil
     }
     
+    func gotoPreviousOnContentIterators() {
+        _contentIterators.forEach { _ = $0.previous() }
+    }
+    
     /**
      Removes the node from the tree structure and the tree order,
      but keeps it in the document.
@@ -390,10 +394,9 @@ public class XContent: XNode {
     func _removeKeep() {
         
         // correction in iterators:
-        prefetchOnContentIterators()
+        gotoPreviousOnContentIterators()
         
         // tree order:
-        
         setTreeOrderWhenRemoving()
         
         // tree structure:
@@ -1152,7 +1155,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     public override func _removeKeep() {
         
         // correction in iterators:
-        _treeIterators.forEach { $0.prefetch() }
+        _treeIterators.forEach { _ = $0.previous() }
         
         super._removeKeep()
     }
