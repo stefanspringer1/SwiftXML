@@ -719,78 +719,7 @@ Output:
 <d>
 ```
 
-Also, in those chains operations resulting in single nodes like `parent` (see above), `insertNext` (see the section on tree manipulations), or `apply` (see the next section on constructing XML) can be used. Note that iterations continue while disregarding newly ny `insertPrevious` or `insertNext` inserted nodes, so that e.g. the following example works:
-
-```Swift
-let element = XElement("top") {
-    XElement("a1") {
-        XElement("a2")
-    }
-    XElement("b1") {
-        XElement("b2")
-    }
-    XElement("c1") {
-        XElement("c2")
-    }
-}
-
-element.echo(pretty: true)
-
-print("\n---- 1 ----\n")
-
-element.content.replace { content in
-    find {
-        content.content
-    }
-}
-
-element.echo(pretty: true)
-
-print("\n---- 2 ----\n")
-
-element.contentReversed.insertPrevious { content in
-    find {
-        XElement("I" + ((content as? XElement)?.name ?? "?"))
-    }
-}
-
-element.echo(pretty: true)
-```
-
-Output:
-
-```Swift
-<top>
-  <a1>
-    <a2/>
-  </a1>
-  <b1>
-    <b2/>
-  </b1>
-  <c1>
-    <c2/>
-  </c1>
-</top>
-
----- 1 ----
-
-<top>
-  <a2/>
-  <b2/>
-  <c2/>
-</top>
-
----- 2 ----
-
-<top>
-  <Ia2/>
-  <a2/>
-  <Ib2/>
-  <b2/>
-  <Ic2/>
-  <c2/>
-</top>
-```
+Also, in those chains operations finding single nodes when applied to a single node like `parent` also work, and you can use e.g. `insertNext` (see the section on tree manipulations), or `apply` (see the next section on constructing XML), or `echo()`.
 
 ## Constructing XML
 
@@ -963,6 +892,103 @@ myDocument.elements(ofName: "table").forEach { table in
         }
     }
 }
+```
+
+Note that iterations continue while disregarding new nodes inserted by `insertPrevious` or `insertNext`, so that e.g. the following example works intuitively:
+
+```Swift
+let element = XElement("top") {
+    XElement("a1") {
+        XElement("a2")
+    }
+    XElement("b1") {
+        XElement("b2")
+    }
+    XElement("c1") {
+        XElement("c2")
+    }
+}
+
+element.echo(pretty: true)
+
+print("\n---- 1 ----\n")
+
+element.content.forEach { content in
+    content.replace {
+        content.content
+    }
+}
+
+element.echo(pretty: true)
+
+print("\n---- 2 ----\n")
+
+element.contentReversed.forEach { content in
+    content.insertPrevious {
+        XElement("I" + ((content as? XElement)?.name ?? "?"))
+    }
+}
+
+element.echo(pretty: true)
+```
+
+Output:
+
+```Swift
+<top>
+  <a1>
+    <a2/>
+  </a1>
+  <b1>
+    <b2/>
+  </b1>
+  <c1>
+    <c2/>
+  </c1>
+</top>
+
+---- 1 ----
+
+<top>
+  <a2/>
+  <b2/>
+  <c2/>
+</top>
+
+---- 2 ----
+
+<top>
+  <Ia2/>
+  <a2/>
+  <Ib2/>
+  <b2/>
+  <Ic2/>
+  <c2/>
+</top>
+```
+
+When using e.g. `insertNext` in chained iterators, you need the `find` function. E.g. in the laste example, you might use with the same result:
+
+```Swift
+print("\n---- 1 ----\n")
+
+element.content.replace { content in
+    find {
+        content.content
+    }
+}
+
+element.echo(pretty: true)
+
+print("\n---- 2 ----\n")
+
+element.contentReversed.insertPrevious { content in
+    find {
+        XElement("I" + ((content as? XElement)?.name ?? "?"))
+    }
+}
+
+element.echo(pretty: true)
 ```
 
 ## `XSpot` and handling of text
