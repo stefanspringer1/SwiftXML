@@ -189,7 +189,7 @@ public class XNode {
     
     public var lastInTree: XNode { get { return getLastInTree() } }
     
-    @discardableResult public func apply(_ f: (XNode) -> ()) -> XNode {
+    @discardableResult public func applied(_ f: (XNode) -> ()) -> XNode {
         f(self)
         return self
     }
@@ -607,7 +607,7 @@ public class XSpot: XContent {
         return self
     }
     
-    @discardableResult public override func apply(_ f: (XSpot) -> ()) -> XSpot {
+    @discardableResult public override func applied(_ f: (XSpot) -> ()) -> XSpot {
         f(self)
         return self
     }
@@ -620,10 +620,10 @@ public protocol XBranch: XNode {
     var lastContent: XContent? { get }
     func lastContent(_ condition: (XContent) -> Bool) -> XContent?
     var isEmpty: Bool { get }
-    @discardableResult func add(@XNodeBuilder builder: () -> [XContent]) -> XBranch
-    @discardableResult func addFirst(@XNodeBuilder builder: () -> [XContent]) -> XBranch
-    @discardableResult func setContent(@XNodeBuilder builder: () -> [XContent]) -> XBranch
-    @discardableResult func clear() -> XBranch
+    func add(@XNodeBuilder builder: () -> [XContent])
+    func addFirst(@XNodeBuilder builder: () -> [XContent])
+    func setContent(@XNodeBuilder builder: () -> [XContent])
+    func clear()
 }
 
 protocol XBranchInternal: XBranch {
@@ -765,8 +765,8 @@ extension XBranchInternal {
         content.forEach { _add($0) }
     }
     
-    @discardableResult public func add(@XNodeBuilder builder: () -> [XContent]) -> XBranch {
-        return add(builder: builder)
+    public func add(@XNodeBuilder builder: () -> [XContent]) {
+        return _add(builder())
     }
     
     /**
@@ -964,7 +964,23 @@ public class Attachments {
 }
 
 public final class XElement: XContent, XBranchInternal, CustomStringConvertible {
-
+    
+    public func addFirst(builder: () -> [XContent]) {
+        (self as XBranchInternal).addFirst(builder: builder)
+    }
+    
+    public func add(builder: () -> [XContent]) {
+        (self as XBranchInternal).add(builder: builder)
+    }
+    
+    public func setContent(builder: () -> [XContent]) {
+        (self as XBranchInternal).setContent(builder: builder)
+    }
+    
+    public func clear() {
+        (self as XBranchInternal).clear()
+    }
+    
     func setDocument(document newDocument: XDocument?) {
         
         // set document:
@@ -1044,7 +1060,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         return theClone
     }
     
-    @discardableResult public override func apply(_ f: (XElement) -> ()) -> XElement {
+    @discardableResult public override func applied(_ f: (XElement) -> ()) -> XElement {
         f(self)
         return self
     }
@@ -1095,21 +1111,6 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     public var asElementSequence: XElementSequence { get { return XElementSelfSequence(element: self) } }
     
     // ------------------------------------------------------------------------
-    // more precisely typed versions for methods from XContent:
-    
-    @discardableResult public override func insertPrevious(@XNodeBuilder builder: () -> [XContent]) -> XElement {
-        prefetchOnContentIterators()
-        _insertPrevious(builder: builder)
-        return self
-    }
-    
-    @discardableResult public override func insertNext(@XNodeBuilder builder: () -> [XContent]) -> XElement {
-        prefetchOnContentIterators()
-        _insertNext(builder: builder)
-        return self
-    }
-    
-    // ------------------------------------------------------------------------
     // repeat methods from XBranch:
     
     public var firstContent: XContent? {
@@ -1130,47 +1131,6 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     
     public var isEmpty: Bool {
         get { _firstContent == nil }
-    }
-    
-    /**
-     Set the contents of the element.
-     */
-    func _setContent(_ content: [XContent]) {
-        _ = (self as XBranchInternal)._setContent(content)
-    }
-    
-    // ------------------------------------------------------------------------
-    // more precisely typed versions for methods from XBranch:
-    
-    @discardableResult public func add(@XNodeBuilder builder: () -> [XContent]) -> XElement {
-        _ = (self as XBranch).add(builder: builder)
-        return self
-    }
-    
-    @discardableResult public func addFirst(@XNodeBuilder builder: () -> [XContent]) -> XElement {
-        _ = (self as XBranch).addFirst(builder: builder)
-        return self
-    }
-    
-    /**
-     Set the contents of the element.
-     */
-    @discardableResult public func setContent(@XNodeBuilder builder: () -> [XContent]) -> XElement {
-        _ = (self as XBranch).setContent(builder: builder)
-        return self
-    }
-    
-    @discardableResult func clear(prefetch: Bool) -> XElement {
-        _ = (self as XBranch).clear()
-        return self
-    }
-    
-    /**
-     Clear the contents of the node.
-     */
-    @discardableResult public func clear() -> XElement {
-        _ = (self as XBranch).clear()
-        return self
     }
     
     // ------------------------------------------------------------------------
@@ -1348,7 +1308,7 @@ public final class XText: XContent, CustomStringConvertible {
         return self
     }
     
-    @discardableResult public override func apply(_ f: (XText) -> ()) -> XText {
+    @discardableResult public override func applied(_ f: (XText) -> ()) -> XText {
         f(self)
         return self
     }
@@ -1406,7 +1366,7 @@ public final class XInternalEntity: XContent {
         return self
     }
     
-    @discardableResult public override func apply(_ f: (XInternalEntity) -> ()) -> XInternalEntity {
+    @discardableResult public override func applied(_ f: (XInternalEntity) -> ()) -> XInternalEntity {
         f(self)
         return self
     }
@@ -1464,7 +1424,7 @@ public final class XExternalEntity: XContent {
         return self
     }
     
-    @discardableResult public override func apply(_ f: (XExternalEntity) -> ()) -> XExternalEntity {
+    @discardableResult public override func applied(_ f: (XExternalEntity) -> ()) -> XExternalEntity {
         f(self)
         return self
     }
@@ -1541,7 +1501,7 @@ public final class XProcessingInstruction: XContent, CustomStringConvertible {
         return self
     }
     
-    @discardableResult public override func apply(_ f: (XProcessingInstruction) -> ()) -> XProcessingInstruction {
+    @discardableResult public override func applied(_ f: (XProcessingInstruction) -> ()) -> XProcessingInstruction {
         f(self)
         return self
     }
@@ -1599,7 +1559,7 @@ public final class XComment: XContent {
         return self
     }
     
-    @discardableResult public override func apply(_ f: (XComment) -> ()) -> XComment {
+    @discardableResult public override func applied(_ f: (XComment) -> ()) -> XComment {
         f(self)
         return self
     }
@@ -1657,7 +1617,7 @@ public final class XCDATASection: XContent {
         return self
     }
     
-    @discardableResult public override func apply(_ f: (XCDATASection) -> ()) -> XCDATASection {
+    @discardableResult public override func applied(_ f: (XCDATASection) -> ()) -> XCDATASection {
         f(self)
         return self
     }

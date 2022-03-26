@@ -16,6 +16,22 @@ final class XValue {
 
 public final class XDocument: XNode, XBranchInternal {
 
+    public func addFirst(builder: () -> [XContent]) {
+        (self as XBranchInternal).addFirst(builder: builder)
+    }
+    
+    public func add(builder: () -> [XContent]) {
+        (self as XBranchInternal).add(builder: builder)
+    }
+    
+    public func setContent(builder: () -> [XContent]) {
+        (self as XBranchInternal).setContent(builder: builder)
+    }
+    
+    public func clear() {
+        (self as XBranchInternal).clear()
+    }
+    
     var _firstContent: XContent? = nil
     
     var _lastContent: XContent? = nil
@@ -91,48 +107,8 @@ public final class XDocument: XNode, XBranchInternal {
     }
     
     // ------------------------------------------------------------------------
-    // more precisely typed versions for methods from XBranch:
     
-    @discardableResult public func add(@XNodeBuilder builder: () -> [XContent]) -> XDocument {
-        _ = (self as XBranch).add(builder: builder)
-        return self
-    }
-    
-    @discardableResult public func addFirst(@XNodeBuilder builder: () -> [XContent]) -> XDocument {
-        _ = (self as XBranch).addFirst(builder: builder)
-        return self
-    }
-    
-    /**
-     Set the contents of the document.
-     If "prefetch", then detaching prefetches the next node in iterators.
-     */
-    @discardableResult public func setContent(@XNodeBuilder builder: () -> [XContent]) -> XDocument {
-        _ = (self as XBranch).setContent(builder: builder)
-        return self
-    }
-    
-    /**
-     Clear the contents of the node.
-     If "prefetch", then detaching prefetches the next node in iterators.
-     */
-    @discardableResult func clear(prefetch: Bool) -> XDocument {
-        _ = (self as XBranch).clear()
-        return self
-    }
-    
-    /**
-     Clear the contents of the node.
-     If "prefetch", then detaching prefetches the next node in iterators.
-     */
-    @discardableResult public func clear() -> XDocument {
-        _ = (self as XBranch).clear()
-        return self
-    }
-    
-    // ------------------------------------------------------------------------
-    
-    @discardableResult public override func apply(_ f: (XDocument) -> ()) -> XDocument {
+    @discardableResult public override func applied(_ f: (XDocument) -> ()) -> XDocument {
         f(self)
         return self
     }

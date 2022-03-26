@@ -719,7 +719,7 @@ Output:
 <d>
 ```
 
-Also, in those chains operations finding single nodes when applied to a single node like `parent` also work, and you can use e.g. `insertNext` (see the section on tree manipulations), or `apply` (see the next section on constructing XML), or `echo()`.
+Also, in those chains operations finding single nodes when applied to a single node like `parent` also work, and you can use e.g. `insertNext` (see the section on tree manipulations), or `applied` (see the next section on constructing XML), or `echo()`.
 
 ## Constructing XML
 
@@ -768,17 +768,15 @@ let myElement = XElement("div") {
 }
 ```
 
-By using the method `apply((XNode) -> ()) -> XNode` to a node (the argument and the return value are more specific if the subject is more specific) you can apply a function to a node before returning it:
+By using the method `applied((XNode) -> ()) -> XNode` to a node (the argument and the return value are more specific if the subject is more specific) you can apply a function to a node before returning it:
 
 Example:
 
 ```Swift
 let myDocument = XDocument {
-    myElement.apply{ $0["level"] = "top" }
+    myElement.applied{ $0["level"] = "top" }
 }
 ```
-
-You do not need to use this method if you would like to e.g. add other content to an element before returning it, as those methods always return the subject if nothing else (see the section below on tree manipulations).
 
 ### Document membership in constructed elements
 
@@ -833,20 +831,20 @@ Besides changing the node properties, an XML tree can be changed by the followin
 Add nodes to the start of the content of an element or a document respectively:
 
 ```Swift
-func add(builder: () -> [XContent]) -> XElement
-func add(builder: () -> [XContent]) -> XDocument
+func add(builder: () -> [XContent])
+func add(builder: () -> [XContent])
 ```
 
 Add nodes as the nodes previous to the node:
 
 ```Swift
-func insertPrevious(builder: () -> [XContent]) -> XContent
+func insertPrevious(builder: () -> [XContent])
 ```
 
 Add nodes as the nodes next to the node:
 
 ```Swift
-func insertNext(builder: () -> [XContent]) -> XContent
+func insertNext(builder: () -> [XContent])
 ```
 
 A more precise type is returned from `insertPrevious` and `insertNext` if the type of the subject is more precisely known.
@@ -868,15 +866,14 @@ func replace(builder: () -> [XContent])
 Clear the contents of an element or a document respectively:
 
 ```Swift
-func clear() -> XElement
-func clear() -> XDocument
+func clear()
 ```
 
 Set the contents of an element or a document respectively:
 
 ```Swift
-func setContent(builder: () -> [XContent]) -> XElement
-func setContent(builder: () -> [XContent]) -> XDocument
+func setContent(builder: () -> [XContent])
+func setContent(builder: () -> [XContent])
 ```
 
 Example:
