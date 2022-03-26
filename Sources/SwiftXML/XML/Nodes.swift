@@ -777,7 +777,7 @@ extension XBranchInternal {
     }
     
     public func addFirst(@XNodeBuilder builder: () -> [XContent]) {
-        addFirst(builder: builder)
+        _addFirst(builder())
     }
     
     /**
