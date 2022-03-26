@@ -387,7 +387,7 @@ public class XContent: XNode {
      Removes the node from the tree structure and the tree order,
      but keeps it in the document.
      */
-    func removeKeep() {
+    func _removeKeep() {
         
         // correction in iterators:
         prefetchOnContentIterators()
@@ -417,8 +417,8 @@ public class XContent: XNode {
      Removes the content from the tree structure and the tree order and
      the document.
      */
-    func remove() {
-        removeKeep()
+    public func remove() {
+        _removeKeep()
         if let meAsElement = self as? XElement {
             meAsElement.document?.unregisterElement(element: meAsElement)
         }
@@ -439,7 +439,7 @@ public class XContent: XNode {
                 _parent?._firstContent = node
             }
             
-            node.removeKeep()
+            node._removeKeep()
             
             _previous?._next = node
             node._previous = _previous
@@ -493,7 +493,7 @@ public class XContent: XNode {
             _parent?._add(node)
         }
         else {
-            node.removeKeep()
+            node._removeKeep()
             
             _next?._previous = node
             node._previous = self
@@ -679,7 +679,7 @@ extension XBranchInternal {
             lastAsText.whitespace = .UNKNOWN
         }
         else {
-            node.removeKeep()
+            node._removeKeep()
             
             // insert into new chain:
             if let theLastChild = _lastContent {
@@ -735,7 +735,7 @@ extension XBranchInternal {
             firstAsText.whitespace = .UNKNOWN
         }
         else {
-            node.removeKeep()
+            node._removeKeep()
             
             // insert into new chain:
             if let theFirstChild = _firstContent {
@@ -1178,12 +1178,12 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         self._document = document
     }
     
-    public override func removeKeep() {
+    public override func _removeKeep() {
         
         // correction in iterators:
         _treeIterators.forEach { $0.prefetch() }
         
-        super.removeKeep()
+        super._removeKeep()
     }
     
     func setAttributes(attributes newAtttributeValues: [String:String?]? = nil) {
