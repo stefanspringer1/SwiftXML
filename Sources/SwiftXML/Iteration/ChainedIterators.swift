@@ -945,6 +945,10 @@ extension XElementSequence {
         self.forEach { element in element._replace(by: contentGetter(element)) }
     }
     
+    public func clear() {
+        self.forEach { element in element.clear() }
+    }
+    
     public func remove() {
         self.forEach { element in element.remove() }
     }
