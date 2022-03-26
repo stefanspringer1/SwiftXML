@@ -620,16 +620,12 @@ extension XContentSequence {
     
     public func insertPrevious(_ contentGetter: @escaping (XContent) -> [XContent]) {
         self.forEach { content in
-            content.prefetchOnContentIterators()
             content._insertPrevious(contentGetter(content))
         }
     }
     
     public func insertNext(_ contentGetter: @escaping (XContent) -> [XContent]) {
-        self.forEach { content in
-            content.prefetchOnContentIterators()
-            content._insertNext(contentGetter(content))
-        }
+        self.forEach { content in content._insertNext(contentGetter(content)) }
     }
     
     public func replace(_ contentGetter: (XContent) -> [XContent]) {
@@ -944,17 +940,11 @@ extension XElementSequence {
     }
     
     public func insertPrevious(_ contentGetter: @escaping (XElement) -> [XContent]) {
-        self.forEach { element in
-            element.prefetchOnContentIterators()
-            element._insertPrevious(contentGetter(element))
-        }
+        self.forEach { element in element._insertPrevious(contentGetter(element)) }
     }
     
     public func insertNext(_ contentGetter: @escaping (XElement) -> [XContent]) {
-        self.forEach { element in
-            element.prefetchOnContentIterators()
-            element._insertNext(contentGetter(element))
-        }
+        self.forEach { element in element._insertNext(contentGetter(element)) }
     }
     
     public func replace(_ contentGetter: (XElement) -> [XContent]) {

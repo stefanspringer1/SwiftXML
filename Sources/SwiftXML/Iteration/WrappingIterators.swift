@@ -23,8 +23,7 @@ public final class XBidirectionalContentIterator: XContentIterator {
     var nodeIterator: XContentIteratorProtocol
     
     public init(nodeIterator: XContentIteratorProtocol) {
-        self.nodeIterator = nodeIterator
-    }
+        self.nodeIterator = nodeIterator    }
     
     weak var current: Element? = nil
     var prefetched = false

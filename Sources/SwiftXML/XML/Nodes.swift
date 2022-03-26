@@ -473,16 +473,12 @@ public class XContent: XNode {
     }
     
     func _insertPrevious(_ content: [XContent]) {
+        prefetchOnContentIterators()
         content.forEach { _insertPrevious($0) }
     }
     
-    func _insertPrevious(@XNodeBuilder builder: () -> [XContent]) {
-        _insertPrevious(builder())
-    }
-    
     public func insertPrevious(@XNodeBuilder builder: () -> [XContent]) {
-        prefetchOnContentIterators()
-        _insertPrevious(builder: builder)
+        _insertPrevious(builder())
     }
     
     func _insertNext(_ node: XContent) {
@@ -525,21 +521,19 @@ public class XContent: XNode {
     }
     
     func _insertNext(_ content: [XContent]) {
+        element.prefetchOnContentIterators()
         content.reversed().forEach { _insertNext($0) }
     }
     
-    func _insertNext(@XNodeBuilder builder: () -> [XContent]) {
-        _insertNext(builder())
-    }
-    
     public func insertNext(@XNodeBuilder builder: () -> [XContent]) {
-        _insertNext(builder: builder)
+        _insertNext(builder())
     }
     
     /**
      Replace the node by other nodes.
      */
     func _replace(by content: [XContent]) {
+        prefetchOnContentIterators()
         let placeholder = XSpot() // do not use text as a place holder!
         _insertNext(placeholder)
         remove()
