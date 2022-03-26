@@ -16,15 +16,15 @@ final class XValue {
 
 public final class XDocument: XNode, XBranchInternal {
 
-    public func addFirst(builder: () -> [XContent]) {
+    public func addFirst(@XNodeBuilder builder: () -> [XContent]) {
         (self as XBranchInternal).addFirst(builder: builder)
     }
     
-    public func add(builder: () -> [XContent]) {
+    public func add(@XNodeBuilder builder: () -> [XContent]) {
         (self as XBranchInternal).add(builder: builder)
     }
     
-    public func setContent(builder: () -> [XContent]) {
+    public func setContent(@XNodeBuilder builder: () -> [XContent]) {
         (self as XBranchInternal).setContent(builder: builder)
     }
     
