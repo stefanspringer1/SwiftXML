@@ -552,6 +552,10 @@ public class XContent: XNode {
     
 }
 
+public extension String {
+    var asContentSequence: XContentSequence { get { return XContentSelfSequence(content: XText(" ")) } }
+}
+
 public class XSpot: XContent {
     
     public override var r: XSpot? { get { super.r as? XSpot } }
