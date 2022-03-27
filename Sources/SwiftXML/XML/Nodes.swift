@@ -187,7 +187,7 @@ public class XNode {
         return self
     }
     
-    public var lastInTree: XNode { get { return getLastInTree() } }
+    public var lastInTree: XNode { get { getLastInTree() } }
     
     public func applied(_ f: (XNode) -> ()) -> XNode {
         f(self)
@@ -430,7 +430,7 @@ public class XContent: XNode {
     public override var previousInTreeTouching: XContent? { get { _previousInTree as? XContent } }
     public override var nextInTreeTouching: XContent? { get { _nextInTree as? XContent } }
     
-    public override var lastInTree: XContent { get { return getLastInTree() as! XContent } }
+    public override var lastInTree: XContent { get { getLastInTree() as! XContent } }
     
     func _insertPrevious(_ node: XContent) {
         if let selfAsText = self as? XText, let newAsText = node as? XText {
@@ -548,12 +548,12 @@ public class XContent: XNode {
         _replace(by: builder())
     }
     
-    public var asContentSequence: XContentSequence { get { return XContentSelfSequence(content: self) } }
+    public var asContentSequence: XContentSequence { get { XContentSelfSequence(content: self) } }
     
 }
 
 public extension String {
-    var asContentSequence: XContentSequence { get { return XContentSelfSequence(content: XText(" ")) } }
+    var asContentSequence: XContentSequence { get { XText(self).asContentSequence } }
 }
 
 public class XSpot: XContent {
@@ -805,7 +805,7 @@ extension XContentLikeSequence: XContentLike {}
 
 public extension Array where Element == XContentLike? {
     var xml: XContentLikeSequence {
-        get { return XContentLikeSequenceFromArray(formArray: self) }
+        get { XContentLikeSequenceFromArray(formArray: self) }
     }
 }
 
@@ -1035,7 +1035,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     weak var previousWithSameName: XElement? = nil
     var nextWithSameName: XElement? = nil
     
-    public var asElementSequence: XElementSequence { get { return XElementSelfSequence(element: self) } }
+    public var asElementSequence: XElementSequence { get { XElementSelfSequence(element: self) } }
     
     // ------------------------------------------------------------------------
     // repeat methods from XBranch:

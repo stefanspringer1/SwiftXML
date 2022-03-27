@@ -42,7 +42,7 @@ public extension XBranch {
     }
     
     var children: XElementSequence {
-        get { return XChildrenSequence(node: self) }
+        get { XChildrenSequence(node: self) }
     }
     
     func children(_ condition: @escaping (XElement) -> Bool) -> XElementSequence {
@@ -62,7 +62,7 @@ public extension XBranch {
     }
     
     var childrenReversed: XElementSequence {
-        get { return XReversedChildrenSequence(node: self) }
+        get { XReversedChildrenSequence(node: self) }
     }
     
     func childrenReversed(_ condition: @escaping (XElement) -> Bool) -> XElementSequence {
@@ -174,7 +174,7 @@ extension XContent {
     }
     
     public var children: XElementSequence {
-        get { return XChildrenSequence(node: self) }
+        get { XChildrenSequence(node: self) }
     }
     
     public func children(_ condition: @escaping (XElement) -> Bool) -> XElementSequence {
@@ -194,7 +194,7 @@ extension XContent {
     }
     
     public var childrenReversed: XElementSequence {
-        get { return XReversedChildrenSequence(node: self) }
+        get { XReversedChildrenSequence(node: self) }
     }
     
     public func childrenReversed(_ condition: @escaping (XElement) -> Bool) -> XElementSequence {
