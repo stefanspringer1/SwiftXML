@@ -782,7 +782,7 @@ let myDocument = XDocument {
 }
 ```
 
-`applying` can also be used on a content sequence or element sequence where it is shorter than the `map` method in the general case (which might have to define the return value) and gets the types correct without squabbling:
+`applying` can also be used on a content sequence or element sequence where it is shorter than using the `map` method in the general case (where a `return` statement might have to be included) and gets the types correct without squabbling:
 
 ```Swift
 let myDocument = XDocument {
