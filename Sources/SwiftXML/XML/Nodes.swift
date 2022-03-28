@@ -185,7 +185,7 @@ public class XNode {
     
     public var lastInTree: XNode { get { getLastInTree() } }
     
-    public func applied(_ f: (XNode) -> ()) -> XNode {
+    public func applying(_ f: (XNode) -> ()) -> XNode {
         f(self)
         return self
     }
@@ -1004,7 +1004,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         return theClone
     }
     
-    public override func applied(_ f: (XElement) -> ()) -> XElement {
+    public override func applying(_ f: (XElement) -> ()) -> XElement {
         f(self)
         return self
     }
@@ -1267,7 +1267,7 @@ public final class XText: XContent, CustomStringConvertible {
         self.whitespace = whitespace
     }
     
-    public override func applied(_ f: (XText) -> ()) -> XText {
+    public override func applying(_ f: (XText) -> ()) -> XText {
         f(self)
         return self
     }
@@ -1313,7 +1313,7 @@ public final class XInternalEntity: XContent {
         self._name = name
     }
     
-    public override func applied(_ f: (XInternalEntity) -> ()) -> XInternalEntity {
+    public override func applying(_ f: (XInternalEntity) -> ()) -> XInternalEntity {
         f(self)
         return self
     }
@@ -1359,7 +1359,7 @@ public final class XExternalEntity: XContent {
         self._name = name
     }
     
-    public override func applied(_ f: (XExternalEntity) -> ()) -> XExternalEntity {
+    public override func applying(_ f: (XExternalEntity) -> ()) -> XExternalEntity {
         f(self)
         return self
     }
@@ -1424,7 +1424,7 @@ public final class XProcessingInstruction: XContent, CustomStringConvertible {
         self._data = data
     }
     
-    public override func applied(_ f: (XProcessingInstruction) -> ()) -> XProcessingInstruction {
+    public override func applying(_ f: (XProcessingInstruction) -> ()) -> XProcessingInstruction {
         f(self)
         return self
     }
@@ -1470,7 +1470,7 @@ public final class XComment: XContent {
         self._value = text
     }
     
-    public override func applied(_ f: (XComment) -> ()) -> XComment {
+    public override func applying(_ f: (XComment) -> ()) -> XComment {
         f(self)
         return self
     }
@@ -1516,7 +1516,7 @@ public final class XCDATASection: XContent {
         self._value = text
     }
     
-    public override func applied(_ f: (XCDATASection) -> ()) -> XCDATASection {
+    public override func applying(_ f: (XCDATASection) -> ()) -> XCDATASection {
         f(self)
         return self
     }

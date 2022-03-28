@@ -92,7 +92,7 @@ public final class XDocument: XNode, XBranchInternal {
     
     // ------------------------------------------------------------------------
     
-    public override func applied(_ f: (XDocument) -> ()) -> XDocument {
+    public override func applying(_ f: (XDocument) -> ()) -> XDocument {
         f(self)
         return self
     }

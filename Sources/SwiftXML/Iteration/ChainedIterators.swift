@@ -614,7 +614,7 @@ extension XContentSequence {
         return XElementDependingOnContentSequence(sequence: self, elementGetter: { content in content.parent(name) })
     }
     
-    public func applied(_ f: @escaping (XContent) -> ()) -> XContentSequence {
+    public func applying(_ f: @escaping (XContent) -> ()) -> XContentSequence {
         return XContentDependingOnContentSequence(sequence: self, contentGetter: { content in f(content); return content })
     }
     
@@ -923,7 +923,7 @@ extension XElementSequence {
         return XContentDependingOnElementSequence(sequence: self, contentGetter: { content in content.lastContent(condition) })
     }
     
-    public func applied(_ f: @escaping (XElement) -> ()) -> XElementSequence {
+    public func applying(_ f: @escaping (XElement) -> ()) -> XElementSequence {
         return XElementDependingOnElementSequence(sequence: self, elementGetter: { element in f(element); return element })
     }
     
