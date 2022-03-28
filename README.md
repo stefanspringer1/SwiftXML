@@ -964,6 +964,30 @@ Output:
 </top>
 ```
 
+When using e.g. `insertNext` in chained iterators, you need the `collect` function. E.g. in the last example, you might use with the same result:
+
+```Swift
+print("\n---- 1 ----\n")
+
+element.content.replace { content in
+    collect {
+        content.content
+    }
+}
+
+element.echo(pretty: true)
+
+print("\n---- 2 ----\n")
+
+element.contentReversed.insertPrevious { content in
+    find {
+        XElement("I" + ((content as? XElement)?.name ?? "?"))
+    }
+}
+
+element.echo(pretty: true)
+```
+
 When you _do_ want to also operate on the newly insert content, set `keepPosition: true` on `insertPrevious` or `insertNext`. For example, consider the following code:
 
 ```Swift
@@ -1016,28 +1040,54 @@ Output:
 </top>
 ```
 
-When using e.g. `insertNext` in chained iterators, you need the `collect` function. E.g. in the laste example, you might use with the same result:
+Similarly, if you replace a node, the content that gets inserted in place of the node is by default not included in the iteration:
 
 ```Swift
-print("\n---- 1 ----\n")
+let myElement = XElement("top") {
+    XElement("a")
+}
 
-element.content.replace { content in
-    collect {
-        content.content
+myElement.descendants.forEach { element in
+    if element.name == "a" {
+        element.replace {
+            XElement("b")
+        }
+    }
+    else if element.name == "b" {
+        element.replace {
+            XElement("c")
+        }
     }
 }
 
-element.echo(pretty: true)
+myElement.echo(pretty: true)
+```
 
-print("\n---- 2 ----\n")
+Output:
 
-element.contentReversed.insertPrevious { content in
-    find {
-        XElement("I" + ((content as? XElement)?.name ?? "?"))
-    }
-}
 
-element.echo(pretty: true)
+```text
+<top>
+  <b/>
+</top>
+```
+
+If you would like to also iterate over the inserted content, use `follow: true` in the call to `replace`:
+
+```Swift
+    ...
+        element.replace(follow: true) {
+            XElement("b")
+        }
+    ...
+```
+
+Output:
+
+```text
+<top>
+  <c/>
+</top>
 ```
 
 ## `XSpot` and handling of text

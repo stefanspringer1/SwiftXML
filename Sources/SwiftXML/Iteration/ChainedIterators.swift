@@ -628,8 +628,8 @@ extension XContentSequence {
         self.forEach { content in content._insertNext(keepPosition: keepPosition, contentGetter(content)) }
     }
     
-    public func replace(_ contentGetter: (XContent) -> [XContent]) {
-        self.forEach { content in content._replace(by: contentGetter(content)) }
+    public func replace(follow: Bool = false, _ contentGetter: (XContent) -> [XContent]) {
+        self.forEach { content in content._replace(follow: follow, by: contentGetter(content)) }
     }
     
     public func remove() {
@@ -947,8 +947,8 @@ extension XElementSequence {
         self.forEach { element in element._insertNext(keepPosition: keepPosition, contentGetter(element)) }
     }
     
-    public func replace(_ contentGetter: (XElement) -> [XContent]) {
-        self.forEach { element in element._replace(by: contentGetter(element)) }
+    public func replace(follow: Bool = false, _ contentGetter: (XElement) -> [XContent]) {
+        self.forEach { element in element._replace(follow: follow, by: contentGetter(element)) }
     }
     
     public func clear() {

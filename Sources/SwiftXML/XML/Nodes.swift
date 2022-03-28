@@ -536,8 +536,13 @@ public class XContent: XNode {
     /**
      Replace the node by other nodes.
      */
-    func _replace(by content: [XContent]) {
-        prefetchOnContentIterators()
+    func _replace(follow: Bool, by content: [XContent]) {
+        if follow {
+            gotoPreviousOnContentIterators()
+        }
+        else {
+            prefetchOnContentIterators()
+        }
         let placeholder = XSpot() // do not use text as a place holder!
         _insertNext(placeholder)
         remove()
@@ -548,8 +553,8 @@ public class XContent: XNode {
     /**
      Replace the node by other nodes.
      */
-    public func replace(@XNodeBuilder builder: () -> [XContent]) {
-        _replace(by: builder())
+    public func replace(follow: Bool = false, @XNodeBuilder builder: () -> [XContent]) {
+        _replace(follow: follow, by: builder())
     }
     
     public var asContentSequence: XContentSequence { get { XContentSelfSequence(content: self) } }
@@ -1061,6 +1066,19 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
             prefetchOnElementIterators()
         }
         super._insertNext(keepPosition: keepPosition, content)
+    }
+    
+    /**
+     Replace the node by other nodes.
+     */
+    override func _replace(follow: Bool, by content: [XContent]) {
+        if follow {
+            gotoPreviousOnElementIterators()
+        }
+        else {
+            prefetchOnElementIterators()
+        }
+        super._replace(follow: follow, by: content)
     }
     
     // ------------------------------------------------------------------------
