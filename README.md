@@ -636,13 +636,7 @@ For an element:
 var asElementSequence: XElementSequence
 ```
 
-This can be convenient in cases where the same type is needed, but you might want to choose between a sequence or a single content item:
-
-```Swift
-let myElement = XElement("p") {
-    unpack ? myOtherElement.content : myOtherElement.asContentSequence
-}
-```
+(These two methods are used in the tests of the library.)
 
 ## Finding related nodes with filters
 
@@ -768,13 +762,31 @@ let myElement = XElement("div") {
 }
 ```
 
-By using the method `applied((XNode) -> ()) -> XNode` to a node (the argument and the return value are more specific if the subject is more specific) you can apply a function to a node before returning it:
+You might also use `as XContentLike` to set a common appropriate type where necessary:
+
+```Swift
+let myElement = XElement("p") {
+    unpack ? myOtherElement.content : myOtherElement as XContentLike
+    setPredefinedText ? "my text" : anotherElement.content as XContentLike
+    wrapped ? "my other text" : XElement("wrapper") { "my other text" } as XContentLike
+}
+```
+
+By using the method `applied((XNode) -> ()) -> XNode` to a node (the argument and the return value are more specific if the subject is more specific) you can apply a function to a content node before returning it:
 
 Example:
 
 ```Swift
 let myDocument = XDocument {
     myElement.applied{ $0["level"] = "top" }
+}
+```
+
+`applied` can also be used on a content sequence or element sequence where it is shorter than the `map` method (which would have to define the return value) and gets the types correct without squabbling:
+
+```Swift
+let myDocument = XDocument {
+    myElement.descendants.applied{ $0["inserted"] = "yes" }
 }
 ```
 
