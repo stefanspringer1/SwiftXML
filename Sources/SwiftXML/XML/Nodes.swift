@@ -119,10 +119,6 @@ public class XNode {
         _contentIterators.remove(nodeIterator)
     }
     
-    func prefetchOnContentIterators() {
-        _contentIterators.forEach { $0.prefetch() }
-    }
-    
     weak var _parent: XBranchInternal? = nil
     
     public var parent: XElement? {
@@ -387,6 +383,10 @@ public class XContent: XNode {
         _contentIterators.forEach { _ = $0.previous() }
     }
     
+    func prefetchOnContentIterators() {
+        _contentIterators.forEach { $0.prefetch() }
+    }
+    
     /**
      Removes the node from the tree structure and the tree order,
      but keeps it in the document.
@@ -472,13 +472,15 @@ public class XContent: XNode {
         }
     }
     
-    func _insertPrevious(_ content: [XContent]) {
-        prefetchOnContentIterators()
+    func _insertPrevious(keepPosition: Bool, _ content: [XContent]) {
+        if !keepPosition {
+            prefetchOnContentIterators()
+        }
         content.forEach { _insertPrevious($0) }
     }
     
-    public func insertPrevious(@XNodeBuilder builder: () -> [XContent]) {
-        _insertPrevious(builder())
+    public func insertPrevious(keepPosition: Bool = false, @XNodeBuilder builder: () -> [XContent]) {
+        _insertPrevious(keepPosition: keepPosition, builder())
     }
     
     func _insertNext(_ node: XContent) {
@@ -520,13 +522,15 @@ public class XContent: XNode {
         }
     }
     
-    func _insertNext(_ content: [XContent]) {
-        prefetchOnContentIterators()
+    func _insertNext(keepPosition: Bool, _ content: [XContent]) {
+        if !keepPosition {
+            prefetchOnContentIterators()
+        }
         content.reversed().forEach { _insertNext($0) }
     }
     
-    public func insertNext(@XNodeBuilder builder: () -> [XContent]) {
-        _insertNext(builder())
+    public func insertNext(keepPosition: Bool = false, @XNodeBuilder builder: () -> [XContent]) {
+        _insertNext(keepPosition: keepPosition, builder())
     }
     
     /**
@@ -939,8 +943,16 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     
     var _document: XDocument? = nil
     
-    var _treeIterators = WeakList<XBidirectionalElementIterator>()
+    var _elementIterators = WeakList<XBidirectionalElementIterator>()
     var _nameIterators = WeakList<XElementNameIterator>()
+    
+    func gotoPreviousOnElementIterators() {
+        _elementIterators.forEach { _ = $0.previous() }
+    }
+    
+    func prefetchOnElementIterators() {
+        _elementIterators.forEach { $0.prefetch() }
+    }
     
     var _attributes: [String:XAttribute]? = nil
     var _attributeNames: [String]? = nil
@@ -1036,6 +1048,20 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     var nextWithSameName: XElement? = nil
     
     public var asElementSequence: XElementSequence { get { XElementSelfSequence(element: self) } }
+    
+    override func _insertPrevious(keepPosition: Bool, _ content: [XContent]) {
+        if !keepPosition {
+            prefetchOnElementIterators()
+        }
+        super._insertPrevious(keepPosition: keepPosition, content)
+    }
+    
+    override func _insertNext(keepPosition: Bool, _ content: [XContent]) {
+        if !keepPosition {
+            prefetchOnElementIterators()
+        }
+        super._insertNext(keepPosition: keepPosition, content)
+    }
     
     // ------------------------------------------------------------------------
     // repeat methods from XBranch:
@@ -1153,7 +1179,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     public override func _removeKeep() {
         
         // correction in iterators:
-        _treeIterators.forEach { _ = $0.previous() }
+        _elementIterators.forEach { _ = $0.previous() }
         
         super._removeKeep()
     }

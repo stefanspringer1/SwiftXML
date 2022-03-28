@@ -76,24 +76,24 @@ public final class XBidirectionalElementIterator: XElementIterator {
             prefetched = false
             return current
         }
-        current?._treeIterators.remove(self)
+        current?._elementIterators.remove(self)
         current = elementIterator.next()
-        current?._treeIterators.append(self)
+        current?._elementIterators.append(self)
         return current
     }
     
     public func previous() -> XElement? {
         prefetched = false
-        current?._treeIterators.remove(self)
+        current?._elementIterators.remove(self)
         current = elementIterator.previous()
-        current?._treeIterators.append(self)
+        current?._elementIterators.append(self)
         return current
     }
     
     public func prefetch() {
-        current?._treeIterators.remove(self)
+        current?._elementIterators.remove(self)
         current = elementIterator.next()
-        current?._treeIterators.append(self)
+        current?._elementIterators.append(self)
         prefetched = true
     }
 }

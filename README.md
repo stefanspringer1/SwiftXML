@@ -891,7 +891,7 @@ myDocument.elements(ofName: "table").forEach { table in
 }
 ```
 
-Note that iterations continue while disregarding new nodes inserted by `insertPrevious` or `insertNext`, so that e.g. the following example works intuitively:
+Note that by default iterations continue while disregarding new nodes inserted by `insertPrevious` or `insertNext`, so that e.g. the following example works intuitively:
 
 ```Swift
 let element = XElement("top") {
@@ -961,6 +961,58 @@ Output:
   <b2/>
   <Ic2/>
   <c2/>
+</top>
+```
+
+When you _do_ want to also operate on the newly insert content, set `keepPosition: true` on `insertPrevious` or `insertNext`. For example, consider the following code:
+
+```Swift
+let myElement = XElement("top") {
+    XElement("a")
+}
+
+myElement.descendants.forEach { element in
+    if element.name == "a" {
+        element.insertNext() {
+            XElement("b")
+        }
+    }
+    else if element.name == "b" {
+        element.insertNext {
+            XElement("c")
+        }
+    }
+}
+
+myElement.echo(pretty: true)
+```
+
+Output:
+
+```text
+<top>
+  <a/>
+  <b/>
+</top>
+```
+
+When `<b/>` gets inserted, the traversal is skipping it. When you would like `<b/>` to be included in the iteration, tell `insertNext` to keep the position (so the iteration continues from there, _not_ skipping `<b/>`):
+
+```Swift
+    ...
+        element.insertNext(keepPosition: true) {
+            XElement("b")
+        }
+    ...
+```
+
+Output:
+
+```text
+<top>
+  <a/>
+  <b/>
+  <c/>
 </top>
 ```
 

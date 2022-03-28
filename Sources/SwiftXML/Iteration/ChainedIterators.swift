@@ -618,14 +618,14 @@ extension XContentSequence {
         return XContentDependingOnContentSequence(sequence: self, contentGetter: { content in f(content); return content })
     }
     
-    public func insertPrevious(_ contentGetter: @escaping (XContent) -> [XContent]) {
+    public func insertPrevious(keepPosition: Bool = false, _ contentGetter: @escaping (XContent) -> [XContent]) {
         self.forEach { content in
-            content._insertPrevious(contentGetter(content))
+            content._insertPrevious(keepPosition: keepPosition, contentGetter(content))
         }
     }
     
-    public func insertNext(_ contentGetter: @escaping (XContent) -> [XContent]) {
-        self.forEach { content in content._insertNext(contentGetter(content)) }
+    public func insertNext(keepPosition: Bool = false, _ contentGetter: @escaping (XContent) -> [XContent]) {
+        self.forEach { content in content._insertNext(keepPosition: keepPosition, contentGetter(content)) }
     }
     
     public func replace(_ contentGetter: (XContent) -> [XContent]) {
@@ -939,12 +939,12 @@ extension XElementSequence {
         self.forEach { element in element._setContent(contentGetter(element)) }
     }
     
-    public func insertPrevious(_ contentGetter: @escaping (XElement) -> [XContent]) {
-        self.forEach { element in element._insertPrevious(contentGetter(element)) }
+    public func insertPrevious(keepPosition: Bool = false, _ contentGetter: @escaping (XElement) -> [XContent]) {
+        self.forEach { element in element._insertPrevious(keepPosition: keepPosition, contentGetter(element)) }
     }
     
-    public func insertNext(_ contentGetter: @escaping (XElement) -> [XContent]) {
-        self.forEach { element in element._insertNext(contentGetter(element)) }
+    public func insertNext(keepPosition: Bool = false, _ contentGetter: @escaping (XElement) -> [XContent]) {
+        self.forEach { element in element._insertNext(keepPosition: keepPosition, contentGetter(element)) }
     }
     
     public func replace(_ contentGetter: (XElement) -> [XContent]) {
