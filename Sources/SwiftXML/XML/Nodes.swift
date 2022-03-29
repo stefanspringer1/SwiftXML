@@ -25,6 +25,11 @@ public class XNode {
      */
     weak var _r: XNode? = nil
     
+    /**
+     Always pointing from clone to original
+     */
+    weak var __r: XNode? = nil
+    
     public var r: XNode? {
         get {
             return _r
@@ -88,13 +93,8 @@ public class XNode {
         }
     }
     
-    /**
-     Usually the clone will have "r" pointed to the original node.
-     If "forwardref", then this direction will be inversed, i.e.
-     the original node is pointing to the clone.
-     */
-    public func shallowClone(pointingFromClone: Bool = false) -> XNode {
-        let theClone = XNode()
+    func _setClonePointers(theClone: XNode, pointingFromClone: Bool = false) {
+        theClone.__r = self
         if pointingFromClone {
             theClone._r = _r
             _r = theClone
@@ -102,6 +102,16 @@ public class XNode {
         else {
             theClone._r = self
         }
+    }
+    
+    /**
+     Usually the clone will have "r" pointed to the original node.
+     If "forwardref", then this direction will be inversed, i.e.
+     the original node is pointing to the clone.
+     */
+    public func shallowClone(pointingFromClone: Bool = false) -> XNode {
+        let theClone = XNode()
+        _setClonePointers(theClone: theClone, pointingFromClone: pointingFromClone)
         return theClone
     }
     
@@ -616,7 +626,7 @@ extension XBranchInternal {
         }
         allContent.forEach { node in
             if let element = node as? XElement {
-                (element._r as? XBranchInternal)?.content.forEach { node in
+                (element.__r as? XElement)?.content.forEach { node in
                     element._add(node.shallowClone())
                 }
             }
@@ -1105,13 +1115,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     
     public override func shallowClone(pointingFromClone: Bool = false) -> XElement {
         let theClone = XElement(name)
-        if pointingFromClone {
-            theClone._r = self
-        }
-        else {
-            theClone._r = _r
-            _r = theClone
-        }
+        _setClonePointers(theClone: theClone, pointingFromClone: pointingFromClone)
         theClone.copyAttributes(from: self)
         return theClone
     }
@@ -1412,13 +1416,7 @@ public final class XText: XContent, CustomStringConvertible {
     
     public override func shallowClone(pointingFromClone: Bool = false) -> XText {
         let theClone = XText(_value, whitespace: whitespace)
-        if pointingFromClone {
-            theClone._r = self
-        }
-        else {
-            theClone._r = _r
-            _r = theClone
-        }
+        _setClonePointers(theClone: theClone, pointingFromClone: pointingFromClone)
         return theClone
     }
     
@@ -1458,13 +1456,7 @@ public final class XInternalEntity: XContent {
     
     public override func shallowClone(pointingFromClone: Bool = false) -> XInternalEntity {
         let theClone = XInternalEntity(_name)
-        if pointingFromClone {
-            theClone._r = self
-        }
-        else {
-            theClone._r = _r
-            _r = theClone
-        }
+        _setClonePointers(theClone: theClone, pointingFromClone: pointingFromClone)
         return theClone
     }
     
@@ -1504,13 +1496,7 @@ public final class XExternalEntity: XContent {
     
     public override func shallowClone(pointingFromClone: Bool = false) -> XExternalEntity {
         let theClone = XExternalEntity(_name)
-        if pointingFromClone {
-            theClone._r = self
-        }
-        else {
-            theClone._r = _r
-            _r = theClone
-        }
+        _setClonePointers(theClone: theClone, pointingFromClone: pointingFromClone)
         return theClone
     }
     
@@ -1569,13 +1555,7 @@ public final class XProcessingInstruction: XContent, CustomStringConvertible {
     
     public override func shallowClone(pointingFromClone: Bool = false) -> XProcessingInstruction {
         let theClone = XProcessingInstruction(target: _target, data: _data)
-        if pointingFromClone {
-            theClone._r = self
-        }
-        else {
-            theClone._r = _r
-            _r = theClone
-        }
+        _setClonePointers(theClone: theClone, pointingFromClone: pointingFromClone)
         return theClone
     }
     
@@ -1615,13 +1595,7 @@ public final class XComment: XContent {
     
     public override func shallowClone(pointingFromClone: Bool = false) -> XComment {
         let theClone = XComment(_value)
-        if pointingFromClone {
-            theClone._r = self
-        }
-        else {
-            theClone._r = _r
-            _r = theClone
-        }
+        _setClonePointers(theClone: theClone, pointingFromClone: pointingFromClone)
         return theClone
     }
     
@@ -1661,13 +1635,7 @@ public final class XCDATASection: XContent {
     
     public override func shallowClone(pointingFromClone: Bool = false) -> XCDATASection {
         let theClone = XCDATASection(_value)
-        if pointingFromClone {
-            theClone._r = self
-        }
-        else {
-            theClone._r = _r
-            _r = theClone
-        }
+        _setClonePointers(theClone: theClone, pointingFromClone: pointingFromClone)
         return theClone
     }
     

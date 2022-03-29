@@ -413,12 +413,12 @@ public func collect(@XContentBuilder builder: @escaping () -> [XContent]) -> [XC
 
 extension XContentSequence {
     
-    public func clone() -> XContentSequence {
-        return XContentDependingOnContentSequence(sequence: self, contentGetter: { content in content.clone() })
+    public func clone(pointingFromClone: Bool = false) -> XContentSequence {
+        return XContentDependingOnContentSequence(sequence: self, contentGetter: { content in content.clone(pointingFromClone: pointingFromClone) })
     }
     
-    public func shallowClone() -> XContentSequence {
-        return XContentDependingOnContentSequence(sequence: self, contentGetter: { content in content.shallowClone() })
+    public func shallowClone(pointingFromClone: Bool = false) -> XContentSequence {
+        return XContentDependingOnContentSequence(sequence: self, contentGetter: { content in content.shallowClone(pointingFromClone: pointingFromClone) })
     }
     
     public var ancestors: XElementSequence {
@@ -698,12 +698,12 @@ extension XElementSequence {
         get { XNameSequenceDependingOnElementSequence(sequence: self) }
     }
     
-    public func clone() -> XElementSequence {
-        return XElementDependingOnElementSequence(sequence: self, elementGetter: { element in element.clone() })
+    public func clone(pointingFromClone: Bool = false) -> XElementSequence {
+        return XElementDependingOnElementSequence(sequence: self, elementGetter: { element in element.clone(pointingFromClone: pointingFromClone) })
     }
     
-    public func shallowClone() -> XElementSequence {
-        return XElementDependingOnElementSequence(sequence: self, elementGetter: { element in element.clone() })
+    public func shallowClone(pointingFromClone: Bool = false) -> XElementSequence {
+        return XElementDependingOnElementSequence(sequence: self, elementGetter: { element in element.shallowClone(pointingFromClone: pointingFromClone) })
     }
     
     public var ancestors: XElementSequence {

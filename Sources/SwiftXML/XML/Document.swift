@@ -115,12 +115,7 @@ public final class XDocument: XNode, XBranchInternal {
     
     public override func shallowClone(pointingFromClone: Bool = false) -> XDocument {
         let theClone = XDocument()
-        if pointingFromClone {
-            theClone._r = self
-        }
-        else {
-            _r = theClone
-        }
+        _setClonePointers(theClone: theClone, pointingFromClone: pointingFromClone)
         theClone.xmlVersion = xmlVersion
         theClone.encoding = encoding
         theClone.standalone = standalone
