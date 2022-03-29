@@ -376,7 +376,7 @@ public class XElementDependingOnElementSequence: XElementSequence {
     }
 }
 
-public func collect(@XNodeBuilder builder: @escaping () -> [XContent]) -> [XContent] {
+public func collect(@XContentBuilder builder: @escaping () -> [XContent]) -> [XContent] {
     return builder()
 }
 

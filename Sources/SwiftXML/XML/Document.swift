@@ -247,7 +247,7 @@ public final class XDocument: XNode, XBranchInternal {
         attached?.forEach{ (key,value) in self.attached[key] = value }
     }
     
-    public convenience init(attached: [String:Any?]? = nil, @XNodeBuilder builder: () -> [XContent]) {
+    public convenience init(attached: [String:Any?]? = nil, @XContentBuilder builder: () -> [XContent]) {
         self.init(attached: attached)
         builder().forEach { node in
             _add(node)

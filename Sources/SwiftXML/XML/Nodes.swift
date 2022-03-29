@@ -479,7 +479,7 @@ public class XContent: XNode {
         content.forEach { _insertPrevious($0) }
     }
     
-    public func insertPrevious(keepPosition: Bool = false, @XNodeBuilder builder: () -> [XContent]) {
+    public func insertPrevious(keepPosition: Bool = false, @XContentBuilder builder: () -> [XContent]) {
         _insertPrevious(keepPosition: keepPosition, builder())
     }
     
@@ -529,7 +529,7 @@ public class XContent: XNode {
         content.reversed().forEach { _insertNext($0) }
     }
     
-    public func insertNext(keepPosition: Bool = false, @XNodeBuilder builder: () -> [XContent]) {
+    public func insertNext(keepPosition: Bool = false, @XContentBuilder builder: () -> [XContent]) {
         _insertNext(keepPosition: keepPosition, builder())
     }
     
@@ -553,7 +553,7 @@ public class XContent: XNode {
     /**
      Replace the node by other nodes.
      */
-    public func replace(follow: Bool = false, @XNodeBuilder builder: () -> [XContent]) {
+    public func replace(follow: Bool = false, @XContentBuilder builder: () -> [XContent]) {
         _replace(follow: follow, by: builder())
     }
     
@@ -585,9 +585,9 @@ public protocol XBranch: XNode {
     var lastContent: XContent? { get }
     func lastContent(_ condition: (XContent) -> Bool) -> XContent?
     var isEmpty: Bool { get }
-    func add(@XNodeBuilder builder: () -> [XContent])
-    func addFirst(@XNodeBuilder builder: () -> [XContent])
-    func setContent(@XNodeBuilder builder: () -> [XContent])
+    func add(@XContentBuilder builder: () -> [XContent])
+    func addFirst(@XContentBuilder builder: () -> [XContent])
+    func setContent(@XContentBuilder builder: () -> [XContent])
     func clear()
 }
 
@@ -719,7 +719,7 @@ extension XBranchInternal {
         content.forEach { _add($0) }
     }
     
-    public func add(@XNodeBuilder builder: () -> [XContent]) {
+    public func add(@XContentBuilder builder: () -> [XContent]) {
         return _add(builder())
     }
     
@@ -775,7 +775,7 @@ extension XBranchInternal {
         content.reversed().forEach { _addFirst($0) }
     }
     
-    public func addFirst(@XNodeBuilder builder: () -> [XContent]) {
+    public func addFirst(@XContentBuilder builder: () -> [XContent]) {
         _addFirst(builder())
     }
     
@@ -793,7 +793,7 @@ extension XBranchInternal {
     /**
      Set the contents of the branch.
      */
-    public func setContent(@XNodeBuilder builder: () -> [XContent]) {
+    public func setContent(@XContentBuilder builder: () -> [XContent]) {
         _setContent(builder())
     }
     
@@ -878,7 +878,7 @@ final class XNodeSampler {
 }
 
 @resultBuilder
-public struct XNodeBuilder {
+public struct XContentBuilder {
     public static func buildBlock(_ components: XContentLike?...) -> [XContent] {
         let sampler = XNodeSampler()
         components.forEach { if let nodeLike = $0 { sampler.add(nodeLike) } }
@@ -1178,7 +1178,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         attached?.forEach{ (key,value) in self.attached[key] = value }
     }
     
-    public convenience init(_ name: String, _ attributes: [String:String?]? = nil, attached: [String:Any?]? = nil, adjustDocument _adjustDocument: Bool = false, @XNodeBuilder builder: () -> [XContent]) {
+    public convenience init(_ name: String, _ attributes: [String:String?]? = nil, attached: [String:Any?]? = nil, adjustDocument _adjustDocument: Bool = false, @XContentBuilder builder: () -> [XContent]) {
         self.init(name, attributes, attached: attached)
         builder().forEach { node in
             _add(node)
