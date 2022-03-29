@@ -230,6 +230,37 @@ public class XElementDependingOnContentIterator: XElementIterator {
     }
 }
 
+public class XNameSequenceDependingOnElementSequence: XStringSequence {
+    
+    let sequence: XElementSequence
+    
+    init(sequence: XElementSequence) {
+        self.sequence = sequence
+    }
+    
+    override public func makeIterator() -> XNameDependingOnElementIterator {
+        return XNameDependingOnElementIterator(sequence: sequence)
+    }
+}
+
+public class XNameDependingOnElementIterator: XStringIterator {
+    
+    private let iterator: XElementIterator
+    
+    init(sequence: XElementSequence) {
+        iterator = sequence.makeIterator()
+    }
+    
+    public override func next() -> String? {
+        if let element = iterator.next() {
+            return element.name
+        }
+        else {
+            return nil
+        }
+    }
+}
+
 public class XElementDependingOnElementIterator: XElementIterator {
     
     private let iterator1: XElementIterator
@@ -381,6 +412,14 @@ public func collect(@XContentBuilder builder: @escaping () -> [XContent]) -> [XC
 }
 
 extension XContentSequence {
+    
+    public func clone() -> XContentSequence {
+        return XContentDependingOnContentSequence(sequence: self, contentGetter: { content in content.clone() })
+    }
+    
+    public func shallowClone() -> XContentSequence {
+        return XContentDependingOnContentSequence(sequence: self, contentGetter: { content in content.shallowClone() })
+    }
     
     public var ancestors: XElementSequence {
         get { XElementSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.ancestors }) }
@@ -642,6 +681,18 @@ extension XContentSequence {
 }
 
 extension XElementSequence {
+    
+    public var name: XStringSequence {
+        get { XNameSequenceDependingOnElementSequence(sequence: self) }
+    }
+    
+    public func clone() -> XElementSequence {
+        return XElementDependingOnElementSequence(sequence: self, elementGetter: { element in element.clone() })
+    }
+    
+    public func shallowClone() -> XElementSequence {
+        return XElementDependingOnElementSequence(sequence: self, elementGetter: { element in element.clone() })
+    }
     
     public var ancestors: XElementSequence {
         get { XElementSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { content in content.ancestors }) }

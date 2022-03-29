@@ -376,18 +376,18 @@ public final class XDescendantsIncludingSelfSequence: XElementSequence {
 public final class XElementsOfSameNameSequence: XElementSequence {
     
     let document: XDocument
-    let name: String
+    let elementName: String
     
     init(document: XDocument, name: String) {
         self.document = document
-        self.name = name
+        self.elementName = name
     }
     
     public override func makeIterator() -> XElementIterator {
         return XElementNameIterator(
             elementIterator: XElementsOfSameNameIterator(
                 document: document,
-                name: name
+                name: elementName
             )
         )
     }

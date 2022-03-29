@@ -88,6 +88,13 @@ public class XElementIterator: IteratorProtocol {
     }
 }
 
+public class XStringIterator: IteratorProtocol {
+    public typealias Element = String
+    public func next() -> String? {
+        return nil
+    }
+}
+
 public class XElementIteratorWithCondition: XElementIterator {
     
     let iterator: XElementIterator
@@ -168,6 +175,12 @@ public class XElementIteratorUntilCondition: XElementIterator {
 public class XElementSequence: LazySequenceProtocol {
     public func makeIterator() -> XElementIterator {
         return XElementIterator()
+    }
+}
+
+public class XStringSequence: LazySequenceProtocol {
+    public func makeIterator() -> XStringIterator {
+        return XStringIterator()
     }
 }
 

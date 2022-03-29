@@ -1030,7 +1030,7 @@ Output:
 </top>
 ```
 
-When using e.g. `insertNext` in chained iterators, you need the `collect` function. E.g. in the last example, you might use with the same result:
+When using `insertNext`, `replace` etc. in chained iterators, you need the `collect` function. E.g. in the last example, you might use with the same result:
 
 ```Swift
 print("\n---- 1 ----\n")
@@ -1052,6 +1052,44 @@ element.contentReversed.insertPrevious { content in
 }
 
 element.echo(pretty: true)
+```
+
+Note that when inserting a content, and that content is already part of another element or dicument, that contect does get duplicated, but removed from its original position:
+
+```Swift
+let myElement = XElement("div") {
+    XElement("catch-me")
+    XElement("catcher")
+}
+
+myElement.children("catcher").add { _ in
+    collect {
+        myElement.children("catch-me")
+    }
+}
+
+myElement.echo(pretty: true)
+```
+
+Output:
+
+```text
+<div>
+  <catcher>
+    <catch-me/>
+  </catcher>
+</div>
+```
+
+Use `clone()` (or `shallowClone()`) when you actually want content to get duplicated, e.g. using `myElement.children("catch-me").clone()` in the last example would then output:
+
+```text
+<div>
+  <catch-me/>
+  <catcher>
+    <catch-me/>
+  </catcher>
+</div>
 ```
 
 When you _do_ want to also operate on the newly insert content, set `keepPosition: true` on `insertPrevious` or `insertNext`. For example, consider the following code:

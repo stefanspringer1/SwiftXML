@@ -324,6 +324,14 @@ public class XNode {
 
 public class XContent: XNode {
     
+    public func clone() -> XContent {
+        return XContent() // will always be overridden
+    }
+    
+    public func shallowClone() -> XContent {
+        return XContent() // will always be overridden
+    }
+    
     /**
      Correct the tree order after this node has been inserted.
      */
@@ -602,16 +610,12 @@ extension XBranchInternal {
     
     func _addClones(from source: XBranchInternal, forwardref: Bool = false) {
         source.content.forEach { node in
-            if let content = node.shallowClone() as? XContent {
-                _add(content)
-            }
+            _add(node.shallowClone())
         }
         allContent.forEach { node in
             if let element = node as? XElement {
                 (element._r as? XBranchInternal)?.content.forEach { node in
-                    if let content = node.shallowClone() as? XContent {
-                        element._add(content)
-                    }
+                    element._add(node.shallowClone())
                 }
             }
             if forwardref {
