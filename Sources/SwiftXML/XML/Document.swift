@@ -90,6 +90,22 @@ public final class XDocument: XNode, XBranchInternal {
         get { _firstContent == nil }
     }
     
+    public func add(@XContentBuilder builder: () -> [XContent]) {
+        return (self as XBranch).add(builder: builder)
+    }
+    
+    public func addFirst(@XContentBuilder builder: () -> [XContent]) {
+        return (self as XBranch).addFirst(builder: builder)
+    }
+    
+    public func setContent(@XContentBuilder builder: () -> [XContent]) {
+        return (self as XBranch).setContent(builder: builder)
+    }
+    
+    public func clear() {
+        return (self as XBranch).clear()
+    }
+    
     // ------------------------------------------------------------------------
     
     public override func applying(_ f: (XDocument) -> ()) -> XDocument {

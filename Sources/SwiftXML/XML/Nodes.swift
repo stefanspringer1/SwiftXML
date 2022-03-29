@@ -1212,6 +1212,22 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         get { _firstContent == nil }
     }
     
+    public func add(@XContentBuilder builder: () -> [XContent]) {
+        return (self as XBranch).add(builder: builder)
+    }
+    
+    public func addFirst(@XContentBuilder builder: () -> [XContent]) {
+        return (self as XBranch).addFirst(builder: builder)
+    }
+    
+    public func setContent(@XContentBuilder builder: () -> [XContent]) {
+        return (self as XBranch).setContent(builder: builder)
+    }
+    
+    public func clear() {
+        return (self as XBranch).clear()
+    }
+    
     // ------------------------------------------------------------------------
     
     // prevent stack overflow when destroying the list of elements with same name,
