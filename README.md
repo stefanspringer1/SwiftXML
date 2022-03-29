@@ -885,14 +885,12 @@ Add nodes at the end of the content of an element or a document respectively:
 
 ```Swift
 func add(builder: () -> [XContent])
-func add(builder: () -> [XContent])
 ```
 
 Add nodes to the start of the content of an element or a document respectively:
 
 ```Swift
 func addFirst(builder: () -> [XContent])
-func addFIrst(builder: () -> [XContent])
 ```
 
 Add nodes as the nodes previous to the node:
@@ -938,7 +936,6 @@ var isEmpty: Bool
 Set the contents of an element or a document respectively:
 
 ```Swift
-func setContent(builder: () -> [XContent])
 func setContent(builder: () -> [XContent])
 ```
 
