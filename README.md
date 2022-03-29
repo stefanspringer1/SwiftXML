@@ -1030,7 +1030,7 @@ Output:
 </top>
 ```
 
-When using `insertNext`, `replace` etc. in chained iterators, you need the `collect` function. E.g. in the last example, you might use with the same result:
+When using `insertNext`, `replace` etc. in chained iterators, what happens is that the definition of the content in the parentheses `{...}` get _executed_ each item in the sequence. In the genaral case, you should use the `collect` function to build content specifically for the current item. E.g. in the last example, you might use with the same result:
 
 ```Swift
 print("\n---- 1 ----\n")
@@ -1054,18 +1054,45 @@ element.contentReversed.insertPrevious { content in
 element.echo(pretty: true)
 ```
 
-Note that when inserting a content, and that content is already part of another element or dicument, that contect does get duplicated, but removed from its original position:
+You may also not use `collect`:
 
 ```Swift
-let myElement = XElement("div") {
-    XElement("catch-me")
-    XElement("catcher")
+let e = XElement("a") {
+    XElement("b")
+    XElement("c")
 }
 
-myElement.children("catcher").add { _ in
-    collect {
-        myElement.children("catch-me")
-    }
+e.descendants({ $0.name != "added" }).add {
+    XElement("added")
+}
+
+e.echo(pretty: true)
+```
+
+Output:
+
+```Swift
+<a>
+  <b>
+    <added/>
+  </b>
+  <c>
+    <added/>
+  </c>
+</a>
+```
+
+Note that a new `<added/>` is created each time. From what has already bee said, it should be clear that this “duplication” does not work with existing content (unless you use `clone()` or `shallowClone()`):
+
+```Swift
+let myElement = XElement("a") {
+    XElement("to-add")
+    XElement("b")
+    XElement("c")
+}
+
+myElement.descendants({ $0.name != "to-add" }).add {
+    myElement.descendants("to-add")
 }
 
 myElement.echo(pretty: true)
@@ -1074,22 +1101,29 @@ myElement.echo(pretty: true)
 Output:
 
 ```text
-<div>
-  <catcher>
-    <catch-me/>
-  </catcher>
-</div>
+<a>
+  <b/>
+  <c>
+    <to-add/>
+  </c>
+</a>
 ```
 
-Use `clone()` (or `shallowClone()`) when you actually want content to get duplicated, e.g. using `myElement.children("catch-me").clone()` in the last example would then output:
+As a general rule, when inserting a content, and that content is already part of another element or document, that content does not get duplicated, but removed from its original position.
+
+Use `clone()` (or `shallowClone()`) when you actually want content to get duplicated, e.g. using `myElement.descendants("to-add").clone()` in the last example would then output:
 
 ```text
-<div>
-  <catch-me/>
-  <catcher>
-    <catch-me/>
-  </catcher>
-</div>
+<a>
+  <to-add/>
+  <b>
+    <to-add/>
+  </b>
+  <c>
+    <to-add/>
+    <to-add/>
+  </c>
+</a>
 ```
 
 When you _do_ want to also operate on the newly insert content, set `keepPosition: true` on `insertPrevious` or `insertNext`. For example, consider the following code:

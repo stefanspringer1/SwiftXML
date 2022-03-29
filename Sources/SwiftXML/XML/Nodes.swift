@@ -93,9 +93,9 @@ public class XNode {
      If "forwardref", then this direction will be inversed, i.e.
      the original node is pointing to the clone.
      */
-    public func shallowClone(forwardref: Bool = false) -> XNode {
+    public func shallowClone(pointingFromClone: Bool = false) -> XNode {
         let theClone = XNode()
-        if forwardref {
+        if pointingFromClone {
             theClone._r = _r
             _r = theClone
         }
@@ -106,7 +106,7 @@ public class XNode {
     }
     
     public func clone(pointingFromClone: Bool = false) -> XNode {
-        return shallowClone(forwardref: pointingFromClone)
+        return shallowClone(pointingFromClone: pointingFromClone)
     }
     
     var _contentIterators = WeakList<XBidirectionalContentIterator>()
@@ -324,12 +324,14 @@ public class XNode {
 
 public class XContent: XNode {
     
-    public func clone() -> XContent {
-        return XContent() // will always be overridden
+    public override func clone(pointingFromClone: Bool = false) -> XContent {
+        _ = super.clone(pointingFromClone: pointingFromClone)
+        return self
     }
     
-    public func shallowClone() -> XContent {
-        return XContent() // will always be overridden
+    public override func shallowClone(pointingFromClone: Bool = false) -> XContent {
+        _ = super.shallowClone(pointingFromClone: pointingFromClone)
+        return self
     }
     
     /**
@@ -1097,21 +1099,25 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         }
     }
     
-    public override func shallowClone(forwardref: Bool = false) -> XElement {
+    /*public override func clone(pointingFromClone forwardref: Bool = false) -> XElement {
+        return (self as XNode).clone(pointingFromClone: forwardref) as! XElement
+    }*/
+    
+    public override func shallowClone(pointingFromClone: Bool = false) -> XElement {
         let theClone = XElement(name)
-        if forwardref {
-            theClone._r = _r
-            _r = theClone
+        if pointingFromClone {
+            theClone._r = self
         }
         else {
-            theClone._r = self
+            theClone._r = _r
+            _r = theClone
         }
         theClone.copyAttributes(from: self)
         return theClone
     }
     
     public override func clone(pointingFromClone: Bool = false) -> XElement {
-        let theClone = shallowClone(forwardref: pointingFromClone)
+        let theClone = shallowClone(pointingFromClone: pointingFromClone)
         theClone._addClones(from: self, forwardref: pointingFromClone)
         return theClone
     }
@@ -1404,20 +1410,20 @@ public final class XText: XContent, CustomStringConvertible {
         try production.writeText(text: self)
     }
     
-    public override func shallowClone(forwardref: Bool = false) -> XText {
+    public override func shallowClone(pointingFromClone: Bool = false) -> XText {
         let theClone = XText(_value, whitespace: whitespace)
-        if forwardref {
-            theClone._r = _r
-            _r = theClone
+        if pointingFromClone {
+            theClone._r = self
         }
         else {
-            theClone._r = self
+            theClone._r = _r
+            _r = theClone
         }
         return theClone
     }
     
     public override func clone(pointingFromClone: Bool = false) -> XText {
-        return shallowClone(forwardref: pointingFromClone)
+        return shallowClone(pointingFromClone: pointingFromClone)
     }
 }
 
@@ -1450,20 +1456,20 @@ public final class XInternalEntity: XContent {
         try production.writeInternalEntity(internalEntity: self)
     }
     
-    public override func shallowClone(forwardref: Bool = false) -> XInternalEntity {
+    public override func shallowClone(pointingFromClone: Bool = false) -> XInternalEntity {
         let theClone = XInternalEntity(_name)
-        if forwardref {
-            theClone._r = _r
-            _r = theClone
+        if pointingFromClone {
+            theClone._r = self
         }
         else {
-            theClone._r = self
+            theClone._r = _r
+            _r = theClone
         }
         return theClone
     }
     
     public override func clone(pointingFromClone: Bool = false) -> XInternalEntity {
-        return shallowClone(forwardref: pointingFromClone)
+        return shallowClone(pointingFromClone: pointingFromClone)
     }
 }
 
@@ -1496,20 +1502,20 @@ public final class XExternalEntity: XContent {
         try production.writeExternalEntity(externalEntity: self)
     }
     
-    public override func shallowClone(forwardref: Bool = false) -> XExternalEntity {
+    public override func shallowClone(pointingFromClone: Bool = false) -> XExternalEntity {
         let theClone = XExternalEntity(_name)
-        if forwardref {
-            theClone._r = _r
-            _r = theClone
+        if pointingFromClone {
+            theClone._r = self
         }
         else {
-            theClone._r = self
+            theClone._r = _r
+            _r = theClone
         }
         return theClone
     }
     
     public override func clone(pointingFromClone: Bool = false) -> XExternalEntity {
-        return shallowClone(forwardref: pointingFromClone)
+        return shallowClone(pointingFromClone: pointingFromClone)
     }
 }
 
@@ -1561,20 +1567,20 @@ public final class XProcessingInstruction: XContent, CustomStringConvertible {
         try production.writeProcessingInstruction(processingInstruction: self)
     }
     
-    public override func shallowClone(forwardref: Bool = false) -> XProcessingInstruction {
+    public override func shallowClone(pointingFromClone: Bool = false) -> XProcessingInstruction {
         let theClone = XProcessingInstruction(target: _target, data: _data)
-        if forwardref {
-            theClone._r = _r
-            _r = theClone
+        if pointingFromClone {
+            theClone._r = self
         }
         else {
-            theClone._r = self
+            theClone._r = _r
+            _r = theClone
         }
         return theClone
     }
     
     public override func clone(pointingFromClone: Bool = false) -> XProcessingInstruction {
-        return shallowClone(forwardref: pointingFromClone)
+        return shallowClone(pointingFromClone: pointingFromClone)
     }
 }
 
@@ -1607,20 +1613,20 @@ public final class XComment: XContent {
         try production.writeComment(comment: self)
     }
     
-    public override func shallowClone(forwardref: Bool = false) -> XComment {
+    public override func shallowClone(pointingFromClone: Bool = false) -> XComment {
         let theClone = XComment(_value)
-        if forwardref {
-            theClone._r = _r
-            _r = theClone
+        if pointingFromClone {
+            theClone._r = self
         }
         else {
-            theClone._r = self
+            theClone._r = _r
+            _r = theClone
         }
         return theClone
     }
     
     public override func clone(pointingFromClone: Bool = false) -> XComment {
-        return shallowClone(forwardref: pointingFromClone)
+        return shallowClone(pointingFromClone: pointingFromClone)
     }
 }
 
@@ -1653,20 +1659,20 @@ public final class XCDATASection: XContent {
         try production.writeCDATASection(cdataSection: self)
     }
     
-    public override func shallowClone(forwardref: Bool = false) -> XCDATASection {
+    public override func shallowClone(pointingFromClone: Bool = false) -> XCDATASection {
         let theClone = XCDATASection(_value)
-        if forwardref {
-            theClone._r = _r
-            _r = theClone
+        if pointingFromClone {
+            theClone._r = self
         }
         else {
-            theClone._r = self
+            theClone._r = _r
+            _r = theClone
         }
         return theClone
     }
     
     public override func clone(pointingFromClone: Bool = false) -> XCDATASection {
-        return shallowClone(forwardref: pointingFromClone)
+        return shallowClone(pointingFromClone: pointingFromClone)
     }
 }
 
