@@ -753,13 +753,13 @@ let myElement = XElement("div") {
 }
 ```
 
-For resulting arrays of more complex content, use the property `xml` to insert them (`xml` also flattens arrays of sequences):
+For resulting arrays of more complex content, use the property `asContent` to insert them (`asContent` also flattens arrays of sequences):
 
 ```Swift
 let myElement = XElement("div") {
-    ["Hello ", " ", "World"].xml
-    myDocument.children.map{ $0.children }.xml
-    ["a","b"].map{ XElement($0) }.xml
+    ["Hello ", " ", "World"].asContent
+    myDocument.children.map{ $0.children }.asContent
+    ["a","b"].map{ XElement($0) }.asContent
 }
 ```
 
@@ -783,7 +783,7 @@ let myDocument = XDocument {
 }
 ```
 
-`applying` can also be used on a content sequence or element sequence where it is shorter than using the `map` method in the general case (where a `return` statement might have to be included) and you can directly use it to define content (without the `xml` property decribed above):
+`applying` can also be used on a content sequence or element sequence where it is shorter than using the `map` method in the general case (where a `return` statement might have to be included) and you can directly use it to define content (without the `asContent` property decribed above):
 
 ```Swift
 let myDocument = XDocument {

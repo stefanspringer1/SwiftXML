@@ -813,115 +813,115 @@ extension XElementSequence: XContentLike {}
 extension XContentLikeSequence: XContentLike {}
 
 public extension Array where Element == XContentLike? {
-    var xml: XContentLikeSequence {
+    var asContent: XContentLikeSequence {
         get { XContentLikeSequenceFromArray(fromArray: self) }
     }
 }
 
 public extension Array where Element == XElement {
-    var xml: XContentLikeSequence {
+    var asContent: XContentLikeSequence {
         get { XContentLikeSequenceFromArray(fromArray: self) }
     }
 }
 
 public extension Array where Element == XElement? {
-    var xml: XContentLikeSequence {
+    var asContent: XContentLikeSequence {
         get { XContentLikeSequenceFromArray(fromArray: self) }
     }
 }
 
 public extension Array where Element == XText {
-    var xml: XContentLikeSequence {
+    var asContent: XContentLikeSequence {
         get { XContentLikeSequenceFromArray(fromArray: self) }
     }
 }
 
 public extension Array where Element == XText? {
-    var xml: XContentLikeSequence {
+    var asContent: XContentLikeSequence {
         get { XContentLikeSequenceFromArray(fromArray: self) }
     }
 }
 
 public extension Array where Element == XInternalEntity {
-    var xml: XContentLikeSequence {
+    var asContent: XContentLikeSequence {
         get { XContentLikeSequenceFromArray(fromArray: self) }
     }
 }
 
 public extension Array where Element == XInternalEntity? {
-    var xml: XContentLikeSequence {
+    var asContent: XContentLikeSequence {
         get { XContentLikeSequenceFromArray(fromArray: self) }
     }
 }
 
 public extension Array where Element == XExternalEntity {
-    var xml: XContentLikeSequence {
+    var asContent: XContentLikeSequence {
         get { XContentLikeSequenceFromArray(fromArray: self) }
     }
 }
 
 public extension Array where Element == XExternalEntity? {
-    var xml: XContentLikeSequence {
+    var asContent: XContentLikeSequence {
         get { XContentLikeSequenceFromArray(fromArray: self) }
     }
 }
 
 public extension Array where Element == XCDATASection {
-    var xml: XContentLikeSequence {
+    var asContent: XContentLikeSequence {
         get { XContentLikeSequenceFromArray(fromArray: self) }
     }
 }
 
 public extension Array where Element == XCDATASection? {
-    var xml: XContentLikeSequence {
+    var asContent: XContentLikeSequence {
         get { XContentLikeSequenceFromArray(fromArray: self) }
     }
 }
 
 public extension Array where Element == XProcessingInstruction {
-    var xml: XContentLikeSequence {
+    var asContent: XContentLikeSequence {
         get { XContentLikeSequenceFromArray(fromArray: self) }
     }
 }
 
 public extension Array where Element == XProcessingInstruction? {
-    var xml: XContentLikeSequence {
+    var asContent: XContentLikeSequence {
         get { XContentLikeSequenceFromArray(fromArray: self) }
     }
 }
 
 public extension Array where Element == XComment {
-    var xml: XContentLikeSequence {
+    var asContent: XContentLikeSequence {
         get { XContentLikeSequenceFromArray(fromArray: self) }
     }
 }
 
 public extension Array where Element == XComment? {
-    var xml: XContentLikeSequence {
+    var asContent: XContentLikeSequence {
         get { XContentLikeSequenceFromArray(fromArray: self) }
     }
 }
 
 public extension Array where Element == XSpot {
-    var xml: XContentLikeSequence {
+    var asContent: XContentLikeSequence {
         get { XContentLikeSequenceFromArray(fromArray: self) }
     }
 }
 
 public extension Array where Element == XSpot? {
-    var xml: XContentLikeSequence {
+    var asContent: XContentLikeSequence {
         get { XContentLikeSequenceFromArray(fromArray: self) }
     }
 }
 
 public extension LazyFilterSequence where Base == XElementSequence {
-    var xml: XContentLikeSequence {
+    var asContent: XContentLikeSequence {
         get { XContentLikeSequenceFromLazyElementFilterSequence(fromSequence: self) }
     }
 }
 
 public extension LazyFilterSequence where Base == XContentSequence {
-    var xml: XContentLikeSequence {
+    var asContent: XContentLikeSequence {
         get { XContentLikeSequenceFromLazyContentFilterSequence(fromSequence: self) }
     }
 }
