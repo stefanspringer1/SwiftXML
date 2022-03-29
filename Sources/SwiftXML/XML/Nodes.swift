@@ -351,9 +351,9 @@ public class XContent: XNode {
         
         let lastInMyTree = getLastInTree()
         
-        // set _previousInTree & _nextInTree for self:
+        // set _previousInTree & _nextInTree for "self" tree:
         self._previousInTree = _previous?.getLastInTree() ?? _parent
-        lastInMyTree._nextInTree = self._previousInTree?._nextInTree
+        lastInMyTree._nextInTree = self._next ?? _parent
         
         // set _previousInTree or _nextInTree for them:
         self._previousInTree?._nextInTree = self
@@ -458,11 +458,11 @@ public class XContent: XNode {
             selfAsText.whitespace = .UNKNOWN
         }
         else {
+            node._removeKeep()
+            
             if _parent?._firstContent === self {
                 _parent?._firstContent = node
             }
-            
-            node._removeKeep()
             
             _previous?._next = node
             node._previous = _previous
