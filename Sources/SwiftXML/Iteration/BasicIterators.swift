@@ -262,21 +262,20 @@ public class XContentLikeSequence: LazySequenceProtocol {
 public class XContentLikeSequenceFromArray: XContentLikeSequence {
     let array: Array<XContentLike?>
     
-    public init(formArray array: Array<XContentLike?>) {
+    public init(fromArray array: Array<XContentLike?>) {
         self.array = array
     }
     
     public override func makeIterator() -> XContentLikeIterator {
-        return XContentLikeIteratorFromArray(formArray: array)
+        return XContentLikeIteratorFromArray(fromArray: array)
     }
 }
-    
-    
+
 public class XContentLikeIteratorFromArray: XContentLikeIterator {
     let array: Array<XContentLike?>
     var nextIndex = -1
     
-    public init(formArray array: Array<XContentLike?>) {
+    public init(fromArray array: Array<XContentLike?>) {
         self.array = array
     }
     
@@ -292,6 +291,54 @@ public class XContentLikeIteratorFromArray: XContentLikeIterator {
             }
         } while result == nil
         return result
+    }
+}
+
+public class XContentLikeSequenceFromLazyElementFilterSequence: XContentLikeSequence {
+    let sequence: LazyFilterSequence<XElementSequence>
+    
+    public init(fromSequence sequence: LazyFilterSequence<XElementSequence>) {
+        self.sequence = sequence
+    }
+    
+    public override func makeIterator() -> XContentLikeIterator {
+        return XContentLikeIteratorFromLazyElementFilterSequence(fromSequence: sequence)
+    }
+}
+
+public class XContentLikeIteratorFromLazyElementFilterSequence: XContentLikeIterator {
+    var iterator: LazyFilterSequence<XElementSequence>.Iterator
+    
+    public init(fromSequence sequence: LazyFilterSequence<XElementSequence>) {
+        iterator = sequence.makeIterator()
+    }
+    
+    public override func next() -> XContentLike? {
+        return iterator.next()
+    }
+}
+
+public class XContentLikeSequenceFromLazyContentFilterSequence: XContentLikeSequence {
+    let sequence: LazyFilterSequence<XContentSequence>
+    
+    public init(fromSequence sequence: LazyFilterSequence<XContentSequence>) {
+        self.sequence = sequence
+    }
+    
+    public override func makeIterator() -> XContentLikeIterator {
+        return XContentLikeIteratorFromLazyContentFilterSequence(fromSequence: sequence)
+    }
+}
+
+public class XContentLikeIteratorFromLazyContentFilterSequence: XContentLikeIterator {
+    var iterator: LazyFilterSequence<XContentSequence>.Iterator
+    
+    public init(fromSequence sequence: LazyFilterSequence<XContentSequence>) {
+        iterator = sequence.makeIterator()
+    }
+    
+    public override func next() -> XContentLike? {
+        return iterator.next()
     }
 }
 

@@ -758,7 +758,8 @@ For resulting arrays of more complex content, use the property `xml` to insert t
 ```Swift
 let myElement = XElement("div") {
     ["Hello ", " ", "World"].xml
-    document.children.map{ $0.children }.xml
+    myDocument.children.map{ $0.children }.xml
+    ["a","b"].map{ XElement($0) }.xml
 }
 ```
 
@@ -782,7 +783,7 @@ let myDocument = XDocument {
 }
 ```
 
-`applying` can also be used on a content sequence or element sequence where it is shorter than using the `map` method in the general case (where a `return` statement might have to be included) and you can use it when to define content:
+`applying` can also be used on a content sequence or element sequence where it is shorter than using the `map` method in the general case (where a `return` statement might have to be included) and you can directly use it to define content (without the `xml` property decribed above):
 
 ```Swift
 let myDocument = XDocument {
@@ -790,7 +791,7 @@ let myDocument = XDocument {
 }
 ```
 
-When not defining content, using `map` might be an option:
+When not defining content, using `map` might be a sensible option:
 
 ```Swift
 let element = XElement("z") {
@@ -814,7 +815,7 @@ a1
 b1
 ```
 
-The same applies to e.g. the `filter` method, which, besides letting the code look more complex when used instead of the filter options described above, is not an option when defining content.
+The same applies to e.g. the `filter` method, which, besides letting the code look more complex when used instead of the filter options described above, is not a good option when defining content.
 
 ### Document membership in constructed elements
 

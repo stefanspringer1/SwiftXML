@@ -814,7 +814,115 @@ extension XContentLikeSequence: XContentLike {}
 
 public extension Array where Element == XContentLike? {
     var xml: XContentLikeSequence {
-        get { XContentLikeSequenceFromArray(formArray: self) }
+        get { XContentLikeSequenceFromArray(fromArray: self) }
+    }
+}
+
+public extension Array where Element == XElement {
+    var xml: XContentLikeSequence {
+        get { XContentLikeSequenceFromArray(fromArray: self) }
+    }
+}
+
+public extension Array where Element == XElement? {
+    var xml: XContentLikeSequence {
+        get { XContentLikeSequenceFromArray(fromArray: self) }
+    }
+}
+
+public extension Array where Element == XText {
+    var xml: XContentLikeSequence {
+        get { XContentLikeSequenceFromArray(fromArray: self) }
+    }
+}
+
+public extension Array where Element == XText? {
+    var xml: XContentLikeSequence {
+        get { XContentLikeSequenceFromArray(fromArray: self) }
+    }
+}
+
+public extension Array where Element == XInternalEntity {
+    var xml: XContentLikeSequence {
+        get { XContentLikeSequenceFromArray(fromArray: self) }
+    }
+}
+
+public extension Array where Element == XInternalEntity? {
+    var xml: XContentLikeSequence {
+        get { XContentLikeSequenceFromArray(fromArray: self) }
+    }
+}
+
+public extension Array where Element == XExternalEntity {
+    var xml: XContentLikeSequence {
+        get { XContentLikeSequenceFromArray(fromArray: self) }
+    }
+}
+
+public extension Array where Element == XExternalEntity? {
+    var xml: XContentLikeSequence {
+        get { XContentLikeSequenceFromArray(fromArray: self) }
+    }
+}
+
+public extension Array where Element == XCDATASection {
+    var xml: XContentLikeSequence {
+        get { XContentLikeSequenceFromArray(fromArray: self) }
+    }
+}
+
+public extension Array where Element == XCDATASection? {
+    var xml: XContentLikeSequence {
+        get { XContentLikeSequenceFromArray(fromArray: self) }
+    }
+}
+
+public extension Array where Element == XProcessingInstruction {
+    var xml: XContentLikeSequence {
+        get { XContentLikeSequenceFromArray(fromArray: self) }
+    }
+}
+
+public extension Array where Element == XProcessingInstruction? {
+    var xml: XContentLikeSequence {
+        get { XContentLikeSequenceFromArray(fromArray: self) }
+    }
+}
+
+public extension Array where Element == XComment {
+    var xml: XContentLikeSequence {
+        get { XContentLikeSequenceFromArray(fromArray: self) }
+    }
+}
+
+public extension Array where Element == XComment? {
+    var xml: XContentLikeSequence {
+        get { XContentLikeSequenceFromArray(fromArray: self) }
+    }
+}
+
+public extension Array where Element == XSpot {
+    var xml: XContentLikeSequence {
+        get { XContentLikeSequenceFromArray(fromArray: self) }
+    }
+}
+
+public extension Array where Element == XSpot? {
+    var xml: XContentLikeSequence {
+        get { XContentLikeSequenceFromArray(fromArray: self) }
+    }
+}
+
+public extension LazyFilterSequence where Base == XElementSequence {
+    var xml: XContentLikeSequence {
+        get { XContentLikeSequenceFromLazyElementFilterSequence(fromSequence: self) }
+    }
+}
+
+public extension LazyFilterSequence where Base == XContentSequence {
+    var xml: XContentLikeSequence {
+        get { XContentLikeSequenceFromLazyContentFilterSequence(fromSequence: self) }
     }
 }
 
@@ -1466,7 +1574,7 @@ public final class XComment: XContent {
         }
     }
     
-    init(text: String) {
+    init(_ text: String) {
         self._value = text
     }
     
@@ -1480,7 +1588,7 @@ public final class XComment: XContent {
     }
     
     public override func shallowClone(forwardref: Bool = false) -> XComment {
-        let theClone = XComment(text: _value)
+        let theClone = XComment(_value)
         if forwardref {
             theClone._r = _r
             _r = theClone
@@ -1512,7 +1620,7 @@ public final class XCDATASection: XContent {
         }
     }
     
-    init(text: String) {
+    init(_ text: String) {
         self._value = text
     }
     
@@ -1526,7 +1634,7 @@ public final class XCDATASection: XContent {
     }
     
     public override func shallowClone(forwardref: Bool = false) -> XCDATASection {
-        let theClone = XCDATASection(text: _value)
+        let theClone = XCDATASection(_value)
         if forwardref {
             theClone._r = _r
             _r = theClone

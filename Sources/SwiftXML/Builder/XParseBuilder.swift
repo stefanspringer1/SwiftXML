@@ -74,7 +74,7 @@ public final class XParseBuilder: XEventHandler {
     }
     
     public func cdataSection(text: String, textRange _: XTextRange?, dataRange _: XDataRange?) {
-        currentBranch._add(keepCDATASections ? XCDATASection(text: text): XText(text))
+        currentBranch._add(keepCDATASections ? XCDATASection(text): XText(text))
     }
     
     public func internalEntity(name: String, textRange _: XTextRange?, dataRange _: XDataRange?) {
@@ -91,7 +91,7 @@ public final class XParseBuilder: XEventHandler {
     
     public func comment(text: String, textRange _: XTextRange?, dataRange _: XDataRange?) {
         if keepComments {
-            currentBranch._add(XComment(text: text))
+            currentBranch._add(XComment(text))
         }
     }
     
