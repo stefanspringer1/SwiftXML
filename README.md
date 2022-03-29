@@ -782,13 +782,39 @@ let myDocument = XDocument {
 }
 ```
 
-`applying` can also be used on a content sequence or element sequence where it is shorter than using the `map` method in the general case (where a `return` statement might have to be included) and gets the types correct without squabbling:
+`applying` can also be used on a content sequence or element sequence where it is shorter than using the `map` method in the general case (where a `return` statement might have to be included) and you can use it when to define content:
 
 ```Swift
 let myDocument = XDocument {
     myElement.descendants.applying{ $0["inserted"] = "yes" }
 }
 ```
+
+When not defining content, using `map` might be an option:
+
+```Swift
+let element = XElement("z") {
+    XElement("a") {
+        XElement("a1")
+        XElement("a2")
+    }
+    XElement("b") {
+        XElement("b1")
+        XElement("b2")
+    }
+}
+
+element.children.map{ $0.children.findFirst() }.forEach { print($0?.name ?? "-") }
+```
+
+Output:
+
+```text
+a1
+b1
+```
+
+The same applies to e.g. the `filter` method, which, besides letting the code look more complex when used instead of the filter options described above, is not an option when defining content.
 
 ### Document membership in constructed elements
 
