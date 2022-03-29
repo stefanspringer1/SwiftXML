@@ -815,9 +815,9 @@ extension XBranchInternal {
      */
     func _setContent(_ content: [XContent]) {
         let endMarker = XSpot()
-        _add(endMarker)
+        _addFirst(endMarker)
         content.forEach { endMarker._insertPrevious($0) }
-        endMarker.previous.forEach { $0.remove() }
+        endMarker.next.forEach { $0.remove() }
         endMarker.remove()
     }
     
