@@ -1027,7 +1027,7 @@ Output:
 </top>
 ```
 
-Note that there is no such mechanism to skip inserted content when using e.g. `descendants.add`: there is then no “natural” way to correct the traversal of the tree. (A more common use case would be something like `descendants("table").add { XElement("caption") }`, so this should not be a problem in common cases, but something you should be aware of.)
+Note that there is no such mechanism to skip inserted content when not using `insertPrevious`, `insertNext`, or `replace`, e.g. when using `add`. Consider the combination `descendants.add`: there is then no “natural” way to correct the traversal of the tree. (A more common use case would be something like `descendants("table").add { XElement("caption") }`, so this should not be a problem in common cases, but something you should be aware of.)
 
 When using `insertNext`, `replace` etc. in chained iterators, what happens is that the definition of the content in the parentheses `{...}` get _executed_ each item in the sequence. In the genaral case, you should use the `collect` function to build content specifically for the current item. E.g. in the last example, you might use with the same result:
 
