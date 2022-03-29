@@ -363,6 +363,12 @@ if let id = myElement["id"] {
 }
 ```
 
+To get the names of all attributes of an element, use:
+
+```Swift
+var attributeNames: [String]
+```
+
 ### Attachments
 
 Element, documents, and `XSpot` (see the section below on `XSpot` and handling of text) can have “attachments”. Those are objects that can be attached via a textual key to those branches but that not considered as belonging to the actual XML tree.
@@ -389,6 +395,14 @@ myElement.attached["note"] = nil
 ```
 
 You can also set attachments immediately when creating en element, document, or `XSpot` by using the argument `attached:` of the initializer.
+
+### XPath
+
+Get the XPath of a node via:
+
+```Swift
+var xpath: String
+```
 
 ## Traversals
 
@@ -867,11 +881,18 @@ As you can see from the `print` commands in the last example, the element `<b id
 
 Besides changing the node properties, an XML tree can be changed by the following methods. Some of them return the subject itself as a discardable result. For the content specified in `{...}` (the builder) the order is preserved.
 
-Add nodes to the start of the content of an element or a document respectively:
+Add nodes at the end of the content of an element or a document respectively:
 
 ```Swift
 func add(builder: () -> [XContent])
 func add(builder: () -> [XContent])
+```
+
+Add nodes to the start of the content of an element or a document respectively:
+
+```Swift
+func addFirst(builder: () -> [XContent])
+func addFIrst(builder: () -> [XContent])
 ```
 
 Add nodes as the nodes previous to the node:
@@ -906,6 +927,12 @@ Clear the contents of an element or a document respectively:
 
 ```Swift
 func clear()
+```
+
+Test if an element or a document is empty:
+
+```Swift
+var isEmpty: Bool
 ```
 
 Set the contents of an element or a document respectively:
