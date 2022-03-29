@@ -353,7 +353,7 @@ public class XContent: XNode {
         
         // set _previousInTree & _nextInTree for "self" tree:
         self._previousInTree = _previous?.getLastInTree() ?? _parent
-        lastInMyTree._nextInTree = self._next ?? _parent
+        lastInMyTree._nextInTree = self._previousInTree?._nextInTree // let it be nil for the last node in the document!
         
         // set _previousInTree or _nextInTree for them:
         self._previousInTree?._nextInTree = self
