@@ -627,7 +627,7 @@ You might also turn a single content item or, more specifically, an element into
 For any content:
 
 ```Swift
-var asContentSequence: XContentSequence
+var asSequence: XContentSequence
 ```
 
 For an element:

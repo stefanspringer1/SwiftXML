@@ -557,12 +557,12 @@ public class XContent: XNode {
         _replace(follow: follow, by: builder())
     }
     
-    public var asContentSequence: XContentSequence { get { XContentSelfSequence(content: self) } }
+    public var asSequence: XContentSequence { get { XContentSelfSequence(content: self) } }
     
 }
 
 public extension String {
-    var asContentSequence: XContentSequence { get { XText(self).asContentSequence } }
+    var asSequence: XContentSequence { get { XText(self).asSequence } }
 }
 
 public class XSpot: XContent {
