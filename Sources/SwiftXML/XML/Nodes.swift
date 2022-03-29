@@ -642,7 +642,7 @@ extension XBranchInternal {
         get { _firstContent }
     }
     
-    public func firstContent(_ condition: (XContent) -> Bool) -> XContent? {
+    public func _firstContent(_ condition: (XContent) -> Bool) -> XContent? {
         let node = _firstContent
         if let theNode = node, condition(theNode) {
             return node
@@ -652,11 +652,15 @@ extension XBranchInternal {
         }
     }
     
+    public func firstContent(_ condition: (XContent) -> Bool) -> XContent? {
+        return _firstContent(condition)
+    }
+    
     public var lastContent: XContent? {
         get { _lastContent }
     }
     
-    public func lastContent(_ condition: (XContent) -> Bool) -> XContent? {
+    public func _lastContent(_ condition: (XContent) -> Bool) -> XContent? {
         let node = _lastContent
         if let theNode = node, condition(theNode) {
             return node
@@ -664,6 +668,10 @@ extension XBranchInternal {
         else {
             return nil
         }
+    }
+    
+    public func lastContent(_ condition: (XContent) -> Bool) -> XContent? {
+        return _lastContent(condition)
     }
     
     public var isEmpty: Bool {
@@ -675,12 +683,19 @@ extension XBranchInternal {
     /**
      Clear the contents of the node.
      */
-    public func clear() {
+    public func _clear() {
         var node = _firstContent
         while let theNode = node {
             theNode.remove()
             node = theNode._next
         }
+    }
+    
+    /**
+     Clear the contents of the node.
+     */
+    public func clear() {
+        _clear()
     }
     
     /**
@@ -1211,7 +1226,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     }
     
     public func firstContent(_ condition: (XContent) -> Bool) -> XContent? {
-        return (self as XBranchInternal).firstContent(condition)
+        return _firstContent(condition)
     }
     
     public var lastContent: XContent? {
@@ -1219,7 +1234,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     }
     
     public func lastContent(_ condition: (XContent) -> Bool) -> XContent? {
-        return (self as XBranchInternal).lastContent(condition)
+        return _lastContent(condition)
     }
     
     public var isEmpty: Bool {
@@ -1227,19 +1242,19 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     }
     
     public func add(@XContentBuilder builder: () -> [XContent]) {
-        return (self as XBranchInternal).add(builder: builder)
+        return _add(builder())
     }
     
     public func addFirst(@XContentBuilder builder: () -> [XContent]) {
-        return (self as XBranchInternal).addFirst(builder: builder)
+        return _addFirst(builder())
     }
     
     public func setContent(@XContentBuilder builder: () -> [XContent]) {
-        return (self as XBranchInternal).setContent(builder: builder)
+        return _setContent(builder())
     }
     
     public func clear() {
-        return (self as XBranchInternal).clear()
+        return _clear()
     }
     
     // ------------------------------------------------------------------------

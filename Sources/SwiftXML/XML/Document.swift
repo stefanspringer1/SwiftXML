@@ -75,7 +75,7 @@ public final class XDocument: XNode, XBranchInternal {
     }
     
     public func firstContent(_ condition: (XContent) -> Bool) -> XContent? {
-        return (self as XBranchInternal).firstContent(condition)
+        return _firstContent(condition)
     }
     
     public var lastContent: XContent? {
@@ -83,7 +83,7 @@ public final class XDocument: XNode, XBranchInternal {
     }
     
     public func lastContent(_ condition: (XContent) -> Bool) -> XContent? {
-        return (self as XBranchInternal).lastContent(condition)
+        return _lastContent(condition)
     }
     
     public var isEmpty: Bool {
@@ -91,19 +91,19 @@ public final class XDocument: XNode, XBranchInternal {
     }
     
     public func add(@XContentBuilder builder: () -> [XContent]) {
-        return (self as XBranchInternal).add(builder: builder)
+        return _add(builder())
     }
     
     public func addFirst(@XContentBuilder builder: () -> [XContent]) {
-        return (self as XBranchInternal).addFirst(builder: builder)
+        return _addFirst(builder())
     }
     
     public func setContent(@XContentBuilder builder: () -> [XContent]) {
-        return (self as XBranchInternal).setContent(builder: builder)
+        return _setContent(builder())
     }
     
     public func clear() {
-        return (self as XBranchInternal).clear()
+        return _clear()
     }
     
     // ------------------------------------------------------------------------
