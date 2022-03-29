@@ -622,7 +622,7 @@ myElement.descendants.forEach { descendant in
 }
 ```
 
-You might also turn a single content item or, more specifically, an element into an appropriate sequence using the following  methods:
+You might also turn a single content item or, more specifically, an element into an appropriate sequence using the following methods:
 
 For any content:
 
