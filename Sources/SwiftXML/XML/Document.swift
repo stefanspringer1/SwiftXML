@@ -68,7 +68,7 @@ public final class XDocument: XNode, XBranchInternal {
     }
     
     // ------------------------------------------------------------------------
-    // repeat methods from XBranch:
+    // repeat methods from XBranchInternal:
     
     public var firstContent: XContent? {
         get { _firstContent }

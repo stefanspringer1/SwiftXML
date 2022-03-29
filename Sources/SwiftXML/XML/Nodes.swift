@@ -1204,7 +1204,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     }
     
     // ------------------------------------------------------------------------
-    // repeat methods from XBranch:
+    // repeat methods from XBranchInternal:
     
     public var firstContent: XContent? {
         get { _firstContent }
