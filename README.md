@@ -215,7 +215,10 @@ An XML document (`XDocument`) can contain the following content:
 - `XCDATASection`: a CDATA section
 - `XProcessingInstruction`: a processing instruction
 - `XComment`: a comment
+- `XLiteral`: containing text that is meant to be serialized “as is”, i.e. no escaping e.g. of `<` and `&` is done, it could contain XML code that is to be serialized _literally,_ hence its name
 - `XSpot`: see the section below on `XSpot` and handling of text
+
+`XLiteral` is never the result of parsing XML, but might get added by an application. Subsequent `XLiteral` content is (just like `XText`, see the section on handling of text) always automatically combined.
 
 Those content are of type type `XContent`, whereas the more general type `XNode` might be content or an `XDocument`.
 

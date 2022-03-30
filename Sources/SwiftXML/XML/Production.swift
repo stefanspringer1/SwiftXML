@@ -87,6 +87,8 @@ public protocol XProduction {
     
     func writeText(text: XText) throws
     
+    func writeLiteral(literal: XLiteral) throws
+    
     func writeCDATASection(cdataSection: XCDATASection) throws
     
     func writeProcessingInstruction(processingInstruction: XProcessingInstruction) throws
@@ -234,6 +236,10 @@ open class XDefaultProduction: XProduction {
     
     open func writeText(text: XText) throws {
         try write(escapeText(text._value))
+    }
+    
+    open func writeLiteral(literal: XLiteral) throws {
+        try write(literal._value)
     }
     
     open func writeCDATASection(cdataSection: XCDATASection) throws {

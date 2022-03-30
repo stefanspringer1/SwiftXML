@@ -457,6 +457,9 @@ public class XContent: XNode {
             selfAsText._value = newAsText._value + selfAsText._value
             selfAsText.whitespace = .UNKNOWN
         }
+        else if let selfAsLiteral = self as? XLiteral, let newAsLiteral = node as? XLiteral {
+            selfAsLiteral._value = newAsLiteral._value + selfAsLiteral._value
+        }
         else {
             node._removeKeep()
             
@@ -507,6 +510,9 @@ public class XContent: XNode {
         if let selfAsText = self as? XText, let newAsText = node as? XText {
             selfAsText._value = selfAsText._value + newAsText._value
             selfAsText.whitespace = .UNKNOWN
+        }
+        else if let selfAsLiteral = self as? XLiteral, let newAsLiteral = node as? XLiteral {
+            selfAsLiteral._value = selfAsLiteral._value + newAsLiteral._value
         }
         else if _parent?._lastContent === self {
             _parent?._add(node)
@@ -706,6 +712,9 @@ extension XBranchInternal {
             lastAsText._value = lastAsText._value + newAsText._value
             lastAsText.whitespace = .UNKNOWN
         }
+        else if let lastAsLiteral = lastContent as? XLiteral, let newAsLiteral = node as? XLiteral {
+            lastAsLiteral._value = lastAsLiteral._value + newAsLiteral._value
+        }
         else {
             node._removeKeep()
             
@@ -761,6 +770,9 @@ extension XBranchInternal {
         if let firstAsText = firstContent as? XText, let newAsText = node as? XText {
             firstAsText._value = newAsText._value + firstAsText._value
             firstAsText.whitespace = .UNKNOWN
+        }
+        else if let firstAsLiteral = firstContent as? XLiteral, let newAsLiteral = node as? XLiteral {
+            firstAsLiteral._value = newAsLiteral._value + firstAsLiteral._value
         }
         else {
             node._removeKeep()
@@ -1436,6 +1448,60 @@ public final class XText: XContent, CustomStringConvertible {
     }
     
     public override func clone(pointingFromClone: Bool = false) -> XText {
+        return shallowClone(pointingFromClone: pointingFromClone)
+    }
+}
+
+/*
+ `XLiteral` has a text value that is meant to be serialized "as is" without XML-escaping.
+ */
+public final class XLiteral: XContent, CustomStringConvertible {
+    
+    public override var r: XLiteral? { get { super.r as? XLiteral } }
+    public override var rr: XLiteral? { get { super.rr as? XLiteral } }
+    
+    var _value: String
+    
+    public var value: String {
+        get {
+            return _value
+        }
+        set (newText) {
+            if newText.isEmpty {
+                self.remove()
+            }
+            else {
+                _value = newText
+            }
+        }
+    }
+    
+    public var description: String {
+        get {
+            _value
+        }
+    }
+    
+    public init(_ text: String) {
+        self._value = text
+    }
+    
+    public override func applying(_ f: (XLiteral) -> ()) -> XLiteral {
+        f(self)
+        return self
+    }
+    
+    public override func produceEntering(production: XProduction) throws {
+        try production.writeLiteral(literal: self)
+    }
+    
+    public override func shallowClone(pointingFromClone: Bool = false) -> XLiteral {
+        let theClone = XLiteral(_value)
+        _setClonePointers(theClone: theClone, pointingFromClone: pointingFromClone)
+        return theClone
+    }
+    
+    public override func clone(pointingFromClone: Bool = false) -> XLiteral {
         return shallowClone(pointingFromClone: pointingFromClone)
     }
 }
