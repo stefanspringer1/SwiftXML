@@ -1370,6 +1370,8 @@ document.firstContent?.echo()
 
 ```
 
+A transformation can be stopped by calling `self.stop()`.
+
 ## Tracking changes
 
 It might be helpful to get notified when certain things in the XML document are changed. A common use case is the change of an attribute. You can register for the notification for the change of the value of any attribute of a certain name using:

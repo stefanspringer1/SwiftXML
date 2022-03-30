@@ -41,6 +41,12 @@ public class XTransformation {
         self.rules = builder()
     }
     
+    var stopped = false
+    
+    public func stop() {
+        stopped = true
+    }
+    
     public func execute(inDocument document: XDocument) {
         
         var iteratorsWithActions = [(Any,Any)]()
@@ -65,18 +71,18 @@ public class XTransformation {
             
         }
         
-        var working = true
-        while working {
+        var working = true; stopped = false
+        while !stopped && working {
             working = false
             iteratorsWithActions.forEach { (_iterator,_action) in
-                if let iterator = _iterator as? XElementNameIterator, let action = _action as? XElementAction {
-                    while let next = iterator.next() {
+                if !stopped, let iterator = _iterator as? XElementNameIterator, let action = _action as? XElementAction {
+                    while !stopped, let next = iterator.next() {
                         working = true
                         action(next)
                     }
                 }
-                else if let iterator = _iterator as? XBidirectionalAttributeIterator, let action = _action as? XAttributeAction {
-                    while let attribute = iterator.next() {
+                else if !stopped, let iterator = _iterator as? XBidirectionalAttributeIterator, let action = _action as? XAttributeAction {
+                    while !stopped, let attribute = iterator.next() {
                         working = true
                         action(attribute)
                     }
