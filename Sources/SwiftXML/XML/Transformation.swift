@@ -10,16 +10,10 @@ public typealias XElementAction = (XElement)->()
 
 public typealias XAttributeAction = (XAttributeSpot)->()
 
-final public class XRule {
+public struct XRule {
     
     public let names: [String]
     public let action: Any
-    
-    var transformation: XTransformation? = nil
-    
-    public func stopTransformation() {
-        transformation?.stopped = true
-    }
     
     public init(forElements names: [String], action: @escaping XElementAction) {
         self.names = names
@@ -49,12 +43,15 @@ public class XTransformation {
     
     var stopped = false
     
+    public func stop() {
+        stopped = true
+    }
+    
     public func execute(inDocument document: XDocument) {
         
         var iteratorsWithActions = [(Any,Any)]()
         
         rules.forEach { rule in
-            rule.transformation = self
             if let elementAction = rule.action as? XElementAction {
                 rule.names.forEach { name in
                     iteratorsWithActions.append((
