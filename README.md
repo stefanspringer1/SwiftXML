@@ -1370,7 +1370,7 @@ document.firstContent?.echo()
 
 ```
 
-A transformation can be stopped by calling `self.stop()`.
+A transformation can be stopped by calling `stopTransformation()` inside a rule.
 
 ## Tracking changes
 
