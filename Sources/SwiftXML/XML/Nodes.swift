@@ -163,6 +163,26 @@ public class XNode {
     public var previousTouching: XContent? { get { _previous } }
     public var nextTouching: XContent? { get { _next } }
     
+    public func previousTouching(_ condition: (XContent) -> Bool) -> XContent? {
+        let content = _previous
+        if let theContent = content, condition(theContent) {
+            return theContent
+        }
+        else {
+            return nil
+        }
+    }
+    
+    public func nextTouching(_ condition: (XContent) -> Bool) -> XContent? {
+        let content = _next
+        if let theContent = content, condition(theContent) {
+            return theContent
+        }
+        else {
+            return nil
+        }
+    }
+    
     weak var _previousInTree: XNode? = nil
     weak var _nextInTree: XNode? = nil
     

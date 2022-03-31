@@ -625,12 +625,28 @@ extension XContentSequence {
         return XElementSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.descendants(until: condition) })
     }
     
+    public var previousTouching: XContentSequence {
+        get { XContentDependingOnContentSequence(sequence: self, contentGetter: { content in content.previousTouching }) }
+    }
+    
+    public func previousTouching(_ condition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentDependingOnContentSequence(sequence: self, contentGetter: { content in content.previousTouching(condition) })
+    }
+    
     public var previousInTreeTouching: XContentSequence {
         get { XContentDependingOnContentSequence(sequence: self, contentGetter: { content in content.previousInTreeTouching }) }
     }
     
     public func previousInTreeTouching(_ condition: @escaping (XContent) -> Bool) -> XContentSequence {
         return XContentDependingOnContentSequence(sequence: self, contentGetter: { content in content.previousInTreeTouching(condition) })
+    }
+    
+    public var nextTouching: XContentSequence {
+        get { XContentDependingOnContentSequence(sequence: self, contentGetter: { content in content.nextTouching }) }
+    }
+    
+    public func nextTouching(_ condition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentDependingOnContentSequence(sequence: self, contentGetter: { content in content.nextTouching(condition) })
     }
     
     public var nextInTreeTouching: XContentSequence {
@@ -942,12 +958,28 @@ extension XElementSequence {
         return XElementSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { element in element.descendantsIncludingSelf(until: condition) })
     }
     
+    public var previousTouching: XContentSequence {
+        get { XContentDependingOnElementSequence(sequence: self, contentGetter: { content in content.previousTouching }) }
+    }
+    
+    public func previousTouching(_ condition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentDependingOnElementSequence(sequence: self, contentGetter: { content in content.previousTouching(condition) })
+    }
+    
     public var previousInTreeTouching: XContentSequence {
         get { XContentDependingOnElementSequence(sequence: self, contentGetter: { content in content.previousInTreeTouching }) }
     }
     
     public func previousInTreeTouching(_ condition: @escaping (XContent) -> Bool) -> XContentSequence {
         return XContentDependingOnElementSequence(sequence: self, contentGetter: { content in content.previousInTreeTouching(condition) })
+    }
+    
+    public var nextTouching: XContentSequence {
+        get { XContentDependingOnElementSequence(sequence: self, contentGetter: { content in content.nextTouching }) }
+    }
+    
+    public func nextTouching(_ condition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentDependingOnElementSequence(sequence: self, contentGetter: { content in content.nextTouching(condition) })
     }
     
     public var nextInTreeTouching: XContentSequence {
