@@ -323,22 +323,32 @@ func applyProduction(production: XProduction) throws
 Any node (including an XML document) can be cloned, including the tree of nodes that is started by it, using the following method:
 
 ```Swift
-func clone(pointingFromClone: Bool) -> XNode
+func clone() -> XNode
 ```
 
-Any node possesses the property `r` pointing to the node related to itself by (the last) cloning. By default, `r` points from the node in the clone to the according node in the original tree. The `r` values of the clone are as in the document that is being cloned. By setting the argument `pointingFromClone` to `true` (it defaults to `false`), this direction is reversed. By setting `pointingFromClone` when cloning an XML document one can adjust to the situation of using the original tree for further manipulation and just saving an old version for reference; the following method does exactly this:
+(The result will be more specific if the subject is known to be more specific.)
+
+Any node possesses the property `r` that can be used as a relation between a clone and the original node. If you create a clone by using the `clone()` method, the `r` value of a node in the clone points to the original node. So when working with a clone, you can easily look at the original nodes.
+
+Note that the `r` reference references the original node weakly, i.e. if you do not save a reference to the original node or tree then the original node disapears and the `r` property will be `nil`.
+
+If you would like to use cloning to just save a version of your document that you are working with, use its following method:
 
 ```Swift
 func saveVersion()
 ```
 
-You might use the `clone` method several times, the property `r` gives you the whole chains of `rpath` values and `rr` gives you the last value in this chain.
+In that case a clone of the document will be created, but with the `r` property of an original node pointing to the clone, and the `r` property of the clone will point to the old `r` value of the original node. I.e. if you apply `saveVersion()` several times, when following the `r` values starting from a node in your original document, you will go through all versions of this node, from the newer ones to the older ones. Other than when using `clone()`, a strong reference to such a version will be remembered by the document, so the nodes of the clone will be kept. Use `forgetVersions(keeping:Int)` on the document in order to stop this remembering, just keeping the last number of versions defined by the argument `keeping` (`keeping` defaults to 0). In the oldest version then still remembered or, if no remembered version if left, in the document itself all `r` values will then be set to `nil`.
 
-Sometimes, only a “shallow” clone is needed, i.e. the node itself without the tree of nodes that is started by it. In this case, just use:
+The `rr` property follows the whole chain of `r` values and gives you the last value in this chain.
+
+Sometimes, only a “shallow” clone is needed, i.e. the node itself without the whole tree of nodes with the node as root. In this case, just use:
 
 ```Swift
 func shallowClone(forwardref: Bool) -> XNode
 ```
+
+The `r` is then set just like when using `clone()`.
 
 ## Content properties
 

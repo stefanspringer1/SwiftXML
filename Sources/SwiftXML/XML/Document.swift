@@ -41,8 +41,31 @@ public final class XDocument: XNode, XBranchInternal {
         }
     }
     
+    private var versions = [XDocument]()
+    
     public func saveVersion() {
-        _ = clone(pointingFromClone: true)
+        let clone = shallowClone()
+        versions.append(clone)
+        clone._addClones(from: self, pointingToClone: true)
+    }
+    
+    public func forgetVersions(keeping n: Int = 0) {
+        if versions.count > 0 {
+            let oldVersions = versions
+            versions = [XDocument]()
+            if n > 0 {
+                let startIndex = oldVersions.count - n
+                if startIndex >= 0 {
+                    let endIndex = oldVersions.count - 1
+                    for index in startIndex...endIndex {
+                        versions.append(oldVersions[index])
+                    }
+                }
+            }
+            let lastVersion = versions.first ?? self
+            lastVersion._r = nil
+            lastVersion.allContent.forEach { $0._r = nil }
+        }
     }
     
     public var xmlVersion = "1.0"
@@ -113,9 +136,9 @@ public final class XDocument: XNode, XBranchInternal {
         return self
     }
     
-    public override func shallowClone(pointingFromClone: Bool = false) -> XDocument {
+    public override func shallowClone() -> XDocument {
         let theClone = XDocument()
-        _setClonePointers(theClone: theClone, pointingFromClone: pointingFromClone)
+        theClone._r = self
         theClone.xmlVersion = xmlVersion
         theClone.encoding = encoding
         theClone.standalone = standalone
@@ -133,9 +156,9 @@ public final class XDocument: XNode, XBranchInternal {
         return theClone
     }
     
-    public override func clone(pointingFromClone: Bool = false) -> XDocument {
-        let theClone = shallowClone(pointingFromClone: pointingFromClone)
-        theClone._addClones(from: self, forwardref: pointingFromClone)
+    public override func clone() -> XDocument {
+        let theClone = shallowClone()
+        theClone._addClones(from: self)
         return theClone
     }
     
