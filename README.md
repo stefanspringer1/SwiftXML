@@ -318,7 +318,7 @@ For generality, the following method is provided to apply any `XProduction` to a
 func applyProduction(production: XProduction) throws
 ```
 
-## Cloning
+## Cloning and document versions
 
 Any node (including an XML document) can be cloned, including the tree of nodes that is started by it, using the following method:
 
