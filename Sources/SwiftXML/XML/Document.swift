@@ -30,8 +30,8 @@ public final class XDocument: XNode, XBranchInternal {
     
     var _sourcePath: String? = nil
     
-    public override var r: XDocument? { get { super.r as? XDocument } }
-    public override var rr: XDocument? { get { super.rr as? XDocument } }
+    public override var backLink: XDocument? { get { super.backLink as? XDocument } }
+    public override var ultimateBackLink: XDocument? { get { super.ultimateBackLink as? XDocument } }
     
     public var attached = Attachments()
     
@@ -63,8 +63,8 @@ public final class XDocument: XNode, XBranchInternal {
                 }
             }
             let lastVersion = versions.first ?? self
-            lastVersion._r = nil
-            lastVersion.allContent.forEach { $0._r = nil }
+            lastVersion._backLink = nil
+            lastVersion.allContent.forEach { $0._backLink = nil }
         }
     }
     
@@ -138,7 +138,7 @@ public final class XDocument: XNode, XBranchInternal {
     
     public override func shallowClone() -> XDocument {
         let theClone = XDocument()
-        theClone._r = self
+        theClone._backLink = self
         theClone.xmlVersion = xmlVersion
         theClone.encoding = encoding
         theClone.standalone = standalone

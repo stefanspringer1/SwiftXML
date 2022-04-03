@@ -23,16 +23,16 @@ public class XNode {
      But this is a weak reference, the clone must be contained by
      other means to exist.
      */
-    weak var _r: XNode? = nil
+    weak var _backLink: XNode? = nil
     
-    public var r: XNode? {
+    public var backLink: XNode? {
         get {
-            return _r
+            return _backLink
         }
     }
     
-    public func r(_ condition: (XNode) -> Bool) -> XNode? {
-        let node = _r
+    public func backLink(_ condition: (XNode) -> Bool) -> XNode? {
+        let node = _backLink
         if let theNode = node, condition(theNode) {
             return node
         }
@@ -44,18 +44,18 @@ public class XNode {
     /**
      The oldest source of cloning.
      */
-    public var rr: XNode? {
+    public var ultimateBackLink: XNode? {
         get {
-            var ref = _r
-            while let further = ref?._r {
+            var ref = _backLink
+            while let further = ref?._backLink {
                 ref = further
             }
             return ref
         }
     }
     
-    public func rr(_ condition: (XNode) -> Bool) -> XNode? {
-        let node = rr
+    public func ultimateBackLink(_ condition: (XNode) -> Bool) -> XNode? {
+        let node = ultimateBackLink
         if let theNode = node, condition(theNode) {
             return node
         }
@@ -64,13 +64,13 @@ public class XNode {
         }
     }
     
-    public var rpath: [XNode]? {
+    public var backLinkPath: [XNode]? {
         get {
-            var ref = _r
+            var ref = _backLink
             if let theRef = ref {
                 var path = [XNode]()
                 path.append(theRef)
-                while let further = ref?._r {
+                while let further = ref?._backLink {
                     ref = further
                     path.append(further)
                 }
@@ -93,7 +93,7 @@ public class XNode {
      */
     public func shallowClone() -> XNode {
         let theClone = XNode()
-        theClone._r = self
+        theClone._backLink = self
         return theClone
     }
     
@@ -595,8 +595,8 @@ public extension String {
 
 public class XSpot: XContent {
     
-    public override var r: XSpot? { get { super.r as? XSpot } }
-    public override var rr: XSpot? { get { super.rr as? XSpot } }
+    public override var backLink: XSpot? { get { super.backLink as? XSpot } }
+    public override var ultimateBackLink: XSpot? { get { super.ultimateBackLink as? XSpot } }
     
     public var attached = Attachments()
     
@@ -639,15 +639,15 @@ extension XBranchInternal {
         allContent.forEach { node in
             if let element = node as? XElement {
                 // using the reference to the origin here:
-                (element._r as? XElement)?.content.forEach { node in
+                (element._backLink as? XElement)?.content.forEach { node in
                     element._add(node.shallowClone())
                 }
             }
             // change the reference if desired differently:
             if pointingToClone {
-                let source = node._r
-                node._r = source?._r
-                source?._r = node
+                let source = node._backLink
+                node._backLink = source?._backLink
+                source?._backLink = node
             }
         }
     }
@@ -1121,8 +1121,8 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     var _attributes: [String:XAttribute]? = nil
     var _attributeNames: [String]? = nil
     
-    public override var r: XElement? { get { super.r as? XElement } }
-    public override var rr: XElement? { get { super.rr as? XElement } }
+    public override var backLink: XElement? { get { super.backLink as? XElement } }
+    public override var ultimateBackLink: XElement? { get { super.ultimateBackLink as? XElement } }
     
     public var attached = Attachments()
     
@@ -1146,7 +1146,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     
     public override func shallowClone() -> XElement {
         let theClone = XElement(name)
-        theClone._r = self
+        theClone._backLink = self
         theClone.copyAttributes(from: self)
         return theClone
     }
@@ -1403,8 +1403,8 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
 
 public final class XText: XContent, CustomStringConvertible {
     
-    public override var r: XText? { get { super.r as? XText } }
-    public override var rr: XText? { get { super.rr as? XText } }
+    public override var backLink: XText? { get { super.backLink as? XText } }
+    public override var ultimateBackLink: XText? { get { super.ultimateBackLink as? XText } }
     
     var _value: String
     
@@ -1447,7 +1447,7 @@ public final class XText: XContent, CustomStringConvertible {
     
     public override func shallowClone() -> XText {
         let theClone = XText(_value, whitespace: whitespace)
-        theClone._r = self
+        theClone._backLink = self
         return theClone
     }
     
@@ -1461,8 +1461,8 @@ public final class XText: XContent, CustomStringConvertible {
  */
 public final class XLiteral: XContent, CustomStringConvertible {
     
-    public override var r: XLiteral? { get { super.r as? XLiteral } }
-    public override var rr: XLiteral? { get { super.rr as? XLiteral } }
+    public override var backLink: XLiteral? { get { super.backLink as? XLiteral } }
+    public override var ultimateBackLink: XLiteral? { get { super.ultimateBackLink as? XLiteral } }
     
     var _value: String
     
@@ -1501,7 +1501,7 @@ public final class XLiteral: XContent, CustomStringConvertible {
     
     public override func shallowClone() -> XLiteral {
         let theClone = XLiteral(_value)
-        theClone._r = self
+        theClone._backLink = self
         return theClone
     }
     
@@ -1512,8 +1512,8 @@ public final class XLiteral: XContent, CustomStringConvertible {
 
 public final class XInternalEntity: XContent {
     
-    public override var r: XInternalEntity? { get { super.r as? XInternalEntity } }
-    public override var rr: XInternalEntity? { get { super.rr as? XInternalEntity } }
+    public override var backLink: XInternalEntity? { get { super.backLink as? XInternalEntity } }
+    public override var ultimateBackLink: XInternalEntity? { get { super.ultimateBackLink as? XInternalEntity } }
     
     var _name: String
     
@@ -1541,7 +1541,7 @@ public final class XInternalEntity: XContent {
     
     public override func shallowClone() -> XInternalEntity {
         let theClone = XInternalEntity(_name)
-        theClone._r = self
+        theClone._backLink = self
         return theClone
     }
     
@@ -1552,8 +1552,8 @@ public final class XInternalEntity: XContent {
 
 public final class XExternalEntity: XContent {
     
-    public override var r: XExternalEntity? { get { super.r as? XExternalEntity } }
-    public override var rr: XExternalEntity? { get { super.rr as? XExternalEntity } }
+    public override var backLink: XExternalEntity? { get { super.backLink as? XExternalEntity } }
+    public override var ultimateBackLink: XExternalEntity? { get { super.ultimateBackLink as? XExternalEntity } }
     
     var _name: String
     
@@ -1581,7 +1581,7 @@ public final class XExternalEntity: XContent {
     
     public override func shallowClone() -> XExternalEntity {
         let theClone = XExternalEntity(_name)
-        theClone._r = self
+        theClone._backLink = self
         return theClone
     }
     
@@ -1592,8 +1592,8 @@ public final class XExternalEntity: XContent {
 
 public final class XProcessingInstruction: XContent, CustomStringConvertible {
     
-    public override var r: XProcessingInstruction? { get { super.r as? XProcessingInstruction } }
-    public override var rr: XProcessingInstruction? { get { super.rr as? XProcessingInstruction } }
+    public override var backLink: XProcessingInstruction? { get { super.backLink as? XProcessingInstruction } }
+    public override var ultimateBackLink: XProcessingInstruction? { get { super.ultimateBackLink as? XProcessingInstruction } }
     
     var _target: String
     var _data: String?
@@ -1640,7 +1640,7 @@ public final class XProcessingInstruction: XContent, CustomStringConvertible {
     
     public override func shallowClone() -> XProcessingInstruction {
         let theClone = XProcessingInstruction(target: _target, data: _data)
-        theClone._r = self
+        theClone._backLink = self
         return theClone
     }
     
@@ -1651,8 +1651,8 @@ public final class XProcessingInstruction: XContent, CustomStringConvertible {
 
 public final class XComment: XContent {
     
-    public override var r: XComment? { get { super.r as? XComment } }
-    public override var rr: XComment? { get { super.rr as? XComment } }
+    public override var backLink: XComment? { get { super.backLink as? XComment } }
+    public override var ultimateBackLink: XComment? { get { super.ultimateBackLink as? XComment } }
     
     var _value: String
     
@@ -1680,7 +1680,7 @@ public final class XComment: XContent {
     
     public override func shallowClone() -> XComment {
         let theClone = XComment(_value)
-        theClone._r = self
+        theClone._backLink = self
         return theClone
     }
     
@@ -1691,8 +1691,8 @@ public final class XComment: XContent {
 
 public final class XCDATASection: XContent {
     
-    public override var r: XCDATASection? { get { super.r as? XCDATASection } }
-    public override var rr: XCDATASection? { get { super.rr as? XCDATASection } }
+    public override var backLink: XCDATASection? { get { super.backLink as? XCDATASection } }
+    public override var ultimateBackLink: XCDATASection? { get { super.ultimateBackLink as? XCDATASection } }
     
     var _value: String
     
@@ -1720,7 +1720,7 @@ public final class XCDATASection: XContent {
     
     public override func shallowClone() -> XCDATASection {
         let theClone = XCDATASection(_value)
-        theClone._r = self
+        theClone._backLink = self
         return theClone
     }
     

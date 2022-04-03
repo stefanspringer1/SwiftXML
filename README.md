@@ -328,9 +328,9 @@ func clone() -> XNode
 
 (The result will be more specific if the subject is known to be more specific.)
 
-Any node possesses the property `r` that can be used as a relation between a clone and the original node. If you create a clone by using the `clone()` method, the `r` value of a node in the clone points to the original node. So when working with a clone, you can easily look at the original nodes.
+Any node possesses the property `backLink` that can be used as a relation between a clone and the original node. If you create a clone by using the `clone()` method, the `backLink` value of a node in the clone points to the original node. So when working with a clone, you can easily look at the original nodes.
 
-Note that the `r` reference references the original node weakly, i.e. if you do not save a reference to the original node or tree then the original node disapears and the `r` property will be `nil`.
+Note that the `backLink` reference references the original node weakly, i.e. if you do not save a reference to the original node or tree then the original node disapears and the `backLink` property will be `nil`.
 
 If you would like to use cloning to just save a version of your document that you are working with, use its following method:
 
@@ -338,9 +338,9 @@ If you would like to use cloning to just save a version of your document that yo
 func saveVersion()
 ```
 
-In that case a clone of the document will be created, but with the `r` property of an original node pointing to the clone, and the `r` property of the clone will point to the old `r` value of the original node. I.e. if you apply `saveVersion()` several times, when following the `r` values starting from a node in your original document, you will go through all versions of this node, from the newer ones to the older ones. Other than when using `clone()`, a strong reference to such a version will be remembered by the document, so the nodes of the clone will be kept. Use `forgetVersions(keeping:Int)` on the document in order to stop this remembering, just keeping the last number of versions defined by the argument `keeping` (`keeping` defaults to 0). In the oldest version then still remembered or, if no remembered version if left, in the document itself all `r` values will then be set to `nil`.
+In that case a clone of the document will be created, but with the `backLink` property of an original node pointing to the clone, and the `backLink` property of the clone will point to the old `backLink` value of the original node. I.e. if you apply `saveVersion()` several times, when following the `backLink` values starting from a node in your original document, you will go through all versions of this node, from the newer ones to the older ones. The `backLinks` propertty gives you exactly that chain of backlinks. Other than when using `clone()`, a strong reference to such a document version will be remembered by the document, so the nodes of the clone will be kept. Use `forgetVersions(keeping:Int)` on the document in order to stop this remembering, just keeping the last number of versions defined by the argument `keeping` (`keeping` defaults to 0). In the oldest version then still remembered or, if no remembered version if left, in the document itself all `backLink` values will then be set to `nil`.
 
-The `rr` property follows the whole chain of `r` values and gives you the last value in this chain.
+The `ultimateBackLink` property follows the whole chain of `backLink` values and gives you the last value in this chain.
 
 Sometimes, only a “shallow” clone is needed, i.e. the node itself without the whole tree of nodes with the node as root. In this case, just use:
 
@@ -348,7 +348,7 @@ Sometimes, only a “shallow” clone is needed, i.e. the node itself without th
 func shallowClone(forwardref: Bool) -> XNode
 ```
 
-The `r` is then set just like when using `clone()`.
+The `backLink` is then set just like when using `clone()`.
 
 ## Content properties
 
