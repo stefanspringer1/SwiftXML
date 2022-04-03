@@ -31,7 +31,7 @@ public final class XDocument: XNode, XBranchInternal {
     var _sourcePath: String? = nil
     
     public override var backLink: XDocument? { get { super.backLink as? XDocument } }
-    public override var ultimateBackLink: XDocument? { get { super.ultimateBackLink as? XDocument } }
+    public override var finalBackLink: XDocument? { get { super.finalBackLink as? XDocument } }
     
     public var attached = Attachments()
     
