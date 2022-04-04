@@ -393,6 +393,8 @@ public extension XContentSequence {
     
     var exist: Bool { get { makeIterator().next() != nil } }
     
+    var existing: XContentSequence? { exist ? self : nil }
+    
 }
 
 public extension XElementSequence {
@@ -427,5 +429,7 @@ public extension XElementSequence {
     }
     
     var exist: Bool { get { makeIterator().next() != nil } }
+    
+    var existing: XElementSequence? { exist ? self : nil }
     
 }

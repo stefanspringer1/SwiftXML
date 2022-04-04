@@ -627,6 +627,27 @@ func find(index: Int) -> XElement?
 var exist: Bool
 ```
 
+If you would like to test if certain items exist, and many cases you would also then use those items. The property `existing` of a sequence of content or elements returns the sequence itself if items exist, and `nil` otherwise:
+
+```Swift
+var existing: XContentSequence?
+var existing: XElementSequence?
+```
+
+In the following example, a sequence is first tested for existing items and, if items exist, then used:
+
+```Swift
+let document = try parseXML(fromText: """
+<a><c/><b id="1"/><b id="2"/><d/><b id="3"/></a>
+""")
+
+if let theBs = document.descendants("b").existing {
+    theBs.echo()
+}
+```
+
+(Of course, if you change content between the `existing` test and using the sequence, then there might be no more items left.)
+
 You may also ask for the previous or next content item in the tree, in the order of a depth-first traversal. E.g. if a node is the last node of a subtree starting at a certain element and the element has a next sibling, this next sibling is “the next node in the tree” for that last node of the subtree. Getting the next or previous node in the tree is very efficient, as the library keep track of them anyway.
 
 The next content item in the tree:
