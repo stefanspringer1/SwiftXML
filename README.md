@@ -606,6 +606,40 @@ Of those, the ones that are elements:
 var nextElements: XElementSequence
 ```
 
+Example:
+
+```Swift
+myElement.descendants.forEach { descendant in
+    print("the name of the descendant is \(descendant.name)")
+}
+```
+
+Note that a sequence might be used several times:
+
+```Swift
+let document = try parseXML(fromText: """
+<a><c/><d/><e/></a>
+""")
+
+let insideA = document.children.children
+
+insideA.echo()
+print("again:")
+insideA.echo()
+```
+
+Output:
+
+```text
+<c/>
+<d/>
+<e/>
+again:
+<c/>
+<d/>
+<e/>
+```
+
 Once you have such a sequence, you can get the first, the last, or the n'th item in the sequence or just test if an item exists at all via:
 
 ```Swift
@@ -660,14 +694,6 @@ The previous content item in the tree:
 
 ```Swift
 var previousInTreeTouching: XContent?
-```
-
-Example:
-
-```Swift
-myElement.descendants.forEach { descendant in
-    print("the name of the descendant is \(descendant.name)")
-}
 ```
 
 You might also turn a single content item or, more specifically, an element into an appropriate sequence using the following methods:
