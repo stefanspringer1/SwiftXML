@@ -354,7 +354,7 @@ The `backLink` is then set just like when using `clone()`.
 
 ### Source range
 
-If the parser (as it is the case with the [SwiftXMLParser](https://github.com/stefanspringer1/SwiftXMLParser)) reports the where a part of the document it is in the text, i.e. at what line and column it starts and at what line and column it ends), the property `sourceRange: XTextRange` (using `XTextRange` from [SwiftXMLInterfaces](https://github.com/stefanspringer1/SwiftXMLInterfaces)) returns it for the respective node:
+If the parser (as it is the case with the [SwiftXMLParser](https://github.com/stefanspringer1/SwiftXMLParser)) reports the where a part of the document it is in the text (i.e. at what line and column it starts and at what line and column it ends), the property `sourceRange: XTextRange` (using `XTextRange` from [SwiftXMLInterfaces](https://github.com/stefanspringer1/SwiftXMLInterfaces)) returns it for the respective node:
 
 Example:
 
