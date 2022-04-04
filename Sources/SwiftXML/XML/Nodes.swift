@@ -18,9 +18,9 @@ protocol Named: AnyObject {
 
 public class XNode {
     
-    var _textRange: XTextRange? = nil
+    var _sourceRange: XTextRange? = nil
     
-    public var textRange: XTextRange? { _textRange }
+    public var sourceRange: XTextRange? { _sourceRange }
     
     /**
      The reference to the original node after cloning.
@@ -98,7 +98,7 @@ public class XNode {
     public func shallowClone() -> XNode {
         let theClone = XNode()
         theClone._backLink = self
-        theClone._textRange = self._textRange
+        theClone._sourceRange = self._sourceRange
         return theClone
     }
     
@@ -1152,7 +1152,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     public override func shallowClone() -> XElement {
         let theClone = XElement(name)
         theClone._backLink = self
-        theClone._textRange = self._textRange
+        theClone._sourceRange = self._sourceRange
         theClone.copyAttributes(from: self)
         return theClone
     }
@@ -1454,7 +1454,7 @@ public final class XText: XContent, CustomStringConvertible {
     public override func shallowClone() -> XText {
         let theClone = XText(_value, whitespace: whitespace)
         theClone._backLink = self
-        theClone._textRange = self._textRange
+        theClone._sourceRange = self._sourceRange
         return theClone
     }
     
@@ -1509,7 +1509,7 @@ public final class XLiteral: XContent, CustomStringConvertible {
     public override func shallowClone() -> XLiteral {
         let theClone = XLiteral(_value)
         theClone._backLink = self
-        theClone._textRange = self._textRange
+        theClone._sourceRange = self._sourceRange
         return theClone
     }
     
@@ -1550,7 +1550,7 @@ public final class XInternalEntity: XContent {
     public override func shallowClone() -> XInternalEntity {
         let theClone = XInternalEntity(_name)
         theClone._backLink = self
-        theClone._textRange = self._textRange
+        theClone._sourceRange = self._sourceRange
         return theClone
     }
     
@@ -1591,7 +1591,7 @@ public final class XExternalEntity: XContent {
     public override func shallowClone() -> XExternalEntity {
         let theClone = XExternalEntity(_name)
         theClone._backLink = self
-        theClone._textRange = self._textRange
+        theClone._sourceRange = self._sourceRange
         return theClone
     }
     
@@ -1651,7 +1651,7 @@ public final class XProcessingInstruction: XContent, CustomStringConvertible {
     public override func shallowClone() -> XProcessingInstruction {
         let theClone = XProcessingInstruction(target: _target, data: _data)
         theClone._backLink = self
-        theClone._textRange = self._textRange
+        theClone._sourceRange = self._sourceRange
         return theClone
     }
     
@@ -1692,7 +1692,7 @@ public final class XComment: XContent {
     public override func shallowClone() -> XComment {
         let theClone = XComment(_value)
         theClone._backLink = self
-        theClone._textRange = self._textRange
+        theClone._sourceRange = self._sourceRange
         return theClone
     }
     
@@ -1733,7 +1733,7 @@ public final class XCDATASection: XContent {
     public override func shallowClone() -> XCDATASection {
         let theClone = XCDATASection(_value)
         theClone._backLink = self
-        theClone._textRange = self._textRange
+        theClone._sourceRange = self._sourceRange
         return theClone
     }
     
@@ -1744,9 +1744,9 @@ public final class XCDATASection: XContent {
 
 public class XDeclarationInInternalSubset {
     
-    var _textRange: XTextRange? = nil
+    var _sourceRange: XTextRange? = nil
     
-    public var textRange: XTextRange? { _textRange }
+    public var sourceRange: XTextRange? { _sourceRange }
     
     var _name: String = ""
     
@@ -1767,7 +1767,7 @@ public class XDeclarationInInternalSubset {
     
     func shallowClone() -> XDeclarationInInternalSubset {
         let theClone = XDeclarationInInternalSubset(name: _name)
-        theClone._textRange = self._textRange
+        theClone._sourceRange = self._sourceRange
         return theClone
     }
 }
@@ -1799,7 +1799,7 @@ public final class XInternalEntityDeclaration: XDeclarationInInternalSubset {
     
     public override func shallowClone() -> XInternalEntityDeclaration {
         let theClone = XInternalEntityDeclaration(name: _name, value: _value)
-        theClone._textRange = self._textRange
+        theClone._sourceRange = self._sourceRange
         return theClone
     }
 }
@@ -1842,7 +1842,7 @@ public final class XExternalEntityDeclaration: XDeclarationInInternalSubset {
     
     public override func shallowClone() -> XExternalEntityDeclaration {
         let theClone = XExternalEntityDeclaration(name: _name, publicID: _publicID, systemID: _systemID)
-        theClone._textRange = self._textRange
+        theClone._sourceRange = self._sourceRange
         return theClone
     }
 }
@@ -1896,7 +1896,7 @@ public final class XUnparsedEntityDeclaration: XDeclarationInInternalSubset {
     
     public override func shallowClone() -> XUnparsedEntityDeclaration {
         let theClone = XUnparsedEntityDeclaration(name: _name, publicID: _publicID, systemID: _systemID, notationName: _notationName)
-        theClone._textRange = self._textRange
+        theClone._sourceRange = self._sourceRange
         return theClone
     }
 }
@@ -1939,7 +1939,7 @@ public final class XNotationDeclaration: XDeclarationInInternalSubset {
     
     public override func shallowClone() -> XNotationDeclaration {
         let theClone = XNotationDeclaration(name: _name, publicID: _publicID, systemID: _systemID)
-        theClone._textRange = self._textRange
+        theClone._sourceRange = self._sourceRange
         return theClone
     }
 }
@@ -1971,7 +1971,7 @@ public final class XElementDeclaration: XDeclarationInInternalSubset {
     
     public override func shallowClone() -> XElementDeclaration {
         let theClone = XElementDeclaration(name: _name, literal: _literal)
-        theClone._textRange = self._textRange
+        theClone._sourceRange = self._sourceRange
         return theClone
     }
 }
@@ -2003,7 +2003,7 @@ public final class XAttributeListDeclaration: XDeclarationInInternalSubset {
     
     public override func shallowClone() -> XAttributeListDeclaration {
         let theClone = XAttributeListDeclaration(name: _name, literal: _literal)
-        theClone._textRange = self._textRange
+        theClone._sourceRange = self._sourceRange
         return theClone
     }
 }
@@ -2035,7 +2035,7 @@ public final class XParameterEntityDeclaration: XDeclarationInInternalSubset {
     
     public override func shallowClone() -> XParameterEntityDeclaration {
         let theClone = XParameterEntityDeclaration(name: _name, value: _value)
-        theClone._textRange = self._textRange
+        theClone._sourceRange = self._sourceRange
         return theClone
     }
 }
