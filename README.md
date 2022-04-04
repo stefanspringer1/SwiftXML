@@ -328,7 +328,7 @@ func clone() -> XNode
 
 (The result will be more specific if the subject is known to be more specific.)
 
-Any node possesses the property `backLink` that can be used as a relation between a clone and the original node. If you create a clone by using the `clone()` method, the `backLink` value of a node in the clone points to the original node. So when working with a clone, you can easily look at the original nodes.
+Any content and the document itself possesses the property `backLink` that can be used as a relation between a clone and the original node. If you create a clone by using the `clone()` method, the `backLink` value of a node in the clone points to the original node. So when working with a clone, you can easily look at the original nodes.
 
 Note that the `backLink` reference references the original node weakly, i.e. if you do not save a reference to the original node or tree then the original node disapears and the `backLink` property will be `nil`.
 
@@ -351,6 +351,37 @@ func shallowClone(forwardref: Bool) -> XNode
 The `backLink` is then set just like when using `clone()`.
 
 ## Content properties
+
+### Text range
+
+If the parser (as it is the case with the [SwiftXMLParser](https://github.com/stefanspringer1/SwiftXMLParser)) reports the range of the node in the XML source, the property `textRange: XTextRange` returns it:
+
+Example:
+
+```Swift
+let document = try parseXML(fromText: """
+<a>
+    <b>Hello</b>
+</a>
+""", textAllowedInElementWithName: { $0 == "b" })
+
+document.allContent.forEach { content in
+    if let textRange = content.textRange {
+        print("\(textRange): \(content)")
+    }
+    else {
+        content.echo()
+    }
+}
+```
+
+Output:
+
+```text
+1:1 - 3:4: <a>
+2:5 - 2:16: <b>
+2:8 - 2:12: Hello
+```
 
 ### Element names
 
