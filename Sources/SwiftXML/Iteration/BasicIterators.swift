@@ -470,7 +470,7 @@ public final class XContentsIterator: XContentIteratorProtocol {
                 currentContent = currentContent?._next
             }
             else {
-                currentContent = (node as? XBranchInternal)?._firstContent
+                currentContent = (node as? XBranchInternal)?.__firstContent
                 started = true
             }
         } while currentContent != nil && currentContent! is XSpot
@@ -511,7 +511,7 @@ public final class XReversedContentsIterator: XContentIteratorProtocol {
                 currentContent = currentContent?._previous
             }
             else {
-                currentContent = (node as? XBranchInternal)?._lastContent
+                currentContent = (node as? XBranchInternal)?.__lastContent
                 started = true
             }
         } while currentContent != nil && currentContent! is XSpot
@@ -704,7 +704,7 @@ public final class XChildrenIterator: XElementIteratorProtocol {
                 currentNode = currentNode?._next
             }
             else {
-                currentNode = (node as? XBranchInternal)?._firstContent
+                currentNode = (node as? XBranchInternal)?.__firstContent
                 started = true
             }
         } while currentNode != nil && !(currentNode! is XElement)
@@ -746,7 +746,7 @@ public final class XReversedChildrenIterator: XElementIteratorProtocol {
                 currentNode = currentNode?._previous
             }
             else {
-                currentNode = (node as? XBranchInternal)?._lastContent
+                currentNode = (node as? XBranchInternal)?.__lastContent
                 started = true
             }
         } while currentNode != nil && !(currentNode! is XElement)
@@ -1038,7 +1038,7 @@ public final class XTreeIterator: XContentIteratorProtocol {
             while true {
                 if downDirection,
                    let branch = currentNode as? XBranchInternal {
-                    if let firstChild = branch._firstContent {
+                    if let firstChild = branch.__firstContent {
                         currentNode = firstChild
                         directionIndicator.up = false
                         return currentNode as? XContent
@@ -1077,7 +1077,7 @@ public final class XTreeIterator: XContentIteratorProtocol {
         else {
             currentNode = startNode
             if let document = currentNode as? XDocument {
-                currentNode = document._firstContent
+                currentNode = document.__firstContent
             }
             started = true
             return currentNode as? XContent

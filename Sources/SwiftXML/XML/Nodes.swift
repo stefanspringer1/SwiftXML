@@ -401,7 +401,7 @@ public class XContent: XNode {
         lastInMyTree._nextInTree?._previousInTree = lastInMyTree
         
         // set _lastInTree:
-        if self === _parent?._lastContent, let oldParentLastInTree = _parent?.lastInTree {
+        if self === _parent?.__lastContent, let oldParentLastInTree = _parent?.lastInTree {
             var ancestor = _parent
             repeat {
                 if let element = ancestor as? XElement {
@@ -454,6 +454,9 @@ public class XContent: XNode {
      */
     func _removeKeep() {
         
+        let previousText = _previous as? XText
+        let nextText = _next as? XText
+        
         // correction in iterators:
         gotoPreviousOnContentIterators()
         
@@ -468,12 +471,17 @@ public class XContent: XNode {
             theNext._previous = _previous
         }
         if let theParent = _parent {
-            if theParent._firstContent === self {
-                theParent._firstContent = _next
+            if theParent.__firstContent === self {
+                theParent.__firstContent = _next
             }
-            if theParent._lastContent === self {
-                theParent._lastContent = _previous
+            if theParent.__lastContent === self {
+                theParent.__lastContent = _previous
             }
+        }
+        
+        if let thePreviousText = previousText, let theNextText = nextText {
+            thePreviousText.value += theNextText.value
+            theNextText.remove()
         }
     }
     
@@ -504,8 +512,8 @@ public class XContent: XNode {
         else {
             node._removeKeep()
             
-            if _parent?._firstContent === self {
-                _parent?._firstContent = node
+            if _parent?.__firstContent === self {
+                _parent?.__firstContent = node
             }
             
             _previous?._next = node
@@ -555,7 +563,7 @@ public class XContent: XNode {
         else if let selfAsLiteral = self as? XLiteral, let newAsLiteral = node as? XLiteral {
             selfAsLiteral._value = selfAsLiteral._value + newAsLiteral._value
         }
-        else if _parent?._lastContent === self {
+        else if _parent?.__lastContent === self {
             _parent?._add(node)
         }
         else {
@@ -631,14 +639,6 @@ public class XSpot: XContent {
     
     public override var backLink: XSpot? { get { super.backLink as? XSpot } }
     public override var finalBackLink: XSpot? { get { super.finalBackLink as? XSpot } }
-    
-    public var attached = Attachments()
-    
-    public init(attached: [String:Any?]? = nil) {
-        super.init()
-        attached?.forEach{ (key,value) in self.attached[key] = value }
-    }
-    
 }
 
 public protocol XBranch: XNode {
@@ -654,8 +654,8 @@ public protocol XBranch: XNode {
 }
 
 protocol XBranchInternal: XBranch {
-    var _firstContent: XContent? { get set }
-    var _lastContent: XContent? { get set }
+    var __firstContent: XContent? { get set }
+    var __lastContent: XContent? { get set }
     var _document: XDocument? { get set }
     //var _lastInTree: XNode! { get set }
 }
@@ -686,12 +686,20 @@ extension XBranchInternal {
         }
     }
     
-    public var firstContent: XContent? {
-        get { _firstContent }
+    var _firstContent: XContent? {
+        get {
+            var content = __firstContent
+            while let spot = content as? XSpot {
+                content = spot._next
+            }
+            return content
+        }
     }
     
-    public func _firstContent(_ condition: (XContent) -> Bool) -> XContent? {
-        let node = _firstContent
+    public var firstContent: XContent? { _firstContent }
+    
+    func _firstContent(_ condition: (XContent) -> Bool) -> XContent? {
+        let node = firstContent
         if let theNode = node, condition(theNode) {
             return node
         }
@@ -704,12 +712,20 @@ extension XBranchInternal {
         return _firstContent(condition)
     }
     
-    public var lastContent: XContent? {
-        get { _lastContent }
+    var _lastContent: XContent? {
+        get {
+            var content = __lastContent
+            while let spot = content as? XSpot {
+                content = spot._previous
+            }
+            return content
+        }
     }
     
-    public func _lastContent(_ condition: (XContent) -> Bool) -> XContent? {
-        let node = _lastContent
+    public var lastContent: XContent? { _lastContent }
+    
+    func _lastContent(_ condition: (XContent) -> Bool) -> XContent? {
+        let node = lastContent
         if let theNode = node, condition(theNode) {
             return node
         }
@@ -722,17 +738,15 @@ extension XBranchInternal {
         return _lastContent(condition)
     }
     
-    public var isEmpty: Bool {
-        get {
-            return _firstContent == nil
-        }
-    }
+    var _isEmpty: Bool { _firstContent == nil }
+    
+    public var isEmpty: Bool { _isEmpty }
     
     /**
      Clear the contents of the node.
      */
     public func _clear() {
-        var node = _firstContent
+        var node = __firstContent
         while let theNode = node {
             theNode.remove()
             node = theNode._next
@@ -761,15 +775,15 @@ extension XBranchInternal {
             node._removeKeep()
             
             // insert into new chain:
-            if let theLastChild = _lastContent {
+            if let theLastChild = __lastContent {
                 theLastChild._next = node
                 node._previous = theLastChild
             }
             else {
-                _firstContent = node
+                __firstContent = node
                 node._previous = nil
             }
-            _lastContent = node
+            __lastContent = node
             node._next = nil
             
             // set parent:
@@ -820,15 +834,15 @@ extension XBranchInternal {
             node._removeKeep()
             
             // insert into new chain:
-            if let theFirstChild = _firstContent {
+            if let theFirstChild = __firstContent {
                 theFirstChild._previous = node
                 node._next = theFirstChild
             }
             else {
-                _lastContent = node
+                __lastContent = node
                 node._next = nil
             }
-            _firstContent = node
+            __firstContent = node
             node._previous = nil
             
             // set parent:
@@ -1129,9 +1143,9 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         } while node != nil
     }
     
-    var _firstContent: XContent?
+    var __firstContent: XContent?
     
-    var _lastContent: XContent?
+    var __lastContent: XContent?
     
     var _lastInTree: XNode!
     
@@ -1272,25 +1286,19 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     // ------------------------------------------------------------------------
     // repeat methods from XBranchInternal:
     
-    public var firstContent: XContent? {
-        get { _firstContent }
-    }
+    public var firstContent: XContent? { _firstContent }
     
     public func firstContent(_ condition: (XContent) -> Bool) -> XContent? {
         return _firstContent(condition)
     }
     
-    public var lastContent: XContent? {
-        get { _lastContent }
-    }
+    public var lastContent: XContent? { _lastContent }
     
     public func lastContent(_ condition: (XContent) -> Bool) -> XContent? {
         return _lastContent(condition)
     }
     
-    public var isEmpty: Bool {
-        get { _firstContent == nil }
-    }
+    public var isEmpty: Bool { _isEmpty }
     
     public func add(@XContentBuilder builder: () -> [XContent]) {
         return _add(builder())

@@ -16,9 +16,9 @@ final class XValue {
 
 public final class XDocument: XNode, XBranchInternal {
     
-    var _firstContent: XContent? = nil
+    var __firstContent: XContent? = nil
     
-    var _lastContent: XContent? = nil
+    var __lastContent: XContent? = nil
     
     var _document: XDocument?
     
@@ -93,25 +93,19 @@ public final class XDocument: XNode, XBranchInternal {
     // ------------------------------------------------------------------------
     // repeat methods from XBranchInternal:
     
-    public var firstContent: XContent? {
-        get { _firstContent }
-    }
+    public var firstContent: XContent? { _firstContent }
     
     public func firstContent(_ condition: (XContent) -> Bool) -> XContent? {
         return _firstContent(condition)
     }
     
-    public var lastContent: XContent? {
-        get { _lastContent }
-    }
+    public var lastContent: XContent? { _lastContent }
     
     public func lastContent(_ condition: (XContent) -> Bool) -> XContent? {
         return _lastContent(condition)
     }
     
-    public var isEmpty: Bool {
-        get { _firstContent == nil }
-    }
+    public var isEmpty: Bool { _isEmpty }
     
     public func add(@XContentBuilder builder: () -> [XContent]) {
         return _add(builder())
@@ -289,7 +283,7 @@ public final class XDocument: XNode, XBranchInternal {
     }
     
     func getType() -> String? {
-        var node = _firstContent
+        var node = __firstContent
         while let theNode = node {
             if let element = node as? XElement {
                 return element.name

@@ -1324,7 +1324,9 @@ Subsequent text nodes (`XText`) are always automatically combined, and text node
 
 This can be very convenient when processing text, e.g. it is then very straightforward to apply regular expressions to the text in a document. But there might be some stumbling blocks involved here, when the different behaviour of text nodes and other nodes affects the result of your manipulations.
 
-In those cases, you may use an `XSpot` node as a separator to a text. An `XSpot` “does nothing” besides existing at a certain spot in the XML tree (hence its name), but it invisible to all iterations except tree traversals, it is invisible for `previousTouching`, `nextTouching`, `previousInTreeTouching`, and `nextInTreeTouching`, and it is also invisible for a production. So you should use `XSpot` nodes only in a very controlled way, e.g. temporarily. But `XSpot` nodes are found by a tree traversal, so if you do need to find them, you can. And the mentioned properties and methods that do not see an `XSpot` can very well be called for an `XSpot` itself. 
+In those cases, you may use an `XSpot` node as as separator to a text, as shown in the following example. An `XSpot` is the “cheapest” (or simplest) separator you could use in such a case.
+
+An `XSpot` node has a special behaviour that stems from the way it is internally used by the library. An `XSpot` “does nothing” besides existing at a certain spot in the XML tree (hence its name), but it invisible to all iterations except tree traversals, it is invisible for `previousTouching`, `previousInTreeTouching`, `firstContent`, `isEmpty`, etc., and it is also invisible for a production. So you should use `XSpot` nodes only in a very controlled way, e.g. temporarily. But `XSpot` nodes are found by a tree traversal, so if you do need to find them, you can. And the mentioned properties and methods that do not see an `XSpot` can very well be called for an `XSpot` itself, e.g. `myXSpot.next`. 
 
 Consider the following example where the occurrences of a search text gets a greenish background. In this example, you do not want `part` to be added to `text` in the iteration:
 
@@ -1364,10 +1366,6 @@ Output:
 ```text
 <a>Hello <span style="background:LightGreen">world</span>, the <span style="background:LightGreen">world</span> is nice.</a>
 ```
-
-An `XSpot` can also have attachments.
-
-Note that all iterations and `previousTouching`, `nextTouching`, `previousInTreeTouching`, `nextInTreeTouching` do not “see” `XSpot` nodes, i.e. they skip them. So you should use ´XSpot` nodes only temporarily in a controlled way.+++
 
 ## Rules
 
