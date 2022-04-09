@@ -550,7 +550,7 @@ public final class XNextIterator: XContentIteratorProtocol {
         repeat {
             currentContent = currentContent?._next
         } while currentContent != nil && currentContent! is XSpot
-        return currentContent as? XElement
+        return currentContent
     }
     
     public func previous() -> XContent? {
@@ -565,7 +565,7 @@ public final class XNextIterator: XContentIteratorProtocol {
                 }
             }
         } while currentContent != nil && currentContent! is XSpot
-        return currentContent as? XElement
+        return currentContent
     }
 }
 
