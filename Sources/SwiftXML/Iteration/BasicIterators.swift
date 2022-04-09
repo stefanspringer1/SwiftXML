@@ -455,8 +455,8 @@ final class XAttributesOfSameNameIterator: XAttributeIteratorProtocol {
 public final class XContentsIterator: XContentIteratorProtocol {
     
     private var started = false
-    let node: XNode
-    weak var currentNode: XContent? = nil
+    weak var node: XNode?
+    weak var currentContent: XContent? = nil
     
     public init(
         node: XNode
@@ -465,25 +465,28 @@ public final class XContentsIterator: XContentIteratorProtocol {
     }
     
     public func next() -> XContent? {
-        if started {
-            currentNode = currentNode?._next
-        }
-        else {
-            currentNode = (node as? XBranchInternal)?._firstContent
-            started = true
-        }
-        return currentNode
+        repeat {
+            if started {
+                currentContent = currentContent?._next
+            }
+            else {
+                currentContent = (node as? XBranchInternal)?._firstContent
+                started = true
+            }
+        } while currentContent != nil && currentContent! is XSpot
+        return currentContent
     }
     
     public func previous() -> XContent? {
-        if started {
-            currentNode = currentNode?._previous
-            if currentNode == nil {
-                started = false
+        repeat {
+            if started {
+                currentContent = currentContent?._previous
+                if currentContent == nil {
+                    started = false
+                }
             }
-            return currentNode
-        }
-        return nil
+        } while currentContent != nil && currentContent! is XSpot
+        return currentContent
     }
 }
 
@@ -493,8 +496,8 @@ public final class XContentsIterator: XContentIteratorProtocol {
 public final class XReversedContentsIterator: XContentIteratorProtocol {
     
     private var started = false
-    let node: XNode
-    weak var currentNode: XContent? = nil
+    weak var node: XNode?
+    weak var currentContent: XContent? = nil
     
     public init(
         node: XNode
@@ -503,25 +506,28 @@ public final class XReversedContentsIterator: XContentIteratorProtocol {
     }
     
     public func next() -> XContent? {
-        if started {
-            currentNode = currentNode?._previous
-        }
-        else {
-            currentNode = (node as? XBranchInternal)?._lastContent
-            started = true
-        }
-        return currentNode
+        repeat {
+            if started {
+                currentContent = currentContent?._previous
+            }
+            else {
+                currentContent = (node as? XBranchInternal)?._lastContent
+                started = true
+            }
+        } while currentContent != nil && currentContent! is XSpot
+        return currentContent
     }
     
     public func previous() -> XContent? {
-        if started {
-            currentNode = currentNode?._next
-            if currentNode == nil {
-                started = false
+        repeat {
+            if started {
+                currentContent = currentContent?._next
+                if currentContent == nil {
+                    started = false
+                }
             }
-            return currentNode
-        }
-        return nil
+        } while currentContent != nil && currentContent! is XSpot
+        return currentContent
     }
 }
 
@@ -530,7 +536,7 @@ public final class XReversedContentsIterator: XContentIteratorProtocol {
  */
 public final class XNextIterator: XContentIteratorProtocol {
     
-    let content: XContent
+    weak var content: XContent?
     weak var currentContent: XContent? = nil
     
     public init(
@@ -541,21 +547,25 @@ public final class XNextIterator: XContentIteratorProtocol {
     }
     
     public func next() -> XContent? {
-        currentContent = currentContent?._next
-        return currentContent
+        repeat {
+            currentContent = currentContent?._next
+        } while currentContent != nil && currentContent! is XSpot
+        return currentContent as? XElement
     }
     
     public func previous() -> XContent? {
-        if currentContent === content {
-            return nil
-        }
-        else {
-            currentContent = currentContent?._previous
+        repeat {
             if currentContent === content {
                 return nil
             }
-        }
-        return currentContent
+            else {
+                currentContent = currentContent?._previous
+                if currentContent === content {
+                    return nil
+                }
+            }
+        } while currentContent != nil && currentContent! is XSpot
+        return currentContent as? XElement
     }
 }
 
@@ -568,27 +578,31 @@ public final class XPreviousIterator: XContentIteratorProtocol {
     weak var currentContent: XContent? = nil
     
     public init(
-        node: XContent
+        content: XContent
     ) {
-        self.content = node
-        currentContent = node
+        self.content = content
+        currentContent = content
     }
     
     public func next() -> XContent? {
-        currentContent = currentContent?._previous
+        repeat {
+            currentContent = currentContent?._previous
+        } while currentContent != nil && currentContent! is XSpot
         return currentContent
     }
     
     public func previous() -> XContent? {
-        if currentContent === content {
-            return nil
-        }
-        else {
-            currentContent = currentContent?._next
+        repeat {
             if currentContent === content {
                 return nil
             }
-        }
+            else {
+                currentContent = currentContent?._next
+                if currentContent === content {
+                    return nil
+                }
+            }
+        } while currentContent != nil && currentContent! is XSpot
         return currentContent
     }
 }
@@ -816,22 +830,27 @@ public final class XAllContentsIterator: XContentIteratorProtocol {
     }
     
     public func next() -> XContent? {
-        if startNode?.getLastInTree() === currentNode {
-            currentNode = nil
-        }
-        else {
-            currentNode = currentNode?._nextInTree
-        }
+        repeat {
+            if startNode?.getLastInTree() === currentNode {
+                currentNode = nil
+            }
+            else {
+                currentNode = currentNode?._nextInTree
+            }
+        } while currentNode != nil && currentNode! is XSpot
         return currentNode as? XContent
     }
     
     public func previous() -> XContent? {
-        if currentNode === startNode {
-            currentNode = nil
-        }
-        else {
-            currentNode = currentNode?._previousInTree as? XContent
-        }
+        repeat {
+            if currentNode === startNode {
+                currentNode = startNode
+                return nil
+            }
+            else {
+                currentNode = currentNode?._previousInTree
+            }
+        } while currentNode != nil && currentNode! is XSpot
         return currentNode as? XContent
     }
 }
@@ -852,29 +871,39 @@ public final class XAllContentsIncludingSelfIterator: XContentIteratorProtocol {
     }
     
     public func next() -> XContent? {
-        if startNode?.getLastInTree() === currentNode {
-            currentNode = nil
-        }
-        else if started == false {
-            currentNode = startNode
-            started = true
-        }
-        else {
-            currentNode = currentNode?._nextInTree
-        }
-        return currentNode as? XContent
+        repeat {
+            if startNode?.getLastInTree() === currentNode {
+                currentNode = startNode
+                return nil
+            }
+            else if started == false {
+                currentNode = startNode
+                started = true
+            }
+            else {
+                currentNode = currentNode?._nextInTree
+            }
+            if !(currentNode is XSpot || currentNode is XDocument) {
+                return currentNode as? XContent
+            }
+        } while currentNode != nil
+        return nil
     }
     
     public func previous() -> XContent? {
-        if currentNode === startNode {
-            currentNode = nil
-            started = false
-            return nil
-        }
-        else {
-            currentNode = currentNode?._previousInTree
-            return currentNode as? XContent
-        }
+        repeat {
+            if currentNode === startNode {
+                currentNode = nil
+                started = false
+            }
+            else {
+                currentNode = currentNode?._previousInTree
+                if !(currentNode is XSpot) {
+                    return currentNode as? XContent
+                }
+            }
+        } while currentNode != nil
+        return nil
     }
 }
 

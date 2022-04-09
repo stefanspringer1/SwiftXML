@@ -226,7 +226,7 @@ public final class XPreviousSequence: XContentSequence {
     }
     
     public override func makeIterator() -> XBidirectionalContentIterator {
-        return XBidirectionalContentIterator(nodeIterator: XPreviousIterator(node: theContent))
+        return XBidirectionalContentIterator(nodeIterator: XPreviousIterator(content: theContent))
     }
 }
 

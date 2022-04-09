@@ -147,11 +147,28 @@ public class XNode {
     weak var _previous: XContent? = nil
     var _next: XContent? = nil
     
-    public var previousTouching: XContent? { get { _previous } }
-    public var nextTouching: XContent? { get { _next } }
+    public var previousTouching: XContent? {
+        get {
+            var content = _previous
+            while let spot = content as? XSpot {
+                content = spot._previous
+            }
+            return content
+        }
+    }
+    
+    public var nextTouching: XContent? {
+        get {
+            var content = _next
+            while let spot = content as? XSpot {
+                content = spot._next
+            }
+            return content
+        }
+    }
     
     public func previousTouching(_ condition: (XContent) -> Bool) -> XContent? {
-        let content = _previous
+        let content = previousTouching
         if let theContent = content, condition(theContent) {
             return theContent
         }
@@ -161,7 +178,7 @@ public class XNode {
     }
     
     public func nextTouching(_ condition: (XContent) -> Bool) -> XContent? {
-        let content = _next
+        let content = nextTouching
         if let theContent = content, condition(theContent) {
             return theContent
         }
@@ -173,8 +190,25 @@ public class XNode {
     weak var _previousInTree: XNode? = nil
     weak var _nextInTree: XNode? = nil
     
-    public var previousInTreeTouching: XContent? { get { _previousInTree as? XContent } }
-    public var nextInTreeTouching: XContent? { get { _nextInTree as? XContent } }
+    public var previousInTreeTouching: XContent? {
+        get {
+            var content = _previousInTree
+            while let spot = content as? XSpot {
+                content = spot._previousInTree
+            }
+            return content as? XContent
+        }
+    }
+    
+    public var nextInTreeTouching: XContent? {
+        get {
+            var content = _nextInTree
+            while let spot = content as? XSpot {
+                content = spot._nextInTree
+            }
+            return content as? XContent
+        }
+    }
     
     public func previousInTreeTouching(_ condition: (XContent) -> Bool) -> XContent? {
         let content = previousInTreeTouching
@@ -569,25 +603,20 @@ public class XContent: XNode {
     /**
      Replace the node by other nodes.
      */
-    func _replace(follow: Bool, by content: [XContent]) {
+    public func replace(follow: Bool = false, @XContentBuilder builder: () -> [XContent]) {
         if follow {
             gotoPreviousOnContentIterators()
         }
         else {
             prefetchOnContentIterators()
         }
-        let placeholder = XSpot() // do not use text as a place holder!
-        _insertNext(placeholder)
-        remove()
-        content.forEach { placeholder._insertPrevious($0) }
+        let placeholder = XSpot()
+        _insertPrevious(placeholder)
+        builder().forEach { placeholder._insertPrevious($0) }
+        if placeholder._next === self {
+            remove()
+        }
         placeholder.remove()
-    }
-    
-    /**
-     Replace the node by other nodes.
-     */
-    public func replace(follow: Bool = false, @XContentBuilder builder: () -> [XContent]) {
-        _replace(follow: follow, by: builder())
     }
     
     public var asSequence: XContentSequence { get { XContentSelfSequence(content: self) } }
@@ -1230,14 +1259,14 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     /**
      Replace the node by other nodes.
      */
-    override func _replace(follow: Bool, by content: [XContent]) {
+    public override func replace(follow: Bool = false, @XContentBuilder builder: () -> [XContent]) {
         if follow {
             gotoPreviousOnElementIterators()
         }
         else {
             prefetchOnElementIterators()
         }
-        super._replace(follow: follow, by: content)
+        super.replace(follow: follow, builder: builder)
     }
     
     // ------------------------------------------------------------------------

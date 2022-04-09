@@ -1322,10 +1322,11 @@ Output:
 
 Subsequent text nodes (`XText`) are always automatically combined, and text nodes with empty text are automatically removed.
 
-This can be very convenient when processing text, e.g. it is then very straightforward to apply regular expressions to the text in a document. But there might be some stumbling blocks involved here, when the different behaviour of text nodes and other nodes 
-affects the result of your manipulations.
+This can be very convenient when processing text, e.g. it is then very straightforward to apply regular expressions to the text in a document. But there might be some stumbling blocks involved here, when the different behaviour of text nodes and other nodes affects the result of your manipulations.
 
-In those cases, you may use an `XSpot` node as a separator to a text. An `XSpot` “does nothing” besides existing at a certain spot in the XML tree (hence its name), it invisible when using a production. Consider e.g. the following example where the occurrences of a search text gets a greenish background. In this example, you do not want `part` to be added to `text` in the iteration:
+In those cases, you may use an `XSpot` node as a separator to a text. An `XSpot` “does nothing” besides existing at a certain spot in the XML tree (hence its name), but it invisible to all iterations except tree traversals, it is invisible for `previousTouching`, `nextTouching`, `previousInTreeTouching`, and `nextInTreeTouching`, and it is also invisible for a production. So you should use `XSpot` nodes only in a very controlled way, e.g. temporarily. But `XSpot` nodes are found by a tree traversal, so if you do need to find them, you can. And the mentioned properties and methods that do not see an `XSpot` can very well be called for an `XSpot` itself. 
+
+Consider the following example where the occurrences of a search text gets a greenish background. In this example, you do not want `part` to be added to `text` in the iteration:
 
 ```Swift
 let document = try parseXML(fromText: """
@@ -1365,6 +1366,8 @@ Output:
 ```
 
 An `XSpot` can also have attachments.
+
+Note that all iterations and `previousTouching`, `nextTouching`, `previousInTreeTouching`, `nextInTreeTouching` do not “see” `XSpot` nodes, i.e. they skip them. So you should use ´XSpot` nodes only temporarily in a controlled way.+++
 
 ## Rules
 
