@@ -415,7 +415,7 @@ var attributeNames: [String]
 
 ### Attachments
 
-Element, documents, and `XSpot` (see the section below on `XSpot` and handling of text) can have “attachments”. Those are objects that can be attached via a textual key to those branches but that not considered as belonging to the actual XML tree.
+Elements and documents can have “attachments”. Those are objects that can be attached via a textual key to those branches but that not considered as belonging to the actual XML tree.
 
 The attachments can be reached by the property `attached`, and accessing and setting them is analogous to attributes:
 
@@ -438,7 +438,7 @@ if let note = myElement.attached["note"] as? XElement {
 myElement.attached["note"] = nil
 ```
 
-You can also set attachments immediately when creating en element, document, or `XSpot` by using the argument `attached:` of the initializer.
+You can also set attachments immediately when creating en element or a document by using the argument `attached:` of the initializer.
 
 ### XPath
 
