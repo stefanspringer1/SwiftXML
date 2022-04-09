@@ -922,6 +922,47 @@ b1
 
 The same applies to e.g. the `filter` method, which, besides letting the code look more complex when used instead of the filter options described above, is not a good option when defining content.
 
+The content of elements containing other elements while defining their content is being built from the inside to the ouside: Consider the following example:
+
+```Swift
+let b = XElement("b")
+
+let a = XElement("a") {
+    b
+    "Hello"
+}
+
+a.echo(pretty: true)
+
+print("\n------\n")
+
+b.replace {
+    XElement("wrapper1") {
+        b
+        XElement("wrapper2") {
+            b.next
+        }
+    }
+}
+
+a.echo(pretty: true)
+```
+
+First, the element “wrapper2” is built, and at that moment the sequence `b.next` contains the text `"Hello"`. So we will get as output:
+
+```text
+<a><b/>Hello</a>
+
+------
+
+<a>
+  <wrapper1>
+    <b/>
+    <wrapper2>Hello</wrapper2>
+  </wrapper1>
+</a>
+```
+
 ### Document membership in constructed elements
 
 Elements that are part of a document (`XDocument`) are registered in the document. The same is true for its attributes. The reason is that this allows fast access to elements and attributes of a certain name via `elements(ofName:)` and `attributes(ofName:)` and the exact functioning of rules (see the section below on rules).
