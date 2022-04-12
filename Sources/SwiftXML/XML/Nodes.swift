@@ -1085,8 +1085,8 @@ final class XNodeSampler {
         else if let sequence = thing as? XContentLikeSequence {
             sequence.forEach { self.add($0) }
         }
-        else if let array = thing as? [XContentLike] {
-            array.forEach { self.add($0) }
+        else if let array = thing as? [XContentLike?] {
+            array.forEach { if let contentLike = $0 { self.add(contentLike) } }
         }
     }
 }
