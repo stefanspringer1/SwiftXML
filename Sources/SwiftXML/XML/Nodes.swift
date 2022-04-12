@@ -639,6 +639,8 @@ public class XSpot: XContent {
     
     public override var backLink: XSpot? { get { super.backLink as? XSpot } }
     public override var finalBackLink: XSpot? { get { super.finalBackLink as? XSpot } }
+    
+    public override init() {}
 }
 
 public protocol XBranch: XNode {
