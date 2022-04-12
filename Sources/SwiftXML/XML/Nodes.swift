@@ -913,6 +913,8 @@ extension XContentSequence: XContentLike {}
 extension XElementSequence: XContentLike {}
 extension XContentLikeSequence: XContentLike {}
 
+extension Array: XContentLike where Element == XContentLike? {}
+
 public extension Array where Element == XContentLike? {
     var asContent: XContentLikeSequence {
         get { XContentLikeSequenceFromArray(fromArray: self) }
@@ -1082,6 +1084,9 @@ final class XNodeSampler {
         }
         else if let sequence = thing as? XContentLikeSequence {
             sequence.forEach { self.add($0) }
+        }
+        else if let array = thing as? [XContentLike] {
+            array.forEach { self.add($0) }
         }
     }
 }
