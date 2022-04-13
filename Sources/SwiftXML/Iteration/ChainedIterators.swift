@@ -152,6 +152,44 @@ public class XContentIteratorDependingOnContentIterator: XContentIterator {
     }
 }
 
+public class XFilteredContentIterator: XContentIterator {
+    
+    private let iterator: XContentIterator
+    private let filter: (XContent) -> Bool
+    
+    init(sequence: XContentSequence, filter: @escaping (XContent) -> Bool) {
+        iterator = sequence.makeIterator()
+        self.filter = filter
+    }
+    
+    public override func next() -> XContent? {
+        var content: XContent? = nil
+        while content == nil || !filter(content!) {
+            content = iterator.next()
+        }
+        return content
+    }
+}
+
+public class XFilteredElementIterator: XElementIterator {
+    
+    private let iterator: XElementIterator
+    private let filter: (XElement) -> Bool
+    
+    init(sequence: XElementSequence, filter: @escaping (XElement) -> Bool) {
+        iterator = sequence.makeIterator()
+        self.filter = filter
+    }
+    
+    public override func next() -> XElement? {
+        var content: XElement? = nil
+        while content == nil || !filter(content!) {
+            content = iterator.next()
+        }
+        return content
+    }
+}
+
 public class XContentDependingOnContentIterator: XContentIterator {
     
     private let iterator1: XContentIterator
@@ -347,6 +385,36 @@ public class XContentSequenceDependingOnContentSequence: XContentSequence {
     }
 }
 
+public class XFilteredContentSequence: XContentSequence {
+    
+    let sequence: XContentSequence
+    let filter: (XContent) -> Bool
+    
+    init(sequence: XContentSequence, filter: @escaping (XContent) -> Bool) {
+        self.sequence = sequence
+        self.filter = filter
+    }
+    
+    override public func makeIterator() -> XContentIterator {
+        return XFilteredContentIterator(sequence: sequence, filter: filter)
+    }
+}
+
+public class XFilteredElementSequence: XElementSequence {
+    
+    let sequence: XElementSequence
+    let filter: (XElement) -> Bool
+    
+    init(sequence: XElementSequence, filter: @escaping (XElement) -> Bool) {
+        self.sequence = sequence
+        self.filter = filter
+    }
+    
+    override public func makeIterator() -> XElementIterator {
+        return XFilteredElementIterator(sequence: sequence, filter: filter)
+    }
+}
+
 public class XContentDependingOnContentSequence: XContentSequence {
     
     let sequence: XContentSequence
@@ -412,6 +480,10 @@ public func collect(@XContentBuilder builder: @escaping () -> [XContent]) -> (()
 }
 
 extension XContentSequence {
+    
+    public func filter(_ isIncluded: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XFilteredContentSequence(sequence: self, filter: isIncluded)
+    }
     
     public func clone() -> XContentSequence {
         return XContentDependingOnContentSequence(sequence: self, contentGetter: { content in content.clone() })
@@ -713,6 +785,10 @@ extension XContentSequence {
 }
 
 extension XElementSequence {
+    
+    public func filter(_ isIncluded: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XFilteredElementSequence(sequence: self, filter: isIncluded)
+    }
     
     public var name: XStringSequence {
         get { XNameSequenceDependingOnElementSequence(sequence: self) }
