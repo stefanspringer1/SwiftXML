@@ -163,8 +163,8 @@ public class XFilteredContentIterator: XContentIterator {
     }
     
     public override func next() -> XContent? {
-        var content: XContent? = nil
-        while content == nil || !filter(content!) {
+        var content: XContent? = iterator.next()
+        while let theContent = content, !filter(theContent) {
             content = iterator.next()
         }
         return content
@@ -182,11 +182,11 @@ public class XFilteredElementIterator: XElementIterator {
     }
     
     public override func next() -> XElement? {
-        var content: XElement? = nil
-        while content == nil || !filter(content!) {
-            content = iterator.next()
+        var element: XElement? = iterator.next()
+        while let theElement = element, !filter(theElement) {
+            element = iterator.next()
         }
-        return content
+        return element
     }
 }
 
