@@ -372,7 +372,7 @@ public class XNode {
         serialized(usingProduction: pretty ? XPrettyPrintProduction() : XDefaultProduction())
     }
     
-    public func allText() -> String {
+    public var allText: String {
         if let meAsBranch = self as? XBranch {
             var texts = [String]()
             meAsBranch.traverse { node in
