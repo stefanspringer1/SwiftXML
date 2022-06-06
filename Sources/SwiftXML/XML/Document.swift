@@ -156,15 +156,13 @@ public final class XDocument: XNode, XBranchInternal {
         return theClone
     }
     
-    public var declarationsInInternalSubset = [XDeclarationInInternalSubset]()
-    
-    var internalEntityDeclarations = [String:XInternalEntityDeclaration]()
-    var parameterEntityDeclarations = [String:XParameterEntityDeclaration]()
-    var externalEntityDeclarations = [String:XExternalEntityDeclaration]()
-    var unparsedEntityDeclarations = [String:XUnparsedEntityDeclaration]()
-    var notationDeclarations = [String:XNotationDeclaration]()
-    var elementDeclarations = [String:XElementDeclaration]()
-    var attributeListDeclarations = [String:XAttributeListDeclaration]()
+    public var internalEntityDeclarations = [String:XInternalEntityDeclaration]()
+    public var parameterEntityDeclarations = [String:XParameterEntityDeclaration]()
+    public var externalEntityDeclarations = [String:XExternalEntityDeclaration]()
+    public var unparsedEntityDeclarations = [String:XUnparsedEntityDeclaration]()
+    public var notationDeclarations = [String:XNotationDeclaration]()
+    public var elementDeclarations = [String:XElementDeclaration]()
+    public var attributeListDeclarations = [String:XAttributeListDeclaration]()
     
     // -------------------------------------------------------------------------
     // elements of same name:

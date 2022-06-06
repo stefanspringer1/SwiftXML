@@ -120,49 +120,42 @@ public final class XParseBuilder: XEventHandler {
         let decl = XInternalEntityDeclaration(name: name, value: value)
         decl._sourceRange = textRange
         document.internalEntityDeclarations[name] = decl
-        document.declarationsInInternalSubset.append(decl)
     }
     
     public func externalEntityDeclaration(name: String, publicID: String?, systemID: String, textRange: XTextRange?, dataRange _: XDataRange?) {
         let decl = XExternalEntityDeclaration(name: name, publicID: publicID, systemID: systemID)
         decl._sourceRange = textRange
         document.externalEntityDeclarations[name] = decl
-        document.declarationsInInternalSubset.append(decl)
     }
     
     public func unparsedEntityDeclaration(name: String, publicID: String?, systemID: String, notation: String, textRange: XTextRange?, dataRange _: XDataRange?) {
         let decl = XUnparsedEntityDeclaration(name: name, publicID: publicID, systemID: systemID, notationName: notation)
         decl._sourceRange = textRange
         document.unparsedEntityDeclarations[name] = decl
-        document.declarationsInInternalSubset.append(decl)
     }
     
     public func notationDeclaration(name: String, publicID: String?, systemID: String?, textRange: XTextRange?, dataRange _: XDataRange?) {
         let decl = XNotationDeclaration(name: name, publicID: publicID, systemID: systemID)
         decl._sourceRange = textRange
         document.notationDeclarations[name] = decl
-        document.declarationsInInternalSubset.append(decl)
     }
     
     public func elementDeclaration(name: String, literal: String, textRange: XTextRange?, dataRange _: XDataRange?) {
         let decl = XElementDeclaration(name: name, literal: literal)
         decl._sourceRange = textRange
         document.elementDeclarations[name] = decl
-        document.declarationsInInternalSubset.append(decl)
     }
     
     public func attributeListDeclaration(name: String, literal: String, textRange: XTextRange?, dataRange _: XDataRange?) {
         let decl = XAttributeListDeclaration(name: name, literal: literal)
         decl._sourceRange = textRange
         document.attributeListDeclarations[name] = decl
-        document.declarationsInInternalSubset.append(decl)
     }
     
     public func parameterEntityDeclaration(name: String, value: String, textRange: XTextRange?, dataRange _: XDataRange?) {
         let decl = XParameterEntityDeclaration(name: name, value: value)
         decl._sourceRange = textRange
         document.parameterEntityDeclarations[name] = decl
-        document.declarationsInInternalSubset.append(decl)
     }
     
     public func documentEnd() {
