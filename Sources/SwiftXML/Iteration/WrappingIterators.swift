@@ -152,7 +152,7 @@ public final class XElementNameIterator: XElementIterator {
 
 public typealias XAttributeSpot = (String,XElement)
 
-public final class XBidirectionalAttributeIterator: IteratorProtocol {
+public final class XBidirectionalAttributeIterator: XAttributeIterator {
     
     var previousIterator: XBidirectionalAttributeIterator? = nil
     var nextIterator: XBidirectionalAttributeIterator? = nil
@@ -171,7 +171,7 @@ public final class XBidirectionalAttributeIterator: IteratorProtocol {
     weak var current: XAttribute? = nil
     var prefetched = false
     
-    public func next() -> XAttributeSpot? {
+    public override func next() -> XAttributeSpot? {
         if prefetched {
             prefetched = false
         }
