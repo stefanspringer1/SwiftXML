@@ -140,13 +140,13 @@ public final class XDocument: XNode, XBranchInternal {
         theClone.publicID = publicID
         theClone.systemID = systemID
         theClone._sourcePath = _sourcePath
-        internalEntityDeclarations.forEach { name, declaration in theClone.internalEntityDeclarations[name] = declaration.shallowClone() }
-        parameterEntityDeclarations.forEach { name, declaration in theClone.parameterEntityDeclarations[name] = declaration.shallowClone() }
-        externalEntityDeclarations.forEach { name, declaration in theClone.externalEntityDeclarations[name] = declaration.shallowClone() }
-        unparsedEntityDeclarations.forEach { name, declaration in theClone.unparsedEntityDeclarations[name] = declaration.shallowClone() }
-        notationDeclarations.forEach { name, declaration in theClone.notationDeclarations[name] = declaration.shallowClone() }
-        elementDeclarations.forEach { name, declaration in theClone.elementDeclarations[name] = declaration.shallowClone() }
-        attributeListDeclarations.forEach { name, declaration in theClone.attributeListDeclarations[name] = declaration.shallowClone() }
+        internalEntityDeclarations.forEach { name, declaration in theClone.internalEntityDeclarations[name] = declaration.clone() }
+        parameterEntityDeclarations.forEach { name, declaration in theClone.parameterEntityDeclarations[name] = declaration.clone() }
+        externalEntityDeclarations.forEach { name, declaration in theClone.externalEntityDeclarations[name] = declaration.clone() }
+        unparsedEntityDeclarations.forEach { name, declaration in theClone.unparsedEntityDeclarations[name] = declaration.clone() }
+        notationDeclarations.forEach { name, declaration in theClone.notationDeclarations[name] = declaration.clone() }
+        elementDeclarations.forEach { name, declaration in theClone.elementDeclarations[name] = declaration.clone() }
+        attributeListDeclarations.forEach { name, declaration in theClone.attributeListDeclarations[name] = declaration.clone() }
         return theClone
     }
     

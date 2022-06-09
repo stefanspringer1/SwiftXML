@@ -1827,7 +1827,7 @@ public class XDeclarationInInternalSubset {
     
     func produceEntering(production: XProduction) throws {}
     
-    func shallowClone() -> XDeclarationInInternalSubset {
+    func clone() -> XDeclarationInInternalSubset {
         let theClone = XDeclarationInInternalSubset(name: _name)
         theClone._sourceRange = self._sourceRange
         return theClone
@@ -1859,7 +1859,7 @@ public final class XInternalEntityDeclaration: XDeclarationInInternalSubset {
         try production.writeInternalEntityDeclaration(internalEntityDeclaration: self)
     }
     
-    public override func shallowClone() -> XInternalEntityDeclaration {
+    public override func clone() -> XInternalEntityDeclaration {
         let theClone = XInternalEntityDeclaration(name: _name, value: _value)
         theClone._sourceRange = self._sourceRange
         return theClone
@@ -1902,7 +1902,7 @@ public final class XExternalEntityDeclaration: XDeclarationInInternalSubset {
         try production.writeExternalEntityDeclaration(externalEntityDeclaration: self)
     }
     
-    public override func shallowClone() -> XExternalEntityDeclaration {
+    public override func clone() -> XExternalEntityDeclaration {
         let theClone = XExternalEntityDeclaration(name: _name, publicID: _publicID, systemID: _systemID)
         theClone._sourceRange = self._sourceRange
         return theClone
@@ -1956,7 +1956,7 @@ public final class XUnparsedEntityDeclaration: XDeclarationInInternalSubset {
         try production.writeUnparsedEntityDeclaration(unparsedEntityDeclaration: self)
     }
     
-    public override func shallowClone() -> XUnparsedEntityDeclaration {
+    public override func clone() -> XUnparsedEntityDeclaration {
         let theClone = XUnparsedEntityDeclaration(name: _name, publicID: _publicID, systemID: _systemID, notationName: _notationName)
         theClone._sourceRange = self._sourceRange
         return theClone
@@ -1999,7 +1999,7 @@ public final class XNotationDeclaration: XDeclarationInInternalSubset {
         try production.writeNotationDeclaration(notationDeclaration: self)
     }
     
-    public override func shallowClone() -> XNotationDeclaration {
+    public override func clone() -> XNotationDeclaration {
         let theClone = XNotationDeclaration(name: _name, publicID: _publicID, systemID: _systemID)
         theClone._sourceRange = self._sourceRange
         return theClone
@@ -2031,7 +2031,7 @@ public final class XElementDeclaration: XDeclarationInInternalSubset {
         try production.writeElementDeclaration(elementDeclaration: self)
     }
     
-    public override func shallowClone() -> XElementDeclaration {
+    public override func clone() -> XElementDeclaration {
         let theClone = XElementDeclaration(name: _name, literal: _literal)
         theClone._sourceRange = self._sourceRange
         return theClone
@@ -2063,7 +2063,7 @@ public final class XAttributeListDeclaration: XDeclarationInInternalSubset {
         try production.writeAttributeListDeclaration(attributeListDeclaration: self)
     }
     
-    public override func shallowClone() -> XAttributeListDeclaration {
+    public override func clone() -> XAttributeListDeclaration {
         let theClone = XAttributeListDeclaration(name: _name, literal: _literal)
         theClone._sourceRange = self._sourceRange
         return theClone
@@ -2095,7 +2095,7 @@ public final class XParameterEntityDeclaration: XDeclarationInInternalSubset {
         try production.writeParameterEntityDeclaration(parameterEntityDeclaration: self)
     }
     
-    public override func shallowClone() -> XParameterEntityDeclaration {
+    public override func clone() -> XParameterEntityDeclaration {
         let theClone = XParameterEntityDeclaration(name: _name, value: _value)
         theClone._sourceRange = self._sourceRange
         return theClone
