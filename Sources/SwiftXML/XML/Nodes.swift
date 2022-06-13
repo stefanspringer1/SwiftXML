@@ -1512,7 +1512,7 @@ public final class XText: XContent, CustomStringConvertible {
     
     public var isWhitespace: Bool {
         if whitespace == .UNKNOWN {
-            if _value.contains(regex: "^s+$") {
+            if _value.contains(regex: #"^\s+$"#) {
                 whitespace = .WHITESPACE
             }
             else {
