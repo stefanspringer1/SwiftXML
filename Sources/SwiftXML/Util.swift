@@ -348,3 +348,13 @@ extension Array where Element == String? {
         return nonEmpties.isEmpty ? nil : nonEmpties.joined(separator: separator)
     }
 }
+
+extension String {
+    func contains(regex: String) -> Bool {
+        var match: Range<String.Index>?
+        autoreleasepool {
+            match = self.range(of: regex, options: .regularExpression)
+        }
+        return match != nil
+    }
+}

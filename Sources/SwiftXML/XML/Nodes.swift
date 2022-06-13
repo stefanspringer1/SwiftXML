@@ -1504,6 +1504,18 @@ public final class XText: XContent, CustomStringConvertible {
         self.whitespace = whitespace
     }
     
+    public var isWhitespace: Bool {
+        if whitespace == .UNKNOWN {
+            if _value.contains(regex: "^s+$") {
+                whitespace = .WHITESPACE
+            }
+            else {
+                whitespace = .NOT_WHITESPACE
+            }
+        }
+        return whitespace == .WHITESPACE
+    }
+    
     public override func applying(_ f: (XText) -> ()) -> XText {
         f(self)
         return self
