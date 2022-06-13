@@ -1255,6 +1255,12 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         }
     }
     
+    public func hasEqualValues(as other: XElement) -> Bool {
+        return self.name == other.name
+        && self.attributeNames.allSatisfy { self[$0] == other[$0] }
+            && other.attributeNames.allSatisfy { self[$0] != nil }
+    }
+    
     public var xpath: String {
         get {
             let myName = name
