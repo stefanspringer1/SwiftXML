@@ -43,6 +43,8 @@ let transformation = XTransformation {
 
 The library reads XML from a source into an XML document instance, and provides methods to transform (or manipulate) the document, and others to write the document to a file. (The reading of a JSON source into an XML document structure is also implemented, but currently only in experimental state.)
 
+The library should be efficient and applications that use it should be very intelligible. As a general guide line for the development of this library, _its development is driven by use cases and not by theoretical considerations._
+
 ### Manipulation of an XML document
 
 Other than some other libraries for XML, the manipulation of the document as built in memory is “in place”, i.e. no new XML document is built. The goal is to be able to apply many isolated manipulations to an XML document efficiently. But it is always possible to clone a document easily with references to or from the old version.
@@ -120,7 +122,7 @@ This library gives full control of how to handle entities. Named entity referenc
 
 No automated inclusion of external parsed entities takes place. The user of the library has to implement such features herself if needed.
 
-In the current state, the library does not recognize XML namespaces; elements or attributes with namespace prefixes are give the full name “prefix:unprefixed".
+In the current state, the library does not recognize XML namespaces; elements or attributes with namespace prefixes are give the full name “prefix:unprefixed". See the section on handling of namespaces for motivation and about how to handle namespaces.
 
 The encoding of the source should always be UTF-8 (ASCII is considered as a subset of it). The parser checks for correct UTF-8 encoding and also checks (according to the data available to the currently used Swift implementation) if a found codepoint is a valid Unicode codepoint.
 
@@ -1543,3 +1545,31 @@ To stop the notification, use
 ```Swift
 func removeChangedAction(forAttributeName: String)
 ```
+
+## Handling of namespaces
+
+The library is very strong when it comes to tracking element or attributes of a certain name and in that respect coping with manipulations of the XML tree. Adding an additional layer by supporting namespace directly by the library would make the implementaion of the library more complicated and less efficient. Let us see then how one would then handle XML documents which are using namespaces.
+
+### How to handle namespaces
+
+First, you can always look up the namespace prefix settings (attributes `xmlns:...`) in your document. When you then like to change element in that namespace, add this prefix dynamically in your code:
+
+
+```Swift
+let transformation = XTransformation {
+    
+    XRule(forElements: ["\(myprefix):a"]) { a in
+        ...
+    }
+    
+    ...
+```
+
+Also, in most applications you have control over the namespace prefixes, so you do not even need to handle the prefix dynamically in those cases.
+
+### Possible future directions
+
+Although we do not think that a special treatment of namespaces by the library is necessary, we certainly could add some features in case our current approach should prove to be insufficient. The following possibilities immediately come to mind:
+
+1. Add support for namespaces in the whole handling of element and attribute names. As explained above, this would make the library more complicated and less efficient, but the library should then still be very efficient in comparsion to other libraries.
+2. Add some helper functions e.g. for understanding the prefix settings in the document.
