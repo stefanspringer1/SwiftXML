@@ -1571,5 +1571,5 @@ Also, in most applications you have control over the namespace prefixes, so you 
 
 Although we do not think that a special treatment of namespaces by the library is necessary, we certainly could add some features in case our current approach should prove to be insufficient. The following possibilities immediately come to mind:
 
-1. Add support for namespaces in the whole handling of element and attribute names. As explained above, this would make the library more complicated and less efficient, but the library should then still be very efficient in comparsion to other libraries.
+1. Add support for namespaces in the whole handling of element and attribute names (in a transparent way). As explained above, this would make the library more complicated and less efficient, but the library should then still be very efficient in comparsion to other libraries.
 2. Add some helper functions e.g. for understanding the prefix settings in the document.
