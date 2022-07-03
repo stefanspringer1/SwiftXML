@@ -1614,7 +1614,7 @@ public final class XInternalEntity: XContent {
         }
     }
     
-    init(_ name: String) {
+    public init(_ name: String) {
         self._name = name
     }
     
@@ -1655,7 +1655,7 @@ public final class XExternalEntity: XContent {
         }
     }
     
-    init(_ name: String) {
+    public init(_ name: String) {
         self._name = name
     }
     
