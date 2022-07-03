@@ -149,7 +149,11 @@ func parseXML(
     eventHandlers: [XEventHandler]?,
     textAllowedInElementWithName: ((String) -> Bool)?,
     keepComments: Bool,
-    keepCDATASections: Bool
+    keepCDATASections: Bool,
+    insertExternalParsedEntities: Bool = false,
+    externalWrapperElement: String? = nil,
+    externalWrapperNameAttribute: String? = nil,
+    externalWrapperPathAttribute: String? = nil
 ) throws -> XDocument
 ```
 
@@ -161,7 +165,11 @@ func parseXML(
     eventHandlers: [XEventHandler]?,
     textAllowedInElementWithName: ((String) -> Bool)?,
     keepComments: Bool,
-    keepCDATASections: Bool
+    keepCDATASections: Bool,
+    insertExternalParsedEntities: Bool = false,
+    externalWrapperElement: String? = nil,
+    externalWrapperNameAttribute: String? = nil,
+    externalWrapperPathAttribute: String? = nil
 ) throws -> XDocument
 ```
 
@@ -173,7 +181,11 @@ func parseXML(
     eventHandlers: [XEventHandler]?,
     textAllowedInElementWithName: ((String) -> Bool)?,
     keepComments: Bool,
-    keepCDATASections: Bool
+    keepCDATASections: Bool,
+    insertExternalParsedEntities: Bool = false,
+    externalWrapperElement: String? = nil,
+    externalWrapperNameAttribute: String? = nil,
+    externalWrapperPathAttribute: String? = nil
 ) throws -> XDocument
 ```
 
@@ -185,7 +197,11 @@ func parseXML(
     eventHandlers: [XEventHandler]?,
     textAllowedInElementWithName: ((String) -> Bool)?,
     keepComments: Bool,
-    keepCDATASections: Bool
+    keepCDATASections: Bool,
+    insertExternalParsedEntities: Bool = false,
+    externalWrapperElement: String? = nil,
+    externalWrapperNameAttribute: String? = nil,
+    externalWrapperPathAttribute: String? = nil
 ) throws -> XDocument
 ```
 
@@ -202,6 +218,8 @@ func resolve(
 ```
 
 This method is always called when a named entity reference is encountered (either in text or attribute) which is scored as an internal entity. It returns the textual replacement for the entity or `nil`. If the method returns `nil`, then the entity reference is not replaced by a text, but is kept. In the case of a named entity in an attribute value, an error is thrown when no replacement is given. The function arguments `forAttributeWithName` (name of the attribute) and `atElementWithName` (name of the element) have according values if and only if the entity is encountered inside an attribute value.
+
+The external parsed entities are not inserted by default, but they are if you set `insertExternalParsedEntities` to `true`. You can then also declare an element name `externalWrapperNameAttribute`: the inserted content then gets wrapped into an element of that name. The attributes set by `externalWrapperNameAttribute` (default: `name`) and `externalWrapperPathAttribute` (default: `path`) then are set to the name of the entity or to the path of the external parsed entity file respectively. (During later processing, you might want to change this representation, e.g. if the external parsed entity reference is the only content of an element, you might replace the wrapper by its content and set the according information at some attachments at the parent element, so validation of the document succeeds.)
 
 One a more event handlers can be given a `parseXML` call, which implement `XEventHandler` from [XMLInterfaces](https://github.com/stefanspringer1/SwiftXMLInterfaces). This allows for the user of the library to catch any event during parsing like entering or leaving an element. E.g., the resolving of an internal entity reference could depend on the location inside the document (and not only on the name of the element or attribute), so this information can be collected by such an event handler.
 
