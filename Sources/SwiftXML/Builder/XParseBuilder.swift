@@ -17,7 +17,7 @@ public final class XParseBuilder: XEventHandler {
     let keepComments: Bool
     let keepCDATASections: Bool
     let insertExternalParsedEntities: Bool
-    let externalWrapperElement: String
+    let externalWrapperElement: String?
     let externalWrapperNameAttribute: String
     let externalWrapperPathAttribute: String
     
@@ -37,7 +37,7 @@ public final class XParseBuilder: XEventHandler {
         self.keepComments = keepComments
         self.keepCDATASections = keepCDATASections
         self.insertExternalParsedEntities = insertExternalParsedEntities
-        self.externalWrapperElement = externalWrapperElement ?? "entity"
+        self.externalWrapperElement = externalWrapperElement
         self.externalWrapperNameAttribute = externalWrapperNameAttribute ?? "name"
         self.externalWrapperPathAttribute = externalWrapperPathAttribute ?? "path"
         
@@ -48,16 +48,20 @@ public final class XParseBuilder: XEventHandler {
     public func documentStart() {}
     
     public func enterExternalDataSource(data: Data, entityName: String?, url: URL?) {
-        elementStart(
-            name: externalWrapperElement,
-            attributes: [externalWrapperNameAttribute:entityName, externalWrapperPathAttribute:url?.path],
-            textRange: nil,
-            dataRange: nil
-        )
+        if let elementName = externalWrapperElement {
+            elementStart(
+                name: elementName,
+                attributes: [externalWrapperNameAttribute:entityName, externalWrapperPathAttribute:url?.path],
+                textRange: nil,
+                dataRange: nil
+            )
+        }
     }
     
     public func leaveExternalDataSource() {
-        elementEnd(name: externalWrapperElement, textRange: nil, dataRange: nil)
+        if let elementName = externalWrapperElement {
+            elementEnd(name: elementName, textRange: nil, dataRange: nil)
+        }
     }
     
     public func xmlDeclaration(version: String, encoding: String?, standalone: String?, textRange _: XTextRange?, dataRange _: XDataRange?) {
