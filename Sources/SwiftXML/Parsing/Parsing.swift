@@ -28,7 +28,15 @@ public func parseXML(
     
     let parser = ConvenienceParser(
         parser: XParser(internalEntityResolver: internalEntityResolver, textAllowedInElementWithName: textAllowedInElementWithName),
-        mainEventHandler: XParseBuilder(document: document, keepComments: keepComments, keepCDATASections: keepCDATASections)
+        mainEventHandler: XParseBuilder(
+            document: document,
+            keepComments: keepComments,
+            keepCDATASections: keepCDATASections,
+            insertExternalParsedEntities: insertExternalParsedEntities,
+            externalWrapperElement: externalWrapperElement,
+            externalWrapperNameAttribute: externalWrapperNameAttribute,
+            externalWrapperPathAttribute: externalWrapperPathAttribute
+        )
     )
     
     try parser.parse(fromPath: path, sourceInfo: sourceInfo, eventHandlers: eventHandlers)
