@@ -16,7 +16,6 @@ public final class XParseBuilder: XEventHandler {
     let document: XDocument
     let keepComments: Bool
     let keepCDATASections: Bool
-    let insertExternalParsedEntities: Bool
     let externalWrapperElement: String?
     let externalWrapperNameAttribute: String
     let externalWrapperPathAttribute: String
@@ -27,7 +26,6 @@ public final class XParseBuilder: XEventHandler {
         document: XDocument,
         keepComments: Bool = false,
         keepCDATASections: Bool = false,
-        insertExternalParsedEntities: Bool = false,
         externalWrapperElement: String? = nil,
         externalWrapperNameAttribute: String? = nil,
         externalWrapperPathAttribute: String? = nil
@@ -36,7 +34,6 @@ public final class XParseBuilder: XEventHandler {
         self.document = document
         self.keepComments = keepComments
         self.keepCDATASections = keepCDATASections
-        self.insertExternalParsedEntities = insertExternalParsedEntities
         self.externalWrapperElement = externalWrapperElement
         self.externalWrapperNameAttribute = externalWrapperNameAttribute ?? "name"
         self.externalWrapperPathAttribute = externalWrapperPathAttribute ?? "path"
