@@ -141,6 +141,8 @@ The description of the library that follows might not include all types and meth
 
 The following functions take a source and return an XML document instance (`XDocument`). The source can either be provided as a URL, a path to a file, a text, or binary data.
 
+Reading from a URL which references a local file:
+
 ```Swift
 func parseXML(
     fromURL: URL,
@@ -157,51 +159,26 @@ func parseXML(
 ) throws -> XDocument
 ```
 
+And accordingly:
+
 ```Swift
 func parseXML(
     fromPath: String,
-    sourceInfo: String?,
-    internalEntityResolver: InternalEntityResolver?,
-    eventHandlers: [XEventHandler]?,
-    textAllowedInElementWithName: ((String) -> Bool)?,
-    keepComments: Bool,
-    keepCDATASections: Bool,
-    insertExternalParsedEntities: Bool = false,
-    externalWrapperElement: String? = nil,
-    externalWrapperNameAttribute: String? = nil,
-    externalWrapperPathAttribute: String? = nil
+    ...
 ) throws -> XDocument
 ```
 
 ```Swift
 func parseXML(
     fromText: String,
-    sourceInfo: String?,
-    internalEntityResolver: InternalEntityResolver?,
-    eventHandlers: [XEventHandler]?,
-    textAllowedInElementWithName: ((String) -> Bool)?,
-    keepComments: Bool,
-    keepCDATASections: Bool,
-    insertExternalParsedEntities: Bool = false,
-    externalWrapperElement: String? = nil,
-    externalWrapperNameAttribute: String? = nil,
-    externalWrapperPathAttribute: String? = nil
+    ...
 ) throws -> XDocument
 ```
 
 ```Swift
 func parseXML(
     fromData: Data,
-    sourceInfo: String?,
-    internalEntityResolver: InternalEntityResolver?,
-    eventHandlers: [XEventHandler]?,
-    textAllowedInElementWithName: ((String) -> Bool)?,
-    keepComments: Bool,
-    keepCDATASections: Bool,
-    insertExternalParsedEntities: Bool = false,
-    externalWrapperElement: String? = nil,
-    externalWrapperNameAttribute: String? = nil,
-    externalWrapperPathAttribute: String? = nil
+    ...
 ) throws -> XDocument
 ```
 
