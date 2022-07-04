@@ -47,7 +47,7 @@ public final class XParseBuilder: XEventHandler {
     
     public func documentStart() {}
     
-    public func enterExternalDataSource(data: Data, entityName: String?, url: URL?) {
+    public func enterExternalDataSource(data: Data, entityName: String?, url: URL?, textRange _: XTextRange?, dataRange _: XDataRange?) {
         if let elementName = externalWrapperElement {
             elementStart(
                 name: elementName,
@@ -63,6 +63,15 @@ public final class XParseBuilder: XEventHandler {
             elementEnd(name: elementName, textRange: nil, dataRange: nil)
         }
     }
+    
+    public func enterInternalDataSource(data: Data, entityName: String, textRange: XTextRange?, dataRange: XDataRange?) {
+        // -
+    }
+    
+    public func leaveInternalDataSource() {
+        // -
+    }
+    
     
     public func xmlDeclaration(version: String, encoding: String?, standalone: String?, textRange _: XTextRange?, dataRange _: XDataRange?) {
         document.xmlVersion = version
