@@ -7,3 +7,4 @@ Thumbs.db
 /.idea
 /.swiftpm
 /.vscode
+/Sources/SwiftXML/main.swift
