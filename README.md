@@ -789,6 +789,8 @@ document
     }
 ```
 
+You can also use multiple names (e.g. `descendants("paragraph", "table")`).
+
 ## Chained iterators
 
 Iterators can also be chained. The second iterator is executed on each of the node encountered by the first iterator. All this iteration is lazy, so the first iterator only searches for the next node if the second iterator is done with the current node found by the first iterator.
