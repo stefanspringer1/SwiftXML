@@ -417,7 +417,7 @@ public extension XContentSequence {
         return content
     }
     
-    func find(index: Int) -> XContent? {
+    func at(index: Int) -> XContent? {
         let iterator = makeIterator()
         var position = 0
         var content: XContent? = nil
@@ -454,7 +454,7 @@ public extension XElementSequence {
         return element
     }
     
-    func find(index: Int) -> XElement? {
+    func at(index: Int) -> XElement? {
         let iterator = makeIterator()
         var position = 0
         var element: XElement? = nil

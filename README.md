@@ -687,9 +687,11 @@ var last: XElement?
 
 Note that `last` has to iterate though the whole sequence to find the last item. It might be better to use `contentReversed` or `childrenReversed` in combination with `first`.
 
+You can also access the item at a certain index in the sequence (counting from 0):
+
 ```Swift
-func find(index: Int) -> XContent?
-func find(index: Int) -> XElement?
+func at(index: Int) -> XContent?
+func at(index: Int) -> XElement?
 ```
 
 ```Swift
