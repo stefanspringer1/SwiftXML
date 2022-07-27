@@ -676,14 +676,16 @@ again:
 Once you have such a sequence, you can get the first, the last, or the n'th item in the sequence or just test if an item exists at all via:
 
 ```Swift
-func findFirst() -> XContent?
-func findFirst() -> XElement?
+var first: XContent?
+var first: XElement?
 ```
 
 ```Swift
-func findLast() -> XContent?
-func findLast() -> XElement?
+var last: XContent?
+var last: XElement?
 ```
+
+Note that `last` has to iterate though the whole sequence to find the last item. It might be better to use `contentReversed` or `childrenReversed` in combination with `first`.
 
 ```Swift
 func find(index: Int) -> XContent?
@@ -914,7 +916,7 @@ let element = XElement("z") {
     }
 }
 
-element.children.map{ $0.children.findFirst() }.forEach { print($0?.name ?? "-") }
+element.children.map{ $0.children.first }.forEach { print($0?.name ?? "-") }
 ```
 
 Output:

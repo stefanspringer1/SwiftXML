@@ -402,11 +402,11 @@ public extension XElement {
 
 public extension XContentSequence {
     
-    func findFirst() -> XContent? {
+    var first: XContent? {
         return makeIterator().next()
     }
     
-    func findLast() -> XContent? {
+    var last: XContent? {
         let iterator = makeIterator()
         var content: XContent? = nil
         var next: XContent? = nil
@@ -439,11 +439,11 @@ public extension XContentSequence {
 
 public extension XElementSequence {
     
-    func findFirst() -> XElement? {
+    var first: XElement? {
         return makeIterator().next()
     }
     
-    func findLast() -> XElement? {
+    var last: XElement? {
         let iterator = makeIterator()
         var element: XElement? = nil
         var next: XElement? = nil
