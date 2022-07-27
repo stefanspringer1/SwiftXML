@@ -468,7 +468,7 @@ public extension XElementSequence {
         return element
     }
     
-    var exist: Bool { get { return makeIterator().next() != nil } }
+    var exist: Bool { get { makeIterator().next() != nil } }
     
     var existing: XElementSequence? { exist ? self : nil }
     
