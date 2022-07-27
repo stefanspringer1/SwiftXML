@@ -39,7 +39,7 @@ public final class XBidirectionalContentIterator: XContentIterator {
         return current
     }
     
-    public func previous() -> XContent? {
+    public override func previous() -> XContent? {
         prefetched = false
         current?.removeContentIterator(self)
         current = nodeIterator.previous()
@@ -82,7 +82,7 @@ public final class XBidirectionalElementIterator: XElementIterator {
         return current
     }
     
-    public func previous() -> XElement? {
+    public override func previous() -> XElement? {
         prefetched = false
         current?._elementIterators.remove(self)
         current = elementIterator.previous()
@@ -134,7 +134,7 @@ public final class XElementNameIterator: XElementIterator {
         }
     }
     
-    public func previous() -> XElement? {
+    public override func previous() -> XElement? {
         prefetched = false
         current?._nameIterators.remove(self)
         current = elementIterator.previous()

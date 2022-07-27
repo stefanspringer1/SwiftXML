@@ -694,9 +694,13 @@ func at(index: Int) -> XContent?
 func at(index: Int) -> XElement?
 ```
 
+Test if something exists in a sequence by using `exist`:
+
 ```Swift
 var exist: Bool
 ```
+
+Note that after using `exist`, the sequence automatically goes back to its previous position in the iteration, so you can use the sequence after you tested it for the existence of items without loosing an item.
 
 If you would like to test if certain items exist, and many cases you would also then use those items. The property `existing` of a sequence of content or elements returns the sequence itself if items exist, and `nil` otherwise:
 

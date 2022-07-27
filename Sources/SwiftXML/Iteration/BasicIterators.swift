@@ -6,9 +6,12 @@
 
 import Foundation
 
-public class XContentIterator: IteratorProtocol {
+public class XContentIterator: IteratorProtocol, XContentIteratorProtocol {
     public typealias Element = XContent
     public func next() -> XContent? {
+        return nil
+    }
+    public func previous() -> XContent? {
         return nil
     }
 }
@@ -81,9 +84,12 @@ public class XContentSequence: LazySequenceProtocol {
     }
 }
 
-public class XElementIterator: IteratorProtocol {
+public class XElementIterator: IteratorProtocol, XElementIteratorProtocol {
     public typealias Element = XElement
     public func next() -> XElement? {
+        return nil
+    }
+    public func previous() -> XElement? {
         return nil
     }
 }

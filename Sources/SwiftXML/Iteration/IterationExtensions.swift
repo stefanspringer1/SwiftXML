@@ -431,7 +431,12 @@ public extension XContentSequence {
         return content
     }
     
-    var exist: Bool { get { makeIterator().next() != nil } }
+    var exist: Bool { get {
+        let iterator = makeIterator()
+        let exist = iterator.next() != nil
+        _ = iterator.previous()
+        return exist
+    } }
     
     var existing: XContentSequence? { exist ? self : nil }
     
@@ -468,7 +473,12 @@ public extension XElementSequence {
         return element
     }
     
-    var exist: Bool { get { makeIterator().next() != nil } }
+    var exist: Bool { get {
+        let iterator = makeIterator()
+        let exist = iterator.next() != nil
+        _ = iterator.previous()
+        return exist
+    } }
     
     var existing: XElementSequence? { exist ? self : nil }
     
