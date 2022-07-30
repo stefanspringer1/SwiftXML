@@ -122,7 +122,7 @@ In the current implementation, the XML library does not implement any validation
 
 This library gives full control of how to handle entities. Named entity references can persist inside the document event if they are not defined. Named entity references are being scored as internal or external entity references during parsing, the external entity references being those which are referenced by external entity definitions in the internal subset inside the document declaration of the document. Replacements of internal entity references by text can be done automatically according to the internal subset and/or controlled by the application.
 
-Automated inclusion of the content external parsed entities can be configurated, the content might then be wrapped by elements with according information of the enities (see below).
+Automated inclusion of the content external parsed entities can be configurated, the content might then be wrapped by elements with according information of the enities.
 
 In the current state, the library does not recognize XML namespaces; elements or attributes with namespace prefixes are give the full name “prefix:unprefixed". See the section on handling of namespaces for motivation and about how to handle namespaces.
 
