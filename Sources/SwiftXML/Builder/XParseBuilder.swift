@@ -17,8 +17,6 @@ public final class XParseBuilder: XEventHandler {
     let keepComments: Bool
     let keepCDATASections: Bool
     let externalWrapperElement: String?
-    let externalWrapperNameAttribute: String
-    let externalWrapperPathAttribute: String
     
     var currentBranch: XBranchInternal
     
@@ -26,17 +24,13 @@ public final class XParseBuilder: XEventHandler {
         document: XDocument,
         keepComments: Bool = false,
         keepCDATASections: Bool = false,
-        externalWrapperElement: String? = nil,
-        externalWrapperNameAttribute: String? = nil,
-        externalWrapperPathAttribute: String? = nil
+        externalWrapperElement: String? = nil
     ) {
         
         self.document = document
         self.keepComments = keepComments
         self.keepCDATASections = keepCDATASections
         self.externalWrapperElement = externalWrapperElement
-        self.externalWrapperNameAttribute = externalWrapperNameAttribute ?? "name"
-        self.externalWrapperPathAttribute = externalWrapperPathAttribute ?? "path"
         
         self.currentBranch = document
         
@@ -44,11 +38,11 @@ public final class XParseBuilder: XEventHandler {
     
     public func documentStart() {}
     
-    public func enterExternalDataSource(data: Data, entityName: String?, url: URL?, textRange _: XTextRange?, dataRange _: XDataRange?) {
+    public func enterExternalDataSource(data: Data, entityName: String?, systemID: String, url: URL?, textRange _: XTextRange?, dataRange _: XDataRange?) {
         if let elementName = externalWrapperElement {
             elementStart(
                 name: elementName,
-                attributes: [externalWrapperNameAttribute:entityName, externalWrapperPathAttribute:url?.path],
+                attributes: ["name": entityName, "sytemID":  systemID, "path": url?.path],
                 textRange: nil,
                 dataRange: nil
             )

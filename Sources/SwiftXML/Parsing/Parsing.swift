@@ -13,16 +13,16 @@ import SwiftXMLParser
 public func parseXML(
     fromPath path: String,
     sourceInfo: String? = nil,
+    textAllowedInElementWithName: ((String) -> Bool)? = nil,
     internalEntityAutoResolve: Bool = false,
     internalEntityResolver: InternalEntityResolver? = nil,
-    eventHandlers: [XEventHandler]? = nil,
-    textAllowedInElementWithName: ((String) -> Bool)? = nil,
+    insertExternalParsedEntities: Bool = false,
+    externalParsedEntitySystemResolver: ((String) -> URL?)? = nil,
+    externalParsedEntityGetter: ((String) -> Data?)? = nil,
+    externalWrapperElement: String? = nil,
     keepComments: Bool = false,
     keepCDATASections: Bool = false,
-    insertExternalParsedEntities: Bool = false,
-    externalWrapperElement: String? = nil,
-    externalWrapperNameAttribute: String? = nil,
-    externalWrapperPathAttribute: String? = nil
+    eventHandlers: [XEventHandler]? = nil
 ) throws -> XDocument {
     let document = XDocument()
     document._sourcePath = path
@@ -32,15 +32,15 @@ public func parseXML(
             internalEntityAutoResolve: internalEntityAutoResolve,
             internalEntityResolver: internalEntityResolver,
             textAllowedInElementWithName: textAllowedInElementWithName,
-            insertExternalParsedEntities: insertExternalParsedEntities
+            insertExternalParsedEntities: insertExternalParsedEntities,
+            externalParsedEntitySystemResolver: externalParsedEntitySystemResolver,
+            externalParsedEntityGetter: externalParsedEntityGetter
         ),
         mainEventHandler: XParseBuilder(
             document: document,
             keepComments: keepComments,
             keepCDATASections: keepCDATASections,
-            externalWrapperElement: externalWrapperElement,
-            externalWrapperNameAttribute: externalWrapperNameAttribute,
-            externalWrapperPathAttribute: externalWrapperPathAttribute
+            externalWrapperElement: externalWrapperElement
         )
     )
     
@@ -52,16 +52,16 @@ public func parseXML(
 public func parseXML(
     fromURL url: URL,
     sourceInfo: String? = nil,
+    textAllowedInElementWithName: ((String) -> Bool)? = nil,
     internalEntityAutoResolve: Bool = false,
     internalEntityResolver: InternalEntityResolver? = nil,
-    eventHandlers: [XEventHandler]? = nil,
-    textAllowedInElementWithName: ((String) -> Bool)? = nil,
+    insertExternalParsedEntities: Bool = false,
+    externalParsedEntitySystemResolver: ((String) -> URL?)? = nil,
+    externalParsedEntityGetter: ((String) -> Data?)? = nil,
+    externalWrapperElement: String? = nil,
     keepComments: Bool = false,
     keepCDATASections: Bool = false,
-    insertExternalParsedEntities: Bool = false,
-    externalWrapperElement: String? = nil,
-    externalWrapperNameAttribute: String? = nil,
-    externalWrapperPathAttribute: String? = nil
+    eventHandlers: [XEventHandler]? = nil
 ) throws -> XDocument {
     let document = XDocument()
     document._sourcePath = url.path
@@ -71,15 +71,15 @@ public func parseXML(
             internalEntityAutoResolve: internalEntityAutoResolve,
             internalEntityResolver: internalEntityResolver,
             textAllowedInElementWithName: textAllowedInElementWithName,
-            insertExternalParsedEntities: insertExternalParsedEntities
+            insertExternalParsedEntities: insertExternalParsedEntities,
+            externalParsedEntitySystemResolver: externalParsedEntitySystemResolver,
+            externalParsedEntityGetter: externalParsedEntityGetter
         ),
         mainEventHandler: XParseBuilder(
             document: document,
             keepComments: keepComments,
             keepCDATASections: keepCDATASections,
-            externalWrapperElement: externalWrapperElement,
-            externalWrapperNameAttribute: externalWrapperNameAttribute,
-            externalWrapperPathAttribute: externalWrapperPathAttribute
+            externalWrapperElement: externalWrapperElement
         )
     )
     
@@ -94,16 +94,16 @@ public func parseXML(
 public func parseXML(
     fromText text: String,
     sourceInfo: String? = nil,
+    textAllowedInElementWithName: ((String) -> Bool)? = nil,
     internalEntityAutoResolve: Bool = false,
     internalEntityResolver: InternalEntityResolver? = nil,
-    eventHandlers: [XEventHandler]? = nil,
-    textAllowedInElementWithName: ((String) -> Bool)? = nil,
+    insertExternalParsedEntities: Bool = false,
+    externalParsedEntitySystemResolver: ((String) -> URL?)? = nil,
+    externalParsedEntityGetter: ((String) -> Data?)? = nil,
+    externalWrapperElement: String? = nil,
     keepComments: Bool = false,
     keepCDATASections: Bool = false,
-    insertExternalParsedEntities: Bool = false,
-    externalWrapperElement: String? = nil,
-    externalWrapperNameAttribute: String? = nil,
-    externalWrapperPathAttribute: String? = nil
+    eventHandlers: [XEventHandler]? = nil
 ) throws -> XDocument {
     let document = XDocument()
     
@@ -112,15 +112,15 @@ public func parseXML(
             internalEntityAutoResolve: internalEntityAutoResolve,
             internalEntityResolver: internalEntityResolver,
             textAllowedInElementWithName: textAllowedInElementWithName,
-            insertExternalParsedEntities: insertExternalParsedEntities
+            insertExternalParsedEntities: insertExternalParsedEntities,
+            externalParsedEntitySystemResolver: externalParsedEntitySystemResolver,
+            externalParsedEntityGetter: externalParsedEntityGetter
         ),
         mainEventHandler: XParseBuilder(
             document: document,
             keepComments: keepComments,
             keepCDATASections: keepCDATASections,
-            externalWrapperElement: externalWrapperElement,
-            externalWrapperNameAttribute: externalWrapperNameAttribute,
-            externalWrapperPathAttribute: externalWrapperPathAttribute
+            externalWrapperElement: externalWrapperElement
         )
     )
     
@@ -139,6 +139,8 @@ public func parseXML(
     keepComments: Bool = false,
     keepCDATASections: Bool = false,
     insertExternalParsedEntities: Bool = false,
+    externalParsedEntitySystemResolver: ((String) -> URL?)? = nil,
+    externalParsedEntityGetter: ((String) -> Data?)? = nil,
     externalWrapperElement: String? = nil,
     externalWrapperNameAttribute: String? = nil,
     externalWrapperPathAttribute: String? = nil
@@ -150,15 +152,15 @@ public func parseXML(
             internalEntityAutoResolve: internalEntityAutoResolve,
             internalEntityResolver: internalEntityResolver,
             textAllowedInElementWithName: textAllowedInElementWithName,
-            insertExternalParsedEntities: insertExternalParsedEntities
+            insertExternalParsedEntities: insertExternalParsedEntities,
+            externalParsedEntitySystemResolver: externalParsedEntitySystemResolver,
+            externalParsedEntityGetter: externalParsedEntityGetter
         ),
         mainEventHandler: XParseBuilder(
             document: document,
             keepComments: keepComments,
             keepCDATASections: keepCDATASections,
-            externalWrapperElement: externalWrapperElement,
-            externalWrapperNameAttribute: externalWrapperNameAttribute,
-            externalWrapperPathAttribute: externalWrapperPathAttribute
+            externalWrapperElement: externalWrapperElement
         )
     )
     
