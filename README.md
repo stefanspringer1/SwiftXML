@@ -35,7 +35,7 @@ let transformation = XTransformation {
 ---
 **NOTE**
 
-**This library is not in a “final” state yet** despite its high version number, i.e. there might still be serious bugs, or maybe breaking changes will happen without the major version getting augmented, and there will be more comments in the code. Also, when such a final state is reached, the library might be further developed using a new repository URL (and the version number set back to a lower one). Further notice will be added here. See [there](https://stefanspringer.com) for contact information.
+**This library is not in a “final” state yet** despite its high version number, i.e. there might still be bugs, or maybe breaking changes will happen without the major version getting augmented, and there will be more comments in the code. Also, when such a final state is reached, the library might be further developed using a new repository URL (and the version number set back to a lower one). Further notice will be added here. See [there](https://stefanspringer.com) for contact information.
 
 ---
 
@@ -114,7 +114,7 @@ The user of the library can also provide sets of rules to be applied (see the co
 
 The library uses the [SwiftXMLParser](https://github.com/stefanspringer1/SwiftXMLParser) to parse XML which implements the according protocol from [SwiftXMLInterfaces](https://github.com/stefanspringer1/SwiftXMLInterfaces).
 
-All parts of the XML source are retained in the XML document built in memory, including all comments and parts of an internal subset e.g. all entity or element definitions. (Elements definitions and attribute list definitions are, besides their reported element names, only retained as their original textual representation, they are not parsed into any other representation.) 
+Depending on the configuration of the parse process, all parts of the XML source can be retained in the XML document, including all comments and parts of an internal subset e.g. all entity or element definitions. (Elements definitions and attribute list definitions are, besides their reported element names, only retained as their original textual representation, they are not parsed into any other representation.) 
 
 In the current implementation, the XML library does not implement any validation, i.e. validation against a DTD or other XML schema, telling us e.g. if an element of a certain name can be contained in an element of another certain name. The user has to use other libraries (e.g. [Libxml2Validation](https://github.com/stefanspringer1/Libxml2Validation)) for such validation before reading or after writing the document. Besides validating the structure of an XML document, validation is also important for knowing if the occurrence of a whitespace text is significant (i.e. should be kept) or not. (E.g., whitespace text between elements representing paragraphs of a text document is usually considered insignificant.) To compensate for that last issue, the user of the library can provide a function that decides if an instance of whitespace text between elements should be kept or not. Also, possible default values of attributes have to be set by the user if desired once the document tree is built.
 
@@ -785,7 +785,7 @@ Output:
 <e take="true">
 ```
 
-Note that the round parentheses “(...)” around the condition in the example is needed to distinguish it from the `while:` and `until:` versions. (There is no `where:` argument name, because without it the less common case `where:` – and to a lesser degree `until:` – is more easily visually distinguished from it, the more common case being syntactically the shortest. This plays out well in actual code.)
+Note that the round parentheses “(...)” around the condition in the example is needed to distinguish it from the `while:` and `until:` versions. (There is no `where:` argument name, because without it the less common case `while:` – and to a lesser degree `until:` – is more easily visually distinguished from it, the more common case being syntactically the shortest. This plays out well in actual code.)
 
 There also exist a shortcut for the common of filtering elements according to a name:
 
