@@ -18,7 +18,7 @@ public protocol Writer {
 }
 
 extension FileHandle {
-    func _write(_ text: String) throws {
+    func write(text: String) throws {
         if #available(macOS 10.15.4, *) {
             try self.write(contentsOf: text.data(using: .utf8)!)
         } else {
@@ -36,7 +36,7 @@ public class FileWriter: Writer {
     }
     
     open func write(_ text: String) throws {
-        try _file._write(text)
+        try _file.write(text: text)
     }
 }
 
