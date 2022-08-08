@@ -54,7 +54,7 @@ public extension XBranch {
     }
     
     func children(_ names: String...) -> XElementSequence {
-        return XElementSequenceWithCondition(sequence: XChildrenSequence(node: self), condition: { names.contains($0.name) })
+        return XElementSequenceWithCondition(sequence: XChildrenSequence(node: self), condition: { names.isEmpty || names.contains($0.name) })
     }
     
     func children(while condition: @escaping (XElement) -> Bool) -> XElementSequence {
@@ -78,7 +78,7 @@ public extension XBranch {
     }
     
     func childrenReversed(_ names: String...) -> XElementSequence {
-        return XElementSequenceWithCondition(sequence: XReversedChildrenSequence(node: self), condition: { names.contains($0.name) })
+        return XElementSequenceWithCondition(sequence: XReversedChildrenSequence(node: self), condition: { names.isEmpty || names.contains($0.name) })
     }
     
     func childrenReversed(while condition: @escaping (XElement) -> Bool) -> XElementSequence {
@@ -118,7 +118,7 @@ public extension XBranch {
     }
     
     func descendants(_ names: String...) -> XElementSequence {
-        return XElementSequenceWithCondition(sequence: XDescendantsSequence(node: self), condition: { names.contains($0.name) })
+        return XElementSequenceWithCondition(sequence: XDescendantsSequence(node: self), condition: { names.isEmpty || names.contains($0.name) })
     }
     
     func descendants(while condition: @escaping (XElement) -> Bool) -> XElementSequence {
@@ -146,7 +146,7 @@ public extension XContent {
     }
     
     func ancestors(_ names: String...) -> XElementSequence {
-        return XElementSequenceWithCondition(sequence: XAncestorsSequence(node: self), condition: { names.contains($0.name) })
+        return XElementSequenceWithCondition(sequence: XAncestorsSequence(node: self), condition: { names.isEmpty || names.contains($0.name) })
     }
     
     func ancestors(while condition: @escaping (XElement) -> Bool) -> XElementSequence {
@@ -202,7 +202,7 @@ public extension XContent {
     }
     
     func children(_ names: String...) -> XElementSequence {
-        return XElementSequenceWithCondition(sequence: XChildrenSequence(node: self), condition: { names.contains($0.name) })
+        return XElementSequenceWithCondition(sequence: XChildrenSequence(node: self), condition: { names.isEmpty || names.contains($0.name) })
     }
     
     func children(while condition: @escaping (XElement) -> Bool) -> XElementSequence {
@@ -226,7 +226,7 @@ public extension XContent {
     }
     
     func childrenReversed(_ names: String...) -> XElementSequence {
-        return XElementSequenceWithCondition(sequence: XReversedChildrenSequence(node: self), condition: { names.contains($0.name) })
+        return XElementSequenceWithCondition(sequence: XReversedChildrenSequence(node: self), condition: { names.isEmpty || names.contains($0.name) })
     }
     
     func childrenReversed(while condition: @escaping (XElement) -> Bool) -> XElementSequence {
@@ -282,7 +282,7 @@ public extension XContent {
     }
     
     func nextElements(_ names: String...) -> XElementSequence {
-        return XElementSequenceWithCondition(sequence: XNextElementsSequence(content: self), condition: { names.contains($0.name) })
+        return XElementSequenceWithCondition(sequence: XNextElementsSequence(content: self), condition: { names.isEmpty || names.contains($0.name) })
     }
     
     func nextElements(while condition: @escaping (XElement) -> Bool) -> XElementSequence {
@@ -306,7 +306,7 @@ public extension XContent {
     }
     
     func previousElements(_ names: String...) -> XElementSequence {
-        return XElementSequenceWithCondition(sequence: XPreviousElementsSequence(content: self), condition: { names.contains($0.name) })
+        return XElementSequenceWithCondition(sequence: XPreviousElementsSequence(content: self), condition: { names.isEmpty || names.contains($0.name) })
     }
     
     func previousElements(while condition: @escaping (XElement) -> Bool) -> XElementSequence {
@@ -362,7 +362,7 @@ public extension XContent {
     }
     
     func descendants(_ names: String...) -> XElementSequence {
-        return XElementSequenceWithCondition(sequence: XDescendantsSequence(node: self), condition: { names.contains($0.name) })
+        return XElementSequenceWithCondition(sequence: XDescendantsSequence(node: self), condition: { names.isEmpty || names.contains($0.name) })
     }
     
     func descendants(while condition: @escaping (XElement) -> Bool) -> XElementSequence {
@@ -388,7 +388,7 @@ public extension XElement {
     }
     
     func descendantsIncludingSelf(_ names: String...) -> XElementSequence {
-        return XElementSequenceWithCondition(sequence: XDescendantsIncludingSelfSequence(element: self), condition: { names.contains($0.name) })
+        return XElementSequenceWithCondition(sequence: XDescendantsIncludingSelfSequence(element: self), condition: { names.isEmpty || names.contains($0.name) })
     }
     
     func descendantsIncludingSelf(while condition: @escaping (XElement) -> Bool) -> XElementSequence {
