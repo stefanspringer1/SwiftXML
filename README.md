@@ -801,7 +801,7 @@ document
     }
 ```
 
-You can also use multiple names (e.g. `descendants("paragraph", "table")`).
+You can also use multiple names (e.g. `descendants("paragraph", "table")`). If no name is given, all elements are given in the result regardless the name, e.g. `children()` means the same as `children`.
 
 ## Chained iterators
 
@@ -911,6 +911,8 @@ let myDocument = XDocument {
     myElement.descendants.applying{ $0["inserted"] = "yes" }
 }
 ```
+
+(With asynchronous code inside the closure, use the method `collected()` a sequence of `XContent` or `XElement` followed by `map`.)
 
 When not defining content, using `map` might be a sensible option:
 
@@ -1533,6 +1535,8 @@ transformationAlias = transformation
 
 transformation.execute(inDocument: myDocument)
 ```
+
+In an asynchronous contexts, use `XAsyncTransformation` with `XAsyncRule` instances.
 
 ## Tracking changes
 
