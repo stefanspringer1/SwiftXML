@@ -912,8 +912,6 @@ let myDocument = XDocument {
 }
 ```
 
-(With asynchronous code inside the closure, use the method `collected()` a sequence of `XContent` or `XElement` followed by `map`.)
-
 When not defining content, using `map` might be a sensible option:
 
 ```Swift
@@ -1535,8 +1533,6 @@ transformationAlias = transformation
 
 transformation.execute(inDocument: myDocument)
 ```
-
-In an asynchronous contexts, use `XAsyncTransformation` with `XAsyncRule` instances.
 
 ## Tracking changes
 

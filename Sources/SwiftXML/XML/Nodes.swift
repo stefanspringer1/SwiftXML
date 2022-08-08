@@ -615,10 +615,6 @@ public class XContent: XNode {
         }
     }
     
-    public func insertNext(keepPosition: Bool = false, @XContentBuilder builder: () -> [XContent]) {
-        _insertNext(keepPosition: keepPosition, builder())
-    }
-    
     func _insertNext(keepPosition: Bool, _ content: [XContent]) {
         if !keepPosition {
             prefetchOnContentIterators()
@@ -626,15 +622,8 @@ public class XContent: XNode {
         content.reversed().forEach { _insertNext($0) }
     }
     
-    func _insertNext(keepPosition: Bool, _ content: [XContent]) async {
-        if !keepPosition {
-            prefetchOnContentIterators()
-        }
-        content.reversed().forEach { _insertNext($0) }
-    }
-    
-    public func insertNext(keepPosition: Bool = false, @XContentBuilder builder: () async -> [XContent]) async {
-        await _insertNext(keepPosition: keepPosition, builder())
+    public func insertNext(keepPosition: Bool = false, @XContentBuilder builder: () -> [XContent]) {
+        _insertNext(keepPosition: keepPosition, builder())
     }
     
     /**
