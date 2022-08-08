@@ -1175,7 +1175,7 @@ extension XElementSequence {
 @available(macOS 10.15, *)
 extension AsyncLazySequence {
     
-    public func applying(_ f: @escaping (Base.Element) -> ()) -> AsyncLazySequenceWithApplication<Base> {
+    public func applying(_ f: @escaping (Base.Element) async -> ()) -> AsyncLazySequenceWithApplication<Base> {
         
         return AsyncLazySequenceWithApplication(self.base, application: f)
     }
@@ -1194,10 +1194,10 @@ public struct AsyncLazySequenceWithApplication<Base: Sequence>: AsyncSequence {
     var iterator: Base.Iterator?
     
     @usableFromInline
-    let application: (Base.Element) -> ()
+    let application: (Base.Element) async -> ()
     
     @usableFromInline
-      init(_ iterator: Base.Iterator, application: @escaping (Base.Element) -> ()) {
+      init(_ iterator: Base.Iterator, application: @escaping (Base.Element) async -> ()) {
       self.iterator = iterator
         self.application = application
     }
@@ -1205,7 +1205,7 @@ public struct AsyncLazySequenceWithApplication<Base: Sequence>: AsyncSequence {
     @inlinable
     public mutating func next() async -> Base.Element? {
       if !Task.isCancelled, let value = iterator?.next() {
-        application(value)
+        await application(value)
         return value
       } else {
         iterator = nil
@@ -1218,10 +1218,10 @@ public struct AsyncLazySequenceWithApplication<Base: Sequence>: AsyncSequence {
   let base: Base
 
   @usableFromInline
-  let application: (Base.Element) -> ()
+  let application: (Base.Element) async -> ()
   
   @usableFromInline
-    init(_ base: Base, application: @escaping (Base.Element) -> ()) {
+    init(_ base: Base, application: @escaping (Base.Element) async -> ()) {
     self.base = base
     self.application = application
   }
