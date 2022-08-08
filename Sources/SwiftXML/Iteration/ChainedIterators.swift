@@ -481,7 +481,7 @@ public func collect(@XContentBuilder builder: @escaping () -> [XContent]) -> (()
 
 extension XContentSequence {
     
-    public func collected() -> [XContent?] {
+    public func collected() -> [XContent] {
         var content = [XContent]()
         self.forEach { content.append($0) }
         return content
@@ -792,7 +792,7 @@ extension XContentSequence {
 
 extension XElementSequence {
     
-    public func collected() -> [XElement?] {
+    public func collected() -> [XElement] {
         var content = [XElement]()
         self.forEach { content.append($0) }
         return content
