@@ -622,8 +622,15 @@ public class XContent: XNode {
         content.reversed().forEach { _insertNext($0) }
     }
     
-    public func insertNext(keepPosition: Bool = false, @XContentBuilder builder: () -> [XContent]) {
-        _insertNext(keepPosition: keepPosition, builder())
+    func _insertNextAsync(keepPosition: Bool, _ content: [XContent]) async {
+        if !keepPosition {
+            prefetchOnContentIterators()
+        }
+        content.reversed().forEach { _insertNext($0) }
+    }
+    
+    public func insertNext(keepPosition: Bool = false, @XContentBuilder builder: () async -> [XContent]) async {
+        await _insertNextAsync(keepPosition: keepPosition, builder())
     }
     
     /**
