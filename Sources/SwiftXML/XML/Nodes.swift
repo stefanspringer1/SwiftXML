@@ -629,7 +629,7 @@ public class XContent: XNode {
         content.reversed().forEach { _insertNext($0) }
     }
     
-    public func insertNext(keepPosition: Bool = false, @XContentBuilder builder: () async -> [XContent]) async {
+    public func insertNextAsync(keepPosition: Bool = false, @XContentBuilder builder: () async -> [XContent]) async {
         await _insertNextAsync(keepPosition: keepPosition, builder())
     }
     
