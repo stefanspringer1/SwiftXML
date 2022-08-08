@@ -912,6 +912,8 @@ let myDocument = XDocument {
 }
 ```
 
+(With asynchronous code inside the closure, use the method `collected()` a sequence of `XContent` or `XElement` followed by `map`.)
+
 When not defining content, using `map` might be a sensible option:
 
 ```Swift

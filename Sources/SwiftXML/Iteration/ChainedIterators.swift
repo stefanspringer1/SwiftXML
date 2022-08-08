@@ -481,6 +481,12 @@ public func collect(@XContentBuilder builder: @escaping () -> [XContent]) -> (()
 
 extension XContentSequence {
     
+    public func collected() -> [XContent] {
+        var content = [XContent]()
+        self.forEach { content.append($0) }
+        return content
+    }
+    
     public func filter(_ isIncluded: @escaping (XContent) -> Bool) -> XContentSequence {
         return XFilteredContentSequence(sequence: self, filter: isIncluded)
     }
@@ -785,6 +791,12 @@ extension XContentSequence {
 }
 
 extension XElementSequence {
+    
+    public func collected() -> [XElement] {
+        var content = [XElement]()
+        self.forEach { content.append($0) }
+        return content
+    }
     
     public func filter(_ isIncluded: @escaping (XElement) -> Bool) -> XElementSequence {
         return XFilteredElementSequence(sequence: self, filter: isIncluded)
