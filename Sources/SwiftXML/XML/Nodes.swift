@@ -255,7 +255,7 @@ public class XNode {
         }
     }
     
-    public func traverseThrowing(down: @escaping (XNode) throws -> (), up: ((XNode) throws -> ())? = nil) throws {
+    public func traverse(down: @escaping (XNode) throws -> (), up: ((XNode) throws -> ())? = nil) throws {
         let directionIndicator = XDirectionIndicator()
         try XTraversalSequence(node: self, directionIndicator: directionIndicator).forEach { node in
             if directionIndicator.up {
@@ -283,9 +283,9 @@ public class XNode {
         }
     }
     
-    public func traverseAsyncThrowing(down: @escaping (XNode) async throws -> (), up: ((XNode) async throws -> ())? = nil) async throws {
+    public func traverseAsync(down: @escaping (XNode) async throws -> (), up: ((XNode) async throws -> ())? = nil) async throws {
         let directionIndicator = XDirectionIndicator()
-        try await XTraversalSequence(node: self, directionIndicator: directionIndicator).forEachAsyncThrowing { node in
+        try await XTraversalSequence(node: self, directionIndicator: directionIndicator).forEachAsync { node in
             if directionIndicator.up {
                 if let branch = node as? XBranchInternal {
                     try await up?(branch)
@@ -303,7 +303,7 @@ public class XNode {
     
     public func applyProduction(production: XProduction) throws {
         try (self as? XDocument)?.produceEntering(production: production)
-        try traverseThrowing { node in
+        try traverse { node in
             try node.produceEntering(production: production)
         } up: { branch in
             if let element = branch as? XElement {

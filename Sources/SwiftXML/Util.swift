@@ -220,7 +220,7 @@ extension Sequence {
         }
     }
     
-    func forEachAsyncThrowing (
+    func forEachAsync (
         _ operation: (Element) async throws -> Void
     ) async rethrows {
         for element in self {
