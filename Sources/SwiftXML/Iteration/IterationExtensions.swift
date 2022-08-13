@@ -406,6 +406,19 @@ public extension XContentSequence {
         return makeIterator().next()
     }
     
+    var second: XContent? {
+        let iterator = makeIterator()
+        _ = iterator.next() // first
+        return iterator.next() // second
+    }
+    
+    var third: XContent? {
+        let iterator = makeIterator()
+        _ = iterator.next() // first
+        _ = iterator.next() // second
+        return iterator.next() // third
+    }
+
     var last: XContent? {
         let iterator = makeIterator()
         var content: XContent? = nil
@@ -441,6 +454,19 @@ public extension XElementSequence {
     
     var first: XElement? {
         return makeIterator().next()
+    }
+    
+    var second: XElement? {
+        let iterator = makeIterator()
+        _ = iterator.next() // first
+        return iterator.next() // second
+    }
+    
+    var third: XElement? {
+        let iterator = makeIterator()
+        _ = iterator.next() // first
+        _ = iterator.next() // second
+        return iterator.next() // third
     }
     
     var last: XElement? {
