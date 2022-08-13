@@ -353,8 +353,8 @@ public class XNode {
         }
     }
     
-    public func echo(pretty: Bool = false, terminator: String = "\n") {
-        echo(usingProduction: pretty ? XPrettyPrintProduction() : XDefaultProduction(), terminator: terminator)
+    public func echo(pretty: Bool = false, indentation: String = "  ", terminator: String = "\n") {
+        echo(usingProduction: pretty ? XPrettyPrintProduction(indentation: indentation) : XDefaultProduction(), terminator: terminator)
     }
     
     public func serialized(usingProduction production: XProduction) -> String {
@@ -368,8 +368,8 @@ public class XNode {
         return writer.description
     }
     
-    public func serialized(pretty: Bool = false) -> String {
-        serialized(usingProduction: pretty ? XPrettyPrintProduction() : XDefaultProduction())
+    public func serialized(pretty: Bool = false, indentation: String = "  ") -> String {
+        serialized(usingProduction: pretty ? XPrettyPrintProduction(indentation: indentation) : XDefaultProduction())
     }
     
     public var allText: String {

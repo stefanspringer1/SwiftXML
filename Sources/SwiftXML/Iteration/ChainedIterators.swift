@@ -779,8 +779,8 @@ extension XContentSequence {
         self.forEach { content in content.remove() }
     }
     
-    public func echo(pretty: Bool = false, terminator: String = "\n") {
-        self.forEach { content in content.echo(pretty: pretty, terminator: terminator) }
+    public func echo(pretty: Bool = false, indentation: String = "  ", terminator: String = "\n") {
+        self.forEach { content in content.echo(pretty: pretty, indentation: indentation, terminator: terminator) }
     }
 }
 
@@ -1154,8 +1154,8 @@ extension XElementSequence {
         self.forEach { element in element.remove() }
     }
     
-    public func echo(pretty: Bool = false, terminator: String = "\n") {
-        self.forEach { element in element.echo(pretty: pretty, terminator: terminator) }
+    public func echo(pretty: Bool = false, indentation: String = "  ", terminator: String = "\n") {
+        self.forEach { element in element.echo(pretty: pretty, indentation: indentation, terminator: terminator) }
     }
     
 }

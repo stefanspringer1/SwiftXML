@@ -256,10 +256,10 @@ When not set explicitely in the XML source, some of those values are set to a se
 When printing a content via `print(...)`, only a top-level represenation like the start tag is printed and never the whole tree. When you would like to print the whole tree or document, use:
 
 ```Swift
-func echo(pretty: Bool, terminator: String)
+func echo(pretty: Bool, indentation: String, terminator: String)
 ```
 
-`pretty` defaults to `false`; if it is set to `true`, linebreaks and spaces are added for pretty print. The terminator defaults to `"\n"`, i.e. a linebreak is then printed after the output.
+`pretty` defaults to `false`; if it is set to `true`, linebreaks and spaces are added for pretty print. `indentation` defaults to two spaces, `terminator` defaults to `"\n"`, i.e. a linebreak is then printed after the output.
 
 With more control:
 
