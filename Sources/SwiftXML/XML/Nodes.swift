@@ -1486,6 +1486,11 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     public func trimWhiteSpace() {
         self._trimWhiteSpace()
     }
+    
+    public func trimmimgWhiteSpace() -> XElement {
+        self._trimWhiteSpace()
+        return self
+    }
 }
 
 public final class XText: XContent, CustomStringConvertible {
@@ -1537,6 +1542,11 @@ public final class XText: XContent, CustomStringConvertible {
     
     public func trim() {
         self.value = self.value.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+    
+    public func trimming() -> XText {
+        self.value = self.value.trimmingCharacters(in: .whitespacesAndNewlines)
+        return self
     }
     
     public override func applying(_ f: (XText) -> ()) -> XText {

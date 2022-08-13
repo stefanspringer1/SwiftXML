@@ -333,4 +333,9 @@ public final class XDocument: XNode, XBranchInternal {
     public func trimWhiteSpace() {
         self._trimWhiteSpace()
     }
+    
+    public func trimmimgWhiteSpace() -> XDocument {
+        self._trimWhiteSpace()
+        return self
+    }
 }
