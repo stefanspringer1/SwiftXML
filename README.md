@@ -677,11 +677,15 @@ again:
 <e/>
 ```
 
-Once you have such a sequence, you can get the first, the last, or the n'th item in the sequence or just test if an item exists at all via:
+Once you have such a sequence, you can get the first, second, third, or the last item in the sequence via:
 
 ```Swift
 var first: XContent?
 var first: XElement?
+var second: XContent?
+var second: XElement?
+var third: XContent?
+var third: XElement?
 ```
 
 ```Swift

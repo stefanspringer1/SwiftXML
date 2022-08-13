@@ -671,6 +671,7 @@ public protocol XBranch: XNode {
     func addFirst(@XContentBuilder builder: () -> [XContent])
     func setContent(@XContentBuilder builder: () -> [XContent])
     func clear()
+    func trimWhiteSpace()
 }
 
 protocol XBranchInternal: XBranch {
@@ -918,6 +919,14 @@ extension XBranchInternal {
     
     func produceLeaving(production: XProduction) throws {
         // to be implemented by subclass
+    }
+    
+    public func trimWhiteSpace() {
+        self.traverse { node in
+            if let text = node as? XText {
+                text.value = text.value.trimmingCharacters(in: .whitespacesAndNewlines)
+            }
+        }
     }
 }
 
@@ -1520,6 +1529,10 @@ public final class XText: XContent, CustomStringConvertible {
             }
         }
         return whitespace == .WHITESPACE
+    }
+    
+    public func trim() {
+        self.value = self.value.trimmingCharacters(in: .whitespacesAndNewlines)
     }
     
     public override func applying(_ f: (XText) -> ()) -> XText {
