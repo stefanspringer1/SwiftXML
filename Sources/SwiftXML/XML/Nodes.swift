@@ -921,7 +921,7 @@ extension XBranchInternal {
         // to be implemented by subclass
     }
     
-    public func trimWhiteSpace() {
+    func _trimWhiteSpace() {
         self.traverse { node in
             if let text = node as? XText {
                 text.value = text.value.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -1481,6 +1481,10 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     
     func produceLeaving(production: XProduction) throws {
         try production.writeElementEnd(element: self)
+    }
+    
+    public func trimWhiteSpace() {
+        self._trimWhiteSpace()
     }
 }
 

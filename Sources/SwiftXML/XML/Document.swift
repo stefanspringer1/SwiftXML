@@ -329,4 +329,8 @@ public final class XDocument: XNode, XBranchInternal {
     func produceLeaving(production: XProduction) throws {
         try production.writeDocumentEnd(document: self)
     }
+    
+    public func trimWhiteSpace() {
+        self._trimWhiteSpace()
+    }
 }
