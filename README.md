@@ -39,6 +39,10 @@ let transformation = XTransformation {
 
 ---
 
+## Related packages
+
+When using SwiftXML in the context of the [SwiftWorkflow](https://github.com/stefanspringer1/SwiftWorkflow) framework, you might include the [WorkflowUtilitiesForSwiftXML](https://github.com/stefanspringer1/WorkflowUtilitiesForSwiftXML).
+
 ## Properties of the library
 
 The library reads XML from a source into an XML document instance, and provides methods to transform (or manipulate) the document, and others to write the document to a file.[^1]
