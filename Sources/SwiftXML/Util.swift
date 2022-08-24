@@ -212,6 +212,7 @@ extension FileHandle: TextOutputStream {
 
 extension Sequence {
     
+    @available(macOS 10.15.0, *)
     func forEachAsync (
         _ operation: (Element) async -> Void
     ) async {
@@ -220,6 +221,7 @@ extension Sequence {
         }
     }
     
+    @available(macOS 10.15.0, *)
     func forEachAsync (
         _ operation: (Element) async throws -> Void
     ) async rethrows {
