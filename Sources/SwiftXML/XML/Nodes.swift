@@ -269,7 +269,6 @@ public class XNode {
         }
     }
     
-    @available(macOS 10.15.0, *)
     public func traverseAsync(down: @escaping (XNode) async -> (), up: ((XNode) async -> ())? = nil) async {
         let directionIndicator = XDirectionIndicator()
         await XTraversalSequence(node: self, directionIndicator: directionIndicator).forEachAsync { node in
@@ -284,7 +283,6 @@ public class XNode {
         }
     }
     
-    @available(macOS 10.15.0, *)
     public func traverseAsync(down: @escaping (XNode) async throws -> (), up: ((XNode) async throws -> ())? = nil) async throws {
         let directionIndicator = XDirectionIndicator()
         try await XTraversalSequence(node: self, directionIndicator: directionIndicator).forEachAsync { node in
@@ -664,6 +662,7 @@ public class XSpot: XContent {
 }
 
 public protocol XBranch: XNode {
+    var attached: Attachments { get }
     var firstContent: XContent? { get }
     func firstContent(_ condition: (XContent) -> Bool) -> XContent?
     var lastContent: XContent? { get }
