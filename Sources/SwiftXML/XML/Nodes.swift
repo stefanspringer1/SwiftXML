@@ -501,6 +501,10 @@ public class XContent: XNode {
             thePreviousText.value += theNextText.value
             theNextText.remove()
         }
+        
+        _next = nil
+        _previous = nil
+        _parent = nil
     }
     
     /**
