@@ -327,7 +327,7 @@ open class XPrettyPrintProduction: XDefaultProduction {
     open override func writeElementStartAfterAttributes(element: XElement) throws {
         try super.writeElementStartAfterAttributes(element: element)
         if !element.isEmpty {
-            mixed.append(hasMixedContent(element: element))
+            mixed.append(mixed.last == true || hasMixedContent(element: element))
             indentationLevel += 1
         }
     }
