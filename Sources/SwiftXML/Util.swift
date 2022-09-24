@@ -252,7 +252,11 @@ extension Array where Element == String? {
     }
 }
 
-extension String {
+extension StringProtocol {
+    
+/// Test if a text contains a part matching a certain regular expression.
+///
+/// Use a regular expression of the form "^...$" to test if the whole text matches the expression.
     func contains(regex: String) -> Bool {
         var match: Range<String.Index>?
         autoreleasepool {
