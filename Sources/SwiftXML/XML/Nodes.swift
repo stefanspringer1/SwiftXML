@@ -1159,6 +1159,12 @@ public class Attachments {
             }
         }
     }
+    
+    public func pull(_ key: String) -> Any? {
+        let value = values?[key]
+        values?[key] = nil
+        return value
+    }
 }
 
 public final class XElement: XContent, XBranchInternal, CustomStringConvertible {
