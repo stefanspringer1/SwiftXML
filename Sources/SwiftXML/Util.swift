@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import AutoreleasepoolShim
 
 public func escapeAll(_ text: String) -> String {
     return text

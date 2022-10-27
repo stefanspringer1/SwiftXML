@@ -13,7 +13,7 @@ let package = Package(
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
-        .package(url: "https://github.com/stefanspringer1/SwiftXMLParser", from: "1.1.115"),
+        .package(url: "https://github.com/stefanspringer1/SwiftXMLParser", from: "1.1.116"),
         .package(url: "https://github.com/stefanspringer1/AutoreleasepoolShim", from: "1.0.2"),
     ],
     targets: [
