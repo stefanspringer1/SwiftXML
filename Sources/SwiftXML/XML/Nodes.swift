@@ -325,7 +325,7 @@ public class XNode {
         try write(toWriter: FileWriter(fileHandle), usingProduction: production)
     }
     
-    public func write(toFile path: String, usingProduction: XProduction = XDefaultProduction()) throws {
+    public func write(toFile path: String, usingProduction production: XProduction = XDefaultProduction()) throws {
         let fileManager = FileManager.default
     
         fileManager.createFile(atPath: path,  contents:Data("".utf8), attributes: nil)
