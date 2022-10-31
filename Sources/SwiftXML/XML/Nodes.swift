@@ -316,22 +316,22 @@ public class XNode {
         try (self as? XDocument)?.produceLeaving(production: production)
     }
     
-    public func write(toWriter writer: Writer, production: XProduction = XDefaultProduction()) throws {
+    public func write(toWriter writer: Writer, usingProduction production: XProduction = XDefaultProduction()) throws {
         production.setWriter(writer)
         try self.applyProduction(production: production)
     }
     
-    public func write(toFileHandle fileHandle: FileHandle, production: XProduction = XDefaultProduction()) throws {
-        try write(toWriter: FileWriter(fileHandle), production: production)
+    public func write(toFileHandle fileHandle: FileHandle, usingProduction production: XProduction = XDefaultProduction()) throws {
+        try write(toWriter: FileWriter(fileHandle), usingProduction: production)
     }
     
-    public func write(toFile path: String, production: XProduction = XDefaultProduction()) throws {
+    public func write(toFile path: String, usingProduction: XProduction = XDefaultProduction()) throws {
         let fileManager = FileManager.default
     
         fileManager.createFile(atPath: path,  contents:Data("".utf8), attributes: nil)
         
         if let fileHandle = FileHandle(forWritingAtPath: path) {
-            try write(toFileHandle: fileHandle, production: production)
+            try write(toFileHandle: fileHandle, usingProduction: production)
             fileHandle.closeFile()
         }
         else {
@@ -340,13 +340,13 @@ public class XNode {
         
     }
     
-    public func write(toURL url: URL, production: XProduction = XDefaultProduction()) throws {
-        try write(toFile: url.path, production: production)
+    public func write(toURL url: URL, usingProduction production: XProduction = XDefaultProduction()) throws {
+        try write(toFile: url.path, usingProduction: production)
     }
     
     public func echo(usingProduction production: XProduction, terminator: String = "\n") {
         do {
-            try write(toFileHandle: FileHandle.standardOutput, production: production); print(terminator, terminator: "")
+            try write(toFileHandle: FileHandle.standardOutput, usingProduction: production); print(terminator, terminator: "")
         }
         catch {
             // writing to standard output does not really throw
@@ -360,7 +360,7 @@ public class XNode {
     public func serialized(usingProduction production: XProduction) -> String {
         let writer = CollectingWriter()
         do {
-            try write(toWriter: writer, production: production)
+            try write(toWriter: writer, usingProduction: production)
         }
         catch {
             // CollectingWriter does not really throw
