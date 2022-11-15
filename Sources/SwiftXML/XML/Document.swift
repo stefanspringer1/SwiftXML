@@ -173,6 +173,9 @@ public final class XDocument: XNode, XBranchInternal {
     
     func registerElement(element: XElement) {
         let name = element.name
+        if let elementNamesToRegister = elementNamesToRegister, !elementNamesToRegister.contains(name) {
+            return
+        }
         if let theLast = _elementsOfName_last[name] {
             theLast.nextWithSameName = element
             element.previousWithSameName = theLast
@@ -183,8 +186,10 @@ public final class XDocument: XNode, XBranchInternal {
         _elementsOfName_last[name] = element
         
         // register attributes:
-        element._attributes?.values.forEach { attribute in
-            registerAttribute(attribute: attribute)
+        if attributeNamesToRegister?.isEmpty != true {
+            element._attributes?.values.forEach { attribute in
+                registerAttribute(attribute: attribute)
+            }
         }
     }
     
@@ -231,6 +236,9 @@ public final class XDocument: XNode, XBranchInternal {
     
     func registerAttribute(attribute: XAttribute) {
         let name = attribute.name
+        if let attributeNamesToRegister = elementNamesToRegister, !attributeNamesToRegister.contains(name) {
+            return
+        }
         if let theLast = _attributesOfName_last[name] {
             theLast.nextWithSameName = attribute
             attribute.previousWithSameName = theLast
@@ -266,15 +274,29 @@ public final class XDocument: XNode, XBranchInternal {
     
     // -------------------------------------------------------------------------
     
-    public init(attached: [String:Any?]? = nil) {
+    private var elementNamesToRegister: Set<String>?
+    private var attributeNamesToRegister: Set<String>?
+    
+    public init(
+        attached: [String:Any?]? = nil,
+        elementNamesToRegister: Set<String>? = nil,
+        attributeNamesToRegister: Set<String>? = nil
+    ) {
         super.init()
         _document = self
         self._lastInTree = self
         attached?.forEach{ (key,value) in self.attached[key] = value }
+        self.elementNamesToRegister = elementNamesToRegister
+        self.attributeNamesToRegister = attributeNamesToRegister
     }
     
-    public convenience init(attached: [String:Any?]? = nil, @XContentBuilder builder: () -> [XContent]) {
-        self.init(attached: attached)
+    public convenience init(
+        attached: [String:Any?]? = nil,
+        elementNamesToRegister: Set<String>? = nil,
+        attributeNamesToRegister: Set<String>? = nil,
+        @XContentBuilder builder: () -> [XContent]
+    ) {
+        self.init(attached: attached, elementNamesToRegister: elementNamesToRegister, attributeNamesToRegister: attributeNamesToRegister)
         builder().forEach { node in
             _add(node)
         }
