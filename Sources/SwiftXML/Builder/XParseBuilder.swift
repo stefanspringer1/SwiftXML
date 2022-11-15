@@ -24,9 +24,7 @@ public final class XParseBuilder: XEventHandler {
         document: XDocument,
         keepComments: Bool = false,
         keepCDATASections: Bool = false,
-        externalWrapperElement: String? = nil,
-        elementsToRegister: Set<String>? = nil,
-        attributesToRegister: Set<String>? = nil
+        externalWrapperElement: String? = nil
     ) {
         
         self.document = document

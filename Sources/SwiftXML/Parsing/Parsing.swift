@@ -22,11 +22,9 @@ public func parseXML(
     externalWrapperElement: String? = nil,
     keepComments: Bool = false,
     keepCDATASections: Bool = false,
-    eventHandlers: [XEventHandler]? = nil,
-    elementsToRegister: Set<String>? = nil,
-    attributesToRegister: Set<String>? = nil
+    eventHandlers: [XEventHandler]? = nil
 ) throws -> XDocument {
-    let document = XDocument(elementNamesToRegister: elementsToRegister, attributeNamesToRegister: attributesToRegister)
+    let document = XDocument()
     document._sourcePath = path
     
     let parser = ConvenienceParser(
@@ -67,11 +65,9 @@ public func parseXML(
     externalWrapperElement: String? = nil,
     keepComments: Bool = false,
     keepCDATASections: Bool = false,
-    eventHandlers: [XEventHandler]? = nil,
-    elementsToRegister: Set<String>? = nil,
-    attributesToRegister: Set<String>? = nil
+    eventHandlers: [XEventHandler]? = nil
 ) throws -> XDocument {
-    let document = XDocument(elementNamesToRegister: elementsToRegister, attributeNamesToRegister: attributesToRegister)
+    let document = XDocument()
     document._sourcePath = url.path
     
     let parser = ConvenienceParser(
@@ -111,11 +107,9 @@ public func parseXML(
     externalWrapperElement: String? = nil,
     keepComments: Bool = false,
     keepCDATASections: Bool = false,
-    eventHandlers: [XEventHandler]? = nil,
-    elementsToRegister: Set<String>? = nil,
-    attributesToRegister: Set<String>? = nil
+    eventHandlers: [XEventHandler]? = nil
 ) throws -> XDocument {
-    let document = XDocument(elementNamesToRegister: elementsToRegister, attributeNamesToRegister: attributesToRegister)
+    let document = XDocument()
     
     let parser = ConvenienceParser(
         parser: XParser(

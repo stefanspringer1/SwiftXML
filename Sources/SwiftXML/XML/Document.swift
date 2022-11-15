@@ -173,9 +173,6 @@ public final class XDocument: XNode, XBranchInternal {
     
     func registerElement(element: XElement) {
         let name = element.name
-        if let elementNamesToRegister = elementNamesToRegister, !elementNamesToRegister.contains(name) {
-            return
-        }
         if let theLast = _elementsOfName_last[name] {
             theLast.nextWithSameName = element
             element.previousWithSameName = theLast
@@ -186,12 +183,9 @@ public final class XDocument: XNode, XBranchInternal {
         _elementsOfName_last[name] = element
         
         // register attributes:
-        if attributeNamesToRegister?.isEmpty != true {
-            element._attributes?.values.forEach { attribute in
-                registerAttribute(attribute: attribute)
-            }
-        }
-    }
+        element._attributes?.values.forEach { attribute in
+            registerAttribute(attribute: attribute)
+        }    }
     
     func unregisterElement(element: XElement) {
         element._nameIterators.forEach { _ = $0.previous() }
@@ -236,9 +230,6 @@ public final class XDocument: XNode, XBranchInternal {
     
     func registerAttribute(attribute: XAttribute) {
         let name = attribute.name
-        if let attributeNamesToRegister = elementNamesToRegister, !attributeNamesToRegister.contains(name) {
-            return
-        }
         if let theLast = _attributesOfName_last[name] {
             theLast.nextWithSameName = attribute
             attribute.previousWithSameName = theLast
@@ -274,20 +265,13 @@ public final class XDocument: XNode, XBranchInternal {
     
     // -------------------------------------------------------------------------
     
-    private var elementNamesToRegister: Set<String>?
-    private var attributeNamesToRegister: Set<String>?
-    
     public init(
-        attached: [String:Any?]? = nil,
-        elementNamesToRegister: Set<String>? = nil,
-        attributeNamesToRegister: Set<String>? = nil
+        attached: [String:Any?]? = nil
     ) {
         super.init()
         _document = self
         self._lastInTree = self
         attached?.forEach{ (key,value) in self.attached[key] = value }
-        self.elementNamesToRegister = elementNamesToRegister
-        self.attributeNamesToRegister = attributeNamesToRegister
     }
     
     public convenience init(
@@ -296,7 +280,7 @@ public final class XDocument: XNode, XBranchInternal {
         attributeNamesToRegister: Set<String>? = nil,
         @XContentBuilder builder: () -> [XContent]
     ) {
-        self.init(attached: attached, elementNamesToRegister: elementNamesToRegister, attributeNamesToRegister: attributeNamesToRegister)
+        self.init(attached: attached)
         builder().forEach { node in
             _add(node)
         }
