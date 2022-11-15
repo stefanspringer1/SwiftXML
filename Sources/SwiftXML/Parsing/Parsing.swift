@@ -44,11 +44,7 @@ public func parseXML(
         )
     )
     
-    try parser.parse(
-        fromPath: path,
-        sourceInfo: sourceInfo,
-        eventHandlers: eventHandlers
-    )
+    try parser.parse(fromPath: path, sourceInfo: sourceInfo, eventHandlers: eventHandlers)
     
     return document
 }
@@ -87,10 +83,7 @@ public func parseXML(
         )
     )
     
-    try parser.parse(
-        fromURL: url,
-        sourceInfo: sourceInfo,
-        eventHandlers: eventHandlers)
+    try parser.parse(fromURL: url, sourceInfo: sourceInfo, eventHandlers: eventHandlers)
     
     return document
 }
