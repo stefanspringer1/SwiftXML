@@ -374,6 +374,9 @@ public class XNode {
     
     public var allText: String {
         if let meAsBranch = self as? XBranch {
+            if let text = meAsBranch.firstContent as? XText, text._next == nil {
+                return text.value
+            }
             var texts = [String]()
             meAsBranch.traverse { node in
                 if let text = node as? XText {
