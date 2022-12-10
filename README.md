@@ -217,7 +217,6 @@ One a more event handlers can be given a `parseXML` call, which implement `XEven
 
 An XML document (`XDocument`) can contain the following content:
 
-- `XDocument`: a whole document
 - `XElement`: an element
 - `XText`: a text
 - `XInternalEntity`: an internal entity reference
