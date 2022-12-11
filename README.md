@@ -49,7 +49,7 @@ The library reads XML from a source into an XML document instance, and provides 
 
 [^1]: The reading of a JSON source into an XML document structure is also implemented, but currently only in experimental state.
 
-The library should be efficient and applications that use it should be very intelligible. As a general guideline for the development of this library, _its development is driven by use cases and not by theoretical considerations._
+The library should be efficient and applications that use it should be very intelligible._
 
 ### Manipulation of an XML document
 
