@@ -47,7 +47,7 @@ When using SwiftXML in the context of the [SwiftWorkflow](https://github.com/ste
 
 The library reads XML from a source into an XML document instance, and provides methods to transform (or manipulate) the document, and others to write the document to a file.
 
-The library should be efficient and applications that use it should be very intelligible. As a general guideline for the development of this library, _its development is driven by use cases and not by theoretical considerations._
+The library should be efficient and applications that use it should be very intelligible.
 
 ### Manipulation of an XML document
 
@@ -215,7 +215,6 @@ One a more event handlers can be given a `parseXML` call, which implement `XEven
 
 An XML document (`XDocument`) can contain the following content:
 
-- `XDocument`: a whole document
 - `XElement`: an element
 - `XText`: a text
 - `XInternalEntity`: an internal entity reference
@@ -1391,7 +1390,7 @@ This can be very convenient when processing text, e.g. it is then very straightf
 
 In those cases, you may use an `XSpot` node as as separator to a text, as shown in the following example. An `XSpot` is the “cheapest” (or simplest) separator you could use in such a case.
 
-An `XSpot` node has a special behaviour that stems from the way it is internally used by the library. An `XSpot` “does nothing” besides existing at a certain spot in the XML tree (hence its name), but it invisible to all iterations except tree traversals, it is invisible for `previousTouching`, `previousInTreeTouching`, `firstContent`, `isEmpty`, etc., and it is also invisible for a production. So you should use `XSpot` nodes only in a very controlled way, e.g. temporarily. But `XSpot` nodes are found by a tree traversal, so if you do need to find them, you can. And the mentioned properties and methods that do not see an `XSpot` can very well be called for an `XSpot` itself, e.g. `myXSpot.next`. 
+An `XSpot` node has a special behaviour that stems from the way it is internally used by the library. An `XSpot` “does nothing” besides existing at a certain spot in the XML tree (hence its name), but it invisible to all iterations except tree traversals, it is invisible for `previousTouching`, `previousInTreeTouching`, `firstContent`, `isEmpty`, etc., and it is also invisible for a production. So you should use `XSpot` nodes only in a very controlled way, e.g. temporarily. As already mentioned, `XSpot` nodes are found by a tree traversal, so if you do need to find them, you can. And the mentioned properties and methods that do not see an `XSpot` can very well be called for an `XSpot` itself, e.g. `myXSpot.next`. 
 
 Consider the following example where the occurrences of a search text gets a greenish background. In this example, you do not want `part` to be added to `text` in the iteration:
 
