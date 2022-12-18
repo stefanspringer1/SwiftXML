@@ -45,9 +45,7 @@ When using SwiftXML in the context of the [SwiftWorkflow](https://github.com/ste
 
 ## Properties of the library
 
-The library reads XML from a source into an XML document instance, and provides methods to transform (or manipulate) the document, and others to write the document to a file.[^1]
-
-[^1]: The reading of a JSON source into an XML document structure is also implemented, but currently only in experimental state.
+The library reads XML from a source into an XML document instance, and provides methods to transform (or manipulate) the document, and others to write the document to a file.
 
 The library should be efficient and applications that use it should be very intelligible.
 
