@@ -43,7 +43,7 @@ public final class XDocument: XNode, XBranchInternal {
     
     private var versions = [XDocument]()
     
-    public func saveVersion() {
+    public func makeVersion() {
         let clone = shallowClone()
         versions.append(clone)
         clone._addClones(from: self, pointingToClone: true)
