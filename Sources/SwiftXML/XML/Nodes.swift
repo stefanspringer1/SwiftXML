@@ -1284,7 +1284,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
             && other.attributeNames.allSatisfy { self[$0] != nil }
     }
     
-    public var xpath: String {
+    public var xPath: String {
         get {
             let myName = name
             return "/" + ([

@@ -452,7 +452,7 @@ You can also set attachments immediately when creating en element or a document 
 Get the XPath of a node via:
 
 ```Swift
-var xpath: String
+var xPath: String
 ```
 
 ## Traversals
