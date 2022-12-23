@@ -1128,11 +1128,19 @@ final class XNodeSampler {
 
 @resultBuilder
 public struct XContentBuilder {
+    
     public static func buildBlock(_ components: XContentLike?...) -> [XContent] {
         let sampler = XNodeSampler()
         components.forEach { if let nodeLike = $0 { sampler.add(nodeLike) } }
         return sampler.nodes
     }
+    
+    public static func buildBlock<T: XContent>(_ components: any Sequence<T>) -> [XContent] {
+        let sampler = XNodeSampler()
+        components.forEach { sampler.add($0 as! XContent) }
+        return sampler.nodes
+    }
+    
 }
 
 public class Attachments {
