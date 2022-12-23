@@ -1,11 +1,24 @@
 //
-//  File.swift
+//  Sequences.swift
 //  
 //
 //  Created by Stefan Springer on 27.09.21.
 //
 
 import Foundation
+
+public struct TypedIterator<T> {
+    
+    private var iterator: any IteratorProtocol
+    
+    public init(for sequence: any Sequence<T>) {
+        self.iterator = sequence.makeIterator() as any IteratorProtocol
+    }
+    
+    public mutating func next() -> T? {
+        return iterator.next() as! T?
+    }
+}
 
 // >>>>>>>>>>>>>>>>
 // with conditions:

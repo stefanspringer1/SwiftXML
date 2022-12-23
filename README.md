@@ -108,9 +108,7 @@ The output is:
 <a><item id="2"/><item id="4"/></a>
 ```
 
-Of course, since those iterations are regular sequences, all according Swift library functions like `map` and `filter` can be used (the `filter` methods are currently custom methods, that may change in the future[^1]). But in many cases, it might be better to use conditions on the content iterators (see the section on finding related content with filters) or chaining of content iterators (see the section on chained iterators). The most common use case for `filter` is applying it to `elements(ofName:)` or `attributes(ofName:)`.
-
-[^1]: There some changes comming to the type system of Swift which will help. There will be no need to change your code.
+Of course, since those iterations are regular sequences, all according Swift library functions like `map` and `filter` can be used. But in many cases, it might be better to use conditions on the content iterators (see the section on finding related content with filters) or chaining of content iterators (see the section on chained iterators).
 
 The user of the library can also provide sets of rules to be applied (see the code at the beginning and a full example in the section about rules). In such a rule, the user defines what to do with an element or attribute with a certain name. A set of rules can then be applied to a document, i.e. the rules are applied in the order of their definition. This is repeated, guaranteeing that a rule is only applied once to the same object (if not fully removed from the document and added again, see the section below on document membership), until no more application takes places. So elements can be added during application of a rule and then later be processed by the same or another rule.
 

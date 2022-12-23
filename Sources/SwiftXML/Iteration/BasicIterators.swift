@@ -178,13 +178,15 @@ public class XElementIteratorUntilCondition: XElementIterator {
     }
 }
 
-public class XElementSequence: LazySequenceProtocol {
+public class XElementSequence: LazySequenceProtocol, Sequence {
+    public typealias Element = XElement
     public func makeIterator() -> XElementIterator {
         return XElementIterator()
     }
 }
 
-public class XStringSequence: LazySequenceProtocol {
+public class XStringSequence: LazySequenceProtocol, Sequence {
+    public typealias Element = String
     public func makeIterator() -> XStringIterator {
         return XStringIterator()
     }

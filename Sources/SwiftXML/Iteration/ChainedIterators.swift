@@ -10,14 +10,14 @@ import Foundation
 
 public class XElementIteratorDependingOnElementIterator: XElementIterator {
     
-    private let iterator1: XElementIterator
+    private var iterator1: TypedIterator<XElement>
     private var element1: XElement? = nil
     private var started = false
     let nextSequenceGetter: (XElement) -> XElementSequence
     private var iterator2: XElementIterator? = nil
     
-    init(sequence: XElementSequence, nextSequenceGetter: @escaping (XElement) -> XElementSequence) {
-        iterator1 = sequence.makeIterator()
+    init(sequence: any Sequence<XElement>, nextSequenceGetter: @escaping (XElement) -> XElementSequence) {
+        iterator1 = TypedIterator(for: sequence)
         self.nextSequenceGetter = nextSequenceGetter
     }
     
@@ -46,14 +46,14 @@ public class XElementIteratorDependingOnElementIterator: XElementIterator {
 
 public class XElementIteratorDependingOnContentIterator: XElementIterator {
     
-    private let iterator1: XContentIterator
+    private var iterator1: TypedIterator<XContent>
     private var content1: XContent? = nil
     private var started = false
     let nextSequenceGetter: (XContent) -> XElementSequence
     private var iterator2: XElementIterator? = nil
     
-    init(sequence: XContentSequence, nextSequenceGetter: @escaping (XContent) -> XElementSequence) {
-        iterator1 = sequence.makeIterator()
+    init(sequence: any Sequence<XContent>, nextSequenceGetter: @escaping (XContent) -> XElementSequence) {
+        iterator1 = TypedIterator(for: sequence)
         self.nextSequenceGetter = nextSequenceGetter
     }
     
@@ -82,14 +82,14 @@ public class XElementIteratorDependingOnContentIterator: XElementIterator {
 
 public class XContentIteratorDependingOnElementIterator: XContentIterator {
     
-    private let iterator1: XElementIterator
+    private var iterator1: TypedIterator<XElement>
     private var content1: XElement? = nil
     private var started = false
     let nextSequenceGetter: (XElement) -> XContentSequence
     private var iterator2: XContentIterator? = nil
     
-    init(sequence: XElementSequence, nextSequenceGetter: @escaping (XElement) -> XContentSequence) {
-        iterator1 = sequence.makeIterator()
+    init(sequence: any Sequence<XElement>, nextSequenceGetter: @escaping (XElement) -> XContentSequence) {
+        iterator1 = TypedIterator(for: sequence)
         self.nextSequenceGetter = nextSequenceGetter
     }
     
@@ -118,14 +118,14 @@ public class XContentIteratorDependingOnElementIterator: XContentIterator {
 
 public class XContentIteratorDependingOnContentIterator: XContentIterator {
     
-    private let iterator1: XContentIterator
+    private var iterator1: TypedIterator<XContent>
     private var content1: XContent? = nil
     private var started = false
     let nextSequenceGetter: (XContent) -> XContentSequence
     private var iterator2: XContentIterator? = nil
     
-    init(sequence: XContentSequence, nextSequenceGetter: @escaping (XContent) -> XContentSequence) {
-        iterator1 = sequence.makeIterator()
+    init(sequence: any Sequence<XContent>, nextSequenceGetter: @escaping (XContent) -> XContentSequence) {
+        iterator1 = TypedIterator(for: sequence)
         self.nextSequenceGetter = nextSequenceGetter
     }
     
@@ -152,52 +152,14 @@ public class XContentIteratorDependingOnContentIterator: XContentIterator {
     }
 }
 
-public class XFilteredContentIterator: XContentIterator {
-    
-    private let iterator: XContentIterator
-    private let filter: (XContent) -> Bool
-    
-    init(sequence: XContentSequence, filter: @escaping (XContent) -> Bool) {
-        iterator = sequence.makeIterator()
-        self.filter = filter
-    }
-    
-    public override func next() -> XContent? {
-        var content: XContent? = iterator.next()
-        while let theContent = content, !filter(theContent) {
-            content = iterator.next()
-        }
-        return content
-    }
-}
-
-public class XFilteredElementIterator: XElementIterator {
-    
-    private let iterator: XElementIterator
-    private let filter: (XElement) -> Bool
-    
-    init(sequence: XElementSequence, filter: @escaping (XElement) -> Bool) {
-        iterator = sequence.makeIterator()
-        self.filter = filter
-    }
-    
-    public override func next() -> XElement? {
-        var element: XElement? = iterator.next()
-        while let theElement = element, !filter(theElement) {
-            element = iterator.next()
-        }
-        return element
-    }
-}
-
 public class XContentDependingOnContentIterator: XContentIterator {
     
-    private let iterator1: XContentIterator
+    private var iterator1: TypedIterator<XContent>
     private var content1: XContent? = nil
     let contentGetter: (XContent) -> XContent?
     
-    init(sequence: XContentSequence, contentGetter: @escaping (XContent) -> XContent?) {
-        iterator1 = sequence.makeIterator()
+    init(sequence: any Sequence<XContent>, contentGetter: @escaping (XContent) -> XContent?) {
+        iterator1 = TypedIterator(for: sequence)
         self.contentGetter = contentGetter
     }
     
@@ -218,12 +180,12 @@ public class XContentDependingOnContentIterator: XContentIterator {
 
 public class XContentDependingOnElementIterator: XContentIterator {
     
-    private let iterator1: XElementIterator
+    private var iterator1: TypedIterator<XElement>
     private var element1: XElement? = nil
     let contentGetter: (XElement) -> XContent?
     
-    init(sequence: XElementSequence, contentGetter: @escaping (XElement) -> XContent?) {
-        iterator1 = sequence.makeIterator()
+    init(sequence: any Sequence<XElement>, contentGetter: @escaping (XElement) -> XContent?) {
+        iterator1 = TypedIterator(for: sequence)
         self.contentGetter = contentGetter
     }
     
@@ -244,12 +206,12 @@ public class XContentDependingOnElementIterator: XContentIterator {
 
 public class XElementDependingOnContentIterator: XElementIterator {
     
-    private let iterator1: XContentIterator
+    private var iterator1: TypedIterator<XContent>
     private var content1: XContent? = nil
     let elementGetter: (XContent) -> XElement?
     
-    init(sequence: XContentSequence, elementGetter: @escaping (XContent) -> XElement?) {
-        iterator1 = sequence.makeIterator()
+    init(sequence: any Sequence<XContent>, elementGetter: @escaping (XContent) -> XElement?) {
+        iterator1 = TypedIterator(for: sequence)
         self.elementGetter = elementGetter
     }
     
@@ -270,9 +232,9 @@ public class XElementDependingOnContentIterator: XElementIterator {
 
 public class XNameSequenceDependingOnElementSequence: XStringSequence {
     
-    let sequence: XElementSequence
+    let sequence: any Sequence<XElement>
     
-    init(sequence: XElementSequence) {
+    init(sequence: any Sequence<XElement>) {
         self.sequence = sequence
     }
     
@@ -283,10 +245,10 @@ public class XNameSequenceDependingOnElementSequence: XStringSequence {
 
 public class XNameDependingOnElementIterator: XStringIterator {
     
-    private let iterator: XElementIterator
+    private var iterator: TypedIterator<XElement>
     
-    init(sequence: XElementSequence) {
-        iterator = sequence.makeIterator()
+    init(sequence: any Sequence<XElement>) {
+        iterator = TypedIterator(for: sequence)
     }
     
     public override func next() -> String? {
@@ -301,12 +263,12 @@ public class XNameDependingOnElementIterator: XStringIterator {
 
 public class XElementDependingOnElementIterator: XElementIterator {
     
-    private let iterator1: XElementIterator
+    private var iterator1: TypedIterator<XElement>
     private var element1: XElement? = nil
     let elementGetter: (XElement) -> XElement?
     
-    init(sequence: XElementSequence, elementGetter: @escaping (XElement) -> XElement?) {
-        iterator1 = sequence.makeIterator()
+    init(sequence: any Sequence<XElement>, elementGetter: @escaping (XElement) -> XElement?) {
+        iterator1 = TypedIterator(for: sequence)
         self.elementGetter = elementGetter
     }
     
@@ -327,10 +289,25 @@ public class XElementDependingOnElementIterator: XElementIterator {
 
 public class XElementSequenceDependingOnElementSequence: XElementSequence {
     
-    let sequence: XElementSequence
+    let sequence: any Sequence<XElement>
     let nextSequenceGetter: (XElement) -> XElementSequence
     
-    init(sequence: XElementSequence, nextSequenceGetter: @escaping (XElement) -> XElementSequence) {
+    init(sequence: any Sequence<XElement>, nextSequenceGetter: @escaping (XElement) -> XElementSequence) {
+        self.sequence = sequence
+        self.nextSequenceGetter = nextSequenceGetter
+    }
+    
+    override public func makeIterator() -> XElementIterator {
+        return XElementIteratorDependingOnElementIterator(sequence: sequence, nextSequenceGetter: nextSequenceGetter)
+    }
+}
+
+public class XElementSequenceDependingOnElementSequenceNEW: XElementSequence {
+    
+    let sequence: any Sequence<XElement>
+    let nextSequenceGetter: (XElement) -> XElementSequence
+    
+    init(sequence: any Sequence<XElement>, nextSequenceGetter: @escaping (XElement) -> XElementSequence) {
         self.sequence = sequence
         self.nextSequenceGetter = nextSequenceGetter
     }
@@ -342,10 +319,10 @@ public class XElementSequenceDependingOnElementSequence: XElementSequence {
 
 public class XElementSequenceDependingOnContentSequence: XElementSequence {
     
-    let sequence: XContentSequence
+    let sequence: any Sequence<XContent>
     let nextSequenceGetter: (XContent) -> XElementSequence
     
-    init(sequence: XContentSequence, nextSequenceGetter: @escaping (XContent) -> XElementSequence) {
+    init(sequence: any Sequence<XContent>, nextSequenceGetter: @escaping (XContent) -> XElementSequence) {
         self.sequence = sequence
         self.nextSequenceGetter = nextSequenceGetter
     }
@@ -357,10 +334,10 @@ public class XElementSequenceDependingOnContentSequence: XElementSequence {
 
 public class XContentSequenceDependingOnElementSequence: XContentSequence {
     
-    let sequence: XElementSequence
+    let sequence: any Sequence<XElement>
     let nextSequenceGetter: (XElement) -> XContentSequence
     
-    init(sequence: XElementSequence, nextSequenceGetter: @escaping (XElement) -> XContentSequence) {
+    init(sequence: any Sequence<XElement>, nextSequenceGetter: @escaping (XElement) -> XContentSequence) {
         self.sequence = sequence
         self.nextSequenceGetter = nextSequenceGetter
     }
@@ -372,10 +349,10 @@ public class XContentSequenceDependingOnElementSequence: XContentSequence {
 
 public class XContentSequenceDependingOnContentSequence: XContentSequence {
     
-    let sequence: XContentSequence
+    let sequence: any Sequence<XContent>
     let nextSequenceGetter: (XContent) -> XContentSequence
     
-    init(sequence: XContentSequence, nextSequenceGetter: @escaping (XContent) -> XContentSequence) {
+    init(sequence: any Sequence<XContent>, nextSequenceGetter: @escaping (XContent) -> XContentSequence) {
         self.sequence = sequence
         self.nextSequenceGetter = nextSequenceGetter
     }
@@ -385,42 +362,12 @@ public class XContentSequenceDependingOnContentSequence: XContentSequence {
     }
 }
 
-public class XFilteredContentSequence: XContentSequence {
-    
-    let sequence: XContentSequence
-    let filter: (XContent) -> Bool
-    
-    init(sequence: XContentSequence, filter: @escaping (XContent) -> Bool) {
-        self.sequence = sequence
-        self.filter = filter
-    }
-    
-    override public func makeIterator() -> XContentIterator {
-        return XFilteredContentIterator(sequence: sequence, filter: filter)
-    }
-}
-
-public class XFilteredElementSequence: XElementSequence {
-    
-    let sequence: XElementSequence
-    let filter: (XElement) -> Bool
-    
-    init(sequence: XElementSequence, filter: @escaping (XElement) -> Bool) {
-        self.sequence = sequence
-        self.filter = filter
-    }
-    
-    override public func makeIterator() -> XElementIterator {
-        return XFilteredElementIterator(sequence: sequence, filter: filter)
-    }
-}
-
 public class XContentDependingOnContentSequence: XContentSequence {
     
-    let sequence: XContentSequence
+    let sequence: any Sequence<XContent>
     let contentGetter: (XContent) -> XContent?
     
-    init(sequence: XContentSequence, contentGetter: @escaping (XContent) -> XContent?) {
+    init(sequence: any Sequence<XContent>, contentGetter: @escaping (XContent) -> XContent?) {
         self.sequence = sequence
         self.contentGetter = contentGetter
     }
@@ -432,10 +379,10 @@ public class XContentDependingOnContentSequence: XContentSequence {
 
 public class XElementDependingOnContentSequence: XElementSequence {
     
-    let sequence: XContentSequence
+    let sequence: any Sequence<XContent>
     let elementGetter: (XContent) -> XElement?
     
-    init(sequence: XContentSequence, elementGetter: @escaping (XContent) -> XElement?) {
+    init(sequence: any Sequence<XContent>, elementGetter: @escaping (XContent) -> XElement?) {
         self.sequence = sequence
         self.elementGetter = elementGetter
     }
@@ -447,10 +394,10 @@ public class XElementDependingOnContentSequence: XElementSequence {
 
 public class XContentDependingOnElementSequence: XContentSequence {
     
-    let sequence: XElementSequence
+    let sequence: any Sequence<XElement>
     let contentGetter: (XElement) -> XContent?
     
-    init(sequence: XElementSequence, contentGetter: @escaping (XElement) -> XContent?) {
+    init(sequence: any Sequence<XElement>, contentGetter: @escaping (XElement) -> XContent?) {
         self.sequence = sequence
         self.contentGetter = contentGetter
     }
@@ -462,10 +409,10 @@ public class XContentDependingOnElementSequence: XContentSequence {
 
 public class XElementDependingOnElementSequence: XElementSequence {
     
-    let sequence: XElementSequence
+    let sequence: any Sequence<XElement>
     let elementGetter: (XElement) -> XElement?
     
-    init(sequence: XElementSequence, elementGetter: @escaping (XElement) -> XElement?) {
+    init(sequence: any Sequence<XElement>, elementGetter: @escaping (XElement) -> XElement?) {
         self.sequence = sequence
         self.elementGetter = elementGetter
     }
@@ -479,11 +426,7 @@ public func collect(@XContentBuilder builder: @escaping () -> [XContent]) -> (()
     return builder
 }
 
-extension XContentSequence {
-    
-    public func filter(_ isIncluded: @escaping (XContent) -> Bool) -> XContentSequence {
-        return XFilteredContentSequence(sequence: self, filter: isIncluded)
-    }
+extension Sequence<XContent> {
     
     public func clone() -> XContentSequence {
         return XContentDependingOnContentSequence(sequence: self, contentGetter: { content in content.clone() })
@@ -784,11 +727,7 @@ extension XContentSequence {
     }
 }
 
-extension XElementSequence {
-    
-    public func filter(_ isIncluded: @escaping (XElement) -> Bool) -> XElementSequence {
-        return XFilteredElementSequence(sequence: self, filter: isIncluded)
-    }
+extension Sequence<XElement> {
     
     public var name: XStringSequence {
         get { XNameSequenceDependingOnElementSequence(sequence: self) }
