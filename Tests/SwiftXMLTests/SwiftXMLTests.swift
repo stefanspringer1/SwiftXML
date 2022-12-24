@@ -57,33 +57,37 @@ final class SwiftXMLTests: XCTestCase {
             """)
         }
         
-        do {
-            let document = try parseXML(fromText: documentSource1)
-            let element = XElement("test") {
-                document.children.children.filter { $0.name == "b" }.drop(while: { Int($0["id"] ?? "1") ?? 1 < 2 }).filter { $0["drop"] != "yes" }
-            }
-            
-            XCTAssertEqual(element.serialized(pretty: true), """
+        if #available(macOS 13.0.0, *) {
+            do {
+                let document = try parseXML(fromText: documentSource1)
+                let element = XElement("test") {
+                    document.children.children.filter { $0.name == "b" }.drop(while: { Int($0["id"] ?? "1") ?? 1 < 2 }).filter { $0["drop"] != "yes" }
+                }
+                
+                XCTAssertEqual(element.serialized(pretty: true), """
             <test>
               <b id="2"/>
             </test>
             """)
+            }
         }
         
-        do {
-            let document1 = try parseXML(fromText: documentSource1)
-            let document2 = try parseXML(fromText: documentSource1)
-            let element = XElement("test") {
-                document1.children.children.filter { $0.name == "b" }.drop(while: { Int($0["id"] ?? "1") ?? 1 < 2 }).filter { $0["drop"] != "yes" }.asContent
-                document2.children.children.filter { $0.name == "b" }.drop(while: { Int($0["id"] ?? "1") ?? 1 < 2 }).filter { $0["drop"] != "yes" }.asContent
-            }
-            
-            XCTAssertEqual(element.serialized(pretty: true), """
+        if #available(macOS 13.0.0, *) {
+            do {
+                let document1 = try parseXML(fromText: documentSource1)
+                let document2 = try parseXML(fromText: documentSource1)
+                let element = XElement("test") {
+                    document1.children.children.filter { $0.name == "b" }.drop(while: { Int($0["id"] ?? "1") ?? 1 < 2 }).filter { $0["drop"] != "yes" }
+                    document2.children.children.filter { $0.name == "b" }.drop(while: { Int($0["id"] ?? "1") ?? 1 < 2 }).filter { $0["drop"] != "yes" }
+                }
+                
+                XCTAssertEqual(element.serialized(pretty: true), """
             <test>
               <b id="2"/>
               <b id="2"/>
             </test>
             """)
+            }
         }
     }
     
