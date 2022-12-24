@@ -14,10 +14,17 @@ final class SwiftXMLTests: XCTestCase {
     
     func testTypedIterator() throws {
         let document = try parseXML(fromText: documentSource1)
-        let sequence = document.children.children.filter { $0.name == "b" }.drop(while: { Int($0["id"] ?? "1") ?? 1 < 2 }).filter { $0["drop"] != "yes" }
+        let sequence = document.children.filter { $0.name == "a" }.children.drop(while: { Int($0["id"] ?? "1") ?? 1 < 2 }).filter { $0["drop"] != "yes" }
         var iterator = TypedIterator(for: sequence)
         let next: XElement? = iterator.next()
         XCTAssertEqual("\(next?.description ?? "-")", #"<b id="2">"#)
+    }
+    
+    func testLaziness() throws {
+        let document = try parseXML(fromText: documentSource1)
+        let sequence = document.children.filter { $0.name == "a" }.children
+        document.children.filter { $0.name == "a" }.first?.add { XElement("b", ["id": "4"]) }
+        XCTAssertEqual(sequence["id"].compactMap{ $0 }.joined(separator: ", "), #"1, 2, 3, 4"#)
     }
     
     func testXContentLike() throws {
