@@ -21,18 +21,21 @@ final class SwiftXMLTests: XCTestCase {
     }
     
     func testXContentLike() throws {
+        
         do {
             let document = try parseXML(fromText: documentSource1)
             let element = XElement("test") {
-                document.children
+                XElement("title") {
+                    "this is the title"
+                }
+                document.children.children
             }
             XCTAssertEqual(element.serialized(pretty: true), """
             <test>
-              <a>
-                <b id="1"/>
-                <b id="2"/>
-                <b drop="yes" id="3"/>
-            </a>
+              <title>this is the title</title>
+              <b id="1"/>
+              <b id="2"/>
+              <b drop="yes" id="3"/>
             </test>
             """)
         }
@@ -55,6 +58,23 @@ final class SwiftXMLTests: XCTestCase {
               <b drop="yes" id="3"/>
             </test>
             """)
+        }
+        
+        do {
+            let document = try parseXML(fromText: documentSource1)
+            let element = XElement("test") {
+                XElement("title") {
+                    "this is the title"
+                }
+                document.children.children.filter { $0.name == "b" }.drop(while: { Int($0["id"] ?? "1") ?? 1 < 2 }).filter { $0["drop"] != "yes" }.asContent
+            }
+            
+            XCTAssertEqual(element.serialized(pretty: true), """
+        <test>
+          <title>this is the title</title>
+          <b id="2"/>
+        </test>
+        """)
         }
         
         if #available(macOS 13.0.0, *) {
