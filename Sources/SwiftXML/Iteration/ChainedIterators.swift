@@ -261,6 +261,46 @@ public class XNameDependingOnElementIterator: XStringIterator {
     }
 }
 
+public class XAttributeValueSequenceDependingOnElementSequence: XStringSequence {
+    
+    let sequence: any Sequence<XElement>
+    private let attributeName: String?
+    
+    init(sequence: any Sequence<XElement>, attributeName: String?) {
+        self.sequence = sequence
+        self.attributeName = attributeName
+    }
+    
+    override public func makeIterator() -> XAttributeValueDependingOnElementIterator {
+        return XAttributeValueDependingOnElementIterator(sequence: sequence, attributeName: attributeName)
+    }
+}
+
+public class XAttributeValueDependingOnElementIterator: XStringIterator {
+    
+    private var iterator: TypedIterator<XElement>
+    private let attributeName: String?
+    
+    init(sequence: any Sequence<XElement>, attributeName: String?) {
+        iterator = TypedIterator(for: sequence)
+        self.attributeName = attributeName
+    }
+    
+    public override func next() -> String? {
+        if let element = iterator.next() {
+            if let attributeName {
+                return element[attributeName]
+            }
+            else {
+                return nil
+            }
+        }
+        else {
+            return nil
+        }
+    }
+}
+
 public class XElementDependingOnElementIterator: XElementIterator {
     
     private var iterator1: TypedIterator<XElement>
@@ -731,6 +771,10 @@ extension Sequence<XElement> {
     
     public var name: XStringSequence {
         get { XNameSequenceDependingOnElementSequence(sequence: self) }
+    }
+    
+    public subscript(attributeName: String) -> XStringSequence {
+        get { XAttributeValueSequenceDependingOnElementSequence(sequence: self, attributeName: attributeName) }
     }
     
     public func clone() -> XElementSequence {

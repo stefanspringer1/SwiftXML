@@ -5,11 +5,11 @@ import class Foundation.Bundle
 final class SwiftXMLTests: XCTestCase {
     
     let documentSource1 = """
-            <a>
-                <b id="1"/>
-                <b id="2"/>
-                <b id="3" drop="yes"/>
-            </a>
+        <a>
+            <b id="1"/>
+            <b id="2"/>
+            <b id="3" drop="yes"/>
+        </a>
         """
     
     func testTypedIterator() throws {
@@ -29,10 +29,10 @@ final class SwiftXMLTests: XCTestCase {
             XCTAssertEqual(element.serialized(pretty: true), """
             <test>
               <a>
-                    <b id="1"/>
-                    <b id="2"/>
-                    <b drop="yes" id="3"/>
-                </a>
+                <b id="1"/>
+                <b id="2"/>
+                <b drop="yes" id="3"/>
+            </a>
             </test>
             """)
         }
@@ -87,4 +87,16 @@ final class SwiftXMLTests: XCTestCase {
         }
     }
     
+    func testAttributeValueSequence() throws {
+        let document = try parseXML(fromText: """
+            <test>
+              <b id="1"/>
+              <b id="2"/>
+              <b id="3"/>
+            </test>
+            """)
+        let attributeValues = document.children.children["id"].joined(separator: ", ")
+        XCTAssertEqual(attributeValues, #"1, 2, 3"#)
+    }
+
 }

@@ -412,6 +412,27 @@ if let id = myElement["id"] {
 }
 ```
 
+You can also get a sequence of attribute values (optional Strings) from a sequence of elements.
+
+Example:
+
+```Swift
+let document = try parseXML(fromText: """
+    <test>
+      <b id="1"/>
+      <b id="2"/>
+      <b id="3"/>
+    </test>
+    """)
+print(document.children.children["id"].joined(separator: ", "))
+```
+
+Result:
+
+```text
+1, 2, 3
+```
+
 To get the names of all attributes of an element, use:
 
 ```Swift
