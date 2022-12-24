@@ -98,5 +98,17 @@ final class SwiftXMLTests: XCTestCase {
         let attributeValues = document.children.children["id"].joined(separator: ", ")
         XCTAssertEqual(attributeValues, #"1, 2, 3"#)
     }
+    
+    func testFirstSecondThird() throws {
+        let document = try parseXML(fromText: """
+            <test>
+              <b id="1"/>
+              <b id="2"/>
+              <b id="3"/>
+            </test>
+            """)
+        let bs = document.children.children
+        XCTAssertEqual([bs.first,bs.second,bs.third,].compactMap{ $0 }["id"].joined(separator: ", "), #"1, 2, 3"#)
+    }
 
 }

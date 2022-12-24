@@ -400,27 +400,28 @@ public extension XElement {
     }
 }
 
-public extension XContentSequence {
+public extension Sequence<XContent> {
     
     var first: XContent? {
-        return makeIterator().next()
+        var iterator = makeIterator()
+        return iterator.next()
     }
     
     var second: XContent? {
-        let iterator = makeIterator()
+        var iterator = makeIterator()
         _ = iterator.next() // first
         return iterator.next() // second
     }
     
     var third: XContent? {
-        let iterator = makeIterator()
+        var iterator = makeIterator()
         _ = iterator.next() // first
         _ = iterator.next() // second
         return iterator.next() // third
     }
 
     var last: XContent? {
-        let iterator = makeIterator()
+        var iterator = makeIterator()
         var content: XContent? = nil
         var next: XContent? = nil
         repeat {
@@ -431,7 +432,7 @@ public extension XContentSequence {
     }
     
     func at(index: Int) -> XContent? {
-        let iterator = makeIterator()
+        var iterator = makeIterator()
         var position = 0
         var content: XContent? = nil
         while position <= index {
@@ -444,33 +445,37 @@ public extension XContentSequence {
         return content
     }
     
-    var exist: Bool { get { makeIterator().next() != nil } }
+    var exist: Bool { get {
+        var iterator = makeIterator()
+        return iterator.next() != nil
+    } }
     
-    var existing: XContentSequence? { exist ? self : nil }
+    var existing: Self? { exist ? self : nil }
     
 }
 
-public extension XElementSequence {
+public extension Sequence<XElement> {
     
     var first: XElement? {
-        return makeIterator().next()
+        var iterator = makeIterator()
+        return iterator.next()
     }
     
     var second: XElement? {
-        let iterator = makeIterator()
+        var iterator = makeIterator()
         _ = iterator.next() // first
         return iterator.next() // second
     }
     
     var third: XElement? {
-        let iterator = makeIterator()
+        var iterator = makeIterator()
         _ = iterator.next() // first
         _ = iterator.next() // second
         return iterator.next() // third
     }
     
     var last: XElement? {
-        let iterator = makeIterator()
+        var iterator = makeIterator()
         var element: XElement? = nil
         var next: XElement? = nil
         repeat {
@@ -481,7 +486,7 @@ public extension XElementSequence {
     }
     
     func at(index: Int) -> XElement? {
-        let iterator = makeIterator()
+        var iterator = makeIterator()
         var position = 0
         var element: XElement? = nil
         while position <= index {
@@ -494,8 +499,11 @@ public extension XElementSequence {
         return element
     }
     
-    var exist: Bool { get { makeIterator().next() != nil } }
+    var exist: Bool { get {
+        var iterator = makeIterator()
+        return iterator.next() != nil
+    } }
     
-    var existing: XElementSequence? { exist ? self : nil }
+    var existing: Self? { exist ? self : nil }
     
 }
