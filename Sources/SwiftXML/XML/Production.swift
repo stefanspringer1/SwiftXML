@@ -178,7 +178,7 @@ open class XDefaultProduction: XProduction {
     }
     
     open func writeXMLDeclaration(version: String, encoding: String?, standalone: String?) throws {
-        if version != "1.0" || (encoding != nil && encoding != "UTF-8" && encoding != "utf-8") || standalone != nil {
+        if version != "1.0" || encoding != nil || standalone != nil {
             try write("<?xml version=\"\(version)\"\(encoding != nil ? " encoding=\"\(encoding ?? "?")\"" : "")\(standalone != nil ? " standalone=\"\(standalone ?? "?")\"" : "")?>\(linebreak)")
         }
     }
