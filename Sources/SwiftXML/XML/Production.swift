@@ -178,11 +178,18 @@ open class XDefaultProduction: XProduction {
     }
     
     open func writeXMLDeclaration(version: String, encoding: String?, standalone: String?) throws {
-        try write("<?xml version=\"\(version)\"\(encoding != nil ? " encoding=\"\(encoding ?? "?")\"" : "")\(standalone != nil ? " standalone=\"\(standalone ?? "?")\"" : "")?>\(linebreak)")
+        if version != "1.0" || (encoding != nil && encoding != "UTF-8" && encoding != "utf-8") || standalone != nil {
+            try write("<?xml version=\"\(version)\"\(encoding != nil ? " encoding=\"\(encoding ?? "?")\"" : "")\(standalone != nil ? " standalone=\"\(standalone ?? "?")\"" : "")?>\(linebreak)")
+        }
     }
     
     open func writeDocumentTypeDeclarationBeforeInternalSubset(type: String, publicID: String?, systemID: String?, hasInternalSubset: Bool) throws {
-        try write("<!DOCTYPE \(type)\(publicID != nil ? " PUBLIC \"\(publicID ?? "")\"" : "")\(systemID != nil ? "\(publicID == nil ? " SYSTEM" : "") \"\(systemID ?? "")\"" : "")")
+        if publicID != nil || systemID != nil || hasInternalSubset {
+            try write("<!DOCTYPE \(type)\(publicID != nil ? " PUBLIC \"\(publicID ?? "")\"" : "")\(systemID != nil ? "\(publicID == nil ? " SYSTEM" : "") \"\(systemID ?? "")\"" : "")")
+            if !hasInternalSubset {
+                try write(">\(linebreak)")
+            }
+        }
     }
     
     open func writeDocumentTypeDeclarationInternalSubsetStart() throws {
@@ -194,7 +201,9 @@ open class XDefaultProduction: XProduction {
     }
     
     open func writeDocumentTypeDeclarationAfterInternalSubset(hasInternalSubset: Bool) throws {
-        try write(">\(linebreak)")
+        if hasInternalSubset {
+            try write(">\(linebreak)")
+        }
     }
     
     open func writeElementStartBeforeAttributes(element: XElement) throws {
