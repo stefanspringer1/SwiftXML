@@ -75,7 +75,7 @@ document.elements(ofName: "item").forEach { item in
     }
 }
 
-document.firstContent?.echo()
+document.echo()
 ```
 
 The output is:
@@ -99,7 +99,7 @@ document.traverse { content in
     }
 }
 
-document.firstContent?.echo()
+document.echo()
 ```
 
 The output is:
@@ -1035,7 +1035,7 @@ document.elements(ofName: "b").forEach { element in
 
 print("\n-----------------\n")
 
-document.firstContent?.echo()
+document.echo()
 ```
 
 Output:
@@ -1441,7 +1441,7 @@ document.traverse { node in
     }
 }
 
-document.firstContent?.echo()
+document.echo()
 ```
 
 Output:
@@ -1505,7 +1505,7 @@ transformation.execute(inDocument: document)
 
 print("\n----------------------------------------\n")
 
-document.firstContent?.echo()
+document.echo()
 ```
 
 ```text
