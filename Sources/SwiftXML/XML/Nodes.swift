@@ -1764,7 +1764,7 @@ public final class XProcessingInstruction: XContent, CustomStringConvertible {
         }
     }
     
-    init(target: String, data: String?) {
+    public init(target: String, data: String?) {
         self._target = target
         self._data = data
     }
@@ -1806,7 +1806,7 @@ public final class XComment: XContent {
         }
     }
     
-    init(_ text: String) {
+    public init(_ text: String) {
         self._value = text
     }
     
@@ -1847,7 +1847,7 @@ public final class XCDATASection: XContent {
         }
     }
     
-    init(_ text: String) {
+    public init(_ text: String) {
         self._value = text
     }
     
