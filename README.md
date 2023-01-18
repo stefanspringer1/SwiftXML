@@ -718,8 +718,8 @@ Note that `last` has to iterate though the whole sequence to find the last item.
 You can also access the item at a certain index in the sequence via `first` with argument `skip`:
 
 ```Swift
-func first(skip: Int) -> XContent?
-func first(skip: Int) -> XElement?
+func first(skipping: Int) -> XContent?
+func first(skipping: Int) -> XElement?
 ```
 
 Test if something exists in a sequence by using `exist`:

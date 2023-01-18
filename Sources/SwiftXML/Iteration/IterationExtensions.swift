@@ -431,11 +431,11 @@ public extension Sequence<XContent> {
         return content
     }
     
-    func first(skip: Int) -> XContent? {
+    func first(skipping: Int) -> XContent? {
         var iterator = makeIterator()
         var position = 0
         var content: XContent? = nil
-        while position <= skip {
+        while position <= skipping {
             content = iterator.next()
             if content == nil {
                 return nil
@@ -485,11 +485,11 @@ public extension Sequence<XElement> {
         return element
     }
     
-    func first(skip: Int) -> XElement? {
+    func first(skipping: Int) -> XElement? {
         var iterator = makeIterator()
         var position = 0
         var element: XElement? = nil
-        while position <= skip {
+        while position <= skipping {
             element = iterator.next()
             if element == nil {
                 return nil
