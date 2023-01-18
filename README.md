@@ -765,6 +765,12 @@ The previous content item in the tree:
 var previousInTreeTouching: XContent?
 ```
 
+Find all text contained in a node (being composed into a single `String`):
+
+```Swift
+var text: String
+```
+
 You might also turn a single content item or, more specifically, an element into an appropriate sequence using the following methods:
 
 For any content:
