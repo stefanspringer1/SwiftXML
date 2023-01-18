@@ -715,11 +715,11 @@ var last: XElement?
 
 Note that `last` has to iterate though the whole sequence to find the last item. It might be better to use `contentReversed` or `childrenReversed` in combination with `first`.
 
-You can also access the item at a certain index in the sequence (counting from 0):
+You can also access the item at a certain index in the sequence via `first` with argument `skip`:
 
 ```Swift
-func at(index: Int) -> XContent?
-func at(index: Int) -> XElement?
+func first(skip: Int) -> XContent?
+func first(skip: Int) -> XElement?
 ```
 
 Test if something exists in a sequence by using `exist`:
