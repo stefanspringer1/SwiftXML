@@ -372,7 +372,7 @@ public class XNode {
         serialized(usingProduction: pretty ? XPrettyPrintProduction(indentation: indentation) : XDefaultProduction())
     }
     
-    public var allText: String {
+    public var text: String {
         if let meAsBranch = self as? XBranch {
             if let text = meAsBranch.firstContent as? XText, text._next == nil {
                 return text.value
