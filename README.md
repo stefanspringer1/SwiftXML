@@ -479,11 +479,11 @@ var xPath: String
 Traversing a tree depth-first starting from a node (including a document) can be done by the following methods:
 
 ```Swift
-    func traverse(down: (XNode) throws -> (), up: ((XNode) throws -> ())? = nil) rethrows
+func traverse(down: (XNode) throws -> (), up: ((XNode) throws -> ())? = nil) rethrows
 ```
 
 ```Swift
-public func traverse(down: (XNode) async throws -> (), up: ((XNode) async throws -> ())? = nil) async rethrows
+func traverse(down: (XNode) async throws -> (), up: ((XNode) async throws -> ())? = nil) async rethrows
 ```
 
 For a “branch”, i.e. a node that might contain other nodes (like an element, opposed to e.g. text, which does not contain other nodes), when returning from the traversal of its content (also in the case of an empty branch) the closure given the optional `up:` argument is called.
