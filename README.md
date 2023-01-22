@@ -487,11 +487,11 @@ func traverse(down: (XNode) throws -> (), up: ((XNode) throws -> ())?) throws
 ```
 
 ```Swift
-func traverseAsync(down: (XNode) async -> (), up: ((XNode) async -> ())?) async
+func traverse(down: (XNode) async -> (), up: ((XNode) async -> ())?) async
 ```
 
 ```Swift
-func traverseAsync(down: (XNode) async throws -> (), up: ((XNode) async throws -> ())?) async throws
+func traverse(down: (XNode) async throws -> (), up: ((XNode) async throws -> ())?) async throws
 ```
 
 For a “branch”, i.e. a node that might contain other nodes (like an element, opposed to e.g. text, which does not contain other nodes), when returning from the traversal of its content (also in the case of an empty branch) the closure given the optional `up:` argument is called.
