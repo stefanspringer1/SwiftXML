@@ -479,19 +479,11 @@ var xPath: String
 Traversing a tree depth-first starting from a node (including a document) can be done by the following methods:
 
 ```Swift
-func traverse(down: (XNode) -> (), up: ((XNode) -> ())?)
+    func traverse(down: (XNode) throws -> (), up: ((XNode) throws -> ())? = nil) rethrows
 ```
 
 ```Swift
-func traverse(down: (XNode) throws -> (), up: ((XNode) throws -> ())?) throws
-```
-
-```Swift
-func traverse(down: (XNode) async -> (), up: ((XNode) async -> ())?) async
-```
-
-```Swift
-func traverse(down: (XNode) async throws -> (), up: ((XNode) async throws -> ())?) async throws
+public func traverse(down: (XNode) async throws -> (), up: ((XNode) async throws -> ())? = nil) async rethrows
 ```
 
 For a “branch”, i.e. a node that might contain other nodes (like an element, opposed to e.g. text, which does not contain other nodes), when returning from the traversal of its content (also in the case of an empty branch) the closure given the optional `up:` argument is called.
@@ -1592,6 +1584,12 @@ let transformation = XTransformation {
 ```
 
 Also, in most applications you have control over the namespace prefixes, so you do not even need to handle the prefix dynamically in those cases.
+
+### Using async/await
+
+You can use `traverse` with closures using `await`. And you can use the `async` property of the [Swift Async Algorithms package](https://github.com/apple/swift-async-algorithms) (giving a `AsyncLazySequence`) to apply `map` etc. with closures using `await` (e.g. `element.children.async.map { await a.f($0) }`).
+
+Currently the SwiftXML packages defined a `forEachAsync` method for closure arguments using `await`, but thsi might be removed inn future versions of the package if the Swift Async Algorithms package should define it for `AsyncLazySequence`.
 
 ### Possible future directions
 
