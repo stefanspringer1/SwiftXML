@@ -1585,7 +1585,7 @@ Also, in most applications you have control over the namespace prefixes, so you 
 
 You can use `traverse` with closures using `await`. And you can use the `async` property of the [Swift Async Algorithms package](https://github.com/apple/swift-async-algorithms) (giving a `AsyncLazySequence`) to apply `map` etc. with closures using `await` (e.g. `element.children.async.map { await a.f($0) }`).
 
-Currently the SwiftXML packages defined a `forEachAsync` method for closure arguments using `await`, but this might be removed in future versions of the package if the Swift Async Algorithms package should define it for `AsyncLazySequence`.
+Currently the SwiftXML packages defined a `forEachAsync` method for closure arguments using `await`, but this method might be removed in future versions of the package if the Swift Async Algorithms package should define it for `AsyncLazySequence`.
 
 ### Possible future directions
 
