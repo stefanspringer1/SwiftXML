@@ -215,14 +215,6 @@ extension FileHandle: TextOutputStream {
 extension Sequence {
     
     func forEachAsync (
-        _ operation: (Element) async -> Void
-    ) async {
-        for element in self {
-            await operation(element)
-        }
-    }
-    
-    func forEachAsync (
         _ operation: (Element) async throws -> Void
     ) async rethrows {
         for element in self {

@@ -2,6 +2,8 @@ import XCTest
 import class Foundation.Bundle
 @testable import SwiftXML
 
+extension String: Error {}
+
 final class SwiftXMLTests: XCTestCase {
     
     let documentSource1 = """
@@ -164,18 +166,36 @@ final class SwiftXMLTests: XCTestCase {
             
         }
         
+        // --------------------------------------------------------------------
         // traversal:
+        // --------------------------------------------------------------------
+        
         document.traverse { node in
-            print(node)
+            print("down: \(node)")
+        } up: { node in
+            print("up: \(node)")
         }
         await document.traverse { node in
+            await a.f()
+        } up: { node in
             await a.f()
         }
         try await document.traverse { node in
             try await a.g()
+        } up: { node in
+            try await a.g()
+        }
+        // "mixed":
+        await document.traverse { node in
+            print(node)
+        } up: { node in
+            await a.f()
         }
         
+        // --------------------------------------------------------------------
         // forEach:
+        // --------------------------------------------------------------------
+        
         document.children.forEach { child in
             print(child)
         }
@@ -185,6 +205,12 @@ final class SwiftXMLTests: XCTestCase {
         try await document.children.forEachAsync { child in
             try await a.g()
         }
+        
+        _ = [1, 2, 3].map { String($0) }  // okay: map does not throw because the closure does not throw
+        _ = try ["1", "2", "3"].map { (string: String) -> Int in
+          guard let result = Int(string) else { throw "nanana" }
+          return result
+        } // okay: map can throw because the closure can throw
     }
     
 }

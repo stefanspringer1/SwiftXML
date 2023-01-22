@@ -241,21 +241,7 @@ public class XNode {
         return self
     }
     
-    public func traverse(down: @escaping (XNode) -> (), up: ((XNode) -> ())? = nil) {
-        let directionIndicator = XDirectionIndicator()
-        XTraversalSequence(node: self, directionIndicator: directionIndicator).forEach { node in
-            if directionIndicator.up {
-                if let branch = node as? XBranchInternal {
-                    up?(branch)
-                }
-            }
-            else {
-                down(node)
-            }
-        }
-    }
-    
-    public func traverse(down: @escaping (XNode) throws -> (), up: ((XNode) throws -> ())? = nil) throws {
+    public func traverse(down: @escaping (XNode) throws -> (), up: ((XNode) throws -> ())? = nil) rethrows {
         let directionIndicator = XDirectionIndicator()
         try XTraversalSequence(node: self, directionIndicator: directionIndicator).forEach { node in
             if directionIndicator.up {
@@ -269,21 +255,7 @@ public class XNode {
         }
     }
     
-    public func traverse(down: @escaping (XNode) async -> (), up: ((XNode) async -> ())? = nil) async {
-        let directionIndicator = XDirectionIndicator()
-        await XTraversalSequence(node: self, directionIndicator: directionIndicator).forEachAsync { node in
-            if directionIndicator.up {
-                if let branch = node as? XBranchInternal {
-                    await up?(branch)
-                }
-            }
-            else {
-                await down(node)
-            }
-        }
-    }
-    
-    public func traverse(down: @escaping (XNode) async throws -> (), up: ((XNode) async throws -> ())? = nil) async throws {
+    public func traverse(down: @escaping (XNode) async throws -> (), up: ((XNode) async throws -> ())? = nil) async rethrows {
         let directionIndicator = XDirectionIndicator()
         try await XTraversalSequence(node: self, directionIndicator: directionIndicator).forEachAsync { node in
             if directionIndicator.up {
