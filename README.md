@@ -934,8 +934,6 @@ let myDocument = XDocument {
 }
 ```
 
-(With asynchronous code inside the closure, use the method `collected()` a sequence of `XContent` or `XElement` followed by `map`.)
-
 When not defining content, using `map` might be a sensible option:
 
 ```Swift
@@ -1538,8 +1536,6 @@ transformationAlias = transformation
 transformation.execute(inDocument: myDocument)
 ```
 
-In an asynchronous contexts, use `XAsyncTransformation` with `XAsyncRule` instances.
-
 ## Tracking changes
 
 It might be helpful to get notified when certain things in the XML document are changed. A common use case is the change of an attribute. You can register for the notification for the change of the value of any attribute of a certain name using:
@@ -1589,7 +1585,7 @@ Also, in most applications you have control over the namespace prefixes, so you 
 
 You can use `traverse` with closures using `await`. And you can use the `async` property of the [Swift Async Algorithms package](https://github.com/apple/swift-async-algorithms) (giving a `AsyncLazySequence`) to apply `map` etc. with closures using `await` (e.g. `element.children.async.map { await a.f($0) }`).
 
-Currently the SwiftXML packages defined a `forEachAsync` method for closure arguments using `await`, but thsi might be removed inn future versions of the package if the Swift Async Algorithms package should define it for `AsyncLazySequence`.
+Currently the SwiftXML packages defined a `forEachAsync` method for closure arguments using `await`, but this might be removed in future versions of the package if the Swift Async Algorithms package should define it for `AsyncLazySequence`.
 
 ### Possible future directions
 
