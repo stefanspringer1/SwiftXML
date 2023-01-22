@@ -1357,54 +1357,34 @@ Output:
 </top>
 ```
 
-Similarly, if you replace a node, the content that gets inserted in place of the node is by default not included in the iteration:
+Similarly, if you replace a node, the content that gets inserted in place of the node is by default not included in the iteration. Example: Assume you would like to replace every occurrence of some `<bold>` element by its content. You might first try:
 
 ```Swift
-let myElement = XElement("top") {
-    XElement("a")
-}
-
-myElement.descendants.forEach { element in
-    if element.name == "a" {
-        element.replace {
-            XElement("b")
-        }
-    }
-    else if element.name == "b" {
-        element.replace {
-            XElement("c")
-        }
-    }
-}
-
-myElement.echo(pretty: true)
+let document = try parseXML(fromText: """
+    <text><bold><bold>Hello</bold></bold></text>
+    """)
+document.descendants("bold").forEach { b in b.replace { b.content } }
+document.echo()
 ```
 
-Output:
-
+But the output is:
 
 ```text
-<top>
-  <b/>
-</top>
+<text><bold>Hello</bold></text>
 ```
 
-If you would like to also iterate over the inserted content, use `follow: true` in the call to `replace`:
+If you would like to also iterate over the inserted content, use `follow: true` in the call to `replace`. E.g. in the last example:
 
 ```Swift
-    ...
-        element.replace(follow: true) {
-            XElement("b")
-        }
-    ...
+...
+document.descendants("bold").forEach { b in b.replace(follow: true) { b.content } }
+...
 ```
 
-Output:
+The output then becomes:
 
 ```text
-<top>
-  <c/>
-</top>
+<text>Hello</text>
 ```
 
 ## `XSpot` and handling of text
