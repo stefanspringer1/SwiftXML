@@ -1092,6 +1092,7 @@ final class XAttribute: Named {
     // prevent stack overflow when destroying the list of elements with same name,
     // to be applied on the first element in that list,
     // cf. https://forums.swift.org/t/deep-recursion-in-deinit-should-not-happen/54987
+    // !!! This should not be necessary anymore with Swift 5.7 or on masOS 13. !!!
     func removeFollowingWithSameName() {
         var node = self
         while isKnownUniquelyReferenced(&node.nextWithSameName) {
@@ -1384,6 +1385,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     // prevent stack overflow when destroying the list of elements with same name,
     // to be applied on the first element in that list,
     // cf. https://forums.swift.org/t/deep-recursion-in-deinit-should-not-happen/54987
+    // !!! This should not be necessary anymore with Swift 5.7 or on masOS 13. !!!
     func removeFollowingWithSameName() {
         var node = self
         while isKnownUniquelyReferenced(&node.nextWithSameName) {
