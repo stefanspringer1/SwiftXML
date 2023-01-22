@@ -141,5 +141,50 @@ final class SwiftXMLTests: XCTestCase {
         let bs = document.children.children
         XCTAssertEqual([bs.first,bs.second,bs.third,].compactMap{ $0 }["id"].joined(separator: ", "), #"1, 2, 3"#)
     }
-
+    
+    func testAsync() async throws {
+        let document = try parseXML(fromText: """
+            <test>
+              <b id="1"/>
+              <b id="2"/>
+              <b id="3"/>
+            </test>
+            """)
+        let a = A()
+        
+        actor A {
+            
+            func f() async {
+                
+            }
+            
+            func g() async throws {
+                
+            }
+            
+        }
+        
+        // traversal:
+        document.traverse { node in
+            print(node)
+        }
+        await document.traverse { node in
+            await a.f()
+        }
+        try await document.traverse { node in
+            try await a.g()
+        }
+        
+        // forEach:
+        document.children.forEach { child in
+            print(child)
+        }
+        await document.children.forEachAsync { child in
+            await a.f()
+        }
+        try await document.children.forEachAsync { child in
+            try await a.g()
+        }
+    }
+    
 }

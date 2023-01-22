@@ -269,7 +269,7 @@ public class XNode {
         }
     }
     
-    public func traverseAsync(down: @escaping (XNode) async -> (), up: ((XNode) async -> ())? = nil) async {
+    public func traverse(down: @escaping (XNode) async -> (), up: ((XNode) async -> ())? = nil) async {
         let directionIndicator = XDirectionIndicator()
         await XTraversalSequence(node: self, directionIndicator: directionIndicator).forEachAsync { node in
             if directionIndicator.up {
@@ -283,7 +283,7 @@ public class XNode {
         }
     }
     
-    public func traverseAsync(down: @escaping (XNode) async throws -> (), up: ((XNode) async throws -> ())? = nil) async throws {
+    public func traverse(down: @escaping (XNode) async throws -> (), up: ((XNode) async throws -> ())? = nil) async throws {
         let directionIndicator = XDirectionIndicator()
         try await XTraversalSequence(node: self, directionIndicator: directionIndicator).forEachAsync { node in
             if directionIndicator.up {
