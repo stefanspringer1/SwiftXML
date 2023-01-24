@@ -450,6 +450,8 @@ public extension Sequence<XContent> {
         return iterator.next() != nil
     } }
     
+    var absent: Bool { !exist }
+    
     var existing: Self? { exist ? self : nil }
     
 }
@@ -503,6 +505,8 @@ public extension Sequence<XElement> {
         var iterator = makeIterator()
         return iterator.next() != nil
     } }
+    
+    var absent: Bool { !exist }
     
     var existing: Self? { exist ? self : nil }
     

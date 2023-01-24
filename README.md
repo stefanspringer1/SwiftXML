@@ -722,6 +722,12 @@ var exist: Bool
 
 Note that after using `exist`, you can still iterate normally along the same sequence, without loosing an item.
 
+Test if nothing exists in a sequence by using `absent`:
+
+```
+var absent: Bool
+```
+
 If you would like to test if certain items exist, and many cases you would also then use those items. The property `existing` of a sequence of content or elements returns the sequence itself if items exist, and `nil` otherwise:
 
 ```Swift
