@@ -241,6 +241,10 @@ public class XNode {
         return self
     }
     
+    public func checking(_ f: (XNode) -> Bool) -> XNode? {
+        return f(self) ? self : nil
+    }
+    
     public func traverse(down: (XNode) throws -> (), up: ((XNode) throws -> ())? = nil) rethrows {
         let directionIndicator = XDirectionIndicator()
         try XTraversalSequence(node: self, directionIndicator: directionIndicator).forEach { node in
@@ -1241,6 +1245,10 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         return self
     }
     
+    public override func checking(_ f: (XElement) -> Bool) -> XElement? {
+        return f(self) ? self : nil
+    }
+    
     var _name: String
     
     public var name: String {
@@ -1551,6 +1559,10 @@ public final class XText: XContent, CustomStringConvertible {
         return self
     }
     
+    public override func checking(_ f: (XText) -> Bool) -> XText? {
+        return f(self) ? self : nil
+    }
+    
     public override func produceEntering(production: XProduction) throws {
         try production.writeText(text: self)
     }
@@ -1606,6 +1618,10 @@ public final class XLiteral: XContent, CustomStringConvertible {
         return self
     }
     
+    public override func checking(_ f: (XLiteral) -> Bool) -> XLiteral? {
+        return f(self) ? self : nil
+    }
+    
     public override func produceEntering(production: XProduction) throws {
         try production.writeLiteral(literal: self)
     }
@@ -1647,6 +1663,10 @@ public final class XInternalEntity: XContent {
         return self
     }
     
+    public override func checking(_ f: (XInternalEntity) -> Bool) -> XInternalEntity? {
+        return f(self) ? self : nil
+    }
+    
     override func produceEntering(production: XProduction) throws {
         try production.writeInternalEntity(internalEntity: self)
     }
@@ -1686,6 +1706,10 @@ public final class XExternalEntity: XContent {
     public override func applying(_ f: (XExternalEntity) -> ()) -> XExternalEntity {
         f(self)
         return self
+    }
+    
+    public override func checking(_ f: (XExternalEntity) -> Bool) -> XExternalEntity? {
+        return f(self) ? self : nil
     }
     
     override func produceEntering(production: XProduction) throws {
@@ -1748,6 +1772,10 @@ public final class XProcessingInstruction: XContent, CustomStringConvertible {
         return self
     }
     
+    public override func checking(_ f: (XProcessingInstruction) -> Bool) -> XProcessingInstruction? {
+        return f(self) ? self : nil
+    }
+    
     override func produceEntering(production: XProduction) throws {
         try production.writeProcessingInstruction(processingInstruction: self)
     }
@@ -1789,6 +1817,10 @@ public final class XComment: XContent {
         return self
     }
     
+    public override func checking(_ f: (XComment) -> Bool) -> XComment? {
+        return f(self) ? self : nil
+    }
+    
     override func produceEntering(production: XProduction) throws {
         try production.writeComment(comment: self)
     }
@@ -1828,6 +1860,10 @@ public final class XCDATASection: XContent {
     public override func applying(_ f: (XCDATASection) -> ()) -> XCDATASection {
         f(self)
         return self
+    }
+    
+    public override func checking(_ f: (XCDATASection) -> Bool) -> XCDATASection? {
+        return f(self) ? self : nil
     }
     
     override func produceEntering(production: XProduction) throws {
