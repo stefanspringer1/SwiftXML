@@ -149,6 +149,13 @@ final class SwiftXMLTests: XCTestCase {
     }
     
     func testAsync() async throws {
+        
+        let attachments = Attachments()
+        attachments["f"] = nil
+        
+        let e = XElement("u")
+        e.attached["ii"] = nil
+        
         let document = try parseXML(fromText: """
             <test>
               <b id="1"/>
