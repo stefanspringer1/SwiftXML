@@ -400,105 +400,11 @@ public extension XElement {
     }
 }
 
-public extension Sequence<XContent> {
+public extension Sequence where Element: Any {
     
-    var first: XContent? {
+    var firstItem: Element? {
         var iterator = makeIterator()
         return iterator.next()
-    }
-    
-    var second: XContent? {
-        var iterator = makeIterator()
-        _ = iterator.next() // first
-        return iterator.next() // second
-    }
-    
-    var third: XContent? {
-        var iterator = makeIterator()
-        _ = iterator.next() // first
-        _ = iterator.next() // second
-        return iterator.next() // third
-    }
-
-    var last: XContent? {
-        var iterator = makeIterator()
-        var content: XContent? = nil
-        var next: XContent? = nil
-        repeat {
-            content = next
-            next = iterator.next()
-        } while next != nil
-        return content
-    }
-    
-    func first(skipping: Int) -> XContent? {
-        var iterator = makeIterator()
-        var position = 0
-        var content: XContent? = nil
-        while position <= skipping {
-            content = iterator.next()
-            if content == nil {
-                return nil
-            }
-            position += 1
-        }
-        return content
-    }
-    
-    var exist: Bool { get {
-        var iterator = makeIterator()
-        return iterator.next() != nil
-    } }
-    
-    var absent: Bool { !exist }
-    
-    var existing: Self? { exist ? self : nil }
-    
-}
-
-public extension Sequence<XElement> {
-    
-    var first: XElement? {
-        var iterator = makeIterator()
-        return iterator.next()
-    }
-    
-    var second: XElement? {
-        var iterator = makeIterator()
-        _ = iterator.next() // first
-        return iterator.next() // second
-    }
-    
-    var third: XElement? {
-        var iterator = makeIterator()
-        _ = iterator.next() // first
-        _ = iterator.next() // second
-        return iterator.next() // third
-    }
-    
-    var last: XElement? {
-        var iterator = makeIterator()
-        var element: XElement? = nil
-        var next: XElement? = nil
-        repeat {
-            element = next
-            next = iterator.next()
-        } while next != nil
-        return element
-    }
-    
-    func first(skipping: Int) -> XElement? {
-        var iterator = makeIterator()
-        var position = 0
-        var element: XElement? = nil
-        while position <= skipping {
-            element = iterator.next()
-            if element == nil {
-                return nil
-            }
-            position += 1
-        }
-        return element
     }
     
     var exist: Bool { get {

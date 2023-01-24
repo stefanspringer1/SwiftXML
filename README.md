@@ -689,30 +689,11 @@ again:
 <e/>
 ```
 
-Once you have such a sequence, you can get the first, second, third, or the last item in the sequence via:
+Once you have such a sequence, you can get the first item in the sequence via property `firstItem`.
 
-```Swift
-var first: XContent?
-var first: XElement?
-var second: XContent?
-var second: XElement?
-var third: XContent?
-var third: XElement?
-```
+Use `mySequence.dropFirst(n)` to drop the first `n` items of the sequence `mySequence`. E.g. to get the second item, use ``mySequence.dropFirst(1).firstItem`.
 
-```Swift
-var last: XContent?
-var last: XElement?
-```
-
-Note that `last` has to iterate though the whole sequence to find the last item. It might be better to use `contentReversed` or `childrenReversed` in combination with `first`.
-
-You can also access the item at a certain index in the sequence via `first` with argument `skip`:
-
-```Swift
-func first(skipping: Int) -> XContent?
-func first(skipping: Int) -> XElement?
-```
+Note that there is no property getting you the last item of those sequences, as it would be quite inefficient. Better use `contentReversed` or `childrenReversed` in combination with `firstItem`.
 
 Test if something exists in a sequence by using `exist`:
 

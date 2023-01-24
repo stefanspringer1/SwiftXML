@@ -141,7 +141,11 @@ final class SwiftXMLTests: XCTestCase {
             </test>
             """)
         let bs = document.children.children
-        XCTAssertEqual([bs.first,bs.second,bs.third,].compactMap{ $0 }["id"].joined(separator: ", "), #"1, 2, 3"#)
+        XCTAssertEqual([
+            bs.firstItem,
+            bs.dropFirst(1).firstItem,
+            bs.dropFirst(2).firstItem
+        ].compactMap{ $0 }["id"].joined(separator: ", "), #"1, 2, 3"#)
     }
     
     func testAsync() async throws {
