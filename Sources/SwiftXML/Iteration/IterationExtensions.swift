@@ -402,7 +402,7 @@ public extension XElement {
 
 public extension Sequence where Element: Any {
     
-    var firstItem: Element? {
+    func first() -> Element? {
         var iterator = makeIterator()
         return iterator.next()
     }
