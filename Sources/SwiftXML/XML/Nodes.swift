@@ -1206,7 +1206,8 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     public override var backLink: XElement? { get { super.backLink as? XElement } }
     public override var finalBackLink: XElement? { get { super.finalBackLink as? XElement } }
     
-    public var attached = Attachments()
+    var _attached: Attachments? = nil
+    public var attached: Attachments { _attached ?? { _attached = Attachments(); return _attached! }() }
     
     public var description: String {
         get {
