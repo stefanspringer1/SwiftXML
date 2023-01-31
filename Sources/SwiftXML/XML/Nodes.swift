@@ -772,9 +772,11 @@ extension XBranchInternal {
         if let lastAsText = lastContent as? XText, let newAsText = node as? XText {
             lastAsText._value = lastAsText._value + newAsText._value
             lastAsText.whitespace = .UNKNOWN
+            newAsText.remove()
         }
         else if let lastAsLiteral = lastContent as? XLiteral, let newAsLiteral = node as? XLiteral {
             lastAsLiteral._value = lastAsLiteral._value + newAsLiteral._value
+            newAsLiteral.remove()
         }
         else {
             node._removeKeep()
@@ -831,9 +833,11 @@ extension XBranchInternal {
         if let firstAsText = firstContent as? XText, let newAsText = node as? XText {
             firstAsText._value = newAsText._value + firstAsText._value
             firstAsText.whitespace = .UNKNOWN
+            newAsText.remove()
         }
         else if let firstAsLiteral = firstContent as? XLiteral, let newAsLiteral = node as? XLiteral {
             firstAsLiteral._value = newAsLiteral._value + firstAsLiteral._value
+            newAsLiteral.remove()
         }
         else {
             node._removeKeep()
