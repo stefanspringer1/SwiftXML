@@ -506,9 +506,11 @@ public class XContent: XNode {
         if let selfAsText = self as? XText, let newAsText = node as? XText {
             selfAsText._value = newAsText._value + selfAsText._value
             selfAsText.whitespace = .UNKNOWN
+            newAsText.remove()
         }
         else if let selfAsLiteral = self as? XLiteral, let newAsLiteral = node as? XLiteral {
             selfAsLiteral._value = newAsLiteral._value + selfAsLiteral._value
+            newAsLiteral.remove()
         }
         else {
             node._removeKeep()
@@ -560,9 +562,11 @@ public class XContent: XNode {
         if let selfAsText = self as? XText, let newAsText = node as? XText {
             selfAsText._value = selfAsText._value + newAsText._value
             selfAsText.whitespace = .UNKNOWN
+            newAsText.remove()
         }
         else if let selfAsLiteral = self as? XLiteral, let newAsLiteral = node as? XLiteral {
             selfAsLiteral._value = selfAsLiteral._value + newAsLiteral._value
+            newAsLiteral.remove()
         }
         else if _parent?.__lastContent === self {
             _parent?._add(node)
