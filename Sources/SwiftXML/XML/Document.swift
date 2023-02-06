@@ -211,6 +211,14 @@ public final class XDocument: XNode, XBranchInternal {
         return XElementsOfSameNameSequence(document: self, name: elementName)
     }
     
+    public func elements(ofNames names: [String]) -> XElementSequence {
+        return XElementsOfNamesSequence(forNames: names, forDocument: self)
+    }
+    
+    public func elements(ofNames names: String...) -> XElementSequence {
+        return elements(ofNames: names)
+    }
+    
     // -------------------------------------------------------------------------
     // attributes of same name:
     // -------------------------------------------------------------------------
@@ -261,6 +269,14 @@ public final class XDocument: XNode, XBranchInternal {
             document: self,
             attributeName: attributeName
         )
+    }
+    
+    public func attributes(ofNames names: [String]) -> XAttributeSequence {
+        return XAttributesOfNamesSequence(forNames: names, forDocument: self)
+    }
+    
+    public func attributes(ofNames names: String...) -> XAttributeSequence {
+        return attributes(ofNames: names)
     }
     
     // -------------------------------------------------------------------------

@@ -224,4 +224,56 @@ final class SwiftXMLTests: XCTestCase {
         } // okay: map can throw because the closure can throw
     }
     
+    func testElementsWithNames() async throws {
+        
+        let document = try parseXML(fromText: """
+            <a>
+                <b id="b1"/>
+                <c id="c1"/>
+                <d id="d1"/>
+                <b id="b2"/>
+                <c id="c2"/>
+                <d id="d2"/>
+            </a>
+            """)
+        
+        var collectedIDs = [String]()
+        
+        document.elements(ofNames: "b", "c", "d").forEach { element in
+            if let id = element["id"] {
+                collectedIDs.append(id)
+                if id == "c1" {
+                    element.insertPrevious { XElement("b", ["id": "bInserted1"]) }
+                }
+            }
+        }
+        
+        XCTAssertEqual(collectedIDs.joined(separator: ", "), "b1, b2, c1, c2, d1, d2, bInserted1")
+    }
+    
+    func testAttributesWithNames() async throws {
+        
+        let document = try parseXML(fromText: """
+            <a>
+                <x b="b1"/>
+                <x c="c1"/>
+                <x d="d1"/>
+                <x b="b2"/>
+                <x c="c2"/>
+                <x d="d2"/>
+            </a>
+            """)
+        
+        var collectedAttributeValues = [String]()
+        
+        document.attributes(ofNames: "b", "c", "d").forEach { attribute in
+            collectedAttributeValues.append(attribute.value)
+            if attribute.value == "c1" {
+                attribute.element.insertPrevious { XElement("x", ["b": "bInserted1"]) }
+            }
+        }
+        
+        XCTAssertEqual(collectedAttributeValues.joined(separator: ", "), "b1, b2, c1, c2, d1, d2, bInserted1")
+    }
+    
 }

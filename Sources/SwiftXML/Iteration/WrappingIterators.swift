@@ -150,7 +150,7 @@ public final class XElementNameIterator: XElementIterator {
     }
 }
 
-public typealias XAttributeSpot = (String,XElement)
+public struct XAttributeSpot { let name: String; let value: String; let element: XElement }
 
 public final class XBidirectionalAttributeIterator: XAttributeIterator {
     
@@ -186,8 +186,8 @@ public final class XBidirectionalAttributeIterator: XAttributeIterator {
                 current?.attributeIterators.append(self)
             }
         }
-        if let theValue = current?.value, let theElement = current?.element {
-            return XAttributeSpot(value: theValue,element: theElement)
+        if let name = current?.name, let value = current?.value, let element = current?.element {
+            return XAttributeSpot(name: name, value: value, element: element)
         }
         else {
             current?.attributeIterators.remove(self)
@@ -199,9 +199,9 @@ public final class XBidirectionalAttributeIterator: XAttributeIterator {
         prefetched = false
         current?.attributeIterators.remove(self)
         current = attributeIterator.previous()
-        if let theValue = current?.value, let theElement = current?.element {
+        if let name = current?.name, let value = current?.value, let element = current?.element {
             current?.attributeIterators.append(self)
-            return XAttributeSpot(value: theValue,element: theElement)
+            return XAttributeSpot(name: name, value:value, element: element)
         }
         else {
             return nil
