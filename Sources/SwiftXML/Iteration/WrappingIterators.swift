@@ -150,7 +150,7 @@ public final class XElementNameIterator: XElementIterator {
     }
 }
 
-public struct XAttributeSpot { let name: String; let value: String; let element: XElement }
+public struct XAttributeSpot { public let name: String; public let value: String; public let element: XElement }
 
 public final class XBidirectionalAttributeIterator: XAttributeIterator {
     
