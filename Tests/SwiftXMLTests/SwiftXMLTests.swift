@@ -239,7 +239,7 @@ final class SwiftXMLTests: XCTestCase {
         
         var collectedIDs = [String]()
         
-        document.elements(ofNames: "b", "c", "d").forEach { element in
+        document.elements(ofName: "b", "c", "d").forEach { element in
             if let id = element["id"] {
                 collectedIDs.append(id)
                 if id == "c1" {
@@ -266,11 +266,42 @@ final class SwiftXMLTests: XCTestCase {
         
         var collectedAttributeValues = [String]()
         
-        document.attributes(ofNames: "b", "c", "d").forEach { attribute in
+        document.attributes(ofName: "b").forEach { attribute in print(attribute) }
+        
+        document.attributes(ofName: "b", "c", "d").forEach { attribute in
             collectedAttributeValues.append(attribute.value)
             if attribute.value == "c1" {
                 attribute.element.insertPrevious { XElement("x", ["b": "bInserted1"]) }
             }
+        }
+        
+        let transformation = XTransformation {
+            
+            XRule(forElements: "table") { table in
+                table.insertNext {
+                    XElement("caption") {
+                        "Table: "
+                        table.children({ $0.name.contains("title") }).content
+                    }
+                }
+            }
+            
+            XRule(forElements: "tbody", "tfoot") { tablePart in
+                tablePart
+                    .children("tr")
+                    .children("th")
+                    .forEach { cell in
+                        cell.name = "td"
+                    }
+            }
+            
+            XRule(forAttributes: "id") { id in
+                print("\n----- Rule for attribute \"id\" -----\n")
+                print("  \(id.element) --> ", terminator: "")
+                id.element["id"] = "done-" + id.value
+                print(id.element)
+            }
+            
         }
         
         XCTAssertEqual(collectedAttributeValues.joined(separator: ", "), "b1, b2, c1, c2, d1, d2, bInserted1")

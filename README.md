@@ -7,7 +7,7 @@ This library is published under the Apache License 2.0.
 ```Swift
 let transformation = XTransformation {
     
-    XRule(forElements: ["table"]) { table in
+    XRule(forElements: "table") { table in
         table.insertNext {
             XElement("caption") {
                 "Table: "
@@ -16,7 +16,7 @@ let transformation = XTransformation {
         }
     }
     
-    XRule(forElements: ["tbody", "tfoot"]) { tablePart in
+    XRule(forElements: "tbody", "tfoot") { tablePart in
         tablePart
             .children("tr")
             .children("th")
@@ -25,8 +25,8 @@ let transformation = XTransformation {
             }
     }
     
-    XRule(forAttributes: ["label"]) { (value,element) in
-        element["label"] = value + ")"
+    XRule(forAttributes: "label") { label in
+        label.element["label"] = label.value + ")"
     }
     
 }
@@ -543,7 +543,7 @@ myDocument.attributes(ofName: "id").forEach { id in
 
 Note that we did not use something like `...forEach { attribute in ... attribute.value ...}` but we used the attribute name for the name of the variable in the `forEach` loop to make clear what attribute is used, without an unnecesary complex variable name.
 
-Find the elements of several names or the attributes of several names via the methods `elements(ofNames:)` or `attributes(ofNames:)` of the document, respectively. Note that just like the methods for single names, what you add during the iteration will then also be considered.
+Find the elements of several names or the attributes of several names by using sevearal names in `elements(ofName:)` or `attributes(ofName:)`, respectively. Note that just like the methods for single names, what you add during the iteration will then also be considered.
 
 ## Finding related content
 
@@ -1436,7 +1436,7 @@ var count = 1
 
 let transformation = XTransformation {
     
-    XRule(forElements: ["formula"]) { element in
+    XRule(forElements: "formula") { element in
         print("\n----- Rule for element \"formula\" -----\n")
         print("  \(element)")
         if count == 1 {
@@ -1449,7 +1449,7 @@ let transformation = XTransformation {
         }
     }
     
-    XRule(forElements: ["image"]) { element in
+    XRule(forElements: "image") { element in
         print("\n----- Rule for element \"image\" -----\n")
         print("  \(element)")
         if count == 2 {
@@ -1461,11 +1461,11 @@ let transformation = XTransformation {
         }
     }
     
-    XRule(forAttributes: ["id"]) { (value,element) in
+    XRule(forAttributes: "id") { id in
         print("\n----- Rule for attribute \"id\" -----\n")
-        print("  \(element) --> ", terminator: "")
-        element["id"] = "done-" + value
-        print(element)
+        print("  \(id.element) --> ", terminator: "")
+        id.element["id"] = "done-" + id.value
+        print(id.element)
     }
     
 }
@@ -1518,7 +1518,7 @@ var transformationAlias: XTransformation? = nil
 
 let transformation = XTransformation {
     
-    XRule(forElements: ["a"]) { _ in
+    XRule(forElements: "a") { _ in
         transformationAlias?.stop()
     }
     
@@ -1565,7 +1565,7 @@ First, you can always look up the namespace prefix settings (attributes `xmlns:.
 ```Swift
 let transformation = XTransformation {
     
-    XRule(forElements: ["\(myprefix):a"]) { a in
+    XRule(forElements: "\(myprefix):a") { a in
         ...
     }
     

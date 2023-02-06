@@ -20,7 +20,17 @@ public struct XRule {
         self.action = action
     }
     
+    public init(forElements names: String..., action: @escaping XElementAction) {
+        self.names = names
+        self.action = action
+    }
+    
     public init(forAttributes names: [String], action: @escaping XAttributeAction) {
+        self.names = names
+        self.action = action
+    }
+    
+    public init(forAttributes names: String..., action: @escaping XAttributeAction) {
         self.names = names
         self.action = action
     }
