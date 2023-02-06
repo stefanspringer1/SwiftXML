@@ -245,6 +245,10 @@ public class XNode {
         return f(self) ? self : nil
     }
     
+    public func hasProperty(_ f: (XNode) -> Bool) -> Bool {
+        return f(self)
+    }
+    
     public func traverse(down: (XNode) throws -> (), up: ((XNode) throws -> ())? = nil) rethrows {
         let directionIndicator = XDirectionIndicator()
         try XTraversalSequence(node: self, directionIndicator: directionIndicator).forEach { node in
