@@ -245,7 +245,7 @@ public class XNode {
         return f(self) ? self : nil
     }
     
-    public func hasProperty(_ f: (XNode) -> Bool) -> Bool {
+    public func hasProperties(_ f: (XNode) -> Bool) -> Bool {
         return f(self)
     }
     
@@ -1262,7 +1262,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         return f(self) ? self : nil
     }
     
-    public override func hasProperty(_ f: (XElement) -> Bool) -> Bool {
+    public override func hasProperties(_ f: (XElement) -> Bool) -> Bool {
         return f(self)
     }
     
@@ -1580,7 +1580,7 @@ public final class XText: XContent, CustomStringConvertible {
         return f(self) ? self : nil
     }
     
-    public override func hasProperty(_ f: (XText) -> Bool) -> Bool {
+    public override func hasProperties(_ f: (XText) -> Bool) -> Bool {
         return f(self)
     }
     
@@ -1643,7 +1643,7 @@ public final class XLiteral: XContent, CustomStringConvertible {
         return f(self) ? self : nil
     }
     
-    public override func hasProperty(_ f: (XLiteral) -> Bool) -> Bool {
+    public override func hasProperties(_ f: (XLiteral) -> Bool) -> Bool {
         return f(self)
     }
     
@@ -1692,7 +1692,7 @@ public final class XInternalEntity: XContent {
         return f(self) ? self : nil
     }
     
-    public override func hasProperty(_ f: (XInternalEntity) -> Bool) -> Bool {
+    public override func hasProperties(_ f: (XInternalEntity) -> Bool) -> Bool {
         return f(self)
     }
     
@@ -1741,7 +1741,7 @@ public final class XExternalEntity: XContent {
         return f(self) ? self : nil
     }
     
-    public override func hasProperty(_ f: (XExternalEntity) -> Bool) -> Bool {
+    public override func hasProperties(_ f: (XExternalEntity) -> Bool) -> Bool {
         return f(self)
     }
     
@@ -1809,7 +1809,7 @@ public final class XProcessingInstruction: XContent, CustomStringConvertible {
         return f(self) ? self : nil
     }
     
-    public override func hasProperty(_ f: (XProcessingInstruction) -> Bool) -> Bool {
+    public override func hasProperties(_ f: (XProcessingInstruction) -> Bool) -> Bool {
         return f(self)
     }
     
@@ -1858,7 +1858,7 @@ public final class XComment: XContent {
         return f(self) ? self : nil
     }
     
-    public override func hasProperty(_ f: (XComment) -> Bool) -> Bool {
+    public override func hasProperties(_ f: (XComment) -> Bool) -> Bool {
         return f(self)
     }
     
@@ -1907,7 +1907,7 @@ public final class XCDATASection: XContent {
         return f(self) ? self : nil
     }
     
-    public override func hasProperty(_ f: (XCDATASection) -> Bool) -> Bool {
+    public override func hasProperties(_ f: (XCDATASection) -> Bool) -> Bool {
         return f(self)
     }
     
