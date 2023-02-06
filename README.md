@@ -534,12 +534,14 @@ The items of the returned sequence are of type `XAttributeSpot`, which is a pair
 Example:
 
 ```Swift
-myDocument.attributes(ofName: "id").forEach { attribute in
-    if attribute.element.name == "paragraph" {
-        print("found paragraph with ID \"\(attribute.value)\"")
+myDocument.attributes(ofName: "id").forEach { id in
+    if id.element.name == "paragraph" {
+        print("found paragraph with ID \"\(id.value)\"")
     }
 }
 ```
+
+Note that we did not use something like `...forEach { attribute in ... attribute.value ...}` but we used the attribute name for the name of the variable in the `forEach` loop to make clear what attribute is used, without an unnecesary complex variable name.
 
 Find the elements of several names or the attributes of several names via the methods `elements(ofNames:)` or `attributes(ofNames:)` of the document, respectively. Note that just like the methods for single names, what you add during the iteration will then also be considered.
 
