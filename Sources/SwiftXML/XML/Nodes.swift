@@ -1262,6 +1262,10 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         return f(self) ? self : nil
     }
     
+    public override func hasProperty(_ f: (XElement) -> Bool) -> Bool {
+        return f(self)
+    }
+    
     var _name: String
     
     public var name: String {
@@ -1576,6 +1580,10 @@ public final class XText: XContent, CustomStringConvertible {
         return f(self) ? self : nil
     }
     
+    public override func hasProperty(_ f: (XText) -> Bool) -> Bool {
+        return f(self)
+    }
+    
     public override func produceEntering(production: XProduction) throws {
         try production.writeText(text: self)
     }
@@ -1635,6 +1643,10 @@ public final class XLiteral: XContent, CustomStringConvertible {
         return f(self) ? self : nil
     }
     
+    public override func hasProperty(_ f: (XLiteral) -> Bool) -> Bool {
+        return f(self)
+    }
+    
     public override func produceEntering(production: XProduction) throws {
         try production.writeLiteral(literal: self)
     }
@@ -1680,6 +1692,10 @@ public final class XInternalEntity: XContent {
         return f(self) ? self : nil
     }
     
+    public override func hasProperty(_ f: (XInternalEntity) -> Bool) -> Bool {
+        return f(self)
+    }
+    
     override func produceEntering(production: XProduction) throws {
         try production.writeInternalEntity(internalEntity: self)
     }
@@ -1723,6 +1739,10 @@ public final class XExternalEntity: XContent {
     
     public override func checking(_ f: (XExternalEntity) -> Bool) -> XExternalEntity? {
         return f(self) ? self : nil
+    }
+    
+    public override func hasProperty(_ f: (XExternalEntity) -> Bool) -> Bool {
+        return f(self)
     }
     
     override func produceEntering(production: XProduction) throws {
@@ -1789,6 +1809,10 @@ public final class XProcessingInstruction: XContent, CustomStringConvertible {
         return f(self) ? self : nil
     }
     
+    public override func hasProperty(_ f: (XProcessingInstruction) -> Bool) -> Bool {
+        return f(self)
+    }
+    
     override func produceEntering(production: XProduction) throws {
         try production.writeProcessingInstruction(processingInstruction: self)
     }
@@ -1834,6 +1858,10 @@ public final class XComment: XContent {
         return f(self) ? self : nil
     }
     
+    public override func hasProperty(_ f: (XComment) -> Bool) -> Bool {
+        return f(self)
+    }
+    
     override func produceEntering(production: XProduction) throws {
         try production.writeComment(comment: self)
     }
@@ -1877,6 +1905,10 @@ public final class XCDATASection: XContent {
     
     public override func checking(_ f: (XCDATASection) -> Bool) -> XCDATASection? {
         return f(self) ? self : nil
+    }
+    
+    public override func hasProperty(_ f: (XCDATASection) -> Bool) -> Bool {
+        return f(self)
     }
     
     override func produceEntering(production: XProduction) throws {
