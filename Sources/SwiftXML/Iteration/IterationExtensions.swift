@@ -282,15 +282,15 @@ public extension XElement {
 
 public extension Sequence where Element: Any {
     
-    func first() -> Element? {
+    var first: Element? {
         var iterator = makeIterator()
         return iterator.next()
     }
     
-    var exist: Bool { get {
+    var exist: Bool {
         var iterator = makeIterator()
         return iterator.next() != nil
-    } }
+    }
     
     var absent: Bool { !exist }
     
