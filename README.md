@@ -693,11 +693,11 @@ again:
 <e/>
 ```
 
-Once you have such a sequence, you can get the first item in the sequence via its method `first()` (which is introduced by this package in addition to the already defined `first(where:)`).
+Once you have such a sequence, you can get the first item in the sequence via its property `first` (which is introduced by this package in addition to the already defined `first(where:)`).
 
-The usual methods of sequences can be used. E.g., use `mySequence.dropFirst(n)` to drop the first `n` items of the sequence `mySequence`. E.g. to get the second item of the sequence, use ``mySequence.dropFirst(1).first()`.
+The usual methods of sequences can be used. E.g., use `mySequence.dropFirst(n)` to drop the first `n` items of the sequence `mySequence`. E.g. to get the third item of the sequence, use ``mySequence.dropFirst(2).first`.
 
-Note that there is no property getting you the last item of those sequences, as it would be quite inefficient. Better use `contentReversed` or `childrenReversed` in combination with `first()`.
+Note that there is no property getting you the last item of those sequences, as it would be quite inefficient. Better use `contentReversed` or `childrenReversed` in combination with `first`.
 
 Test if something exists in a sequence by using `exist`:
 
