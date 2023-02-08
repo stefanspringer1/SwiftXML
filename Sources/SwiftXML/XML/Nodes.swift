@@ -482,6 +482,7 @@ public class XContent: XNode {
         
         if let thePreviousText = previousText, let theNextText = nextText {
             thePreviousText.value += theNextText.value
+            thePreviousText.whitespace = thePreviousText.whitespace + theNextText.whitespace
             theNextText.remove()
         }
         
@@ -509,7 +510,7 @@ public class XContent: XNode {
     func _insertPrevious(_ node: XContent) {
         if let selfAsText = self as? XText, let newAsText = node as? XText {
             selfAsText._value = newAsText._value + selfAsText._value
-            selfAsText.whitespace = .UNKNOWN
+            selfAsText.whitespace = newAsText.whitespace + selfAsText.whitespace
             newAsText.remove()
         }
         else if let selfAsLiteral = self as? XLiteral, let newAsLiteral = node as? XLiteral {
@@ -565,7 +566,7 @@ public class XContent: XNode {
     func _insertNext(_ node: XContent) {
         if let selfAsText = self as? XText, let newAsText = node as? XText {
             selfAsText._value = selfAsText._value + newAsText._value
-            selfAsText.whitespace = .UNKNOWN
+            selfAsText.whitespace = selfAsText.whitespace + newAsText.whitespace
             newAsText.remove()
         }
         else if let selfAsLiteral = self as? XLiteral, let newAsLiteral = node as? XLiteral {
@@ -779,7 +780,7 @@ extension XBranchInternal {
     func _add(_ node: XContent) {
         if let lastAsText = lastContent as? XText, let newAsText = node as? XText {
             lastAsText._value = lastAsText._value + newAsText._value
-            lastAsText.whitespace = .UNKNOWN
+            lastAsText.whitespace = lastAsText.whitespace + newAsText.whitespace
             newAsText.remove()
         }
         else if let lastAsLiteral = lastContent as? XLiteral, let newAsLiteral = node as? XLiteral {
@@ -840,7 +841,7 @@ extension XBranchInternal {
     func _addFirst(_ node: XContent) {
         if let firstAsText = firstContent as? XText, let newAsText = node as? XText {
             firstAsText._value = newAsText._value + firstAsText._value
-            firstAsText.whitespace = .UNKNOWN
+            firstAsText.whitespace = newAsText.whitespace + firstAsText.whitespace
             newAsText.remove()
         }
         else if let firstAsLiteral = firstContent as? XLiteral, let newAsLiteral = node as? XLiteral {
