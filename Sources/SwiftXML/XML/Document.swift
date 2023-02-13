@@ -265,10 +265,7 @@ public final class XDocument: XNode, XBranchInternal {
     }
     
     public func attributes(ofName name: String) -> XAttributeSequence {
-        return XAttributesOfSameNameSequence(
-            document: self,
-            attributeName: name
-        )
+        return XAttributesOfSameNameSequence(document: self, attributeName: name)
     }
     
     public func attributes(ofName names: String...) -> XAttributeSequence {
