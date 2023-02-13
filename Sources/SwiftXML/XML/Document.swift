@@ -211,12 +211,12 @@ public final class XDocument: XNode, XBranchInternal {
         return XElementsOfSameNameSequence(document: self, name: elementName)
     }
     
-    public func elements(ofName names: [String]) -> XElementSequence {
-        return XElementsOfNamesSequence(forNames: names, forDocument: self)
+    public func elements(ofName elementNames: String...) -> XElementSequence {
+        return elements(ofName: elementNames)
     }
     
-    public func elements(ofName names: String...) -> XElementSequence {
-        return elements(ofName: names)
+    public func elements(ofName elementNames: [String]) -> XElementSequence {
+        return XElementsOfNamesSequence(forNames: elementNames, forDocument: self)
     }
     
     // -------------------------------------------------------------------------
