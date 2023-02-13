@@ -207,16 +207,16 @@ public final class XDocument: XNode, XBranchInternal {
         }
     }
     
-    public func elements(ofName elementName: String) -> XElementSequence {
-        return XElementsOfSameNameSequence(document: self, name: elementName)
+    public func elements(ofName name: String) -> XElementSequence {
+        return XElementsOfSameNameSequence(document: self, name: name)
     }
     
-    public func elements(ofName elementNames: String...) -> XElementSequence {
-        return elements(ofName: elementNames)
+    public func elements(ofName names: String...) -> XElementSequence {
+        return elements(ofName: names)
     }
     
-    public func elements(ofName elementNames: [String]) -> XElementSequence {
-        return XElementsOfNamesSequence(forNames: elementNames, forDocument: self)
+    public func elements(ofName names: [String]) -> XElementSequence {
+        return XElementsOfNamesSequence(forNames: names, forDocument: self)
     }
     
     // -------------------------------------------------------------------------
@@ -264,19 +264,19 @@ public final class XDocument: XNode, XBranchInternal {
         attribute.nextWithSameName = nil
     }
     
-    public func attributes(ofName attributeName: String) -> XAttributeSequence {
+    public func attributes(ofName name: String) -> XAttributeSequence {
         return XAttributesOfSameNameSequence(
             document: self,
-            attributeName: attributeName
+            attributeName: name
         )
-    }
-    
-    public func attributes(ofName names: [String]) -> XAttributeSequence {
-        return XAttributesOfNamesSequence(forNames: names, forDocument: self)
     }
     
     public func attributes(ofName names: String...) -> XAttributeSequence {
         return attributes(ofName: names)
+    }
+    
+    public func attributes(ofName names: [String]) -> XAttributeSequence {
+        return XAttributesOfNamesSequence(forNames: names, forDocument: self)
     }
     
     // -------------------------------------------------------------------------
