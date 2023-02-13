@@ -275,7 +275,7 @@ final class SwiftXMLTests: XCTestCase {
             }
         }
         
-        let transformation = XTransformation {
+        let _ = XTransformation {
             
             XRule(forElements: "table") { table in
                 table.insertNext {
