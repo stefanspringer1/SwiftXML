@@ -951,7 +951,7 @@ b1
 
 The same applies to e.g. the `filter` method, which, besides letting the code look more complex when used instead of the filter options described above, is not a good option when defining content.
 
-For a single node, use the `checking(...)` method to see if a condition is met; if yes, the node is returned, if not, `nil` is returned. Use `hasProperties(...)` to see if a node has a certain properties.
+For a single node, use the `havingProperties(...)` method to see if a condition is met; if yes, the node is returned, if not, `nil` is returned. Use `hasProperties(...)` to just see if a node has a certain properties., without returning the node.
 
 The content of elements containing other elements while defining their content is being built from the inside to the ouside: Consider the following example:
 
