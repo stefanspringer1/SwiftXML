@@ -581,6 +581,12 @@ Get the last content of a branch:
 var lastContent: XContent?
 ```
 
+If there is exactly one node contained, get it, else get `nil`:
+
+```Swift
+var singleContent: XContent?
+```
+
 The direct content of a document or an element (“direct” means that their parent is this document or element):
 
 ```Swift
@@ -1378,7 +1384,7 @@ This can be very convenient when processing text, e.g. it is then very straightf
 
 In those cases, you may use an `XSpot` node as as separator to a text, as shown in the following example. An `XSpot` is the “cheapest” (or simplest) separator you could use in such a case.
 
-An `XSpot` node has a special behaviour that stems from the way it is internally used by the library. An `XSpot` “does nothing” besides existing at a certain spot in the XML tree (hence its name), but it invisible to all iterations except tree traversals, it is invisible for `previousTouching`, `previousInTreeTouching`, `firstContent`, `isEmpty`, etc., and it is also invisible for a production. So you should use `XSpot` nodes only in a very controlled way, e.g. temporarily. As already mentioned, `XSpot` nodes are found by a tree traversal, so if you do need to find them, you can. And the mentioned properties and methods that do not see an `XSpot` can very well be called for an `XSpot` itself, e.g. `myXSpot.next`. 
+An `XSpot` node has a special behaviour that stems from the way it is internally used by the library. An `XSpot` “does nothing” besides existing at a certain spot in the XML tree (hence its name), but it invisible to all iterations except tree traversals, it is invisible for `previousTouching`, `previousInTreeTouching`, `firstContent`, `singleContent`, `isEmpty`, etc., and it is also invisible for a production. So you should use `XSpot` nodes only in a very controlled way, e.g. temporarily. As already mentioned, `XSpot` nodes are found by a tree traversal, so if you do need to find them, you can. And the mentioned properties and methods that do not see an `XSpot` can very well be called for an `XSpot` itself, e.g. `myXSpot.next`. 
 
 Consider the following example where the occurrences of a search text gets a greenish background. In this example, you do not want `part` to be added to `text` in the iteration:
 
