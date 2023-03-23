@@ -144,6 +144,20 @@ public class XNode {
         }
     }
     
+    public func parent(_ names: [String]) -> XElement? {
+        let element = parent
+        if let theElement = element, names.contains(theElement.name) {
+            return theElement
+        }
+        else {
+            return nil
+        }
+    }
+    
+    public func parent(_ names: String...) -> XElement? {
+        parent(names)
+    }
+    
     weak var _previous: XContent? = nil
     var _next: XContent? = nil
     
