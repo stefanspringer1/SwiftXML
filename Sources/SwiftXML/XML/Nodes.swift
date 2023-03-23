@@ -752,7 +752,9 @@ extension XBranchInternal {
         return _lastContent(condition)
     }
     
-    public var singleContent: XContent? {
+    public var singleContent: XContent? { _singleContent }
+    
+    public var _singleContent: XContent? {
         if let firstContent, firstContent.nextTouching == nil {
             return firstContent
         } else {
@@ -1367,6 +1369,8 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     public func lastContent(_ condition: (XContent) -> Bool) -> XContent? {
         return _lastContent(condition)
     }
+    
+    public var singleContent: XContent? { _singleContent }
     
     public var isEmpty: Bool { _isEmpty }
     

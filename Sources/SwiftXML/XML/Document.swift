@@ -105,6 +105,8 @@ public final class XDocument: XNode, XBranchInternal {
         return _lastContent(condition)
     }
     
+    public var singleContent: XContent? { _singleContent }
+    
     public var isEmpty: Bool { _isEmpty }
     
     public func add(@XContentBuilder builder: () -> [XContent]) {
