@@ -752,6 +752,14 @@ extension XBranchInternal {
         return _lastContent(condition)
     }
     
+    public var singleContent: XContent? {
+        if let firstContent, firstContent.nextTouching == nil {
+            return firstContent
+        } else {
+            return nil
+        }
+    }
+    
     var _isEmpty: Bool { _firstContent == nil }
     
     public var isEmpty: Bool { _isEmpty }
