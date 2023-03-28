@@ -362,6 +362,19 @@ public final class XSequenceOfTexts: XTextSequence {
     }
 }
 
+public final class XSequenceOfAllTexts: XTextSequence {
+    
+    let node: XNode
+    
+    init(node: XNode) {
+        self.node = node
+    }
+    
+    public override func makeIterator() -> XTextIterator {
+        return XBidirectionalTextIterator(textIterator: XAllTextsIterator(node: node))
+    }
+}
+
 public final class XReversedSequenceOfTexts: XTextSequence {
     
     let node: XNode
@@ -437,6 +450,19 @@ public final class XAllContentIncludingSelfSequence: XContentSequence {
     
     public override func makeIterator() -> XBidirectionalContentIterator {
         return XBidirectionalContentIterator(nodeIterator: XAllContentsIncludingSelfIterator(node: node))
+    }
+}
+
+public final class XAllTextsSequence: XTextSequence {
+    
+    let node: XNode
+    
+    init(node: XNode) {
+        self.node = node
+    }
+    
+    public override func makeIterator() -> XTextIterator {
+        return XBidirectionalTextIterator(textIterator: XAllTextsIterator(node: node))
     }
 }
 

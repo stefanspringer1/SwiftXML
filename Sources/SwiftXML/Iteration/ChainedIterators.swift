@@ -792,6 +792,22 @@ extension Sequence<XContent> {
         XTextSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.textsReversed(until: condition) })
     }
     
+    public var allTexts: XTextSequence {
+        get { XTextSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.allTexts }) }
+    }
+    
+    public func allTexts(_ condition: @escaping (XContent) -> Bool) -> XTextSequence {
+        XTextSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.allTexts(condition) })
+    }
+    
+    public func allTexts(while condition: @escaping (XContent) -> Bool) -> XTextSequence {
+        XTextSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.allTexts(while: condition) })
+    }
+    
+    public func allTexts(until condition: @escaping (XContent) -> Bool) -> XTextSequence {
+        XTextSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.allTexts(until: condition) })
+    }
+    
     public var children: XElementSequence {
         get { XElementSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.children }) }
     }
@@ -1147,6 +1163,22 @@ extension Sequence<XElement> {
     
     public func textsReversed(until condition: @escaping (XContent) -> Bool) -> XTextSequence {
         XTextSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { content in content.textsReversed(until: condition) })
+    }
+    
+    public var allTexts: XTextSequence {
+        get { XTextSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { content in content.allTexts }) }
+    }
+    
+    public func allTexts(_ condition: @escaping (XContent) -> Bool) -> XTextSequence {
+        XTextSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { content in content.allTexts(condition) })
+    }
+    
+    public func allTexts(while condition: @escaping (XContent) -> Bool) -> XTextSequence {
+        XTextSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { content in content.allTexts(while: condition) })
+    }
+    
+    public func allTexts(until condition: @escaping (XContent) -> Bool) -> XTextSequence {
+        XTextSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { content in content.allTexts(until: condition) })
     }
     
     public var children: XElementSequence {

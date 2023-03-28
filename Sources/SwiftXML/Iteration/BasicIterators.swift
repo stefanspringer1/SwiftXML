@@ -1123,6 +1123,53 @@ public final class XDescendantsIterator: XElementIteratorProtocol {
 }
 
 /**
+ Iterates though all texts (tree traversal) of a branch.
+ */
+public final class XAllTextsIterator: XTextIteratorProtocol {
+    
+    weak var startNode: XNode?
+    weak var currentNode: XNode? = nil
+    
+    public init(
+        node: XNode
+    ) {
+        self.startNode = node
+        self.currentNode = node
+    }
+    
+    public func next() -> XText? {
+        repeat {
+            if startNode?.getLastInTree() === currentNode {
+                currentNode = nil
+            }
+            else {
+                currentNode = currentNode?._nextInTree
+                if let element = currentNode as? XText {
+                    return element
+                }
+            }
+        } while currentNode != nil
+        return nil
+    }
+    
+    public func previous() -> XText? {
+        repeat {
+            if currentNode === startNode {
+                currentNode = startNode
+                return nil
+            }
+            else {
+                currentNode = currentNode?._previousInTree
+                if let element = currentNode as? XText {
+                    return element
+                }
+            }
+        } while currentNode != nil
+        return nil
+    }
+}
+
+/**
  Iterates though all elements (tree traversal) of a branch, inlcuding teh start node itself if it is an element.
  */
 public final class XDescendantsIncludingSelfIterator: XElementIteratorProtocol {

@@ -97,6 +97,22 @@ public extension XNode {
         return XTextSequenceUntilCondition(sequence: XReversedSequenceOfTexts(node: self), until: condition)
     }
     
+    var allTexts: XTextSequence {
+        get { XSequenceOfAllTexts(node: self) }
+    }
+    
+    func allTexts(_ condition: @escaping (XText) -> Bool) -> XTextSequence {
+        return XTextSequenceWithCondition(sequence: XSequenceOfAllTexts(node: self), condition: condition)
+    }
+    
+    func allTexts(while condition: @escaping (XText) -> Bool) -> XTextSequence {
+        return XTextSequenceWhileCondition(sequence: XSequenceOfAllTexts(node: self), while: condition)
+    }
+    
+    func allTexts(until condition: @escaping (XText) -> Bool) -> XTextSequence {
+        return XTextSequenceUntilCondition(sequence: XSequenceOfAllTexts(node: self), until: condition)
+    }
+    
     var children: XElementSequence {
         get { XChildrenSequence(node: self) }
     }

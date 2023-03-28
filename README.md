@@ -631,6 +631,12 @@ If a node is an element, the element itself and the descendants, starting with t
 var descendantsIncludingSelf: XElementSequence
 ```
 
+All texts in the tree of nodes that is started by the node itself, without the node itself, in the order of a depth-first traversal:
+
+```Swift
+var allTexts: XTextSequence
+```
+
 The (direct) content of an branch (element or document) are “siblings” to each other.
 
 The content item previous to the subject:
