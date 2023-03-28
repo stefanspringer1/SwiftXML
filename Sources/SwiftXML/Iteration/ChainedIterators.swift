@@ -80,6 +80,78 @@ public class XElementIteratorDependingOnContentIterator: XElementIterator {
     }
 }
 
+public class XTextIteratorDependingOnContentIterator: XTextIterator {
+    
+    private var iterator1: TypedIterator<XContent>
+    private var content1: XContent? = nil
+    private var started = false
+    let nextSequenceGetter: (XContent) -> XTextSequence
+    private var iterator2: XTextIterator? = nil
+    
+    init(sequence: any Sequence<XContent>, nextSequenceGetter: @escaping (XContent) -> XTextSequence) {
+        iterator1 = TypedIterator(for: sequence)
+        self.nextSequenceGetter = nextSequenceGetter
+    }
+    
+    public override func next() -> XText? {
+        if !started {
+            content1 = iterator1.next()
+            started = true
+        }
+        while let theContent1 = content1 {
+            let theIterator2 = iterator2 ?? {
+                let newIterator2 = nextSequenceGetter(theContent1).makeIterator()
+                iterator2 = newIterator2
+                return newIterator2
+            }()
+            if let theNext = theIterator2.next() {
+                return theNext
+            }
+            else {
+                iterator2 = nil
+                content1 = iterator1.next()
+            }
+        }
+        return nil
+    }
+}
+
+public class XElementIteratorDependingOnTextIterator: XElementIterator {
+    
+    private var iterator1: TypedIterator<XText>
+    private var content1: XText? = nil
+    private var started = false
+    let nextSequenceGetter: (XText) -> XElementSequence
+    private var iterator2: XElementIterator? = nil
+    
+    init(sequence: any Sequence<XText>, nextSequenceGetter: @escaping (XText) -> XElementSequence) {
+        iterator1 = TypedIterator(for: sequence)
+        self.nextSequenceGetter = nextSequenceGetter
+    }
+    
+    public override func next() -> XElement? {
+        if !started {
+            content1 = iterator1.next()
+            started = true
+        }
+        while let theContent1 = content1 {
+            let theIterator2 = iterator2 ?? {
+                let newIterator2 = nextSequenceGetter(theContent1).makeIterator()
+                iterator2 = newIterator2
+                return newIterator2
+            }()
+            if let theNext = theIterator2.next() {
+                return theNext
+            }
+            else {
+                iterator2 = nil
+                content1 = iterator1.next()
+            }
+        }
+        return nil
+    }
+}
+
 public class XContentIteratorDependingOnElementIterator: XContentIterator {
     
     private var iterator1: TypedIterator<XElement>
@@ -94,6 +166,114 @@ public class XContentIteratorDependingOnElementIterator: XContentIterator {
     }
     
     public override func next() -> XContent? {
+        if !started {
+            content1 = iterator1.next()
+            started = true
+        }
+        while let theContent1 = content1 {
+            let theIterator2 = iterator2 ?? {
+                let newIterator2 = nextSequenceGetter(theContent1).makeIterator()
+                iterator2 = newIterator2
+                return newIterator2
+            }()
+            if let theNext = theIterator2.next() {
+                return theNext
+            }
+            else {
+                iterator2 = nil
+                content1 = iterator1.next()
+            }
+        }
+        return nil
+    }
+}
+
+public class XTextIteratorDependingOnElementIterator: XTextIterator {
+    
+    private var iterator1: TypedIterator<XElement>
+    private var content1: XElement? = nil
+    private var started = false
+    let nextSequenceGetter: (XElement) -> XTextSequence
+    private var iterator2: XTextIterator? = nil
+    
+    init(sequence: any Sequence<XElement>, nextSequenceGetter: @escaping (XElement) -> XTextSequence) {
+        iterator1 = TypedIterator(for: sequence)
+        self.nextSequenceGetter = nextSequenceGetter
+    }
+    
+    public override func next() -> XText? {
+        if !started {
+            content1 = iterator1.next()
+            started = true
+        }
+        while let theContent1 = content1 {
+            let theIterator2 = iterator2 ?? {
+                let newIterator2 = nextSequenceGetter(theContent1).makeIterator()
+                iterator2 = newIterator2
+                return newIterator2
+            }()
+            if let theNext = theIterator2.next() {
+                return theNext
+            }
+            else {
+                iterator2 = nil
+                content1 = iterator1.next()
+            }
+        }
+        return nil
+    }
+}
+
+public class XContentIteratorDependingOnTextIterator: XContentIterator {
+    
+    private var iterator1: TypedIterator<XText>
+    private var content1: XText? = nil
+    private var started = false
+    let nextSequenceGetter: (XText) -> XContentSequence
+    private var iterator2: XContentIterator? = nil
+    
+    init(sequence: any Sequence<XText>, nextSequenceGetter: @escaping (XText) -> XContentSequence) {
+        iterator1 = TypedIterator(for: sequence)
+        self.nextSequenceGetter = nextSequenceGetter
+    }
+    
+    public override func next() -> XContent? {
+        if !started {
+            content1 = iterator1.next()
+            started = true
+        }
+        while let theContent1 = content1 {
+            let theIterator2 = iterator2 ?? {
+                let newIterator2 = nextSequenceGetter(theContent1).makeIterator()
+                iterator2 = newIterator2
+                return newIterator2
+            }()
+            if let theNext = theIterator2.next() {
+                return theNext
+            }
+            else {
+                iterator2 = nil
+                content1 = iterator1.next()
+            }
+        }
+        return nil
+    }
+}
+
+public class XTextIteratorDependingOnTextIterator: XTextIterator {
+    
+    private var iterator1: TypedIterator<XText>
+    private var content1: XText? = nil
+    private var started = false
+    let nextSequenceGetter: (XText) -> XTextSequence
+    private var iterator2: XTextIterator? = nil
+    
+    init(sequence: any Sequence<XText>, nextSequenceGetter: @escaping (XText) -> XTextSequence) {
+        iterator1 = TypedIterator(for: sequence)
+        self.nextSequenceGetter = nextSequenceGetter
+    }
+    
+    public override func next() -> XText? {
         if !started {
             content1 = iterator1.next()
             started = true
@@ -342,21 +522,6 @@ public class XElementSequenceDependingOnElementSequence: XElementSequence {
     }
 }
 
-public class XElementSequenceDependingOnElementSequenceNEW: XElementSequence {
-    
-    let sequence: any Sequence<XElement>
-    let nextSequenceGetter: (XElement) -> XElementSequence
-    
-    init(sequence: any Sequence<XElement>, nextSequenceGetter: @escaping (XElement) -> XElementSequence) {
-        self.sequence = sequence
-        self.nextSequenceGetter = nextSequenceGetter
-    }
-    
-    override public func makeIterator() -> XElementIterator {
-        return XElementIteratorDependingOnElementIterator(sequence: sequence, nextSequenceGetter: nextSequenceGetter)
-    }
-}
-
 public class XElementSequenceDependingOnContentSequence: XElementSequence {
     
     let sequence: any Sequence<XContent>
@@ -372,6 +537,51 @@ public class XElementSequenceDependingOnContentSequence: XElementSequence {
     }
 }
 
+public class XTextSequenceDependingOnContentSequence: XTextSequence {
+    
+    let sequence: any Sequence<XContent>
+    let nextSequenceGetter: (XContent) -> XTextSequence
+    
+    init(sequence: any Sequence<XContent>, nextSequenceGetter: @escaping (XContent) -> XTextSequence) {
+        self.sequence = sequence
+        self.nextSequenceGetter = nextSequenceGetter
+    }
+    
+    override public func makeIterator() -> XTextIterator {
+        return XTextIteratorDependingOnContentIterator(sequence: sequence, nextSequenceGetter: nextSequenceGetter)
+    }
+}
+
+public class XTextSequenceDependingOnElementSequence: XTextSequence {
+    
+    let sequence: any Sequence<XElement>
+    let nextSequenceGetter: (XElement) -> XTextSequence
+    
+    init(sequence: any Sequence<XElement>, nextSequenceGetter: @escaping (XElement) -> XTextSequence) {
+        self.sequence = sequence
+        self.nextSequenceGetter = nextSequenceGetter
+    }
+    
+    override public func makeIterator() -> XTextIterator {
+        return XTextIteratorDependingOnElementIterator(sequence: sequence, nextSequenceGetter: nextSequenceGetter)
+    }
+}
+
+public class XElementSequenceDependingOnTextSequence: XElementSequence {
+    
+    let sequence: any Sequence<XText>
+    let nextSequenceGetter: (XText) -> XElementSequence
+    
+    init(sequence: any Sequence<XText>, nextSequenceGetter: @escaping (XText) -> XElementSequence) {
+        self.sequence = sequence
+        self.nextSequenceGetter = nextSequenceGetter
+    }
+    
+    override public func makeIterator() -> XElementIterator {
+        return XElementIteratorDependingOnTextIterator(sequence: sequence, nextSequenceGetter: nextSequenceGetter)
+    }
+}
+
 public class XContentSequenceDependingOnElementSequence: XContentSequence {
     
     let sequence: any Sequence<XElement>
@@ -384,6 +594,36 @@ public class XContentSequenceDependingOnElementSequence: XContentSequence {
     
     override public func makeIterator() -> XContentIterator {
         return XContentIteratorDependingOnElementIterator(sequence: sequence, nextSequenceGetter: nextSequenceGetter)
+    }
+}
+
+public class XContentSequenceDependingOnTextSequence: XContentSequence {
+    
+    let sequence: any Sequence<XText>
+    let nextSequenceGetter: (XText) -> XContentSequence
+    
+    init(sequence: any Sequence<XText>, nextSequenceGetter: @escaping (XText) -> XContentSequence) {
+        self.sequence = sequence
+        self.nextSequenceGetter = nextSequenceGetter
+    }
+    
+    override public func makeIterator() -> XContentIterator {
+        return XContentIteratorDependingOnTextIterator(sequence: sequence, nextSequenceGetter: nextSequenceGetter)
+    }
+}
+
+public class XTextSequenceDependingOnTextSequence: XTextSequence {
+    
+    let sequence: any Sequence<XText>
+    let nextSequenceGetter: (XText) -> XTextSequence
+    
+    init(sequence: any Sequence<XText>, nextSequenceGetter: @escaping (XText) -> XTextSequence) {
+        self.sequence = sequence
+        self.nextSequenceGetter = nextSequenceGetter
+    }
+    
+    override public func makeIterator() -> XTextIterator {
+        return XTextIteratorDependingOnTextIterator(sequence: sequence, nextSequenceGetter: nextSequenceGetter)
     }
 }
 
@@ -518,6 +758,38 @@ extension Sequence<XContent> {
     
     public func contentReversed(until condition: @escaping (XContent) -> Bool) -> XContentSequence {
         XContentSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.contentReversed(until: condition) })
+    }
+    
+    public var texts: XTextSequence {
+        get { XTextSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.texts }) }
+    }
+    
+    public func texts(_ condition: @escaping (XContent) -> Bool) -> XTextSequence {
+        XTextSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.texts(condition) })
+    }
+    
+    public func texts(while condition: @escaping (XContent) -> Bool) -> XTextSequence {
+        XTextSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.texts(while: condition) })
+    }
+    
+    public func texts(until condition: @escaping (XContent) -> Bool) -> XTextSequence {
+        XTextSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.texts(until: condition) })
+    }
+    
+    public var textsReversed: XTextSequence {
+        get { XTextSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.textsReversed }) }
+    }
+    
+    public func textsReversed(_ condition: @escaping (XContent) -> Bool) -> XTextSequence {
+        XTextSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.textsReversed(condition) })
+    }
+    
+    public func textsReversed(while condition: @escaping (XContent) -> Bool) -> XTextSequence {
+        XTextSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.textsReversed(while: condition) })
+    }
+    
+    public func textsReversed(until condition: @escaping (XContent) -> Bool) -> XTextSequence {
+        XTextSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.textsReversed(until: condition) })
     }
     
     public var children: XElementSequence {
@@ -843,6 +1115,38 @@ extension Sequence<XElement> {
     
     public func contentReversed(until condition: @escaping (XContent) -> Bool) -> XContentSequence {
         XContentSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { content in content.contentReversed(until: condition) })
+    }
+    
+    public var texts: XTextSequence {
+        get { XTextSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { content in content.texts }) }
+    }
+    
+    public func texts(_ condition: @escaping (XContent) -> Bool) -> XTextSequence {
+        XTextSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { content in content.texts(condition) })
+    }
+    
+    public func texts(while condition: @escaping (XContent) -> Bool) -> XTextSequence {
+        XTextSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { content in content.texts(while: condition) })
+    }
+    
+    public func texts(until condition: @escaping (XContent) -> Bool) -> XTextSequence {
+        XTextSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { content in content.texts(until: condition) })
+    }
+    
+    public var textsReversed: XTextSequence {
+        get { XTextSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { content in content.textsReversed }) }
+    }
+    
+    public func textsReversed(_ condition: @escaping (XContent) -> Bool) -> XTextSequence {
+        XTextSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { content in content.textsReversed(condition) })
+    }
+    
+    public func textsReversed(while condition: @escaping (XContent) -> Bool) -> XTextSequence {
+        XTextSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { content in content.textsReversed(while: condition) })
+    }
+    
+    public func textsReversed(until condition: @escaping (XContent) -> Bool) -> XTextSequence {
+        XTextSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { content in content.textsReversed(until: condition) })
     }
     
     public var children: XElementSequence {
