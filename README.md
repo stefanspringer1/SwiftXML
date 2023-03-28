@@ -651,6 +651,13 @@ The content item next to the subject:
 var nextTouching: XContent?
 ```
 
+You might also just be interested if a previous or next node exists:
+
+```Swift
+var hasPrevious: Bool
+var hasNext: Bool 
+```
+
 The following very short method names `previous` and `next` actually mean “the previous content” and “the next content”, repectively. Those method names are chosen to be so short because they are such a common use case.
 
 All nodes previous to the node (i.e. the previous siblings) _on the same level,_ i.e. of the same parent, in the order from the node:
