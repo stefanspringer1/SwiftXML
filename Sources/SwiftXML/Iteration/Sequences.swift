@@ -77,6 +77,60 @@ public final class XContentSequenceUntilCondition: XContentSequence {
     }
 }
 
+public final class XTextSequenceWithCondition: XTextSequence {
+    
+    let sequence: XTextSequence
+    let condition: (XText) -> Bool
+    
+    init(sequence: XTextSequence, condition: @escaping (XText) -> Bool) {
+        self.sequence = sequence
+        self.condition = condition
+    }
+    
+    public override func makeIterator() -> XTextIterator {
+        return XTextIteratorWithCondition(
+            iterator: sequence.makeIterator(),
+            condition: condition
+        )
+    }
+}
+
+public final class XTextSequenceWhileCondition: XTextSequence {
+    
+    let sequence: XTextSequence
+    let condition: (XText) -> Bool
+    
+    init(sequence: XTextSequence, while condition: @escaping (XText) -> Bool) {
+        self.sequence = sequence
+        self.condition = condition
+    }
+    
+    public override func makeIterator() -> XTextIterator {
+        return XTextIteratorWhileCondition(
+            iterator: sequence.makeIterator(),
+            while: condition
+        )
+    }
+}
+
+public final class XTextSequenceUntilCondition: XTextSequence {
+    
+    let sequence: XTextSequence
+    let condition: (XText) -> Bool
+    
+    init(sequence: XTextSequence, until condition: @escaping (XText) -> Bool) {
+        self.sequence = sequence
+        self.condition = condition
+    }
+    
+    public override func makeIterator() -> XTextIterator {
+        return XTextIteratorUntilCondition(
+            iterator: sequence.makeIterator(),
+            until: condition
+        )
+    }
+}
+
 public final class XElementSequenceWithCondition: XElementSequence {
     
     let sequence: XElementSequence
@@ -292,6 +346,32 @@ public final class XReversedSequenceOfContent: XContentSequence {
     
     public override func makeIterator() -> XContentIterator {
         return XBidirectionalContentIterator(nodeIterator: XReversedContentsIterator(node: node))
+    }
+}
+
+public final class XSequenceOfTexts: XTextSequence {
+    
+    let node: XNode
+    
+    init(node: XNode) {
+        self.node = node
+    }
+    
+    public override func makeIterator() -> XTextIterator {
+        return XBidirectionalTextIterator(textIterator: XTextsIterator(node: node))
+    }
+}
+
+public final class XReversedSequenceOfTexts: XTextSequence {
+    
+    let node: XNode
+    
+    init(node: XNode) {
+        self.node = node
+    }
+    
+    public override func makeIterator() -> XTextIterator {
+        return XBidirectionalTextIterator(textIterator: XReversedTextsIterator(node: node))
     }
 }
 

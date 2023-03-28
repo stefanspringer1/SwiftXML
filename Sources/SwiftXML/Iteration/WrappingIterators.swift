@@ -55,6 +55,49 @@ public final class XBidirectionalContentIterator: XContentIterator {
     }
 }
 
+public final class XBidirectionalTextIterator: XTextIterator {
+    
+    var previousIterator: XBidirectionalTextIterator? = nil
+    var nextIterator: XBidirectionalTextIterator? = nil
+    
+    public typealias Element = XText
+    
+    var textIterator: XTextIteratorProtocol
+    
+    public init(textIterator: XTextIteratorProtocol) {
+        self.textIterator = textIterator    }
+    
+    weak var current: XText? = nil
+    var prefetched = false
+    
+    public override func next() -> XText? {
+        if prefetched {
+            prefetched = false
+            return current
+        }
+        current?.removeTextIterator(self)
+        current = textIterator.next()
+        current?.addTextIterator(self)
+        return current
+    }
+    
+    public override func previous() -> XText? {
+        prefetched = false
+        current?.removeTextIterator(self)
+        current = textIterator.previous()
+        current?.addTextIterator(self)
+        return current
+    }
+    
+    public func prefetch() {
+        current?.removeTextIterator(self)
+        current = textIterator.next()
+        current?.addTextIterator(self)
+        prefetched = true
+    }
+}
+
+
 public final class XBidirectionalElementIterator: XElementIterator {
     
     var previousIterator: XBidirectionalElementIterator? = nil

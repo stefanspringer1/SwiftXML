@@ -599,7 +599,13 @@ The direct content that is an element, i.e. all the children:
 var children: XElementSequence
 ```
 
-For the `content` and `children` sequences, there also exist the sequences `contentReversed` and `childrenReversed` which iterate from the last corresponding item to the first.
+The direct content that is text:
+
+```Swift
+var texts: XTextSequence
+```
+
+For the `content` and `children` sequences, there also exist the sequences `contentReversed`, `childrenReversed`, and `textsReversed` which iterate from the last corresponding item to the first.
 
 All content in the tree of nodes that is started by the node itself, without the node itself, in the order of a depth-first traversal:
 

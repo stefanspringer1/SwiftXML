@@ -1544,6 +1544,42 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
 
 public final class XText: XContent, CustomStringConvertible {
     
+    var _textIterators = WeakList<XBidirectionalTextIterator>()
+    
+    func gotoPreviousOnTextIterators() {
+        _textIterators.forEach { _ = $0.previous() }
+    }
+    
+    func prefetchOnTextIterators() {
+        _textIterators.forEach { $0.prefetch() }
+    }
+    
+    func addTextIterator(_ textIterator: XBidirectionalTextIterator) {
+        _textIterators.append(textIterator)
+    }
+    
+    func removeTextIterator(_ textIterator: XBidirectionalTextIterator) {
+        _textIterators.remove(textIterator)
+    }
+    
+    public override func _removeKeep() {
+        
+        // correction in iterators:
+        _textIterators.forEach { _ = $0.previous() }
+        
+        super._removeKeep()
+    }
+    
+    public override func replace(follow: Bool = false, @XContentBuilder builder: () -> [XContent]) {
+        if follow {
+            gotoPreviousOnTextIterators()
+        }
+        else {
+            prefetchOnTextIterators()
+        }
+        super.replace(follow: follow, builder: builder)
+    }
+    
     public override var backLink: XText? { get { super.backLink as? XText } }
     public override var finalBackLink: XText? { get { super.finalBackLink as? XText } }
     

@@ -17,6 +17,15 @@ public protocol XContentIteratorProtocol {
 }
 
 /**
+ The XTextIteratorProtocol implements one more features over the IteratorProtocol,
+ it can go backwards via the function "previous".
+ */
+public protocol XTextIteratorProtocol {
+    mutating func next() -> XText?
+    mutating func previous() -> XText?
+}
+
+/**
  The XElementIteratorProtocol implements one more features over the IteratorProtocol,
  it can go backwards via the function "previous".
  */

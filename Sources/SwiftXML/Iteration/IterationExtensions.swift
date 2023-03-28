@@ -65,6 +65,38 @@ public extension XNode {
         return XContentSequenceUntilCondition(sequence: XReversedSequenceOfContent(node: self), until: condition)
     }
     
+    var texts: XTextSequence {
+        get { XSequenceOfTexts(node: self) }
+    }
+    
+    func texts(_ condition: @escaping (XText) -> Bool) -> XTextSequence {
+        return XTextSequenceWithCondition(sequence: XSequenceOfTexts(node: self), condition: condition)
+    }
+    
+    func texts(while condition: @escaping (XText) -> Bool) -> XTextSequence {
+        return XTextSequenceWhileCondition(sequence: XSequenceOfTexts(node: self), while: condition)
+    }
+    
+    func texts(until condition: @escaping (XText) -> Bool) -> XTextSequence {
+        return XTextSequenceUntilCondition(sequence: XSequenceOfTexts(node: self), until: condition)
+    }
+    
+    var textsReversed: XTextSequence {
+        get { XReversedSequenceOfTexts(node: self) }
+    }
+    
+    func textsReversed(_ condition: @escaping (XText) -> Bool) -> XTextSequence {
+        return XTextSequenceWithCondition(sequence: XReversedSequenceOfTexts(node: self), condition: condition)
+    }
+    
+    func textsReversed(while condition: @escaping (XText) -> Bool) -> XTextSequence {
+        return XTextSequenceWhileCondition(sequence: XReversedSequenceOfTexts(node: self), while: condition)
+    }
+    
+    func textsReversed(until condition: @escaping (XText) -> Bool) -> XTextSequence {
+        return XTextSequenceUntilCondition(sequence: XReversedSequenceOfTexts(node: self), until: condition)
+    }
+    
     var children: XElementSequence {
         get { XChildrenSequence(node: self) }
     }

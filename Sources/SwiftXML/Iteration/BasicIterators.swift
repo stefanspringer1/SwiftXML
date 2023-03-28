@@ -16,6 +16,16 @@ public class XContentIterator: IteratorProtocol, XContentIteratorProtocol {
     }
 }
 
+public class XTextIterator: IteratorProtocol, XTextIteratorProtocol {
+    public typealias Element = XText
+    public func next() -> XText? {
+        return nil
+    }
+    public func previous() -> XText? {
+        return nil
+    }
+}
+
 public class XContentIteratorWithCondition: XContentIterator {
     
     let iterator: XContentIterator
@@ -78,9 +88,78 @@ public class XContentIteratorUntilCondition: XContentIterator {
     }
 }
 
+
+public class XTextIteratorWithCondition: XTextIterator {
+    
+    let iterator: XTextIterator
+    let condition: (XText) -> Bool
+    
+    init(iterator: XTextIterator, condition: @escaping (XText) -> Bool) {
+        self.iterator = iterator
+        self.condition = condition
+    }
+    
+    public override func next() -> XText? {
+        var _next: XText? = nil
+        repeat {
+            _next = iterator.next()
+            if let node = _next, condition(node) {
+                return node
+            }
+        } while _next != nil
+        return nil
+    }
+}
+
+public class XTextIteratorWhileCondition: XTextIterator {
+    
+    let iterator: XTextIterator
+    let condition: (XText) -> Bool
+    
+    init(iterator: XTextIterator, while condition: @escaping (XText) -> Bool) {
+        self.iterator = iterator
+        self.condition = condition
+    }
+    
+    public override func next() -> XText? {
+        if let node = iterator.next(), condition(node) {
+            return node
+        }
+        else {
+            return nil
+        }
+    }
+}
+
+public class XTextIteratorUntilCondition: XTextIterator {
+    
+    let iterator: XTextIterator
+    let condition: (XText) -> Bool
+    
+    init(iterator: XTextIterator, until condition: @escaping (XText) -> Bool) {
+        self.iterator = iterator
+        self.condition = condition
+    }
+    
+    public override func next() -> XText? {
+        if let node = iterator.next(), !condition(node) {
+            return node
+        }
+        else {
+            return nil
+        }
+    }
+}
+
 public class XContentSequence: LazySequenceProtocol {
     public func makeIterator() -> XContentIterator {
         return XContentIterator()
+    }
+}
+
+public class XTextSequence: LazySequenceProtocol {
+    public func makeIterator() -> XTextIterator {
+        return XTextIterator()
     }
 }
 
@@ -692,6 +771,88 @@ public final class XNextElementsIterator: XElementIteratorProtocol {
 }
 
 /**
+ Iterates though the texts of a branch.
+ */
+public final class XTextsIterator: XTextIterator {
+    
+    private var started = false
+    weak var node: XNode?
+    weak var currentNode: XNode? = nil
+    
+    public init(
+        node: XNode
+    ) {
+        self.node = node
+    }
+    
+    public override func next() -> XText? {
+        repeat {
+            if started {
+                currentNode = currentNode?._next
+            }
+            else {
+                currentNode = (node as? XBranchInternal)?.__firstContent
+                started = true
+            }
+        } while currentNode != nil && !(currentNode! is XText)
+        return currentNode as? XText
+    }
+    
+    public override func previous() -> XText? {
+        repeat {
+            if started {
+                currentNode = currentNode?._previous
+                if currentNode == nil {
+                    started = false
+                }
+            }
+        } while currentNode != nil && !(currentNode! is XText)
+        return currentNode as? XText
+    }
+}
+
+/**
+ Iterates though the texts of a branch, reversely.
+ */
+public final class XReversedTextsIterator: XTextIteratorProtocol {
+    
+    private var started = false
+    weak var node: XNode?
+    weak var currentNode: XNode? = nil
+    
+    public init(
+        node: XNode
+    ) {
+        self.node = node
+    }
+    
+    public func next() -> XText? {
+        repeat {
+            if started {
+                currentNode = currentNode?._previous
+            }
+            else {
+                currentNode = (node as? XBranchInternal)?.__lastContent
+                started = true
+            }
+        } while currentNode != nil && !(currentNode! is XText)
+        return currentNode as? XText
+    }
+    
+    public func previous() -> XText? {
+        repeat {
+            if started {
+                currentNode = currentNode?._next
+                if currentNode == nil {
+                    started = false
+                }
+            }
+        } while currentNode != nil && !(currentNode! is XText)
+        return currentNode as? XText
+    }
+}
+
+/**
  Iterates though the children of a branch.
  */
 public final class XChildrenIterator: XElementIteratorProtocol {
@@ -731,7 +892,6 @@ public final class XChildrenIterator: XElementIteratorProtocol {
         return currentNode as? XElement
     }
 }
-
 
 /**
  Iterates though the children of a branch, reversely.
