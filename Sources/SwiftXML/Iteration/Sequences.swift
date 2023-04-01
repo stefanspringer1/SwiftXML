@@ -427,6 +427,19 @@ public final class XAncestorsSequence: XElementSequence {
     }
 }
 
+public final class XAncestorsSequenceIncludingSelf: XElementSequence {
+    
+    let node: XNode
+    
+    init(node: XNode) {
+        self.node = node
+    }
+    
+    public override func makeIterator() -> XBidirectionalElementIterator {
+        return XBidirectionalElementIterator(elementIterator: XAncestorsIteratorIncludingSelf(startNode: node))
+    }
+}
+
 public final class XAllContentSequence: XContentSequence {
     
     let node: XNode

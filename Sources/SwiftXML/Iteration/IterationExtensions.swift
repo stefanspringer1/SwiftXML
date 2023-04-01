@@ -33,6 +33,30 @@ public extension XNode {
         return XElementSequenceUntilCondition(sequence: XAncestorsSequence(node: self), until: condition)
     }
     
+    var ancestorsIncludingSelf: XElementSequence {
+        get { XAncestorsSequenceIncludingSelf(node: self) }
+    }
+    
+    func ancestorsIncludingSelf(_ condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XAncestorsSequenceIncludingSelf(node: self), condition: condition)
+    }
+    
+    func ancestorsIncludingSelf(_ name: String) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XAncestorsSequenceIncludingSelf(node: self), elementName: name)
+    }
+    
+    func ancestorsIncludingSelf(_ names: String...) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XAncestorsSequenceIncludingSelf(node: self), condition: { names.isEmpty || names.contains($0.name) })
+    }
+    
+    func ancestorsIncludingSelf(while condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWhileCondition(sequence: XAncestorsSequenceIncludingSelf(node: self), while: condition)
+    }
+    
+    func ancestorsIncludingSelf(until condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceUntilCondition(sequence: XAncestorsSequenceIncludingSelf(node: self), until: condition)
+    }
+    
     var content: XContentSequence {
         get { XSequenceOfContent(node: self) }
     }

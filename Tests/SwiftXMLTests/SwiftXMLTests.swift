@@ -14,6 +14,40 @@ final class SwiftXMLTests: XCTestCase {
         </a>
         """
     
+    func testAncestorsIterator() throws {
+        let c = XElement("c")
+        let a = XElement("a") {
+            XElement("b") {
+                c
+            }
+        }
+        XCTAssertEqual(a.name, "a")
+        let iterator = XAncestorsIterator(startNode: c)
+        XCTAssertEqual(iterator.next()?.name, "b")
+        XCTAssertEqual(iterator.next()?.name, "a")
+        XCTAssertEqual(iterator.previous()?.name, "b")
+        XCTAssertEqual(iterator.previous()?.name, nil)
+        XCTAssertEqual(iterator.next()?.name, "b")
+    }
+    
+    func testAncestorsIteratorIncludingSelf() throws {
+        let c = XElement("c")
+        let a = XElement("a") {
+            XElement("b") {
+                c
+            }
+        }
+        XCTAssertEqual(a.name, "a")
+        let iterator = XAncestorsIteratorIncludingSelf(startNode: c)
+        XCTAssertEqual(iterator.next()?.name, "c")
+        XCTAssertEqual(iterator.next()?.name, "b")
+        XCTAssertEqual(iterator.next()?.name, "a")
+        XCTAssertEqual(iterator.previous()?.name, "b")
+        XCTAssertEqual(iterator.previous()?.name, "c")
+        XCTAssertEqual(iterator.previous()?.name, nil)
+        XCTAssertEqual(iterator.next()?.name, "c")
+    }
+    
     func testTypedIterator() throws {
         let document = try parseXML(fromText: documentSource1)
         let sequence = document.children.filter { $0.name == "a" }.children.drop(while: { Int($0["id"] ?? "1") ?? 1 < 2 }).filter { $0["drop"] != "yes" }

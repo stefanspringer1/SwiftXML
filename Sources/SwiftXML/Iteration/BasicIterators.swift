@@ -972,9 +972,61 @@ public final class XAncestorsIterator: XElementIteratorProtocol {
                 started = false
             }
             else {
-                currentNode = currentNode?.parent
-                for _ in 2...ancestorCount {
-                    currentNode = currentNode?.parent
+                currentNode = startNode?.parent
+                if ancestorCount >= 2 {
+                    for _ in 2...ancestorCount {
+                        currentNode = currentNode?.parent
+                    }
+                }
+            }
+        }
+        return currentNode
+    }
+}
+
+/**
+ Iterates though the ancestors, including self if self is an element.
+ */
+public final class XAncestorsIteratorIncludingSelf: XElementIteratorProtocol {
+    
+    private var started = false
+    weak var startNode: XNode?
+    weak var currentNode: XElement? = nil
+    var ancestorCount = 0
+    
+    public init(
+        startNode: XNode
+    ) {
+        self.startNode = startNode
+    }
+    
+    public func next() -> XElement? {
+        if started {
+            currentNode = currentNode?.parent
+        }
+        else {
+            currentNode = (startNode as? XElement) ??  startNode?.parent
+            started = true
+        }
+        if currentNode != nil {
+            ancestorCount += 1
+        }
+        return currentNode
+    }
+    
+    public func previous() -> XElement? {
+        if started {
+            ancestorCount -= 1
+            if ancestorCount == 0 {
+                currentNode = nil
+                started = false
+            }
+            else {
+                currentNode = (startNode as? XElement) ??  startNode?.parent
+                if ancestorCount >= 2 {
+                    for _ in 2...ancestorCount {
+                        currentNode = currentNode?.parent
+                    }
                 }
             }
         }
