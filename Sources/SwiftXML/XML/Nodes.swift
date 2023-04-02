@@ -1612,12 +1612,10 @@ public final class XText: XContent, CustomStringConvertible {
             return _value
         }
         set (newText) {
+            _value = newText
+            whitespace = .UNKNOWN
             if newText.isEmpty {
                 self.remove()
-            }
-            else {
-                _value = newText
-                whitespace = .UNKNOWN
             }
         }
     }
