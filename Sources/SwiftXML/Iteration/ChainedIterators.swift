@@ -937,7 +937,7 @@ extension Sequence<XContent> {
     }
     
     public func previousTexts(until condition: @escaping (XText) -> Bool) -> XTextSequence {
-        XTextSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.nextTexts(until: condition) })
+        XTextSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.previousTexts(until: condition) })
     }
     
     public var nextElements: XElementSequence {
