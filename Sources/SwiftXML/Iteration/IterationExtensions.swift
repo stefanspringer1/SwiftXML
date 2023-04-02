@@ -277,6 +277,38 @@ public extension XContent {
         return XContentSequenceUntilCondition(sequence: XPreviousSequence(content: self), until: condition)
     }
     
+    var nextTexts: XTextSequence {
+        get { XNextTextsSequence(content: self) }
+    }
+    
+    func nextTexts(_ condition: @escaping (XText) -> Bool) -> XTextSequence {
+        return XTextSequenceWithCondition(sequence: XNextTextsSequence(content: self), condition: condition)
+    }
+    
+    func nextTexts(while condition: @escaping (XText) -> Bool) -> XTextSequence {
+        return XTextSequenceWhileCondition(sequence: XNextTextsSequence(content: self), while: condition)
+    }
+    
+    func nextTexts(until condition: @escaping (XText) -> Bool) -> XTextSequence {
+        return XTextSequenceUntilCondition(sequence: XNextTextsSequence(content: self), until: condition)
+    }
+    
+    var previousTexts: XTextSequence {
+        get { XPreviousTextsSequence(content: self) }
+    }
+    
+    func previousTexts(_ condition: @escaping (XText) -> Bool) -> XTextSequence {
+        return XTextSequenceWithCondition(sequence: XPreviousTextsSequence(content: self), condition: condition)
+    }
+    
+    func previousTexts(while condition: @escaping (XText) -> Bool) -> XTextSequence {
+        return XTextSequenceWhileCondition(sequence: XPreviousTextsSequence(content: self), while: condition)
+    }
+    
+    func previousTexts(until condition: @escaping (XText) -> Bool) -> XTextSequence {
+        return XTextSequenceUntilCondition(sequence: XPreviousTextsSequence(content: self), until: condition)
+    }
+    
     var nextElements: XElementSequence {
         get { XNextElementsSequence(content: self) }
     }
@@ -290,6 +322,10 @@ public extension XContent {
     }
     
     func nextElements(_ names: String...) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XNextElementsSequence(content: self), condition: { names.isEmpty || names.contains($0.name) })
+    }
+    
+    func nextElements(_ names: [String]) -> XElementSequence {
         return XElementSequenceWithCondition(sequence: XNextElementsSequence(content: self), condition: { names.isEmpty || names.contains($0.name) })
     }
     
@@ -314,6 +350,10 @@ public extension XContent {
     }
     
     func previousElements(_ names: String...) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XPreviousElementsSequence(content: self), condition: { names.isEmpty || names.contains($0.name) })
+    }
+    
+    func previousElements(_ names: [String]) -> XElementSequence {
         return XElementSequenceWithCondition(sequence: XPreviousElementsSequence(content: self), condition: { names.isEmpty || names.contains($0.name) })
     }
     

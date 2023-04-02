@@ -297,6 +297,32 @@ public final class XPreviousSequence: XContentSequence {
     }
 }
 
+public final class XNextTextsSequence: XTextSequence {
+    
+    let theContent: XContent
+    
+    init(content: XContent) {
+        self.theContent = content
+    }
+    
+    public override func makeIterator() -> XBidirectionalTextIterator {
+        return XBidirectionalTextIterator(textIterator: XNextTextsIterator(content: theContent))
+    }
+}
+
+public final class XPreviousTextsSequence: XTextSequence {
+    
+    let theContent: XContent
+    
+    init(content: XContent) {
+        self.theContent = content
+    }
+    
+    public override func makeIterator() -> XBidirectionalTextIterator {
+        return XBidirectionalTextIterator(textIterator: XPreviousTextsIterator(content: theContent))
+    }
+}
+
 public final class XNextElementsSequence: XElementSequence {
     
     let theContent: XContent

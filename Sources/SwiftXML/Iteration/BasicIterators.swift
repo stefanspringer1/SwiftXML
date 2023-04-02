@@ -853,6 +853,82 @@ public final class XReversedTextsIterator: XTextIteratorProtocol {
 }
 
 /**
+ Iterates though the texts before a node.
+ */
+public final class XPreviousTextsIterator: XTextIteratorProtocol {
+    
+    weak var content: XContent?
+    weak var currentContent: XContent? = nil
+    
+    public init(
+        content: XContent
+    ) {
+        self.content = content
+        currentContent = content
+    }
+    
+    public func next() -> XText? {
+        repeat {
+            currentContent = currentContent?._previous
+        } while currentContent != nil && !(currentContent! is XText)
+        return currentContent as? XText
+    }
+    
+    public func previous() -> XText? {
+        repeat {
+            if currentContent === content {
+                return nil
+            }
+            else {
+                currentContent = currentContent?._next
+                if currentContent === content {
+                    return nil
+                }
+            }
+        } while currentContent != nil && !(currentContent! is XText)
+        return currentContent as? XText
+    }
+}
+
+/**
+ Iterates though the texts after a content.
+ */
+public final class XNextTextsIterator: XTextIteratorProtocol {
+    
+    weak var content: XContent?
+    weak var currentContent: XContent? = nil
+    
+    public init(
+        content: XContent
+    ) {
+        self.content = content
+        currentContent = content
+    }
+    
+    public func next() -> XText? {
+        repeat {
+            currentContent = currentContent?._next
+        } while currentContent != nil && !(currentContent! is XText)
+        return currentContent as? XText
+    }
+    
+    public func previous() -> XText? {
+        repeat {
+            if currentContent === content {
+                return nil
+            }
+            else {
+                currentContent = currentContent?._previous
+                if currentContent === content {
+                    return nil
+                }
+            }
+        } while currentContent != nil && !(currentContent! is XText)
+        return currentContent as? XText
+    }
+}
+
+/**
  Iterates though the children of a branch.
  */
 public final class XChildrenIterator: XElementIteratorProtocol {
