@@ -679,9 +679,12 @@ public extension String {
 }
 
 public class XSpot: XContent {
-    
+
     public override var backLink: XSpot? { get { super.backLink as? XSpot } }
     public override var finalBackLink: XSpot? { get { super.finalBackLink as? XSpot } }
+    
+    var _attached: Attachments? = nil
+    public var attached: Attachments { _attached ?? { _attached = Attachments(); return _attached! }() }
     
     public override init() {}
 }
