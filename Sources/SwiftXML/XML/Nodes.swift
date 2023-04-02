@@ -573,7 +573,15 @@ public class XContent: XNode {
         if !keepPosition {
             prefetchOnContentIterators()
         }
-        content.forEach { _insertPrevious($0) }
+        if content.count == 1 {
+            _insertPrevious(content[0])
+        }
+        else {
+            let spot = XSpot()
+            _insertPrevious(spot)
+            content.forEach { spot._insertPrevious($0) }
+            spot.remove()
+        }
     }
     
     public func insertPrevious(keepPosition: Bool = false, @XContentBuilder builder: () -> [XContent]) {
@@ -628,7 +636,15 @@ public class XContent: XNode {
         if !keepPosition {
             prefetchOnContentIterators()
         }
-        content.reversed().forEach { _insertNext($0) }
+        if content.count == 1 {
+            _insertNext(content[0])
+        }
+        else {
+            let spot = XSpot()
+            _insertNext(spot)
+            content.forEach { spot._insertPrevious($0) }
+            spot.remove()
+        }
     }
     
     public func insertNext(keepPosition: Bool = false, @XContentBuilder builder: () -> [XContent]) {
