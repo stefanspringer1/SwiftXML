@@ -8,8 +8,6 @@ import Foundation
 import SwiftXMLInterfaces
 import SwiftXMLParser
 
-fileprivate let isolator = XSpot()
-
 protocol Named: AnyObject {
     associatedtype WithName
     var _bareName: String? { get set }
@@ -579,6 +577,7 @@ public class XContent: XNode {
             _insertPrevious(content[0])
         }
         else {
+            let isolator = XSpot()
             _insertPrevious(isolator)
             content.forEach { isolator._insertPrevious($0) }
             isolator.remove()
@@ -641,6 +640,7 @@ public class XContent: XNode {
             _insertNext(content[0])
         }
         else {
+            let isolator = XSpot()
             _insertNext(isolator)
             content.forEach { isolator._insertPrevious($0) }
             isolator.remove()
@@ -661,6 +661,7 @@ public class XContent: XNode {
         else {
             prefetchOnContentIterators()
         }
+        let isolator = XSpot()
         _insertPrevious(isolator)
         builder().forEach { isolator._insertPrevious($0) }
         if isolator._next === self {
@@ -945,6 +946,7 @@ extension XBranchInternal {
      Set the contents of the branch.
      */
     func _setContent(_ content: [XContent]) {
+        let isolator = XSpot()
         _addFirst(isolator)
         content.forEach { isolator._insertPrevious($0) }
         isolator.next.forEach { $0.remove() }
