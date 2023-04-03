@@ -8,6 +8,8 @@ import Foundation
 import SwiftXMLInterfaces
 import SwiftXMLParser
 
+fileprivate let isolator = XSpot()
+
 protocol Named: AnyObject {
     associatedtype WithName
     var _bareName: String? { get set }
@@ -577,10 +579,9 @@ public class XContent: XNode {
             _insertPrevious(content[0])
         }
         else {
-            let spot = XSpot()
-            _insertPrevious(spot)
-            content.forEach { spot._insertPrevious($0) }
-            spot.remove()
+            _insertPrevious(isolator)
+            content.forEach { isolator._insertPrevious($0) }
+            isolator.remove()
         }
     }
     
@@ -640,10 +641,9 @@ public class XContent: XNode {
             _insertNext(content[0])
         }
         else {
-            let spot = XSpot()
-            _insertNext(spot)
-            content.forEach { spot._insertPrevious($0) }
-            spot.remove()
+            _insertNext(isolator)
+            content.forEach { isolator._insertPrevious($0) }
+            isolator.remove()
         }
     }
     
@@ -661,13 +661,12 @@ public class XContent: XNode {
         else {
             prefetchOnContentIterators()
         }
-        let placeholder = XSpot()
-        _insertPrevious(placeholder)
-        builder().forEach { placeholder._insertPrevious($0) }
-        if placeholder._next === self {
+        _insertPrevious(isolator)
+        builder().forEach { isolator._insertPrevious($0) }
+        if isolator._next === self {
             remove()
         }
-        placeholder.remove()
+        isolator.remove()
     }
     
     public var asSequence: XContentSequence { get { XContentSelfSequence(content: self) } }
@@ -946,11 +945,10 @@ extension XBranchInternal {
      Set the contents of the branch.
      */
     func _setContent(_ content: [XContent]) {
-        let endMarker = XSpot()
-        _addFirst(endMarker)
-        content.forEach { endMarker._insertPrevious($0) }
-        endMarker.next.forEach { $0.remove() }
-        endMarker.remove()
+        _addFirst(isolator)
+        content.forEach { isolator._insertPrevious($0) }
+        isolator.next.forEach { $0.remove() }
+        isolator.remove()
     }
     
     /**

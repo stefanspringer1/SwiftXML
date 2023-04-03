@@ -130,7 +130,7 @@ The encoding of the source should always be UTF-8 (ASCII is considered as a subs
 
 For any error during parsing an error is thrown and no document is then provided.
 
-The library is not to be used in concurrent contexts.
+The library must not be used concurrently.
 
 ---
 **NOTE**
