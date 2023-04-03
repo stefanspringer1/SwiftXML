@@ -130,7 +130,7 @@ The encoding of the source should always be UTF-8 (ASCII is considered as a subs
 
 For any error during parsing an error is thrown and no document is then provided.
 
-The library must not be used concurrently.
+An XML tree (e.g. a document) must not be examined or changed concurrently.
 
 ---
 **NOTE**
