@@ -18,6 +18,9 @@ protocol Named: AnyObject {
 
 public class XNode {
     
+    var _attached: Attachments? = nil
+    public var attached: Attachments { _attached ?? { _attached = Attachments(); return _attached! }() }
+    
     var _sourceRange: XTextRange? = nil
     
     public var sourceRange: XTextRange? { _sourceRange }
@@ -167,7 +170,7 @@ public class XNode {
     public var previousTouching: XContent? {
         get {
             var content = _previous
-            while let spot = content as? XSpot {
+            while let spot = content as? _Isolator_ {
                 content = spot._previous
             }
             return content
@@ -177,7 +180,7 @@ public class XNode {
     public var nextTouching: XContent? {
         get {
             var content = _next
-            while let spot = content as? XSpot {
+            while let spot = content as? _Isolator_ {
                 content = spot._next
             }
             return content
@@ -210,7 +213,7 @@ public class XNode {
     public var previousInTreeTouching: XContent? {
         get {
             var content = _previousInTree
-            while let spot = content as? XSpot {
+            while let spot = content as? _Isolator_ {
                 content = spot._previousInTree
             }
             return content as? XContent
@@ -220,7 +223,7 @@ public class XNode {
     public var nextInTreeTouching: XContent? {
         get {
             var content = _nextInTree
-            while let spot = content as? XSpot {
+            while let spot = content as? _Isolator_ {
                 content = spot._nextInTree
             }
             return content as? XContent
@@ -608,7 +611,7 @@ public class XContent: XNode {
         if !keepPosition {
             prefetchOnContentIterators()
         }
-        let isolator = XSpot()
+        let isolator = _Isolator_()
         _insertPrevious(isolator)
         content.forEach { isolator._insertPrevious($0) }
         isolator.remove()
@@ -695,7 +698,7 @@ public class XContent: XNode {
         if !keepPosition {
             prefetchOnContentIterators()
         }
-        let isolator = XSpot()
+        let isolator = _Isolator_()
         _insertNext(isolator)
         content.forEach { isolator._insertPrevious($0) }
         isolator.remove()
@@ -715,7 +718,7 @@ public class XContent: XNode {
         else {
             prefetchOnContentIterators()
         }
-        let isolator = XSpot()
+        let isolator = _Isolator_()
         _insertPrevious(isolator)
         builder().forEach { isolator._insertPrevious($0) }
         if isolator._next === self {
@@ -732,19 +735,12 @@ public extension String {
     var asSequence: XContentSequence { get { XText(self).asSequence } }
 }
 
-public class XSpot: XContent {
-
-    public override var backLink: XSpot? { get { super.backLink as? XSpot } }
-    public override var finalBackLink: XSpot? { get { super.finalBackLink as? XSpot } }
-    
-    var _attached: Attachments? = nil
-    public var attached: Attachments { _attached ?? { _attached = Attachments(); return _attached! }() }
+class _Isolator_: XContent {
     
     public override init() {}
 }
 
 public protocol XBranch: XNode {
-    var attached: Attachments { get }
     var firstContent: XContent? { get }
     func firstContent(_ condition: (XContent) -> Bool) -> XContent?
     var lastContent: XContent? { get }
@@ -793,7 +789,7 @@ extension XBranchInternal {
     var _firstContent: XContent? {
         get {
             var content = __firstContent
-            while let spot = content as? XSpot {
+            while let spot = content as? _Isolator_ {
                 content = spot._next
             }
             return content
@@ -819,7 +815,7 @@ extension XBranchInternal {
     var _lastContent: XContent? {
         get {
             var content = __lastContent
-            while let spot = content as? XSpot {
+            while let spot = content as? _Isolator_ {
                 content = spot._previous
             }
             return content
@@ -1000,7 +996,7 @@ extension XBranchInternal {
      Set the contents of the branch.
      */
     func _setContent(_ content: [XContent]) {
-        let isolator = XSpot()
+        let isolator = _Isolator_()
         _addFirst(isolator)
         content.forEach { isolator._insertPrevious($0) }
         isolator.next.forEach { $0.remove() }
@@ -1124,18 +1120,6 @@ public extension Array where Element == XComment {
 }
 
 public extension Array where Element == XComment? {
-    var asContent: XContentLikeSequence {
-        get { XContentLikeSequenceFromArray(fromArray: self) }
-    }
-}
-
-public extension Array where Element == XSpot {
-    var asContent: XContentLikeSequence {
-        get { XContentLikeSequenceFromArray(fromArray: self) }
-    }
-}
-
-public extension Array where Element == XSpot? {
     var asContent: XContentLikeSequence {
         get { XContentLikeSequenceFromArray(fromArray: self) }
     }
@@ -1318,9 +1302,6 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     
     public override var backLink: XElement? { get { super.backLink as? XElement } }
     public override var finalBackLink: XElement? { get { super.finalBackLink as? XElement } }
-    
-    var _attached: Attachments? = nil
-    public var attached: Attachments { _attached ?? { _attached = Attachments(); return _attached! }() }
     
     public var description: String {
         get {

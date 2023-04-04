@@ -221,7 +221,6 @@ An XML document (`XDocument`) can contain the following content:
 - `XProcessingInstruction`: a processing instruction
 - `XComment`: a comment
 - `XLiteral`: containing text that is meant to be serialized “as is”, i.e. no escaping e.g. of `<` and `&` is done, it could contain XML code that is to be serialized _literally,_ hence its name
-- `XSpot`: see the section below on `XSpot` and handling of text
 
 `XLiteral` is never the result of parsing XML, but might get added by an application. Subsequent `XLiteral` content is (just like `XText`, see the section on handling of text) always automatically combined.
 
@@ -441,7 +440,7 @@ var attributeNames: [String]
 
 ### Attachments
 
-Elements, documents, and `XSpot` nodes can have “attachments”. Those are objects that can be attached via a textual key to those branches but that not considered as belonging to the actual XML tree.
+All nodes can have “attachments”. Those are objects that can be attached via a textual key to those branches but that not considered as belonging to the actual XML tree.
 
 The attachments can be reached by the property `attached`, and accessing and setting them is analogous to attributes:
 
@@ -1395,7 +1394,7 @@ The output then becomes:
 <text>Hello</text>
 ```
 
-## `XSpot` and handling of text
+## Handling of text
 
 Subsequent text nodes (`XText`) are always automatically combined, and text nodes with empty text are automatically removed.
 
@@ -1422,41 +1421,6 @@ document.traverse { node in
             }
             text.remove()
             text.isolated = false
-        }
-    }
-}
-
-document.echo()
-```
-
-You may also use an `XSpot` node as as separator to a text, as shown in the following version of the example.
-
-An `XSpot` node has a special behaviour that stems from the way it is internally used by the library. An `XSpot` “does nothing” besides existing at a certain spot in the XML tree (hence its name), but it invisible to all iterations except tree traversals, it is invisible for `previousTouching`, `previousInTreeTouching`, `firstContent`, `singleContent`, `isEmpty`, etc., and it is also invisible for a production. So you should use `XSpot` nodes only in a very controlled way, e.g. temporarily. As already mentioned, `XSpot` nodes are found by a tree traversal, so if you do need to find them, you can. And the mentioned properties and methods that do not see an `XSpot` can very well be called for an `XSpot` itself, e.g. `myXSpot.next`. 
-
-```Swift
-let document = try parseXML(fromText: """
-<a>Hello world, the world is nice.</a>
-""")
-
-let searchText = "world"
-
-document.traverse { node in
-    if let text = node as? XText {
-        if text.value.contains(searchText) {
-            let spot = XSpot()
-            text.insertPrevious { spot }
-            var addSearchText = false
-            text.value.components(separatedBy: searchText).forEach { part in
-                spot.insertPrevious {
-                    addSearchText ? XElement("span", ["style": "background:LightGreen"]) {
-                        searchText
-                    } : nil
-                    part
-                }
-                addSearchText = true
-            }
-            text.remove()
-            spot.remove()
         }
     }
 }

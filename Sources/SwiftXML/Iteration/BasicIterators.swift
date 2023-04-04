@@ -560,7 +560,7 @@ public final class XContentsIterator: XContentIteratorProtocol {
                 currentContent = (node as? XBranchInternal)?.__firstContent
                 started = true
             }
-        } while currentContent != nil && currentContent! is XSpot
+        } while currentContent != nil && currentContent! is _Isolator_
         return currentContent
     }
     
@@ -572,7 +572,7 @@ public final class XContentsIterator: XContentIteratorProtocol {
                     started = false
                 }
             }
-        } while currentContent != nil && currentContent! is XSpot
+        } while currentContent != nil && currentContent! is _Isolator_
         return currentContent
     }
 }
@@ -601,7 +601,7 @@ public final class XReversedContentsIterator: XContentIteratorProtocol {
                 currentContent = (node as? XBranchInternal)?.__lastContent
                 started = true
             }
-        } while currentContent != nil && currentContent! is XSpot
+        } while currentContent != nil && currentContent! is _Isolator_
         return currentContent
     }
     
@@ -613,7 +613,7 @@ public final class XReversedContentsIterator: XContentIteratorProtocol {
                     started = false
                 }
             }
-        } while currentContent != nil && currentContent! is XSpot
+        } while currentContent != nil && currentContent! is _Isolator_
         return currentContent
     }
 }
@@ -636,7 +636,7 @@ public final class XNextIterator: XContentIteratorProtocol {
     public func next() -> XContent? {
         repeat {
             currentContent = currentContent?._next
-        } while currentContent != nil && currentContent! is XSpot
+        } while currentContent != nil && currentContent! is _Isolator_
         return currentContent
     }
     
@@ -651,7 +651,7 @@ public final class XNextIterator: XContentIteratorProtocol {
                     return nil
                 }
             }
-        } while currentContent != nil && currentContent! is XSpot
+        } while currentContent != nil && currentContent! is _Isolator_
         return currentContent
     }
 }
@@ -674,7 +674,7 @@ public final class XPreviousIterator: XContentIteratorProtocol {
     public func next() -> XContent? {
         repeat {
             currentContent = currentContent?._previous
-        } while currentContent != nil && currentContent! is XSpot
+        } while currentContent != nil && currentContent! is _Isolator_
         return currentContent
     }
     
@@ -689,7 +689,7 @@ public final class XPreviousIterator: XContentIteratorProtocol {
                     return nil
                 }
             }
-        } while currentContent != nil && currentContent! is XSpot
+        } while currentContent != nil && currentContent! is _Isolator_
         return currentContent
     }
 }
@@ -1133,7 +1133,7 @@ public final class XAllContentsIterator: XContentIteratorProtocol {
             else {
                 currentNode = currentNode?._nextInTree
             }
-        } while currentNode != nil && currentNode! is XSpot
+        } while currentNode != nil && currentNode! is _Isolator_
         return currentNode as? XContent
     }
     
@@ -1146,7 +1146,7 @@ public final class XAllContentsIterator: XContentIteratorProtocol {
             else {
                 currentNode = currentNode?._previousInTree
             }
-        } while currentNode != nil && currentNode! is XSpot
+        } while currentNode != nil && currentNode! is _Isolator_
         return currentNode as? XContent
     }
 }
@@ -1179,7 +1179,7 @@ public final class XAllContentsIncludingSelfIterator: XContentIteratorProtocol {
             else {
                 currentNode = currentNode?._nextInTree
             }
-            if !(currentNode is XSpot || currentNode is XDocument) {
+            if !(currentNode is _Isolator_ || currentNode is XDocument) {
                 return currentNode as? XContent
             }
         } while currentNode != nil
@@ -1194,7 +1194,7 @@ public final class XAllContentsIncludingSelfIterator: XContentIteratorProtocol {
             }
             else {
                 currentNode = currentNode?._previousInTree
-                if !(currentNode is XSpot) {
+                if !(currentNode is _Isolator_) {
                     return currentNode as? XContent
                 }
             }
