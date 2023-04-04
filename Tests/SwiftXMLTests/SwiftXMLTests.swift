@@ -57,6 +57,21 @@ final class SwiftXMLTests: XCTestCase {
     }
     
     func testLaziness() throws {
+        
+        do {
+            let document = try parseXML(fromText: """
+            <paragraph>Rufe "Hallo".</paragraph>
+            """)
+            document.allTexts.forEach { text in
+                print("text: [\(text)]")
+                text.insertPrevious {
+                    "huhu"
+                    XSpot()
+                }
+                document.traverse { print($0) }
+            }
+        }
+        
         let document = try parseXML(fromText: documentSource1)
         let sequence = document.children.filter { $0.name == "a" }.children
         document.children.filter { $0.name == "a" }.first?.add { XElement("b", ["id": "4"]) }

@@ -559,7 +559,7 @@ public class XContent: XNode {
                     newAsText.value = ""
                     return
                 }
-                if let previousAsText = previousTouching as? XText, !previousAsText.isolated {
+                if let previousAsText = _previous as? XText, !previousAsText.isolated {
                     previousAsText._value = previousAsText._value + newAsText._value
                     previousAsText.whitespace = previousAsText.whitespace + newAsText.whitespace
                     newAsText.value = ""
@@ -577,7 +577,7 @@ public class XContent: XNode {
                     newAsLiteral.value = ""
                     return
                 }
-                if let previousAsLiteral = previousTouching as? XLiteral, !previousAsLiteral.isolated {
+                if let previousAsLiteral = _previous as? XLiteral, !previousAsLiteral.isolated {
                     previousAsLiteral._value = previousAsLiteral._value + newAsLiteral._value
                     newAsLiteral.value = ""
                     return
@@ -591,12 +591,11 @@ public class XContent: XNode {
     }
     
     func _insertPrevious(_ text: String) {
-        print("&&&& add String as previous: [\(text)]")
         if !text.isEmpty {
             if let selfAsText = self as? XText, !selfAsText.isolated {
                 selfAsText._value = text + selfAsText._value
                 selfAsText.whitespace = .UNKNOWN
-            } else if let previousAsText = previousTouching as? XText, !previousAsText.isolated {
+            } else if let previousAsText = _previous as? XText, !previousAsText.isolated {
                 previousAsText._value = previousAsText._value + text
                 previousAsText.whitespace = .UNKNOWN
             } else {
@@ -650,7 +649,7 @@ public class XContent: XNode {
                 newAsText.value = ""
                 return
             }
-            if let nextAsText = nextTouching as? XText, !nextAsText.isolated {
+            if let nextAsText = _next as? XText, !nextAsText.isolated {
                 nextAsText._value = newAsText._value + nextAsText._value
                 nextAsText.whitespace = newAsText.whitespace + nextAsText.whitespace
                 newAsText.value = ""
@@ -666,7 +665,7 @@ public class XContent: XNode {
                 newAsLiteral.value = ""
                 return
             }
-            if let nextAsLiteral = nextTouching as? XText, !nextAsLiteral.isolated {
+            if let nextAsLiteral = _next as? XText, !nextAsLiteral.isolated {
                 nextAsLiteral._value = newAsLiteral._value + nextAsLiteral._value
                 newAsLiteral.value = ""
                 return
