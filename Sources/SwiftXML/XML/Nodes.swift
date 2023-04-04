@@ -695,15 +695,10 @@ public class XContent: XNode {
         if !keepPosition {
             prefetchOnContentIterators()
         }
-        if content.count == 1 {
-            _insertNext(content[0])
-        }
-        else {
-            let isolator = XSpot()
-            _insertNext(isolator)
-            content.forEach { isolator._insertPrevious($0) }
-            isolator.remove()
-        }
+        let isolator = XSpot()
+        _insertNext(isolator)
+        content.forEach { isolator._insertPrevious($0) }
+        isolator.remove()
     }
     
     public func insertNext(keepPosition: Bool = false, @XContentBuilder builder: () -> [XContent]) {
@@ -1649,6 +1644,20 @@ public final class XText: XContent, CustomStringConvertible {
         _textIterators.forEach { _ = $0.previous() }
         
         super._removeKeep()
+    }
+    
+    override func _insertPrevious(keepPosition: Bool, _ content: [XContent]) {
+        if !keepPosition {
+            prefetchOnTextIterators()
+        }
+        super._insertPrevious(keepPosition: keepPosition, content)
+    }
+    
+    override func _insertNext(keepPosition: Bool, _ content: [XContent]) {
+        if !keepPosition {
+            prefetchOnTextIterators()
+        }
+        super._insertNext(keepPosition: keepPosition, content)
     }
     
     public override func replace(follow: Bool = false, @XContentBuilder builder: () -> [XContent]) {
