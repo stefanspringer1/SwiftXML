@@ -624,6 +624,10 @@ public class XContent: XNode {
         func _insertNextBase(_ node: XContent) {
             node._removeKeep()
             
+            if _parent?.__lastContent === self {
+                _parent?.__lastContent = node
+            }
+            
             _next?._previous = node
             node._previous = self
             node._next = _next
