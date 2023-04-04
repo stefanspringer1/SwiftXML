@@ -506,7 +506,7 @@ public class XContent: XNode {
         
         if let thePreviousText = oldPrevious as? XText, let theNextText = oldNext as? XText, !(thePreviousText.isolated || theNextText.isolated) {
             thePreviousText.value += theNextText.value
-            thePreviousText.whitespace = thePreviousText.whitespace + theNextText.whitespace
+            thePreviousText._whitespace = thePreviousText._whitespace + theNextText._whitespace
             theNextText.value = ""
         } else if let thePreviousLiteral = oldPrevious as? XLiteral, let theNextLiteral = oldNext as? XLiteral, !(thePreviousLiteral.isolated || theNextLiteral.isolated) {
             thePreviousLiteral.value += theNextLiteral.value
@@ -558,13 +558,13 @@ public class XContent: XNode {
             if !newAsText.isolated {
                 if let selfAsText = self as? XText, !selfAsText.isolated {
                     selfAsText._value = newAsText._value + selfAsText._value
-                    selfAsText.whitespace = newAsText.whitespace + selfAsText.whitespace
+                    selfAsText._whitespace = newAsText._whitespace + selfAsText._whitespace
                     newAsText.value = ""
                     return
                 }
                 if let previousAsText = _previous as? XText, !previousAsText.isolated {
                     previousAsText._value = previousAsText._value + newAsText._value
-                    previousAsText.whitespace = previousAsText.whitespace + newAsText.whitespace
+                    previousAsText._whitespace = previousAsText._whitespace + newAsText._whitespace
                     newAsText.value = ""
                     return
                 }
@@ -597,10 +597,10 @@ public class XContent: XNode {
         if !text.isEmpty {
             if let selfAsText = self as? XText, !selfAsText.isolated {
                 selfAsText._value = text + selfAsText._value
-                selfAsText.whitespace = .UNKNOWN
+                selfAsText._whitespace = .UNKNOWN
             } else if let previousAsText = _previous as? XText, !previousAsText.isolated {
                 previousAsText._value = previousAsText._value + text
-                previousAsText.whitespace = .UNKNOWN
+                previousAsText._whitespace = .UNKNOWN
             } else {
                 _insertPrevious(XText(text))
             }
@@ -648,13 +648,13 @@ public class XContent: XNode {
         if let newAsText = node as? XText, !newAsText.isolated {
             if let selfAsText = self as? XText, !selfAsText.isolated {
                 selfAsText._value = selfAsText._value + newAsText._value
-                selfAsText.whitespace = selfAsText.whitespace + newAsText.whitespace
+                selfAsText._whitespace = selfAsText._whitespace + newAsText._whitespace
                 newAsText.value = ""
                 return
             }
             if let nextAsText = _next as? XText, !nextAsText.isolated {
                 nextAsText._value = newAsText._value + nextAsText._value
-                nextAsText.whitespace = newAsText.whitespace + nextAsText.whitespace
+                nextAsText._whitespace = newAsText._whitespace + nextAsText._whitespace
                 newAsText.value = ""
                 return
             }
@@ -684,10 +684,10 @@ public class XContent: XNode {
         if !text.isEmpty {
             if let selfAsText = self as? XText, !selfAsText.isolated {
                 selfAsText._value = selfAsText._value + text
-                selfAsText.whitespace = .UNKNOWN
+                selfAsText._whitespace = .UNKNOWN
             } else if let nextAsText = self as? XText, !nextAsText.isolated {
                 nextAsText._value = text + nextAsText._value
-                nextAsText.whitespace = .UNKNOWN
+                nextAsText._whitespace = .UNKNOWN
             } else {
                 _insertNext(XText(text))
             }
@@ -876,7 +876,7 @@ extension XBranchInternal {
     func _add(_ node: XContent) {
         if let lastAsText = lastContent as? XText, let newAsText = node as? XText, !(lastAsText.isolated || newAsText.isolated) {
             lastAsText._value = lastAsText._value + newAsText._value
-            lastAsText.whitespace = lastAsText.whitespace + newAsText.whitespace
+            lastAsText._whitespace = lastAsText._whitespace + newAsText._whitespace
             newAsText.value = ""
         }
         else if let lastAsLiteral = lastContent as? XLiteral, let newAsLiteral = node as? XLiteral, !(lastAsLiteral.isolated || newAsLiteral.isolated) {
@@ -915,7 +915,7 @@ extension XBranchInternal {
         if !text.isEmpty {
             if let lastAsText = lastContent as? XText {
                 lastAsText._value = lastAsText._value + text
-                lastAsText.whitespace = .UNKNOWN
+                lastAsText._whitespace = .UNKNOWN
             }
             else {
                 _add(XText(text))
@@ -937,7 +937,7 @@ extension XBranchInternal {
     func _addFirst(_ node: XContent) {
         if let firstAsText = firstContent as? XText, let newAsText = node as? XText, !(firstAsText.isolated || newAsText.isolated) {
             firstAsText._value = newAsText._value + firstAsText._value
-            firstAsText.whitespace = newAsText.whitespace + firstAsText.whitespace
+            firstAsText._whitespace = newAsText._whitespace + firstAsText._whitespace
             newAsText.value = ""
         }
         else if let firstAsLiteral = firstContent as? XLiteral, let newAsLiteral = node as? XLiteral, !(firstAsLiteral.isolated || newAsLiteral.isolated) {
@@ -976,7 +976,7 @@ extension XBranchInternal {
         if !text.isEmpty {
             if let firstAsText = firstContent as? XText {
                 firstAsText._value = text + firstAsText._value
-                firstAsText.whitespace = .UNKNOWN
+                firstAsText._whitespace = .UNKNOWN
             }
             else {
                 _addFirst(XText(text))
@@ -1662,7 +1662,7 @@ public final class XText: XContent, CustomStringConvertible {
         }
         set (newText) {
             _value = newText
-            whitespace = .UNKNOWN
+            _whitespace = .UNKNOWN
             if newText.isEmpty {
                 self.remove()
             }
@@ -1675,7 +1675,7 @@ public final class XText: XContent, CustomStringConvertible {
         }
     }
     
-    var _isolated: Bool = false
+    var _isolated: Bool
     
     public var isolated: Bool {
         get {
@@ -1696,23 +1696,26 @@ public final class XText: XContent, CustomStringConvertible {
         }
     }
     
-    public var whitespace: WhitespaceIndicator
+    var _whitespace: WhitespaceIndicator
     
-    public init(_ text: String, whitespace: WhitespaceIndicator = .UNKNOWN) {
-        self._value = text
-        self.whitespace = whitespace
+    public var whitespace: WhitespaceIndicator { _whitespace }
+    
+    public init(_ text: String, isolated: Bool = false, whitespace: WhitespaceIndicator = .UNKNOWN) {
+        _value = text
+        _isolated = isolated
+        _whitespace = whitespace
     }
     
     public var isWhitespace: Bool {
-        if whitespace == .UNKNOWN {
+        if _whitespace == .UNKNOWN {
             if _value.contains(regex: #"^\s+$"#) {
-                whitespace = .WHITESPACE
+                _whitespace = .WHITESPACE
             }
             else {
-                whitespace = .NOT_WHITESPACE
+                _whitespace = .NOT_WHITESPACE
             }
         }
-        return whitespace == .WHITESPACE
+        return _whitespace == .WHITESPACE
     }
     
     public func trim() {
@@ -1742,7 +1745,7 @@ public final class XText: XContent, CustomStringConvertible {
     }
     
     public override func shallowClone() -> XText {
-        let theClone = XText(_value, whitespace: whitespace)
+        let theClone = XText(_value, whitespace: _whitespace)
         theClone._backLink = self
         theClone._sourceRange = self._sourceRange
         return theClone
