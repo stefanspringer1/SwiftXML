@@ -472,8 +472,8 @@ public class XContent: XNode {
      */
     func _removeKeep() {
         
-        let previousText = _previous as? XText
-        let nextText = _next as? XText
+        let oldPrevious = _previous
+        let oldNext = _next
         
         // correction in iterators:
         gotoPreviousOnContentIterators()
@@ -497,15 +497,18 @@ public class XContent: XNode {
             }
         }
         
-        if let thePreviousText = previousText, let theNextText = nextText {
-            thePreviousText.value += theNextText.value
-            thePreviousText.whitespace = thePreviousText.whitespace + theNextText.whitespace
-            theNextText.remove()
-        }
-        
         _next = nil
         _previous = nil
         _parent = nil
+        
+        if let thePreviousText = oldPrevious as? XText, let theNextText = oldNext as? XText, !(thePreviousText.isolated || theNextText.isolated) {
+            thePreviousText.value += theNextText.value
+            thePreviousText.whitespace = thePreviousText.whitespace + theNextText.whitespace
+            theNextText.value = ""
+        } else if let thePreviousLiteral = oldPrevious as? XLiteral, let theNextLiteral = oldNext as? XLiteral, !(thePreviousLiteral.isolated || theNextLiteral.isolated) {
+            thePreviousLiteral.value += theNextLiteral.value
+            theNextLiteral.value = ""
+        }
     }
     
     /**
@@ -525,16 +528,8 @@ public class XContent: XNode {
     public override var lastInTree: XContent { get { getLastInTree() as! XContent } }
     
     func _insertPrevious(_ node: XContent) {
-        if let selfAsText = self as? XText, let newAsText = node as? XText {
-            selfAsText._value = newAsText._value + selfAsText._value
-            selfAsText.whitespace = newAsText.whitespace + selfAsText.whitespace
-            newAsText.remove()
-        }
-        else if let selfAsLiteral = self as? XLiteral, let newAsLiteral = node as? XLiteral {
-            selfAsLiteral._value = newAsLiteral._value + selfAsLiteral._value
-            newAsLiteral.remove()
-        }
-        else {
+        
+        func _insertPreviousBase(_ node: XContent) {
             node._removeKeep()
             
             if _parent?.__firstContent === self {
@@ -555,15 +550,56 @@ public class XContent: XNode {
                 element.setDocument(document: theDocument)
             }
         }
+        
+        if let newAsText = node as? XText {
+            if !newAsText.isolated {
+                if let selfAsText = self as? XText, !selfAsText.isolated {
+                    selfAsText._value = newAsText._value + selfAsText._value
+                    selfAsText.whitespace = newAsText.whitespace + selfAsText.whitespace
+                    newAsText.value = ""
+                    return
+                }
+                if let previousAsText = previousTouching as? XText, !previousAsText.isolated {
+                    previousAsText._value = previousAsText._value + newAsText._value
+                    previousAsText.whitespace = previousAsText.whitespace + newAsText.whitespace
+                    newAsText.value = ""
+                    return
+                }
+            }
+            _insertPreviousBase(node)
+            return
+        }
+        
+        if let newAsLiteral = node as? XLiteral {
+            if !newAsLiteral.isolated {
+                if let selfAsLiteral = self as? XText, !selfAsLiteral.isolated {
+                    selfAsLiteral._value = newAsLiteral._value + selfAsLiteral._value
+                    newAsLiteral.value = ""
+                    return
+                }
+                if let previousAsLiteral = previousTouching as? XLiteral, !previousAsLiteral.isolated {
+                    previousAsLiteral._value = previousAsLiteral._value + newAsLiteral._value
+                    newAsLiteral.value = ""
+                    return
+                }
+            }
+            _insertPreviousBase(node)
+            return
+        }
+        
+        _insertPreviousBase(node)
     }
     
     func _insertPrevious(_ text: String) {
+        print("&&&& add String as previous: [\(text)]")
         if !text.isEmpty {
-            if let selfAsText = self as? XText {
+            if let selfAsText = self as? XText, !selfAsText.isolated {
                 selfAsText._value = text + selfAsText._value
                 selfAsText.whitespace = .UNKNOWN
-            }
-            else {
+            } else if let previousAsText = previousTouching as? XText, !previousAsText.isolated {
+                previousAsText._value = previousAsText._value + text
+                previousAsText.whitespace = .UNKNOWN
+            } else {
                 _insertPrevious(XText(text))
             }
         }
@@ -573,15 +609,10 @@ public class XContent: XNode {
         if !keepPosition {
             prefetchOnContentIterators()
         }
-        if content.count == 1 {
-            _insertPrevious(content[0])
-        }
-        else {
-            let isolator = XSpot()
-            _insertPrevious(isolator)
-            content.forEach { isolator._insertPrevious($0) }
-            isolator.remove()
-        }
+        let isolator = XSpot()
+        _insertPrevious(isolator)
+        content.forEach { isolator._insertPrevious($0) }
+        isolator.remove()
     }
     
     public func insertPrevious(keepPosition: Bool = false, @XContentBuilder builder: () -> [XContent]) {
@@ -589,19 +620,8 @@ public class XContent: XNode {
     }
     
     func _insertNext(_ node: XContent) {
-        if let selfAsText = self as? XText, let newAsText = node as? XText {
-            selfAsText._value = selfAsText._value + newAsText._value
-            selfAsText.whitespace = selfAsText.whitespace + newAsText.whitespace
-            newAsText.remove()
-        }
-        else if let selfAsLiteral = self as? XLiteral, let newAsLiteral = node as? XLiteral {
-            selfAsLiteral._value = selfAsLiteral._value + newAsLiteral._value
-            newAsLiteral.remove()
-        }
-        else if _parent?.__lastContent === self {
-            _parent?._add(node)
-        }
-        else {
+        
+        func _insertNextBase(_ node: XContent) {
             node._removeKeep()
             
             _next?._previous = node
@@ -618,15 +638,51 @@ public class XContent: XNode {
                 element.setDocument(document: theDocument)
             }
         }
+        
+        if let newAsText = node as? XText, !newAsText.isolated {
+            if let selfAsText = self as? XText, !selfAsText.isolated {
+                selfAsText._value = selfAsText._value + newAsText._value
+                selfAsText.whitespace = selfAsText.whitespace + newAsText.whitespace
+                newAsText.value = ""
+                return
+            }
+            if let nextAsText = nextTouching as? XText, !nextAsText.isolated {
+                nextAsText._value = newAsText._value + nextAsText._value
+                nextAsText.whitespace = newAsText.whitespace + nextAsText.whitespace
+                newAsText.value = ""
+                return
+            }
+            _insertNextBase(node)
+            return
+        }
+        
+        if let newAsLiteral = node as? XText, !newAsLiteral.isolated {
+            if let selfAsLiteral = self as? XText, !selfAsLiteral.isolated {
+                selfAsLiteral._value = selfAsLiteral._value + newAsLiteral._value
+                newAsLiteral.value = ""
+                return
+            }
+            if let nextAsLiteral = nextTouching as? XText, !nextAsLiteral.isolated {
+                nextAsLiteral._value = newAsLiteral._value + nextAsLiteral._value
+                newAsLiteral.value = ""
+                return
+            }
+            _insertNextBase(node)
+            return
+        }
+        
+        _insertNextBase(node)
     }
     
     func _insertNext(_ text: String) {
         if !text.isEmpty {
-            if let selfAsText = self as? XText {
+            if let selfAsText = self as? XText, !selfAsText.isolated {
                 selfAsText._value = selfAsText._value + text
                 selfAsText.whitespace = .UNKNOWN
-            }
-            else {
+            } else if let nextAsText = self as? XText, !nextAsText.isolated {
+                nextAsText._value = text + nextAsText._value
+                nextAsText.whitespace = .UNKNOWN
+            } else {
                 _insertNext(XText(text))
             }
         }
@@ -824,14 +880,14 @@ extension XBranchInternal {
      Add content as last content.
      */
     func _add(_ node: XContent) {
-        if let lastAsText = lastContent as? XText, let newAsText = node as? XText {
+        if let lastAsText = lastContent as? XText, let newAsText = node as? XText, !(lastAsText.isolated || newAsText.isolated) {
             lastAsText._value = lastAsText._value + newAsText._value
             lastAsText.whitespace = lastAsText.whitespace + newAsText.whitespace
-            newAsText.remove()
+            newAsText.value = ""
         }
-        else if let lastAsLiteral = lastContent as? XLiteral, let newAsLiteral = node as? XLiteral {
+        else if let lastAsLiteral = lastContent as? XLiteral, let newAsLiteral = node as? XLiteral, !(lastAsLiteral.isolated || newAsLiteral.isolated) {
             lastAsLiteral._value = lastAsLiteral._value + newAsLiteral._value
-            newAsLiteral.remove()
+            newAsLiteral.value = ""
         }
         else {
             node._removeKeep()
@@ -885,14 +941,14 @@ extension XBranchInternal {
      Add content as first content.
      */
     func _addFirst(_ node: XContent) {
-        if let firstAsText = firstContent as? XText, let newAsText = node as? XText {
+        if let firstAsText = firstContent as? XText, let newAsText = node as? XText, !(firstAsText.isolated || newAsText.isolated) {
             firstAsText._value = newAsText._value + firstAsText._value
             firstAsText.whitespace = newAsText.whitespace + firstAsText.whitespace
-            newAsText.remove()
+            newAsText.value = ""
         }
-        else if let firstAsLiteral = firstContent as? XLiteral, let newAsLiteral = node as? XLiteral {
+        else if let firstAsLiteral = firstContent as? XLiteral, let newAsLiteral = node as? XLiteral, !(firstAsLiteral.isolated || newAsLiteral.isolated) {
             firstAsLiteral._value = newAsLiteral._value + firstAsLiteral._value
-            newAsLiteral.remove()
+            newAsLiteral.value = ""
         }
         else {
             node._removeKeep()
@@ -1626,6 +1682,27 @@ public final class XText: XContent, CustomStringConvertible {
         }
     }
     
+    var _isolated: Bool = false
+    
+    public var isolated: Bool {
+        get {
+            return _isolated
+        }
+        set (newIsolatedValue) {
+            if _isolated && newIsolatedValue == false {
+                if let previous = _previous as? XText {
+                    _value = previous._value + _value
+                    previous.value = ""
+                }
+                if let next = _next as? XText {
+                    _value = _value + next._value
+                    next.value = ""
+                }
+            }
+            _isolated = newIsolatedValue
+        }
+    }
+    
     public var whitespace: WhitespaceIndicator
     
     public init(_ text: String, whitespace: WhitespaceIndicator = .UNKNOWN) {
@@ -1698,11 +1775,9 @@ public final class XLiteral: XContent, CustomStringConvertible {
             return _value
         }
         set (newText) {
+            _value = newText
             if newText.isEmpty {
                 self.remove()
-            }
-            else {
-                _value = newText
             }
         }
     }
@@ -1710,6 +1785,27 @@ public final class XLiteral: XContent, CustomStringConvertible {
     public var description: String {
         get {
             _value
+        }
+    }
+    
+    var _isolated: Bool = false
+    
+    public var isolated: Bool {
+        get {
+            return _isolated
+        }
+        set (newIsolatedValue) {
+            if _isolated && newIsolatedValue == false {
+                if let previous = _previous as? XLiteral {
+                    _value = previous._value + _value
+                    previous.value = ""
+                }
+                if let next = _next as? XLiteral {
+                    _value = _value + next._value
+                    next.value = ""
+                }
+            }
+            _isolated = newIsolatedValue
         }
     }
     

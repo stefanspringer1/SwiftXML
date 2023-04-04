@@ -441,7 +441,7 @@ var attributeNames: [String]
 
 ### Attachments
 
-Elements and documents can have “attachments”. Those are objects that can be attached via a textual key to those branches but that not considered as belonging to the actual XML tree.
+Elements, documents, and `XSpot` nodes can have “attachments”. Those are objects that can be attached via a textual key to those branches but that not considered as belonging to the actual XML tree.
 
 The attachments can be reached by the property `attached`, and accessing and setting them is analogous to attributes:
 
@@ -1401,11 +1401,37 @@ Subsequent text nodes (`XText`) are always automatically combined, and text node
 
 This can be very convenient when processing text, e.g. it is then very straightforward to apply regular expressions to the text in a document. But there might be some stumbling blocks involved here, when the different behaviour of text nodes and other nodes affects the result of your manipulations.
 
-In those cases, you may use an `XSpot` node as as separator to a text, as shown in the following example. An `XSpot` is the “cheapest” (or simplest) separator you could use in such a case.
+You can avoid merging of text `text` with other texts by setting the `isolated` property to `true`. Consider the following example where the occurrences of a search text gets a greenish background. In this example, you do not want `part` to be added to `text` in the iteration:
+
+```Swift
+let searchText = "world"
+
+document.traverse { node in
+    if let text = node as? XText {
+        if text.value.contains(searchText) {
+            text.isolated = true
+            var addSearchText = false
+            text.value.components(separatedBy: searchText).forEach { part in
+                text.insertPrevious {
+                    addSearchText ? XElement("span", ["style": "background:LightGreen"]) {
+                        searchText
+                    } : nil
+                    part
+                }
+                addSearchText = true
+            }
+            text.remove()
+            text.isolated = false
+        }
+    }
+}
+
+document.echo()
+```
+
+You may also use an `XSpot` node as as separator to a text, as shown in the following version of the example.
 
 An `XSpot` node has a special behaviour that stems from the way it is internally used by the library. An `XSpot` “does nothing” besides existing at a certain spot in the XML tree (hence its name), but it invisible to all iterations except tree traversals, it is invisible for `previousTouching`, `previousInTreeTouching`, `firstContent`, `singleContent`, `isEmpty`, etc., and it is also invisible for a production. So you should use `XSpot` nodes only in a very controlled way, e.g. temporarily. As already mentioned, `XSpot` nodes are found by a tree traversal, so if you do need to find them, you can. And the mentioned properties and methods that do not see an `XSpot` can very well be called for an `XSpot` itself, e.g. `myXSpot.next`. 
-
-Consider the following example where the occurrences of a search text gets a greenish background. In this example, you do not want `part` to be added to `text` in the iteration:
 
 ```Swift
 let document = try parseXML(fromText: """
