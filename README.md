@@ -1400,7 +1400,7 @@ Subsequent text nodes (`XText`) are always automatically combined, and text node
 
 This can be very convenient when processing text, e.g. it is then very straightforward to apply regular expressions to the text in a document. But there might be some stumbling blocks involved here, when the different behaviour of text nodes and other nodes affects the result of your manipulations.
 
-You can avoid merging of text `text` with other texts by setting the `isolated` property to `true`. Consider the following example where the occurrences of a search text gets a greenish background. In this example, you do not want `part` to be added to `text` in the iteration:
+You can avoid merging of text `text` with other texts by setting the `isolated` property to `true` (you can also choose to set this value during initialization of an XText). Consider the following example where the occurrences of a search text gets a greenish background. In this example, you do not want `part` to be added to `text` in the iteration:
 
 ```Swift
 let searchText = "world"
