@@ -1396,7 +1396,7 @@ The output then becomes:
 
 ## Handling of text
 
-Subsequent text nodes (`XText`) are always automatically combined, and text nodes with empty text are automatically removed.
+Subsequent text nodes (`XText`) are always automatically combined, and text nodes with empty text are automatically removed. The same treatment is applied to `XLiteral` nodes.
 
 This can be very convenient when processing text, e.g. it is then very straightforward to apply regular expressions to the text in a document. But there might be some stumbling blocks involved here, when the different behaviour of text nodes and other nodes affects the result of your manipulations.
 
@@ -1433,6 +1433,8 @@ Output:
 ```text
 <a>Hello <span style="background:LightGreen">world</span>, the <span style="background:LightGreen">world</span> is nice.</a>
 ```
+
+Note that when e.g. inserting nodes, the `XText` nodes of them are then treated as being `isolated` while being moved.
 
 ## Rules
 
