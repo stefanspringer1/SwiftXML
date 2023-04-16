@@ -1083,13 +1083,13 @@ func addFirst(builder: () -> [XContent])
 Add nodes as the nodes previous to the node:
 
 ```Swift
-func insertPrevious(builder: () -> [XContent])
+func insertPrevious(_ insertionMode: InsertionMode = .following, builder: () -> [XContent])
 ```
 
 Add nodes as the nodes next to the node:
 
 ```Swift
-func insertNext(builder: () -> [XContent])
+func insertNext(_ insertionMode: InsertionMode = .following, builder: () -> [XContent])
 ```
 
 A more precise type is returned from `insertPrevious` and `insertNext` if the type of the subject is more precisely known.
@@ -1105,7 +1105,7 @@ func remove()
 Replace the node by other nodes:
 
 ```Swift
-func replace(builder: () -> [XContent])
+func replace(_ insertionMode: InsertionMode = .following, builder: () -> [XContent])
 ```
 
 Clear the contents of an element or a document respectively:
@@ -1214,7 +1214,7 @@ Output:
 </top>
 ```
 
-Note that there is no such mechanism to skip inserted content when not using `insertPrevious`, `insertNext`, or `replace`, e.g. when using `add`. Consider the combination `descendants.add`: there is then no “natural” way to correct the traversal of the tree. (A more common use case would be something like `descendants("table").add { XElement("caption") }`, so this should not be a problem in common cases, but something you should be aware of.)
+Note that there is no such mechanism to skipping inserted content when not using `insertPrevious`, `insertNext`, or `replace`, e.g. when using `add`. Consider the combination `descendants.add`: there is then no “natural” way to correct the traversal of the tree. (A more common use case would be something like `descendants("table").add { XElement("caption") }`, so this should not be a problem in common cases, but something you should be aware of.)
 
 When using `insertNext`, `replace` etc. in chained iterators, what happens is that the definition of the content in the parentheses `{...}` get _executed_ each item in the sequence. In the genaral case, you should use the `collect` function to build content specifically for the current item. E.g. in the last example, you might use with the same result:
 
@@ -1341,14 +1341,15 @@ Output:
 <top>
   <a/>
   <b/>
+  <c/>
 </top>
 ```
 
-When `<b/>` gets inserted, the traversal is skipping it. When you would like `<b/>` to be included in the iteration, tell `insertNext` to keep the position (so the iteration continues from there, _not_ skipping `<b/>`):
+When `<b/>` gets inserted, the traversal also follows this inserted content. When you would like to skip the inserted content, use `.skipping` as the first argument of `insertNext` (the default is `.following`, as this “following” mode best reflects the dynamic nature of the library):
 
 ```Swift
     ...
-        element.insertNext(keepPosition: true) {
+        element.insertNext(.skipping) {
             XElement("b")
         }
     ...
@@ -1360,7 +1361,6 @@ Output:
 <top>
   <a/>
   <b/>
-  <c/>
 </top>
 ```
 

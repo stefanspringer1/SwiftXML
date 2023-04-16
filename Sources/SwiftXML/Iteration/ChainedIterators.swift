@@ -1096,34 +1096,34 @@ extension Sequence<XContent> {
         XContentDependingOnContentSequence(sequence: self, contentGetter: { content in f(content); return content })
     }
     
-    public func insertPrevious(keepPosition: Bool = false, @XContentBuilder builder: () -> [XContent]) {
+    public func insertPrevious(_ insertionMode: InsertionMode = .following, @XContentBuilder builder: () -> [XContent]) {
         self.forEach { content in
-            content._insertPrevious(keepPosition: keepPosition, builder())
+            content._insertPrevious(insertionMode, builder())
         }
     }
     
-    public func insertPrevious(keepPosition: Bool = false, _ contentGetter: @escaping (XContent) -> [XContent]) {
+    public func insertPrevious(_ insertionMode: InsertionMode = .following, _ contentGetter: @escaping (XContent) -> [XContent]) {
         self.forEach { content in
-            content._insertPrevious(keepPosition: keepPosition, contentGetter(content))
+            content._insertPrevious(insertionMode, contentGetter(content))
         }
     }
     
-    public func insertNext(keepPosition: Bool = false, @XContentBuilder builder: () -> [XContent]) {
+    public func insertNext(_ insertionMode: InsertionMode = .following, @XContentBuilder builder: () -> [XContent]) {
         self.forEach { content in
-            content._insertNext(keepPosition: keepPosition, builder())
+            content._insertNext(insertionMode, builder())
         }
     }
     
-    public func insertNext(keepPosition: Bool = false, _ contentGetter: @escaping (XContent) -> [XContent]) {
-        self.forEach { content in content._insertNext(keepPosition: keepPosition, contentGetter(content)) }
+    public func insertNext(_ insertionMode: InsertionMode = .following, _ contentGetter: @escaping (XContent) -> [XContent]) {
+        self.forEach { content in content._insertNext(insertionMode, contentGetter(content)) }
     }
     
-    public func replace(follow: Bool = false, @XContentBuilder builder: () -> [XContent]) {
-        self.forEach { content in content.replace(follow: follow, builder: builder) }
+    public func replace(_ insertionMode: InsertionMode = .following, @XContentBuilder builder: () -> [XContent]) {
+        self.forEach { content in content.replace(insertionMode, builder: builder) }
     }
     
-    public func replace(follow: Bool = false, _ contentGetter: (XContent) -> (() -> [XContent])) {
-        self.forEach { content in content.replace(follow: follow, builder: contentGetter(content) ) }
+    public func replace(_ insertionMode: InsertionMode = .following, _ contentGetter: (XContent) -> (() -> [XContent])) {
+        self.forEach { content in content.replace(insertionMode, builder: contentGetter(content) ) }
     }
     
     public func remove() {
@@ -1541,28 +1541,28 @@ extension Sequence<XElement> {
         self.forEach { element in element._setContent(contentGetter(element)) }
     }
     
-    public func insertPrevious(keepPosition: Bool = false, @XContentBuilder builder: () -> [XContent]) {
-        self.forEach { element in element._insertPrevious(keepPosition: keepPosition, builder()) }
+    public func insertPrevious(_ insertionMode: InsertionMode = .following, @XContentBuilder builder: () -> [XContent]) {
+        self.forEach { element in element._insertPrevious(insertionMode, builder()) }
     }
     
-    public func insertPrevious(keepPosition: Bool = false, _ contentGetter: @escaping (XElement) -> [XContent]) {
-        self.forEach { element in element._insertPrevious(keepPosition: keepPosition, contentGetter(element)) }
+    public func insertPrevious(_ insertionMode: InsertionMode = .following, _ contentGetter: @escaping (XElement) -> [XContent]) {
+        self.forEach { element in element._insertPrevious(insertionMode, contentGetter(element)) }
     }
     
-    public func insertNext(keepPosition: Bool = false, @XContentBuilder builder: () -> [XContent]) {
-        self.forEach { element in element._insertNext(keepPosition: keepPosition, builder()) }
+    public func insertNext(_ insertionMode: InsertionMode = .following, @XContentBuilder builder: () -> [XContent]) {
+        self.forEach { element in element._insertNext(insertionMode, builder()) }
     }
     
-    public func insertNext(keepPosition: Bool = false, _ contentGetter: @escaping (XElement) -> [XContent]) {
-        self.forEach { element in element._insertNext(keepPosition: keepPosition, contentGetter(element)) }
+    public func insertNext(_ insertionMode: InsertionMode = .following, _ contentGetter: @escaping (XElement) -> [XContent]) {
+        self.forEach { element in element._insertNext(insertionMode, contentGetter(element)) }
     }
     
-    public func replace(follow: Bool = false, @XContentBuilder builder: () -> [XContent]) {
-        self.forEach { element in element.replace(follow: follow, builder: builder) }
+    public func replace(_ insertionMode: InsertionMode = .following, @XContentBuilder builder: () -> [XContent]) {
+        self.forEach { element in element.replace(insertionMode, builder: builder) }
     }
     
-    public func replace(follow: Bool = false, _ contentGetter: (XElement) -> (() -> [XContent])) {
-        self.forEach { element in element.replace(follow: follow, builder: contentGetter(element) ) }
+    public func replace(_ insertionMode: InsertionMode = .following, _ contentGetter: (XElement) -> (() -> [XContent])) {
+        self.forEach { element in element.replace(insertionMode, builder: contentGetter(element) ) }
     }
     
     public func clear() {

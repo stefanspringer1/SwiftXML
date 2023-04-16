@@ -22,6 +22,8 @@ func moving(_ content: [XContent], action: () -> ()) {
     content.forEach { ($0 as? AutoCombining)?.resetAfterMove() }
 }
 
+public enum InsertionMode { case skipping; case following }
+
 public class XNode {
     
     var _attached: Attachments? = nil
@@ -613,8 +615,8 @@ public class XContent: XNode {
         }
     }
     
-    func _insertPrevious(keepPosition: Bool, _ content: [XContent]) {
-        if !keepPosition {
+    func _insertPrevious(_ insertionMode: InsertionMode, _ content: [XContent]) {
+        if insertionMode == .skipping {
             prefetchOnContentIterators()
         }
         let isolator = _Isolator_()
@@ -625,8 +627,8 @@ public class XContent: XNode {
         isolator.remove()
     }
     
-    public func insertPrevious(keepPosition: Bool = false, @XContentBuilder builder: () -> [XContent]) {
-        _insertPrevious(keepPosition: keepPosition, builder())
+    public func insertPrevious(_ insertionMode: InsertionMode = .following, @XContentBuilder builder: () -> [XContent]) {
+        _insertPrevious(insertionMode, builder())
     }
     
     func _insertNext(_ node: XContent) {
@@ -702,8 +704,8 @@ public class XContent: XNode {
         }
     }
     
-    func _insertNext(keepPosition: Bool, _ content: [XContent]) {
-        if !keepPosition {
+    func _insertNext(_ insertionMode: InsertionMode, _ content: [XContent]) {
+        if insertionMode == .skipping {
             prefetchOnContentIterators()
         }
         let isolator = _Isolator_()
@@ -714,15 +716,15 @@ public class XContent: XNode {
         isolator.remove()
     }
     
-    public func insertNext(keepPosition: Bool = false, @XContentBuilder builder: () -> [XContent]) {
-        _insertNext(keepPosition: keepPosition, builder())
+    public func insertNext(_ insertionMode: InsertionMode = .following, @XContentBuilder builder: () -> [XContent]) {
+        _insertNext(insertionMode, builder())
     }
     
     /**
      Replace the node by other nodes.
      */
-    public func replace(follow: Bool = false, _ content: [XContent]) {
-        if follow {
+    public func replace(_ insertionMode: InsertionMode = .following, _ content: [XContent]) {
+        if insertionMode == .following {
             gotoPreviousOnContentIterators()
         }
         else {
@@ -739,8 +741,8 @@ public class XContent: XNode {
         isolator.remove()
     }
     
-    public func replace(follow: Bool = false, @XContentBuilder builder: () -> [XContent]) {
-        replace(follow: follow, builder())
+    public func replace(_ insertionMode: InsertionMode = .following, @XContentBuilder builder: () -> [XContent]) {
+        replace(insertionMode, builder())
     }
     
     public var asSequence: XContentSequence { get { XContentSelfSequence(content: self) } }
@@ -1421,31 +1423,31 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     
     public var asElementSequence: XElementSequence { get { XElementSelfSequence(element: self) } }
     
-    override func _insertPrevious(keepPosition: Bool, _ content: [XContent]) {
-        if !keepPosition {
+    override func _insertPrevious(_ insertionMode: InsertionMode, _ content: [XContent]) {
+        if insertionMode == .skipping {
             prefetchOnElementIterators()
         }
-        super._insertPrevious(keepPosition: keepPosition, content)
+        super._insertPrevious(insertionMode, content)
     }
     
-    override func _insertNext(keepPosition: Bool, _ content: [XContent]) {
-        if !keepPosition {
+    override func _insertNext(_ insertionMode: InsertionMode, _ content: [XContent]) {
+        if insertionMode == .skipping {
             prefetchOnElementIterators()
         }
-        super._insertNext(keepPosition: keepPosition, content)
+        super._insertNext(insertionMode, content)
     }
     
     /**
      Replace the node by other nodes.
      */
-    public override func replace(follow: Bool = false, @XContentBuilder builder: () -> [XContent]) {
-        if follow {
+    public override func replace(_ insertionMode: InsertionMode = .following, @XContentBuilder builder: () -> [XContent]) {
+        if insertionMode == .following {
             gotoPreviousOnElementIterators()
         }
         else {
             prefetchOnElementIterators()
         }
-        super.replace(follow: follow, builder: builder)
+        super.replace(insertionMode, builder: builder)
     }
     
     // ------------------------------------------------------------------------
@@ -1652,28 +1654,28 @@ public final class XText: XContent, AutoCombining, CustomStringConvertible {
         super._removeKeep()
     }
     
-    override func _insertPrevious(keepPosition: Bool, _ content: [XContent]) {
-        if !keepPosition {
+    override func _insertPrevious(_ insertionMode: InsertionMode, _ content: [XContent]) {
+        if insertionMode == .skipping {
             prefetchOnTextIterators()
         }
-        super._insertPrevious(keepPosition: keepPosition, content)
+        super._insertPrevious(insertionMode, content)
     }
     
-    override func _insertNext(keepPosition: Bool, _ content: [XContent]) {
-        if !keepPosition {
+    override func _insertNext(_ insertionMode: InsertionMode, _ content: [XContent]) {
+        if insertionMode == .skipping {
             prefetchOnTextIterators()
         }
-        super._insertNext(keepPosition: keepPosition, content)
+        super._insertNext(insertionMode, content)
     }
     
-    public override func replace(follow: Bool = false, @XContentBuilder builder: () -> [XContent]) {
-        if follow {
+    public override func replace(_ insertionMode: InsertionMode = .following, @XContentBuilder builder: () -> [XContent]) {
+        if insertionMode == .following {
             gotoPreviousOnTextIterators()
         }
         else {
             prefetchOnTextIterators()
         }
-        super.replace(follow: follow, builder: builder)
+        super.replace(insertionMode, builder: builder)
     }
     
     public override var backLink: XText? { get { super.backLink as? XText } }
