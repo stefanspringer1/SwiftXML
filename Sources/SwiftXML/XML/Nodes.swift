@@ -16,6 +16,12 @@ protocol Named: AnyObject {
     var nextWithSameName: WithName? { get set }
 }
 
+func moving(_ content: [XContent], action: () -> ()) {
+    content.forEach { ($0 as? AutoCombining)?.prepareForMove() }
+    action()
+    content.forEach { ($0 as? AutoCombining)?.resetAfterMove() }
+}
+
 public class XNode {
     
     var _attached: Attachments? = nil
@@ -613,9 +619,9 @@ public class XContent: XNode {
         }
         let isolator = _Isolator_()
         _insertPrevious(isolator)
-        content.forEach { ($0 as? Movable)?.prepareForMove() }
-        content.forEach { isolator._insertPrevious($0) }
-        content.forEach { ($0 as? Movable)?.resetAfterMove() }
+        moving(content) {
+            content.forEach { isolator._insertPrevious($0) }
+        }
         isolator.remove()
     }
     
@@ -702,9 +708,9 @@ public class XContent: XNode {
         }
         let isolator = _Isolator_()
         _insertNext(isolator)
-        content.forEach { ($0 as? Movable)?.prepareForMove() }
-        content.forEach { isolator._insertPrevious($0) }
-        content.forEach { ($0 as? Movable)?.resetAfterMove() }
+        moving(content) {
+            content.forEach { isolator._insertPrevious($0) }
+        }
         isolator.remove()
     }
     
@@ -724,9 +730,9 @@ public class XContent: XNode {
         }
         let isolator = _Isolator_()
         _insertPrevious(isolator)
-        content.forEach { ($0 as? Movable)?.prepareForMove() }
-        content.forEach { isolator._insertPrevious($0) }
-        content.forEach { ($0 as? Movable)?.resetAfterMove() }
+        moving(content) {
+            content.forEach { isolator._insertPrevious($0) }
+        }
         if isolator._next === self {
             remove()
         }
@@ -934,9 +940,9 @@ extension XBranchInternal {
     }
     
     func _add(_ content: [XContent]) {
-        content.forEach { ($0 as? Movable)?.prepareForMove() }
-        content.forEach { _add($0) }
-        content.forEach { ($0 as? Movable)?.resetAfterMove() }
+        moving(content) {
+            content.forEach { _add($0) }
+        }
     }
     
     public func add(@XContentBuilder builder: () -> [XContent]) {
@@ -997,9 +1003,9 @@ extension XBranchInternal {
     }
     
     func _addFirst(_ content: [XContent]) {
-        content.forEach { ($0 as? Movable)?.prepareForMove() }
-        content.reversed().forEach { _addFirst($0) }
-        content.forEach { ($0 as? Movable)?.resetAfterMove() }
+        moving(content) {
+            content.reversed().forEach { _addFirst($0) }
+        }
     }
     
     public func addFirst(@XContentBuilder builder: () -> [XContent]) {
@@ -1012,9 +1018,9 @@ extension XBranchInternal {
     func _setContent(_ content: [XContent]) {
         let isolator = _Isolator_()
         _addFirst(isolator)
-        content.forEach { ($0 as? Movable)?.prepareForMove() }
-        content.forEach { isolator._insertPrevious($0) }
-        content.forEach { ($0 as? Movable)?.resetAfterMove() }
+        moving(content) {
+            content.forEach { isolator._insertPrevious($0) }
+        }
         isolator.next.forEach { $0.remove() }
         isolator.remove()
     }
@@ -1613,12 +1619,12 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     }
 }
 
-protocol Movable {
+protocol AutoCombining {
     func prepareForMove()
     func resetAfterMove()
 }
 
-public final class XText: XContent, Movable, CustomStringConvertible {
+public final class XText: XContent, AutoCombining, CustomStringConvertible {
     
     var _textIterators = WeakList<XBidirectionalTextIterator>()
     
@@ -1703,6 +1709,20 @@ public final class XText: XContent, Movable, CustomStringConvertible {
     
     func resetAfterMove() {
         _moving = false
+        if !_isolated {
+            intendCombiningWithNeighbours()
+        }
+    }
+    
+    func intendCombiningWithNeighbours() {
+        if let previous = _previous as? XText, !previous.isolated {
+            _value = previous._value + _value
+            previous.value = ""
+        }
+        if let next = _next as? XText, !next.isolated {
+            _value = _value + next._value
+            next.value = ""
+        }
     }
     
     public var isolated: Bool {
@@ -1711,14 +1731,7 @@ public final class XText: XContent, Movable, CustomStringConvertible {
         }
         set (newIsolatedValue) {
             if _isolated && newIsolatedValue == false {
-                if let previous = _previous as? XText {
-                    _value = previous._value + _value
-                    previous.value = ""
-                }
-                if let next = _next as? XText {
-                    _value = _value + next._value
-                    next.value = ""
-                }
+                intendCombiningWithNeighbours()
             }
             _isolated = newIsolatedValue
         }
@@ -1787,7 +1800,7 @@ public final class XText: XContent, Movable, CustomStringConvertible {
 /*
  `XLiteral` has a text value that is meant to be serialized "as is" without XML-escaping.
  */
-public final class XLiteral: XContent, Movable, CustomStringConvertible {
+public final class XLiteral: XContent, AutoCombining, CustomStringConvertible {
     
     public override var backLink: XLiteral? { get { super.backLink as? XLiteral } }
     public override var finalBackLink: XLiteral? { get { super.finalBackLink as? XLiteral } }
@@ -1821,6 +1834,20 @@ public final class XLiteral: XContent, Movable, CustomStringConvertible {
     
     func resetAfterMove() {
         _moving = false
+        if !_isolated {
+            intendCombiningWithNeighbours()
+        }
+    }
+    
+    func intendCombiningWithNeighbours() {
+        if let previous = _previous as? XLiteral, !previous.isolated {
+            _value = previous._value + _value
+            previous.value = ""
+        }
+        if let next = _next as? XLiteral, !next.isolated {
+            _value = _value + next._value
+            next.value = ""
+        }
     }
     
     public var isolated: Bool {
@@ -1829,14 +1856,7 @@ public final class XLiteral: XContent, Movable, CustomStringConvertible {
         }
         set (newIsolatedValue) {
             if _isolated && newIsolatedValue == false {
-                if let previous = _previous as? XLiteral {
-                    _value = previous._value + _value
-                    previous.value = ""
-                }
-                if let next = _next as? XLiteral {
-                    _value = _value + next._value
-                    next.value = ""
-                }
+                intendCombiningWithNeighbours()
             }
             _isolated = newIsolatedValue
         }
