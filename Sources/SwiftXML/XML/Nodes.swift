@@ -45,6 +45,10 @@ public class XNode {
         }
     }
     
+    public func detachAll() {
+        attached = nil
+    }
+    
     public func pullAttached(_ key: String) -> Any? {
         if let value = attached?[key] {
             attached![key] = nil

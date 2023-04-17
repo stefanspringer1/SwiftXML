@@ -445,7 +445,7 @@ All nodes can have “attachments”. Those are objects that can be attached via
 Add an attachment:
 
 ```Swift
-node.attach(withKey: "my greeting", value: XElement("greeting") { "hello" })
+node.attach("my greeting", withValue: XElement("greeting") { "hello" })
 ```
 
 Get an attachment:
@@ -456,18 +456,24 @@ if let greeting = node.attached("my greeting") as? XElement {
 }
 ```
 
-Removing an attachment:
-
-```Swift
-node.detach("my greeting")
-```
-
 Getting an at the same time removing an attachment:
 
 ```Swift
 if let greeting = node.pullAttached("my greeting") as? XElement {
     print(greeting.text)
 }
+```
+
+Removing an attachment:
+
+```Swift
+node.detach("my greeting")
+```
+
+Removing all attachments:
+
+```Swift
+node.detachAll()
 ```
 
 You can also set attachments immediately when creating en element or a document by using the argument `attached:` of the initializer.
