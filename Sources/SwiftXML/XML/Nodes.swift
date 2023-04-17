@@ -1271,41 +1271,6 @@ public struct XContentBuilder {
     
 }
 
-public class Attachments {
-    
-    private var values: [String:Any]? = nil
-    
-    public func clear() {
-        values = nil
-    }
-    
-    public subscript(key: String) -> Any? {
-        get {
-            values?[key]
-        }
-        set(newValue) {
-            if newValue == nil {
-                values?[key] = nil
-                if values?.isEmpty == true {
-                    values = nil
-                }
-            }
-            else {
-                if values == nil {
-                    values = [String:Any]()
-                }
-                values?[key] = newValue
-            }
-        }
-    }
-    
-    public func pull(_ key: String) -> Any? {
-        let value = values?[key]
-        values?[key] = nil
-        return value
-    }
-}
-
 public final class XElement: XContent, XBranchInternal, CustomStringConvertible {
     
     func setDocument(document newDocument: XDocument?) {
