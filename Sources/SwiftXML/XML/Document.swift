@@ -286,7 +286,7 @@ public final class XDocument: XNode, XBranchInternal {
         self._lastInTree = self
         attached?.forEach { (key,value) in
             if let value {
-                self.attach(withKey: key, value: value)
+                self.attach(key, withValue: value)
             }
         }
     }

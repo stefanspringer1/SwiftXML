@@ -28,7 +28,7 @@ public class XNode {
     
     var attached: [String:Any]? = nil
     
-    public func attach(withKey key: String, value: Any?) {
+    public func attach(_ key: String, withValue value: Any?) {
         guard let value else { detach(key); return }
         if attached == nil { attached = [String:Any]() }
         attached![key] = value
@@ -1581,7 +1581,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         }
         attached?.forEach { (key,value) in
             if let value {
-                self.attach(withKey: key, value: value)
+                self.attach(key, withValue: value)
             }
         }
     }
