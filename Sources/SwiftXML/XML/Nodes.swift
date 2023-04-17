@@ -28,7 +28,8 @@ public class XNode {
     
     var attached: [String:Any]? = nil
     
-    public func attach(withKey key: String, value: Any) {
+    public func attach(withKey key: String, value: Any?) {
+        guard let value else { detach(key); return }
         if attached == nil { attached = [String:Any]() }
         attached![key] = value
     }
