@@ -284,7 +284,11 @@ public final class XDocument: XNode, XBranchInternal {
         super.init()
         _document = self
         self._lastInTree = self
-        attached?.forEach{ (key,value) in self.attached[key] = value }
+        attached?.forEach { (key,value) in
+            if let value {
+                self.attach(withKey: key, value: value)
+            }
+        }
     }
     
     public convenience init(

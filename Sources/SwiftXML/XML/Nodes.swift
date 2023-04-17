@@ -26,8 +26,29 @@ public enum InsertionMode { case skipping; case following }
 
 public class XNode {
     
-    var _attached: Attachments? = nil
-    public var attached: Attachments { _attached ?? { _attached = Attachments(); return _attached! }() }
+    var attached: [String:Any]? = nil
+    
+    public func attach(withKey key: String, value: Any) {
+        if attached == nil { attached = [String:Any]() }
+        attached![key] = value
+    }
+    
+    public func attached(_ key: String) -> Any? {
+        attached?[key]
+    }
+    
+    public func detach(_ key: String) {
+        attached?[key] = nil
+    }
+    
+    public func pullAttached(_ key: String) -> Any? {
+        if let value = attached?[key] {
+            attached![key] = nil
+            return value
+        } else {
+            return nil
+        }
+    }
     
     var _sourceRange: XTextRange? = nil
     
@@ -1557,7 +1578,11 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         if let theAttributes = attributes {
             setAttributes(attributes: theAttributes)
         }
-        attached?.forEach{ (key,value) in self.attached[key] = value }
+        attached?.forEach { (key,value) in
+            if let value {
+                self.attach(withKey: key, value: value)
+            }
+        }
     }
     
     public convenience init(_ name: String, _ attributes: [String:String?]? = nil, attached: [String:Any?]? = nil, adjustDocument _adjustDocument: Bool = false, @XContentBuilder builder: () -> [XContent]) {

@@ -440,27 +440,34 @@ var attributeNames: [String]
 
 ### Attachments
 
-All nodes can have “attachments”. Those are objects that can be attached via a textual key to those branches but that not considered as belonging to the actual XML tree.
+All nodes can have “attachments”. Those are objects that can be attached via a textual key. Those attachments are not considered as belonging to the formal XML tree.
 
-The attachments can be reached by the property `attached`, and accessing and setting them is analogous to attributes:
-
-Example: attaching a “note” by attaching it with key `"note"` (it uses an element constructed with content as explained in the next section):
+Add an attachment:
 
 ```Swift
-myElement.attached["note"] = "this is a note"
+node.attach(withKey: "my greeting", value: XElement("greeting") { "hello" })
+```
 
-// replacing the attached note by a more complex object:
-myElement.attached["note"] = XElement("note") {
-    "this is a note as element instead"
+Get an attachment:
+
+```Swift
+if let greeting = node.attached("my greeting") as? XElement {
+    print(greeting.text)
 }
+```
 
-// getting the attached note:
-if let note = myElement.attached["note"] as? XElement {
-    print("note: \((note.firstContent as? XText)?.value ?? "")")
+Removing an attachment:
+
+```Swift
+node.detach("my greeting")
+```
+
+Getting an at the same time removing an attachment:
+
+```Swift
+if let greeting = node.pullAttached("my greeting") as? XElement {
+    print(greeting.text)
 }
-
-// removing the attached note:
-myElement.attached["note"] = nil
 ```
 
 You can also set attachments immediately when creating en element or a document by using the argument `attached:` of the initializer.
