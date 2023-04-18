@@ -183,8 +183,8 @@ public final class XDocument: XNode, XBranchInternal {
         _elementsOfName_last[name] = element
         
         // register attributes:
-        for attributeIndex in 0..<(element._attributeNames?.count ?? 0) {
-            registerAttribute(attribute: element._attributes![attributeIndex], withName: element._attributeNames![attributeIndex])
+        for attributeIndex in 0..<element._attributeNames.count {
+            registerAttribute(attribute: element._attributes[attributeIndex], withName: element._attributeNames[attributeIndex])
         }
     }
     
@@ -203,8 +203,8 @@ public final class XDocument: XNode, XBranchInternal {
         element.nextWithSameName = nil
         
         // unregister attributes:
-        for attributeIndex in 0..<(element._attributeNames?.count ?? 0) {
-            unregisterAttribute(attribute: element._attributes![attributeIndex], withName: element._attributeNames![attributeIndex])
+        for attributeIndex in 0..<element._attributeNames.count {
+            unregisterAttribute(attribute: element._attributes[attributeIndex], withName: element._attributeNames[attributeIndex])
         }
     }
     

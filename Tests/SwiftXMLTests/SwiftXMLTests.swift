@@ -16,7 +16,7 @@ final class SwiftXMLTests: XCTestCase {
     
     func testAttributeFromDocument() throws {
         let document = try parseXML(fromText: """
-            <a id="1" h="3">
+            <a id="1">
                 <b id="2"/>
                 <b id="3"/>
             </a>
