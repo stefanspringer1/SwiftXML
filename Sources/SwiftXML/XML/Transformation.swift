@@ -73,7 +73,7 @@ public class XTransformation {
             else if let attributeAction = rule.action as? XAttributeAction {
                 rule.names.forEach { name in
                     iteratorsWithActions.append((
-                        XBidirectionalAttributeIterator(attributeIterator: XAttributesOfSameNameIterator(document: document, attributeName: name, keepLast: true), keepLast: true),
+                        XBidirectionalAttributeIterator(forAttributeName: name, attributeIterator: XAttributesOfSameNameIterator(document: document, attributeName: name, keepLast: true), keepLast: true),
                         attributeAction
                     ))
                 }

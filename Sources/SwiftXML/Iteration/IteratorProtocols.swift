@@ -39,6 +39,6 @@ public protocol XElementIteratorProtocol {
  attributes.
  */
 protocol XAttributeIteratorProtocol {
-    mutating func next() -> XAttribute?
-    mutating func previous() -> XAttribute?
+    mutating func next() -> AttributeValue?
+    mutating func previous() -> AttributeValue?
 }

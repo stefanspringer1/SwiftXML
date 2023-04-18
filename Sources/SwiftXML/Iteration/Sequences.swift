@@ -563,7 +563,7 @@ public final class XAttributesOfSameNameSequence: XAttributeSequence {
     
     public override func makeIterator() -> XAttributeIterator {
         return XBidirectionalAttributeIterator(
-            attributeIterator: XAttributesOfSameNameIterator(
+            forAttributeName: attributeName, attributeIterator: XAttributesOfSameNameIterator(
                 document: document,
                 attributeName: attributeName
             )

@@ -97,7 +97,7 @@ public final class XAttributesOfNamesIterator: XAttributeIterator {
             let iterator = iterators[iteratorIndex]
             if let next = iterator.next(), let element = next.element {
                 foundElement = true
-                return XAttributeSpot(name: next.name, value: next.value, element: element)
+                return XAttributeSpot(name: iterator.attributeName, value: next.value, element: element)
             }
             else {
                 iteratorIndex += 1

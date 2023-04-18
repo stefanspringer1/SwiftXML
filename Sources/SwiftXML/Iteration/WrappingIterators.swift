@@ -205,13 +205,15 @@ public final class XBidirectionalAttributeIterator: XAttributeIterator {
     var attributeIterator: XAttributeIteratorProtocol
     
     var keepLast: Bool
+    var name: String
     
-    init(attributeIterator: XAttributeIteratorProtocol, keepLast: Bool = false) {
+    init(forAttributeName name: String, attributeIterator: XAttributeIteratorProtocol, keepLast: Bool = false) {
+        self.name = name
         self.attributeIterator = attributeIterator
         self.keepLast = keepLast
     }
     
-    weak var current: XAttribute? = nil
+    weak var current: AttributeValue? = nil
     var prefetched = false
     
     public override func next() -> XAttributeSpot? {
@@ -229,7 +231,7 @@ public final class XBidirectionalAttributeIterator: XAttributeIterator {
                 current?.attributeIterators.append(self)
             }
         }
-        if let name = current?.name, let value = current?.value, let element = current?.element {
+        if let value = current?.value, let element = current?.element {
             return XAttributeSpot(name: name, value: value, element: element)
         }
         else {
@@ -242,7 +244,7 @@ public final class XBidirectionalAttributeIterator: XAttributeIterator {
         prefetched = false
         current?.attributeIterators.remove(self)
         current = attributeIterator.previous()
-        if let name = current?.name, let value = current?.value, let element = current?.element {
+        if let value = current?.value, let element = current?.element {
             current?.attributeIterators.append(self)
             return XAttributeSpot(name: name, value:value, element: element)
         }

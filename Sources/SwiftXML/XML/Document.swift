@@ -183,9 +183,10 @@ public final class XDocument: XNode, XBranchInternal {
         _elementsOfName_last[name] = element
         
         // register attributes:
-        element._attributes?.values.forEach { attribute in
-            registerAttribute(attribute: attribute)
-        }    }
+        for attributeIndex in 0..<element._attributeNames.count {
+            registerAttribute(attribute: element._attributes[attributeIndex], withName: element._attributeNames[attributeIndex])
+        }
+    }
     
     func unregisterElement(element: XElement) {
         element._nameIterators.forEach { _ = $0.previous() }
@@ -202,8 +203,8 @@ public final class XDocument: XNode, XBranchInternal {
         element.nextWithSameName = nil
         
         // unregister attributes:
-        element._attributes?.values.forEach { attribute in
-            unregisterAttribute(attribute: attribute)
+        for attributeIndex in 0..<element._attributeNames.count {
+            unregisterAttribute(attribute: element._attributes[attributeIndex], withName: element._attributeNames[attributeIndex])
         }
     }
     
@@ -223,8 +224,8 @@ public final class XDocument: XNode, XBranchInternal {
     // attributes of same name:
     // -------------------------------------------------------------------------
     
-    var _attributesOfName_first = [String:XAttribute]()
-    var _attributesOfName_last = [String:XAttribute]()
+    var _attributesOfName_first = [String:AttributeValue]()
+    var _attributesOfName_last = [String:AttributeValue]()
     
     deinit {
         
@@ -236,8 +237,7 @@ public final class XDocument: XNode, XBranchInternal {
         
     }
     
-    func registerAttribute(attribute: XAttribute) {
-        let name = attribute.name
+    func registerAttribute(attribute: AttributeValue, withName name: String) {
         if let theLast = _attributesOfName_last[name] {
             theLast.nextWithSameName = attribute
             attribute.previousWithSameName = theLast
@@ -249,9 +249,8 @@ public final class XDocument: XNode, XBranchInternal {
         attribute.nextWithSameName = nil
     }
     
-    func unregisterAttribute(attribute: XAttribute) {
+    func unregisterAttribute(attribute: AttributeValue, withName name: String) {
         attribute.attributeIterators.forEach { _ = $0.previous() }
-        let name = attribute.name
         attribute.previousWithSameName?.nextWithSameName = attribute.nextWithSameName
         attribute.nextWithSameName?.previousWithSameName = attribute.previousWithSameName
         if _attributesOfName_first[name] === attribute {
