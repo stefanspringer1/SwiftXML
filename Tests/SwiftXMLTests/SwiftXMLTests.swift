@@ -14,6 +14,44 @@ final class SwiftXMLTests: XCTestCase {
         </a>
         """
     
+    func testAttributeFromDocument() throws {
+        let document = try parseXML(fromText: """
+            <a id="1">
+                <b id="2"/>
+                <b id="3"/>
+            </a>
+            """)
+        let element = document.children.first!
+        XCTAssertEqual(element["id"], "1")
+        XCTAssertEqual(document.attributes(ofName: "id").map { attributeSpot in attributeSpot.value }.joined(separator: ", "), "1, 2, 3")
+    }
+    
+    func testClone() throws {
+        let source = """
+            <a id="1">
+                <b id="2"/>
+                <b id="3"/>
+            </a>
+            """
+        let document = try parseXML(fromText: source)
+        let clone = document.clone()
+        XCTAssertEqual(clone.serialized(), source)
+    }
+    
+    func testAttributeSetting() throws {
+        let element = XElement("test")
+        element["att1"] = "val1"
+        element["att2"] = "val2"
+        element["att3"] = "val3"
+        XCTAssertEqual(element["att1"], "val1")
+        XCTAssertEqual(element["att2"], "val2")
+        XCTAssertEqual(element["att3"], "val3")
+        element["att2"] = nil
+        XCTAssertEqual(element["att1"], "val1")
+        XCTAssertEqual(element["att2"], nil)
+        XCTAssertEqual(element["att3"], "val3")
+    }
+    
     func testAncestorsIterator() throws {
         let c = XElement("c")
         let a = XElement("a") {

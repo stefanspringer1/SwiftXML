@@ -1312,8 +1312,8 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     }
     
     public func copyAttributes(from other: XElement) {
-        for i in 0..<_attributeNames.count {
-            self[_attributeNames[i]] = other._attributes[i].value
+        for i in 0..<other._attributeNames.count {
+            self[other._attributeNames[i]] = other._attributes[i].value
         }
     }
     
