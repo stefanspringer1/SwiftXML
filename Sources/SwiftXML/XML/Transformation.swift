@@ -1,8 +1,12 @@
+//===--- Transformation.swift ---------------------------------------------===//
 //
-//  Transformation.swift
+// This source file is part of the SwiftXML.org open source project
 //
-//  Created 2022 by Stefan Springer, https://stefanspringer.com
-//  License: Apache License 2.0
+// Copyright (c) 2021-2023 Stefan Springer (https://stefanspringer.com)
+// and the SwiftXML project authors
+// Licensed under Apache License v2.0 with Runtime Library Exception
+//
+//===----------------------------------------------------------------------===//
 
 import Foundation
 
