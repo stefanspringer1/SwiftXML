@@ -18,36 +18,27 @@ public enum InsertionMode { case skipping; case following }
 
 public class XNode {
     
-    var attached: [String:Any]? = nil
+    private var attached = [String:Any]()
     
     public func attach(_ key: String, withValue value: Any?) {
         guard let value else { detach(key); return }
-        if attached == nil { attached = [String:Any]() }
-        attached![key] = value
+        attached[key] = value
     }
     
     public func attached(_ key: String) -> Any? {
-        attached?[key]
+        attached[key]
     }
     
     public func detach(_ key: String) {
-        attached?[key] = nil
-        if attached?.isEmpty == true {
-            attached = nil
-        }
+        attached[key] = nil
     }
     
     public func detachAll() {
-        attached = nil
+        attached.removeAll()
     }
     
     public func pullAttached(_ key: String) -> Any? {
-        if let value = attached?[key] {
-            attached![key] = nil
-            return value
-        } else {
-            return nil
-        }
+        attached.removeValue(forKey: key)
     }
     
     var _sourceRange: XTextRange? = nil
@@ -1182,15 +1173,15 @@ public extension LazyFilterSequence where Base == XContentSequence {
     }
 }
 
-final class AttributeValue {
+final class AttributeProperties {
     
     var attributeIterators = WeakList<XBidirectionalAttributeIterator>()
     
     var value: String
     weak var element: XElement?
     
-    weak var previousWithSameName: AttributeValue? = nil
-    var nextWithSameName: AttributeValue? = nil
+    weak var previousWithSameName: AttributeProperties? = nil
+    var nextWithSameName: AttributeProperties? = nil
     
     init(value: String, element: XElement) {
         self.value = value
@@ -1297,8 +1288,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         _elementIterators.forEach { $0.prefetch() }
     }
     
-    var _attributes = [AttributeValue]()
-    var _attributeNames = [String]()
+    var _attributes = [String:AttributeProperties]()
     
     public override var backLink: XElement? { get { super.backLink as? XElement } }
     public override var finalBackLink: XElement? { get { super.finalBackLink as? XElement } }
@@ -1306,14 +1296,14 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     public var description: String {
         get {
             """
-            <\(name)\(_attributes.isEmpty == false ? " " : "")\(Array(0..<_attributeNames.count).map { "\(_attributeNames[$0])=\"\(escapeDoubleQuotedValue(_attributes[$0].value))\"" }.joined(separator: " ") ?? "")>
+            <\(name)\(_attributes.isEmpty == false ? " " : "")\(_attributes.map { (attributeName,attributeValue) in "\(attributeName)=\"\(escapeDoubleQuotedValue(attributeValue.value))\"" }.joined(separator: " ") ?? "")>
             """
         }
     }
     
     public func copyAttributes(from other: XElement) {
-        for i in 0..<other._attributeNames.count {
-            self[other._attributeNames[i]] = other._attributes[i].value
+        for (attributeName,attributeValue) in other._attributes {
+            self[attributeName] = attributeValue.value
         }
     }
     
@@ -1384,7 +1374,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     
     public var attributeNames: [String] {
         get {
-            return _attributeNames
+            return Array(_attributes.keys)
         }
     }
     
@@ -1468,54 +1458,28 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         }
     }
     
-    func getAttributeIndex(forName attributeName: String) -> Int? {
-        for i in 0..<_attributeNames.count {
-            if _attributeNames[i] == attributeName {
-                return i
-            }
-        }
-        return nil
-    }
-    
-    func removeAttribute(withIndex index: Int) {
-        _attributeNames.remove(at: index)
-        _attributes.remove(at: index)
-    }
-    
-    func addNewAttribute(withName name: String, andValue value: String) -> AttributeValue {
-        _attributeNames.append(name)
-        let attribute = AttributeValue(value: value, element: self)
-        _attributes.append(attribute)
-        return attribute
-    }
-    
     public subscript(attributeName: String) -> String? {
         get {
-            if let index = getAttributeIndex(forName: attributeName) {
-                return _attributes[index].value
-            }
-            return nil
+            return _attributes[attributeName]?.value
         }
         set(newValue) {
-            var oldValue: String? = nil
             if let theNewValue = newValue {
-                if let existingIndex = getAttributeIndex(forName: attributeName) {
-                    let existingAttribute = _attributes[existingIndex]
-                    oldValue = existingAttribute.value
+                if let existingAttribute = _attributes[attributeName] {
+                    let oldValue = existingAttribute.value
                     existingAttribute.value = theNewValue
                     _document?.attributeValueChanged(element: self, name: attributeName, oldValue: oldValue, newValue: theNewValue)
                 }
                 else {
-                    let newAttribute = addNewAttribute(withName: attributeName, andValue: theNewValue)
-                    _document?.registerAttribute(attribute: newAttribute, withName: attributeName)
+                    let newAttribute = AttributeProperties(value: theNewValue, element: self)
+                    _attributes[attributeName] = newAttribute
+                    _document?.registerAttribute(attributeProperties: newAttribute, withName: attributeName)
                     _document?.attributeValueChanged(element: self, name: attributeName, oldValue: nil, newValue: theNewValue)
                 }
             }
-            else if let existingIndex = getAttributeIndex(forName: attributeName) {
-                let existingAttribute = _attributes[existingIndex]
-                removeAttribute(withIndex: existingIndex)
-                oldValue = existingAttribute.value
-                _document?.unregisterAttribute(attribute: existingAttribute, withName: attributeName)
+            else if let existingAttribute = _attributes.removeValue(forKey: attributeName) {
+                let oldValue = existingAttribute.value
+                _attributes[attributeName] = nil
+                _document?.unregisterAttribute(attributeProperties: existingAttribute, withName: attributeName)
                 _document?.attributeValueChanged(element: self, name: attributeName, oldValue: oldValue, newValue: nil)
             }
         }
@@ -1569,7 +1533,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     
     override func produceEntering(production: XProduction) throws {
         try production.writeElementStartBeforeAttributes(element: self)
-        try production.sortAttributeNames(attributeNames: _attributeNames, element: self).forEach { attributeName in
+        try production.sortAttributeNames(attributeNames: Array(_attributes.keys), element: self).forEach { attributeName in
             try production.writeAttribute(name: attributeName, value: self[attributeName]!, element: self)
         }
         try production.writeElementStartAfterAttributes(element: self)

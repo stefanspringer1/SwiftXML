@@ -183,8 +183,8 @@ public final class XDocument: XNode, XBranchInternal {
         _elementsOfName_last[name] = element
         
         // register attributes:
-        for attributeIndex in 0..<element._attributeNames.count {
-            registerAttribute(attribute: element._attributes[attributeIndex], withName: element._attributeNames[attributeIndex])
+        for (attributeName,attributeProperties) in element._attributes {
+            registerAttribute(attributeProperties: attributeProperties, withName: attributeName)
         }
     }
     
@@ -203,8 +203,8 @@ public final class XDocument: XNode, XBranchInternal {
         element.nextWithSameName = nil
         
         // unregister attributes:
-        for attributeIndex in 0..<element._attributeNames.count {
-            unregisterAttribute(attribute: element._attributes[attributeIndex], withName: element._attributeNames[attributeIndex])
+        for (attributeName,attributeProperties) in element._attributes {
+            unregisterAttribute(attributeProperties: attributeProperties, withName: attributeName)
         }
     }
     
@@ -224,8 +224,8 @@ public final class XDocument: XNode, XBranchInternal {
     // attributes of same name:
     // -------------------------------------------------------------------------
     
-    var _attributesOfName_first = [String:AttributeValue]()
-    var _attributesOfName_last = [String:AttributeValue]()
+    var _attributesOfName_first = [String:AttributeProperties]()
+    var _attributesOfName_last = [String:AttributeProperties]()
     
     deinit {
         
@@ -237,30 +237,30 @@ public final class XDocument: XNode, XBranchInternal {
         
     }
     
-    func registerAttribute(attribute: AttributeValue, withName name: String) {
+    func registerAttribute(attributeProperties: AttributeProperties, withName name: String) {
         if let theLast = _attributesOfName_last[name] {
-            theLast.nextWithSameName = attribute
-            attribute.previousWithSameName = theLast
+            theLast.nextWithSameName = attributeProperties
+            attributeProperties.previousWithSameName = theLast
         }
         else {
-            _attributesOfName_first[name] = attribute
+            _attributesOfName_first[name] = attributeProperties
         }
-        _attributesOfName_last[name] = attribute
-        attribute.nextWithSameName = nil
+        _attributesOfName_last[name] = attributeProperties
+        attributeProperties.nextWithSameName = nil
     }
     
-    func unregisterAttribute(attribute: AttributeValue, withName name: String) {
-        attribute.attributeIterators.forEach { _ = $0.previous() }
-        attribute.previousWithSameName?.nextWithSameName = attribute.nextWithSameName
-        attribute.nextWithSameName?.previousWithSameName = attribute.previousWithSameName
-        if _attributesOfName_first[name] === attribute {
-            _attributesOfName_first[name] = attribute.nextWithSameName
+    func unregisterAttribute(attributeProperties: AttributeProperties, withName name: String) {
+        attributeProperties.attributeIterators.forEach { _ = $0.previous() }
+        attributeProperties.previousWithSameName?.nextWithSameName = attributeProperties.nextWithSameName
+        attributeProperties.nextWithSameName?.previousWithSameName = attributeProperties.previousWithSameName
+        if _attributesOfName_first[name] === attributeProperties {
+            _attributesOfName_first[name] = attributeProperties.nextWithSameName
         }
-        if _attributesOfName_last[name] === attribute {
-            _attributesOfName_last[name] = attribute.previousWithSameName
+        if _attributesOfName_last[name] === attributeProperties {
+            _attributesOfName_last[name] = attributeProperties.previousWithSameName
         }
-        attribute.previousWithSameName = nil
-        attribute.nextWithSameName = nil
+        attributeProperties.previousWithSameName = nil
+        attributeProperties.nextWithSameName = nil
     }
     
     public func attributes(ofName name: String) -> XAttributeSequence {

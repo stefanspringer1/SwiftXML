@@ -497,7 +497,7 @@ final class XAttributesOfSameNameIterator: XAttributeIteratorProtocol {
     private var started = false
     weak var document: XDocument?
     let attributeName: String
-    weak var currentAttribute: AttributeValue? = nil
+    weak var currentAttribute: AttributeProperties? = nil
     let keepLast: Bool
     
     public init(document: XDocument, attributeName: String, keepLast: Bool = false) {
@@ -506,7 +506,7 @@ final class XAttributesOfSameNameIterator: XAttributeIteratorProtocol {
         self.keepLast = keepLast
     }
     
-    func next() -> AttributeValue? {
+    func next() -> AttributeProperties? {
         let oldStarted = started
         let oldCurrent = currentAttribute
         if started {
@@ -524,7 +524,7 @@ final class XAttributesOfSameNameIterator: XAttributeIteratorProtocol {
         return currentAttribute
     }
     
-    func previous() -> AttributeValue? {
+    func previous() -> AttributeProperties? {
         if started {
             currentAttribute = currentAttribute?.previousWithSameName
             if currentAttribute == nil {

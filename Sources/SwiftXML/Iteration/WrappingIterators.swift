@@ -213,7 +213,7 @@ public final class XBidirectionalAttributeIterator: XAttributeIterator {
         self.keepLast = keepLast
     }
     
-    weak var current: AttributeValue? = nil
+    weak var current: AttributeProperties? = nil
     var prefetched = false
     
     public override func next() -> XAttributeSpot? {
