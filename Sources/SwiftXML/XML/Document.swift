@@ -281,29 +281,10 @@ public final class XDocument: XNode, XBranchInternal {
     
     // -------------------------------------------------------------------------
     
-    public init(
-        attached: [String:Any?]? = nil
-    ) {
+    public override init() {
         super.init()
         _document = self
         self._lastInTree = self
-        attached?.forEach { (key,value) in
-            if let value {
-                self.attached[key] =  value
-            }
-        }
-    }
-    
-    public convenience init(
-        attached: [String:Any?]? = nil,
-        elementNamesToRegister: Set<String>? = nil,
-        attributeNamesToRegister: Set<String>? = nil,
-        @XContentBuilder builder: () -> [XContent]
-    ) {
-        self.init(attached: attached)
-        builder().forEach { node in
-            _add(node)
-        }
     }
     
     func getType() -> String? {
