@@ -444,7 +444,7 @@ All nodes can have “attachments”. Those are objects that can be attached via
 
 Those attachements are realized as a dictionary `attached` as a member of each node.
 
-You can also set attachments immediately when creating en element or a document by using the argument `attached:` of the initializer.
+You can also set attachments immediately when creating en element or a document by using the argument `attached:` of the initializer. (Note that in this argument to the initializers, some values might be `nil`.)
 
 ### XPath
 
