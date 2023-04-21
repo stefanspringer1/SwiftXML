@@ -440,9 +440,9 @@ var attributeNames: [String]
 
 ### Attachments
 
-Attachments are available when the [SwiftXMLAttachments package](https://github.com/stefanspringer1/SwiftXMLAttachments) is included. The all nodes can have “attachments”. Those are objects that can be attached via a textual key. Those attachments are not considered as belonging to the formal XML tree.
+All nodes can have “attachments”. Those are objects that can be attached via a textual key. Those attachments are not considered as belonging to the formal XML tree.
 
-Those attachements are realized as a dictionary `attached` as a member of each node. (Note that in order to at the same time get and remove a value, you can use the `removeValue(forKey:)` method of a dictionary which returns the removed value.)
+Those attachements are realized as a dictionary `attached` as a member of each node.
 
 You can also set attachments immediately when creating en element or a document by using the argument `attached:` of the initializer.
 

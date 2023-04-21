@@ -22,6 +22,8 @@ public enum InsertionMode { case skipping; case following }
 
 public class XNode {
     
+    public var attached = [String:Any]()
+    
     var _sourceRange: XTextRange? = nil
     
     public var sourceRange: XTextRange? { _sourceRange }
@@ -1466,17 +1468,22 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         }
     }
     
-    public init(_ name: String, _ attributes: [String:String?]? = nil) {
+    public init(_ name: String, _ attributes: [String:String?]? = nil, attached: [String:Any?]? = nil) {
         self._name = name
         super.init()
         self._lastInTree = self
         if let theAttributes = attributes {
             setAttributes(attributes: theAttributes)
         }
+        attached?.forEach { (key,value) in
+            if let value {
+                self.attached[key] =  value
+            }
+        }
     }
     
-    public convenience init(_ name: String, _ attributes: [String:String?]? = nil, adjustDocument _adjustDocument: Bool = false, @XContentBuilder builder: () -> [XContent]) {
-        self.init(name, attributes)
+    public convenience init(_ name: String, _ attributes: [String:String?]? = nil, attached: [String:Any?]? = nil, adjustDocument _adjustDocument: Bool = false, @XContentBuilder builder: () -> [XContent]) {
+        self.init(name, attributes, attached: attached)
         self.add(builder: builder)
         if _adjustDocument {
             adjustDocument()
