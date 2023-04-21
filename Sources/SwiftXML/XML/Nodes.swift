@@ -22,28 +22,7 @@ public enum InsertionMode { case skipping; case following }
 
 public class XNode {
     
-    private var attached = [String:Any]()
-    
-    public func attach(_ key: String, withValue value: Any?) {
-        guard let value else { detach(key); return }
-        attached[key] = value
-    }
-    
-    public func attached(_ key: String) -> Any? {
-        attached[key]
-    }
-    
-    public func detach(_ key: String) {
-        attached[key] = nil
-    }
-    
-    public func detachAll() {
-        attached.removeAll()
-    }
-    
-    public func pullAttached(_ key: String) -> Any? {
-        attached.removeValue(forKey: key)
-    }
+    public var attached = [String:Any]()
     
     var _sourceRange: XTextRange? = nil
     
@@ -1498,7 +1477,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         }
         attached?.forEach { (key,value) in
             if let value {
-                self.attach(key, withValue: value)
+                self.attached[key] =  value
             }
         }
     }
