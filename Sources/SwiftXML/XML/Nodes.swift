@@ -22,29 +22,6 @@ public enum InsertionMode { case skipping; case following }
 
 public class XNode {
     
-    private var attached = [String:Any]()
-    
-    public func attach(_ key: String, withValue value: Any?) {
-        guard let value else { detach(key); return }
-        attached[key] = value
-    }
-    
-    public func attached(_ key: String) -> Any? {
-        attached[key]
-    }
-    
-    public func detach(_ key: String) {
-        attached[key] = nil
-    }
-    
-    public func detachAll() {
-        attached.removeAll()
-    }
-    
-    public func pullAttached(_ key: String) -> Any? {
-        attached.removeValue(forKey: key)
-    }
-    
     var _sourceRange: XTextRange? = nil
     
     public var sourceRange: XTextRange? { _sourceRange }
@@ -1292,22 +1269,64 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         _elementIterators.forEach { $0.prefetch() }
     }
     
-    var _attributes = [String:AttributeProperties]()
+    var attachments = [String:Any]()
+    
+    public func attach(_ key: String, withValue value: Any?) {
+        self[key] = nil
+        attachments[key] = value
+    }
+    
+    public func attached(_ key: String) -> Any? {
+        let value = attachments[key]
+        if value is AttributeProperties {
+            return nil
+        } else {
+            return value
+        }
+    }
+    
+    public func detach(_ key: String) {
+        if !(attachments[key] is AttributeProperties) {
+            attachments[key] = nil
+        }
+    }
+    
+    public func detachAll() {
+        for attachmentName in Array(attachments.filter{ !($0.value is AttributeProperties) }.keys) {
+            attachments[attachmentName] = nil
+        }
+    }
+    
+    public func pullAttached(_ key: String) -> Any? {
+        if !(attachments[key] is AttributeProperties) {
+            return attachments.removeValue(forKey: key)
+        } else {
+            return nil
+        }
+    }
     
     public override var backLink: XElement? { get { super.backLink as? XElement } }
     public override var finalBackLink: XElement? { get { super.finalBackLink as? XElement } }
     
+    func decriptionForAttachment(_ attachment: Any, withName name: String) -> String {
+        if let attributeProperties = attachment as? AttributeProperties {
+            return " \(name)=\"\(escapeDoubleQuotedValue(attributeProperties.value))\""
+        } else {
+            return ""
+        }
+    }
+    
     public var description: String {
         get {
             """
-            <\(name)\(_attributes.isEmpty == false ? " " : "")\(_attributes.map { (attributeName,attributeValue) in "\(attributeName)=\"\(escapeDoubleQuotedValue(attributeValue.value))\"" }.joined(separator: " ") ?? "")>
+            <\(name)\(attachments.isEmpty == false ? " " : "")\(attachments.sorted{ $0.0.caseInsensitiveCompare($1.0) == .orderedAscending }.map { (attachmentName,value) in decriptionForAttachment(value, withName: attachmentName) }.joined())>
             """
         }
     }
     
-    public func copyAttributes(from other: XElement) {
-        for (attributeName,attributeValue) in other._attributes {
-            self[attributeName] = attributeValue.value
+    public func copyAttachments(from other: XElement) {
+        for (attributeName,value) in other.attachments {
+                attachments[attributeName] = value
         }
     }
     
@@ -1315,7 +1334,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         let theClone = XElement(name)
         theClone._backLink = self
         theClone._sourceRange = self._sourceRange
-        theClone.copyAttributes(from: self)
+        theClone.copyAttachments(from: self)
         return theClone
     }
     
@@ -1378,7 +1397,13 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     
     public var attributeNames: [String] {
         get {
-            return Array(_attributes.keys)
+            return Array(attachments.filter{ $0.value is AttributeProperties }.keys)
+        }
+    }
+    
+    public var attachmentNames: [String] {
+        get {
+            return Array(attachments.filter{ !($0.value is AttributeProperties) }.keys)
         }
     }
     
@@ -1464,27 +1489,29 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     
     public subscript(attributeName: String) -> String? {
         get {
-            return _attributes[attributeName]?.value
+            return (attachments[attributeName] as? AttributeProperties)?.value
         }
         set(newValue) {
             if let theNewValue = newValue {
-                if let existingAttribute = _attributes[attributeName] {
+                if let existingAttribute = attachments[attributeName] as? AttributeProperties {
                     let oldValue = existingAttribute.value
                     existingAttribute.value = theNewValue
                     _document?.attributeValueChanged(element: self, name: attributeName, oldValue: oldValue, newValue: theNewValue)
                 }
                 else {
                     let newAttribute = AttributeProperties(value: theNewValue, element: self)
-                    _attributes[attributeName] = newAttribute
+                    attachments[attributeName] = newAttribute
                     _document?.registerAttribute(attributeProperties: newAttribute, withName: attributeName)
                     _document?.attributeValueChanged(element: self, name: attributeName, oldValue: nil, newValue: theNewValue)
                 }
             }
-            else if let existingAttribute = _attributes.removeValue(forKey: attributeName) {
-                let oldValue = existingAttribute.value
-                _attributes[attributeName] = nil
-                _document?.unregisterAttribute(attributeProperties: existingAttribute, withName: attributeName)
-                _document?.attributeValueChanged(element: self, name: attributeName, oldValue: oldValue, newValue: nil)
+            else {
+                if let existingAttribute = attachments[attributeName] as? AttributeProperties {
+                    let oldValue = existingAttribute.value
+                    _document?.unregisterAttribute(attributeProperties: existingAttribute, withName: attributeName)
+                    _document?.attributeValueChanged(element: self, name: attributeName, oldValue: oldValue, newValue: nil)
+                }
+                attachments[attributeName] = nil
             }
         }
     }
@@ -1537,7 +1564,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     
     override func produceEntering(production: XProduction) throws {
         try production.writeElementStartBeforeAttributes(element: self)
-        try production.sortAttributeNames(attributeNames: Array(_attributes.keys), element: self).forEach { attributeName in
+        try production.sortAttributeNames(attributeNames: Array(attachments.keys), element: self).forEach { attributeName in
             try production.writeAttribute(name: attributeName, value: self[attributeName]!, element: self)
         }
         try production.writeElementStartAfterAttributes(element: self)
