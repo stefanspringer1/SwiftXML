@@ -442,7 +442,39 @@ var attributeNames: [String]
 
 All nodes can have “attachments”. Those are objects that can be attached via a textual key. Those attachments are not considered as belonging to the formal XML tree.
 
-Those attachements are realized as a dictionary `attached` as a member of each node.
+Add an attachment:
+
+```Swift
+node.attach("my greeting", withValue: XElement("greeting") { "hello" })
+```
+
+Get an attachment:
+
+```Swift
+if let greeting = node.attached("my greeting") as? XElement {
+    print(greeting.text)
+}
+```
+
+Getting an at the same time removing an attachment:
+
+```Swift
+if let greeting = node.pullAttached("my greeting") as? XElement {
+    print(greeting.text)
+}
+```
+
+Removing an attachment:
+
+```Swift
+node.detach("my greeting")
+```
+
+Removing all attachments:
+
+```Swift
+node.detachAll()
+```
 
 You can also set attachments immediately when creating en element or a document by using the argument `attached:` of the initializer. (Note that in this argument to the initializers, some values might be `nil`.)
 

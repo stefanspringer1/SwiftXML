@@ -289,7 +289,7 @@ public final class XDocument: XNode, XBranchInternal {
         self._lastInTree = self
         attached?.forEach { (key,value) in
             if let value {
-                self.attached[key] =  value
+                self.attach(key, withValue: value)
             }
         }
     }
