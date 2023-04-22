@@ -1319,7 +1319,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     public var description: String {
         get {
             """
-            <\(name)\(attachments.isEmpty == false ? " " : "")\(attachments.sorted{ $0.0.caseInsensitiveCompare($1.0) == .orderedAscending }.map { (attachmentName,value) in decriptionForAttachment(value, withName: attachmentName) }.joined())>
+            <\(name)\(attachments.sorted{ $0.0.caseInsensitiveCompare($1.0) == .orderedAscending }.map { (attachmentName,value) in decriptionForAttachment(value, withName: attachmentName) }.joined())>
             """
         }
     }
