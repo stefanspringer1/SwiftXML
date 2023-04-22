@@ -110,16 +110,6 @@ public class XNode {
         return shallowClone()
     }
     
-    var _contentIterators = WeakList<XBidirectionalContentIterator>()
-    
-    func addContentIterator(_ nodeIterator: XBidirectionalContentIterator) {
-        _contentIterators.append(nodeIterator)
-    }
-    
-    func removeContentIterator(_ nodeIterator: XBidirectionalContentIterator) {
-        _contentIterators.remove(nodeIterator)
-    }
-    
     weak var _parent: XBranchInternal? = nil
     
     public var parent: XElement? {
@@ -462,12 +452,22 @@ public class XContent: XNode {
         theLastInTree._nextInTree = nil
     }
     
+    private var contentIterators = WeakList<XBidirectionalContentIterator>()
+    
+    func addContentIterator(_ nodeIterator: XBidirectionalContentIterator) {
+        contentIterators.append(nodeIterator)
+    }
+    
+    func removeContentIterator(_ nodeIterator: XBidirectionalContentIterator) {
+        contentIterators.remove(nodeIterator)
+    }
+    
     func gotoPreviousOnContentIterators() {
-        _contentIterators.forEach { _ = $0.previous() }
+        contentIterators.forEach { _ = $0.previous() }
     }
     
     func prefetchOnContentIterators() {
-        _contentIterators.forEach { $0.prefetch() }
+        contentIterators.forEach { $0.prefetch() }
     }
     
     /**
@@ -1156,7 +1156,23 @@ public extension LazyFilterSequence where Base == XContentSequence {
 
 final class AttributeProperties {
     
-    var attributeIterators = WeakList<XBidirectionalAttributeIterator>()
+    private var attributeIterators = WeakList<XBidirectionalAttributeIterator>()
+    
+    func addAttributeIterator(_ attributeIterator: XBidirectionalAttributeIterator) {
+        attributeIterators.append(attributeIterator)
+    }
+    
+    func removeAttributeIterator(_ attributeIterator: XBidirectionalAttributeIterator) {
+        attributeIterators.remove(attributeIterator)
+    }
+    
+    func gotoPreviousOnAttributeIterators() {
+        attributeIterators.forEach { _ = $0.previous() }
+    }
+    
+    func prefetchOnAttributeIterators() {
+        attributeIterators.forEach { $0.prefetch() }
+    }
     
     var value: String
     weak var element: XElement?
@@ -1258,15 +1274,40 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     
     var _document: XDocument? = nil
     
-    var _elementIterators = WeakList<XBidirectionalElementIterator>()
-    var _nameIterators = WeakList<XElementNameIterator>()
+    private var elementIterators = WeakList<XBidirectionalElementIterator>()
+    
+    func addElementIterator(_ elementIterator: XBidirectionalElementIterator) {
+        elementIterators.append(elementIterator)
+    }
+    
+    func removeElementIterator(_ elementIterator: XBidirectionalElementIterator) {
+        elementIterators.remove(elementIterator)
+    }
     
     func gotoPreviousOnElementIterators() {
-        _elementIterators.forEach { _ = $0.previous() }
+        elementIterators.forEach { _ = $0.previous() }
     }
     
     func prefetchOnElementIterators() {
-        _elementIterators.forEach { $0.prefetch() }
+        elementIterators.forEach { $0.prefetch() }
+    }
+    
+    private var nameIterators = WeakList<XElementNameIterator>()
+    
+    func addNameIterator(_ elementIterator: XElementNameIterator) {
+        nameIterators.append(elementIterator)
+    }
+    
+    func removeNameIterator(_ elementIterator: XElementNameIterator) {
+        nameIterators.remove(elementIterator)
+    }
+    
+    func gotoPreviousOnNameIterators() {
+        nameIterators.forEach { _ = $0.previous() }
+    }
+    
+    func prefetchOnNameIterators() {
+        nameIterators.forEach { $0.prefetch() }
     }
     
     var attachments = [String:Any]()
@@ -1364,7 +1405,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         set(newName) {
             if newName != _name {
                 if let theDocument = _document {
-                    _nameIterators.forEach { _ = $0.previous() }
+                    nameIterators.forEach { _ = $0.previous() }
                     theDocument.unregisterElement(element: self)
                     _name = newName
                     theDocument.registerElement(element: self)
@@ -1547,7 +1588,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     public override func _removeKeep() {
         
         // correction in iterators:
-        _elementIterators.forEach { _ = $0.previous() }
+        elementIterators.forEach { _ = $0.previous() }
         
         super._removeKeep()
     }
@@ -1591,28 +1632,28 @@ protocol AutoCombining {
 
 public final class XText: XContent, AutoCombining, CustomStringConvertible {
     
-    var _textIterators = WeakList<XBidirectionalTextIterator>()
+    private var textIterators = WeakList<XBidirectionalTextIterator>()
     
     func gotoPreviousOnTextIterators() {
-        _textIterators.forEach { _ = $0.previous() }
+        textIterators.forEach { _ = $0.previous() }
     }
     
     func prefetchOnTextIterators() {
-        _textIterators.forEach { $0.prefetch() }
+        textIterators.forEach { $0.prefetch() }
     }
     
     func addTextIterator(_ textIterator: XBidirectionalTextIterator) {
-        _textIterators.append(textIterator)
+        textIterators.append(textIterator)
     }
     
     func removeTextIterator(_ textIterator: XBidirectionalTextIterator) {
-        _textIterators.remove(textIterator)
+        textIterators.remove(textIterator)
     }
     
     public override func _removeKeep() {
         
         // correction in iterators:
-        _textIterators.forEach { _ = $0.previous() }
+        textIterators.forEach { _ = $0.previous() }
         
         super._removeKeep()
     }

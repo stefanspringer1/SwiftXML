@@ -195,7 +195,7 @@ public final class XDocument: XNode, XBranchInternal {
     }
     
     func unregisterElement(element: XElement) {
-        element._nameIterators.forEach { _ = $0.previous() }
+        element.gotoPreviousOnNameIterators()
         let name = element.name
         element.previousWithSameName?.nextWithSameName = element.nextWithSameName
         element.nextWithSameName?.previousWithSameName = element.previousWithSameName
@@ -258,7 +258,7 @@ public final class XDocument: XNode, XBranchInternal {
     }
     
     func unregisterAttribute(attributeProperties: AttributeProperties, withName name: String) {
-        attributeProperties.attributeIterators.forEach { _ = $0.previous() }
+        attributeProperties.gotoPreviousOnAttributeIterators()
         attributeProperties.previousWithSameName?.nextWithSameName = attributeProperties.nextWithSameName
         attributeProperties.nextWithSameName?.previousWithSameName = attributeProperties.previousWithSameName
         if _attributesOfName_first[name] === attributeProperties {

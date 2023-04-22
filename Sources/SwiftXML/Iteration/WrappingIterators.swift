@@ -122,24 +122,24 @@ public final class XBidirectionalElementIterator: XElementIterator {
             prefetched = false
             return current
         }
-        current?._elementIterators.remove(self)
+        current?.removeElementIterator(self)
         current = elementIterator.next()
-        current?._elementIterators.append(self)
+        current?.addElementIterator(self)
         return current
     }
     
     public override func previous() -> XElement? {
         prefetched = false
-        current?._elementIterators.remove(self)
+        current?.removeElementIterator(self)
         current = elementIterator.previous()
-        current?._elementIterators.append(self)
+        current?.addElementIterator(self)
         return current
     }
     
     public func prefetch() {
-        current?._elementIterators.remove(self)
+        current?.removeElementIterator(self)
         current = elementIterator.next()
-        current?._elementIterators.append(self)
+        current?.addElementIterator(self)
         prefetched = true
     }
 }
@@ -173,25 +173,25 @@ public final class XElementNameIterator: XElementIterator {
             return nil
         }
         else {
-            current?._nameIterators.remove(self)
+            current?.removeNameIterator(self)
             current = next
-            current?._nameIterators.append(self)
+            current?.addNameIterator(self)
             return current
         }
     }
     
     public override func previous() -> XElement? {
         prefetched = false
-        current?._nameIterators.remove(self)
+        current?.removeNameIterator(self)
         current = elementIterator.previous()
-        current?._nameIterators.append(self)
+        current?.addNameIterator(self)
         return current
     }
     
     public func prefetch() {
-        current?._nameIterators.remove(self)
+        current?.removeNameIterator(self)
         current = elementIterator.next()
-        current?._nameIterators.append(self)
+        current?.addNameIterator(self)
         prefetched = true
     }
 }
@@ -229,26 +229,26 @@ public final class XBidirectionalAttributeIterator: XAttributeIterator {
                 return nil
             }
             else {
-                current?.attributeIterators.remove(self)
+                current?.removeAttributeIterator(self)
                 current = next
-                current?.attributeIterators.append(self)
+                current?.addAttributeIterator(self)
             }
         }
         if let value = current?.value, let element = current?.element {
             return XAttributeSpot(name: name, value: value, element: element)
         }
         else {
-            current?.attributeIterators.remove(self)
+            current?.removeAttributeIterator(self)
             return nil
         }
     }
     
     public func previous() -> XAttributeSpot? {
         prefetched = false
-        current?.attributeIterators.remove(self)
+        current?.removeAttributeIterator(self)
         current = attributeIterator.previous()
         if let value = current?.value, let element = current?.element {
-            current?.attributeIterators.append(self)
+            current?.addAttributeIterator(self)
             return XAttributeSpot(name: name, value:value, element: element)
         }
         else {
@@ -257,9 +257,9 @@ public final class XBidirectionalAttributeIterator: XAttributeIterator {
     }
     
     public func prefetch() {
-        current?.attributeIterators.remove(self)
+        current?.removeAttributeIterator(self)
         current = attributeIterator.next()
-        current?.attributeIterators.append(self)
+        current?.addAttributeIterator(self)
         prefetched = true
     }
 }
