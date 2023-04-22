@@ -442,7 +442,7 @@ var attributeNames: [String]
 
 Elements (i.e. nodes of type `XElement`) can have “attachments”. Those are arbitrary values (i.e. values of any type) that can be attached to the element via a textual key (of type `String`). Attachments are not considered as belonging to the formal XML tree.
 
-Attributes are internally realized just as attachments (they use the same storage), but you have to add them via subscript notation as described above to have them treated like attributes (e.g. for being able to iterate through the attributes of a certain name in the document). And finding values by the subscript notation tests if they have been added as attributes. In our nomenclature, we make a clear distinction between “attributes” and “attachments”, despite both actually using the same storage.
+Attributes are internally realized just as attachments (they use the same storage), but you have to add them via subscript notation as described above to have them treated like attributes (e.g. for being able to iterate through the attributes of a certain name in the document). And finding values by the subscript notation only returns the according `String` values if they have been added as attributes. In our nomenclature, we make a clear distinction between “attributes” and “attachments”, despite both actually using the same storage.
 
 You have to be aware of attributes and attachements using the same storage when choosing the names of attachments, they should not match any attribute names (e.g. by adding an undescore `_` as prefix). If you add an attachment using the same name as an existing attribute name, the according attribute is removed. Conversely, setting an attribute value will remove an attachment with the same name.
 
@@ -1458,7 +1458,7 @@ Output:
 ```text
 <a>Hello <span style="background:LightGreen">world</span>, the <span style="background:LightGreen">world</span> is nice.</a>
 ```
-
+ subscript only returns
 Note that when e.g. inserting nodes, the `XText` nodes of them are then treated as being `isolated` while being moved.
 
 ## Rules
