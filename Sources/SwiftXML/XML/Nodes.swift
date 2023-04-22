@@ -1564,7 +1564,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     
     override func produceEntering(production: XProduction) throws {
         try production.writeElementStartBeforeAttributes(element: self)
-        try production.sortAttributeNames(attributeNames: Array(attachments.keys), element: self).forEach { attributeName in
+        try production.sortAttributeNames(attributeNames: attributeNames, element: self).forEach { attributeName in
             try production.writeAttribute(name: attributeName, value: self[attributeName]!, element: self)
         }
         try production.writeElementStartAfterAttributes(element: self)
