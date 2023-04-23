@@ -92,7 +92,7 @@ public class XNode {
         }
     }
     
-    public var document: XDocument? {
+    public weak var document: XDocument? {
         get {
             return (self as? XBranchInternal)?._document ?? self.parent?._document
         }
@@ -132,7 +132,7 @@ public class XNode {
     
     weak var _parent: XBranchInternal? = nil
     
-    public var parent: XElement? {
+    public weak var parent: XElement? {
         get {
             return _parent as? XElement
         }
@@ -1269,13 +1269,13 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     
     var __lastContent: XContent?
     
-    var _lastInTree: XNode!
+    weak var _lastInTree: XNode!
     
     override func getLastInTree() -> XNode {
         return _lastInTree
     }
     
-    var _document: XDocument? = nil
+    weak var _document: XDocument? = nil
     
     private var elementIterators = WeakList<XBidirectionalElementIterator>()
     

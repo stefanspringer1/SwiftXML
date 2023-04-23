@@ -24,7 +24,7 @@ public final class XDocument: XNode, XBranchInternal {
     
     var __lastContent: XContent? = nil
     
-    var _document: XDocument?
+    weak var _document: XDocument?
     
     var _lastInTree: XNode!
     
