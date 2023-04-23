@@ -24,6 +24,18 @@ final class SwiftXMLTests: XCTestCase {
         </a>
         """
     
+    func testReplace() throws {
+        let document: XDocument? = try parseXML(fromText: """
+            <a><b/><b/></a>
+            """)
+        
+        document?.elements(ofName: "b").forEach { b in
+            b.replace { XElement("c") }
+        }
+        
+        //_ = readLine()
+    }
+    
     func testAttributeFromDocument() throws {
         let document = try parseXML(fromText: """
             <a id="1">

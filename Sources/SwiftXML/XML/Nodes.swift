@@ -1312,7 +1312,6 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         nameIterators.forEach { $0.prefetch() }
     }
     
-    
     var _attributes = [String:AttributeProperties]()
     
     public override var backLink: XElement? { get { super.backLink as? XElement } }
@@ -1543,6 +1542,10 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         
         // correction in iterators:
         gotoPreviousOnElementIterators()
+        gotoPreviousOnNameIterators()
+        _attributes.values.forEach { attributeProperty in
+            attributeProperty.gotoPreviousOnAttributeIterators()
+        }
         
         super._removeKeep()
     }

@@ -146,9 +146,6 @@ public final class XBidirectionalElementIterator: XElementIterator {
 
 public final class XElementNameIterator: XElementIterator {
     
-    var previousIterator: XElementNameIterator? = nil
-    var nextIterator: XElementNameIterator? = nil
-    
     public typealias Element = XElement
     
     var elementIterator: XElementIteratorProtocol
