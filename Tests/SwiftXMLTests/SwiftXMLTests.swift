@@ -33,6 +33,7 @@ final class SwiftXMLTests: XCTestCase {
             b.replace { XElement("c") }
         }
         
+        document?.echo()
         //_ = readLine()
     }
     

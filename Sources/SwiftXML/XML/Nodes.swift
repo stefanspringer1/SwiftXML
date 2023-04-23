@@ -524,6 +524,7 @@ public class XContent: XNode {
     public func remove() {
         _removeKeep()
         if let meAsElement = self as? XElement {
+            meAsElement.gotoPreviousOnNameIterators()
             meAsElement.document?.unregisterElement(element: meAsElement)
         }
     }
@@ -1542,7 +1543,6 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         
         // correction in iterators:
         gotoPreviousOnElementIterators()
-        gotoPreviousOnNameIterators()
         _attributes.values.forEach { attributeProperty in
             attributeProperty.gotoPreviousOnAttributeIterators()
         }
