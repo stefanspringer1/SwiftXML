@@ -187,10 +187,8 @@ public final class XDocument: XNode, XBranchInternal {
         _elementsOfName_last[name] = element
         
         // register attributes:
-        for (attachmentName,value) in element.attachments {
-            if let attributeProperties = value as? AttributeProperties {
-                registerAttribute(attributeProperties: attributeProperties, withName: attachmentName)
-            }
+        for (attributeName,attributeProperties) in element._attributes {
+            registerAttribute(attributeProperties: attributeProperties, withName: attributeName)
         }
     }
     
@@ -209,10 +207,8 @@ public final class XDocument: XNode, XBranchInternal {
         element.nextWithSameName = nil
         
         // unregister attributes:
-        for (attachmentName,value) in element.attachments {
-            if let attributeProperties = value as? AttributeProperties {
-                unregisterAttribute(attributeProperties: attributeProperties, withName: attachmentName)
-            }
+        for (attributeName,attributeProperties) in element._attributes {
+            unregisterAttribute(attributeProperties: attributeProperties, withName: attributeName)
         }
     }
     
@@ -285,17 +281,26 @@ public final class XDocument: XNode, XBranchInternal {
     
     // -------------------------------------------------------------------------
     
-    public override init() {
+    public init(
+        attached: [String:Any?]? = nil
+    ) {
         super.init()
         _document = self
         self._lastInTree = self
+        attached?.forEach { (key,value) in
+            if let value {
+                self.attached[key] =  value
+            }
+        }
     }
     
     public convenience init(
         attached: [String:Any?]? = nil,
+        elementNamesToRegister: Set<String>? = nil,
+        attributeNamesToRegister: Set<String>? = nil,
         @XContentBuilder builder: () -> [XContent]
     ) {
-        self.init()
+        self.init(attached: attached)
         builder().forEach { node in
             _add(node)
         }

@@ -22,6 +22,8 @@ public enum InsertionMode { case skipping; case following }
 
 public class XNode {
     
+    public var attached = [String:Any]()
+    
     var _sourceRange: XTextRange? = nil
     
     public var sourceRange: XTextRange? { _sourceRange }
@@ -108,6 +110,24 @@ public class XNode {
     
     public func clone() -> XNode {
         return shallowClone()
+    }
+    
+    private var contentIterators = WeakList<XBidirectionalContentIterator>()
+    
+    func addContentIterator(_ nodeIterator: XBidirectionalContentIterator) {
+        contentIterators.append(nodeIterator)
+    }
+    
+    func removeContentIterator(_ nodeIterator: XBidirectionalContentIterator) {
+        contentIterators.remove(nodeIterator)
+    }
+    
+    func gotoPreviousOnContentIterators() {
+        contentIterators.forEach { _ = $0.previous() }
+    }
+    
+    func prefetchOnContentIterators() {
+        contentIterators.forEach { $0.prefetch() }
     }
     
     weak var _parent: XBranchInternal? = nil
@@ -450,24 +470,6 @@ public class XContent: XNode {
         // correct in own tree:
         _previousInTree = nil
         theLastInTree._nextInTree = nil
-    }
-    
-    private var contentIterators = WeakList<XBidirectionalContentIterator>()
-    
-    func addContentIterator(_ nodeIterator: XBidirectionalContentIterator) {
-        contentIterators.append(nodeIterator)
-    }
-    
-    func removeContentIterator(_ nodeIterator: XBidirectionalContentIterator) {
-        contentIterators.remove(nodeIterator)
-    }
-    
-    func gotoPreviousOnContentIterators() {
-        contentIterators.forEach { _ = $0.previous() }
-    }
-    
-    func prefetchOnContentIterators() {
-        contentIterators.forEach { $0.prefetch() }
     }
     
     /**
@@ -1293,7 +1295,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     }
     
     private var nameIterators = WeakList<XElementNameIterator>()
-    
+        
     func addNameIterator(_ elementIterator: XElementNameIterator) {
         nameIterators.append(elementIterator)
     }
@@ -1310,64 +1312,23 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         nameIterators.forEach { $0.prefetch() }
     }
     
-    var attachments = [String:Any]()
     
-    public func attach(_ key: String, withValue value: Any?) {
-        self[key] = nil
-        attachments[key] = value
-    }
-    
-    public func attached(_ key: String) -> Any? {
-        let value = attachments[key]
-        if value is AttributeProperties {
-            return nil
-        } else {
-            return value
-        }
-    }
-    
-    public func detach(_ key: String) {
-        if !(attachments[key] is AttributeProperties) {
-            attachments[key] = nil
-        }
-    }
-    
-    public func detachAll() {
-        for attachmentName in Array(attachments.filter{ !($0.value is AttributeProperties) }.keys) {
-            attachments[attachmentName] = nil
-        }
-    }
-    
-    public func pullAttached(_ key: String) -> Any? {
-        if !(attachments[key] is AttributeProperties) {
-            return attachments.removeValue(forKey: key)
-        } else {
-            return nil
-        }
-    }
+    var _attributes = [String:AttributeProperties]()
     
     public override var backLink: XElement? { get { super.backLink as? XElement } }
     public override var finalBackLink: XElement? { get { super.finalBackLink as? XElement } }
     
-    func decriptionForAttachment(_ attachment: Any, withName name: String) -> String {
-        if let attributeProperties = attachment as? AttributeProperties {
-            return " \(name)=\"\(escapeDoubleQuotedValue(attributeProperties.value))\""
-        } else {
-            return ""
-        }
-    }
-    
     public var description: String {
         get {
             """
-            <\(name)\(attachments.sorted{ $0.0.caseInsensitiveCompare($1.0) == .orderedAscending }.map { (attachmentName,value) in decriptionForAttachment(value, withName: attachmentName) }.joined())>
+            <\(name)\(_attributes.isEmpty == false ? " " : "")\(_attributes.map { (attributeName,attributeValue) in "\(attributeName)=\"\(escapeDoubleQuotedValue(attributeValue.value))\"" }.joined(separator: " ") ?? "")>
             """
         }
     }
     
-    public func copyAttachments(from other: XElement) {
-        for (attributeName,value) in other.attachments {
-                attachments[attributeName] = value
+    public func copyAttributes(from other: XElement) {
+        for (attributeName,attributeValue) in other._attributes {
+            self[attributeName] = attributeValue.value
         }
     }
     
@@ -1375,7 +1336,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         let theClone = XElement(name)
         theClone._backLink = self
         theClone._sourceRange = self._sourceRange
-        theClone.copyAttachments(from: self)
+        theClone.copyAttributes(from: self)
         return theClone
     }
     
@@ -1405,6 +1366,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         set(newName) {
             if newName != _name {
                 if let theDocument = _document {
+                    gotoPreviousOnNameIterators()
                     nameIterators.forEach { _ = $0.previous() }
                     theDocument.unregisterElement(element: self)
                     _name = newName
@@ -1438,13 +1400,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     
     public var attributeNames: [String] {
         get {
-            return Array(attachments.filter{ $0.value is AttributeProperties }.keys)
-        }
-    }
-    
-    public var attachmentNames: [String] {
-        get {
-            return Array(attachments.filter{ !($0.value is AttributeProperties) }.keys)
+            return Array(_attributes.keys)
         }
     }
     
@@ -1530,29 +1486,27 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     
     public subscript(attributeName: String) -> String? {
         get {
-            return (attachments[attributeName] as? AttributeProperties)?.value
+            return _attributes[attributeName]?.value
         }
         set(newValue) {
             if let theNewValue = newValue {
-                if let existingAttribute = attachments[attributeName] as? AttributeProperties {
+                if let existingAttribute = _attributes[attributeName] {
                     let oldValue = existingAttribute.value
                     existingAttribute.value = theNewValue
                     _document?.attributeValueChanged(element: self, name: attributeName, oldValue: oldValue, newValue: theNewValue)
                 }
                 else {
                     let newAttribute = AttributeProperties(value: theNewValue, element: self)
-                    attachments[attributeName] = newAttribute
+                    _attributes[attributeName] = newAttribute
                     _document?.registerAttribute(attributeProperties: newAttribute, withName: attributeName)
                     _document?.attributeValueChanged(element: self, name: attributeName, oldValue: nil, newValue: theNewValue)
                 }
             }
-            else {
-                if let existingAttribute = attachments[attributeName] as? AttributeProperties {
-                    let oldValue = existingAttribute.value
-                    _document?.unregisterAttribute(attributeProperties: existingAttribute, withName: attributeName)
-                    _document?.attributeValueChanged(element: self, name: attributeName, oldValue: oldValue, newValue: nil)
-                }
-                attachments[attributeName] = nil
+            else if let existingAttribute = _attributes.removeValue(forKey: attributeName) {
+                let oldValue = existingAttribute.value
+                _attributes[attributeName] = nil
+                _document?.unregisterAttribute(attributeProperties: existingAttribute, withName: attributeName)
+                _document?.attributeValueChanged(element: self, name: attributeName, oldValue: oldValue, newValue: nil)
             }
         }
     }
@@ -1566,7 +1520,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         }
         attached?.forEach { (key,value) in
             if let value {
-                self.attach(key, withValue: value)
+                self.attached[key] =  value
             }
         }
     }
@@ -1588,7 +1542,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     public override func _removeKeep() {
         
         // correction in iterators:
-        elementIterators.forEach { _ = $0.previous() }
+        gotoPreviousOnElementIterators()
         
         super._removeKeep()
     }
@@ -1605,7 +1559,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     
     override func produceEntering(production: XProduction) throws {
         try production.writeElementStartBeforeAttributes(element: self)
-        try production.sortAttributeNames(attributeNames: attributeNames, element: self).forEach { attributeName in
+        try production.sortAttributeNames(attributeNames: Array(_attributes.keys), element: self).forEach { attributeName in
             try production.writeAttribute(name: attributeName, value: self[attributeName]!, element: self)
         }
         try production.writeElementStartAfterAttributes(element: self)
@@ -1632,28 +1586,28 @@ protocol AutoCombining {
 
 public final class XText: XContent, AutoCombining, CustomStringConvertible {
     
-    private var textIterators = WeakList<XBidirectionalTextIterator>()
+    var _textIterators = WeakList<XBidirectionalTextIterator>()
     
     func gotoPreviousOnTextIterators() {
-        textIterators.forEach { _ = $0.previous() }
+        _textIterators.forEach { _ = $0.previous() }
     }
     
     func prefetchOnTextIterators() {
-        textIterators.forEach { $0.prefetch() }
+        _textIterators.forEach { $0.prefetch() }
     }
     
     func addTextIterator(_ textIterator: XBidirectionalTextIterator) {
-        textIterators.append(textIterator)
+        _textIterators.append(textIterator)
     }
     
     func removeTextIterator(_ textIterator: XBidirectionalTextIterator) {
-        textIterators.remove(textIterator)
+        _textIterators.remove(textIterator)
     }
     
     public override func _removeKeep() {
         
         // correction in iterators:
-        textIterators.forEach { _ = $0.previous() }
+        _textIterators.forEach { _ = $0.previous() }
         
         super._removeKeep()
     }
