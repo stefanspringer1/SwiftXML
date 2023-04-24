@@ -383,4 +383,18 @@ final class SwiftXMLTests: XCTestCase {
         XCTAssertEqual(collectedAttributeValues.joined(separator: ", "), "b1, b2, c1, c2, d1, d2, bInserted1")
     }
     
+    func testTexts() throws {
+        let document = try parseXML(fromText: """
+            <paragraph>Hello <bold>World</bold>!</paragraph>
+            """)
+        XCTAssertEqual(document.children.first!.texts.map{ "\"\($0.value)\"" }.joined(separator: ", "), #""Hello ", "!""#)
+    }
+    
+    func testAllTexts() throws {
+        let document = try parseXML(fromText: """
+            <paragraph>Hello <bold>World</bold>!</paragraph>
+            """)
+        XCTAssertEqual(document.allTexts.map{ "\"\($0.value)\"" }.joined(separator: ", "), #""Hello ", "World", "!""#)
+    }
+    
 }
