@@ -1217,6 +1217,9 @@ final class XNodeSampler {
         else if let sequence = thing as? XElementSequence {
             sequence.forEach { self.add($0) }
         }
+        else if let sequence = thing as? XTextSequence {
+            sequence.forEach { self.add($0) }
+        }
         else if let sequence = thing as? XContentLikeSequence {
             sequence.forEach { self.add($0) }
         }
