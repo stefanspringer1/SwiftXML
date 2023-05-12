@@ -759,6 +759,7 @@ public protocol XBranch: XNode {
     func firstContent(_ condition: (XContent) -> Bool) -> XContent?
     var lastContent: XContent? { get }
     func lastContent(_ condition: (XContent) -> Bool) -> XContent?
+    func child(_ name: String) -> XElement?
     var isEmpty: Bool { get }
     func add(@XContentBuilder builder: () -> [XContent])
     func addFirst(@XContentBuilder builder: () -> [XContent])
@@ -775,6 +776,17 @@ protocol XBranchInternal: XBranch {
 }
 
 extension XBranchInternal {
+    
+    public func child(_ name: String) -> XElement? {
+        var node = __firstContent
+        while let theNode = node {
+            if let child = theNode as? XElement, child.name == name {
+                return child
+            }
+            node = theNode._next
+        }
+        return nil
+    }
     
     /**
      I am the clone, add the content!

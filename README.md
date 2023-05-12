@@ -579,6 +579,12 @@ The direct content that is an element, i.e. all the children:
 var children: XElementSequence
 ```
 
+if you know that there at most one child element with a certain name, use the following method (it returns the first child with this name if it exist):
+
+```Swift
+func child(_ name: String) -> XElement?
+```
+
 The direct content that is text:
 
 ```Swift
