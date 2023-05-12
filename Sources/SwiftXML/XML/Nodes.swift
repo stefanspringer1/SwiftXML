@@ -22,7 +22,7 @@ public enum InsertionMode { case skipping; case following }
 
 public class XNode {
     
-    func ancestor(_ name: String) -> XElement? {
+    public func ancestor(_ name: String) -> XElement? {
         var element = parent
         while let theElement = element {
             if theElement.name == name {
@@ -33,7 +33,7 @@ public class XNode {
         return nil
     }
     
-    func ancestor(_ names: String...) -> XElement? {
+    public func ancestor(_ names: String...) -> XElement? {
         var element = parent
         while let theElement = element {
             if names.contains(theElement.name) {
