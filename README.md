@@ -579,12 +579,6 @@ The direct content that is an element, i.e. all the children:
 var children: XElementSequence
 ```
 
-if you know that there at most one child element with a certain name, use the following method (it returns the first child with this name if it exist):
-
-```Swift
-func child(_ name: String) -> XElement?
-```
-
 The direct content that is text:
 
 ```Swift
@@ -826,6 +820,25 @@ document
 ```
 
 You can also use multiple names (e.g. `descendants("paragraph", "table")`). If no name is given, all elements are given in the result regardless the name, e.g. `children()` means the same as `children`.
+
+If you know that there at most one child element with a certain name, use one of the following method (it returns the first child with this name if it exist):
+
+```Swift
+func child(_ name: String) -> XElement?
+```
+
+You might then also consider alternative names (giving you the first child where the name matches):
+
+```Swift
+func child(_ names: String...) -> XElement? 
+```
+
+If you want to get the first ancestor with a certain name, use one of the following methods:
+
+```Swift
+func ancestor(_ name: String) -> XElement?
+func ancestor(_ names: String...) -> XElement?
+```
 
 ## Chained iterators
 

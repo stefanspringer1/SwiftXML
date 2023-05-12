@@ -22,6 +22,28 @@ public enum InsertionMode { case skipping; case following }
 
 public class XNode {
     
+    func ancestor(_ name: String) -> XElement? {
+        var element = parent
+        while let theElement = element {
+            if theElement.name == name {
+                return theElement
+            }
+            element = theElement.parent
+        }
+        return nil
+    }
+    
+    func ancestor(_ names: String...) -> XElement? {
+        var element = parent
+        while let theElement = element {
+            if names.contains(theElement.name) {
+                return theElement
+            }
+            element = theElement.parent
+        }
+        return nil
+    }
+    
     public var attached = [String:Any]()
     
     var _sourceRange: XTextRange? = nil
@@ -781,6 +803,17 @@ extension XBranchInternal {
         var node = __firstContent
         while let theNode = node {
             if let child = theNode as? XElement, child.name == name {
+                return child
+            }
+            node = theNode._next
+        }
+        return nil
+    }
+    
+    public func child(_ names: String...) -> XElement? {
+        var node = __firstContent
+        while let theNode = node {
+            if let child = theNode as? XElement, names.contains(child.name) {
                 return child
             }
             node = theNode._next
