@@ -734,8 +734,16 @@ extension Sequence<XContent> {
         XElementSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.ancestors(until: condition) })
     }
     
-    public func ancestors(withName name: String) -> XElementSequence {
+    public func ancestors(_ name: String) -> XElementSequence {
         XElementSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.ancestors(name) })
+    }
+    
+    public func ancestors(_ names: [String]) -> XElementSequence {
+        XElementSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.ancestors(names) })
+    }
+    
+    public func ancestors(_ names: String...) -> XElementSequence {
+        XElementSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.ancestors(names) })
     }
     
     public var ancestorsIncludingSelf: XElementSequence {
@@ -746,8 +754,16 @@ extension Sequence<XContent> {
         XElementSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.ancestorsIncludingSelf(condition) })
     }
     
-    public func ancestorsIncludingSelf(withName name: String) -> XElementSequence {
+    public func ancestorsIncludingSelf(_ name: String) -> XElementSequence {
         XElementSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.ancestorsIncludingSelf(name) })
+    }
+    
+    public func ancestorsIncludingSelf(_ names: [String]) -> XElementSequence {
+        XElementSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.ancestorsIncludingSelf(names) })
+    }
+    
+    public func ancestorsIncludingSelf(_ names: String...) -> XElementSequence {
+        XElementSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.ancestorsIncludingSelf(names) })
     }
     
     public func ancestorsIncludingSelf(while condition: @escaping (XElement) -> Bool) -> XElementSequence {
@@ -850,6 +866,14 @@ extension Sequence<XContent> {
         XElementSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.children(name) })
     }
     
+    public func children(_ names: [String]) -> XElementSequence {
+        XElementSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.children(names) })
+    }
+    
+    public func children(_ names: String...) -> XElementSequence {
+        XElementSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.children(names) })
+    }
+    
     public func children(while condition: @escaping (XElement) -> Bool) -> XElementSequence {
         XElementSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.children(while: condition) })
     }
@@ -868,6 +892,14 @@ extension Sequence<XContent> {
     
     public func childrenReversed(_ name: String) -> XElementSequence {
         XElementSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.childrenReversed(name) })
+    }
+    
+    public func childrenReversed(_ names: [String]) -> XElementSequence {
+        XElementSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.childrenReversed(names) })
+    }
+    
+    public func childrenReversed(_ names: String...) -> XElementSequence {
+        XElementSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.childrenReversed(names) })
     }
     
     public func childrenReversed(while condition: @escaping (XElement) -> Bool) -> XElementSequence {
@@ -954,11 +986,11 @@ extension Sequence<XContent> {
         XElementSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.nextElements(name) })
     }
     
-    public func nextElements(_ names: String...) -> XElementSequence {
+    public func nextElements(_ names: [String]) -> XElementSequence {
         XElementSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.nextElements(names) })
     }
     
-    public func nextElements(_ names: [String]) -> XElementSequence {
+    public func nextElements(_ names: String...) -> XElementSequence {
         XElementSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.nextElements(names) })
     }
     
@@ -980,6 +1012,10 @@ extension Sequence<XContent> {
     
     public func previousElements(_ name: String) -> XElementSequence {
         XElementSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.previousElements(name) })
+    }
+    
+    public func previousElements(_ names: [String]) -> XElementSequence {
+        XElementSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.previousElements(names) })
     }
     
     public func previousElements(_ names: String...) -> XElementSequence {
@@ -1028,6 +1064,14 @@ extension Sequence<XContent> {
     
     public func descendants(_ condition: @escaping (XElement) -> Bool) -> XElementSequence {
         XElementSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.descendants(condition) })
+    }
+    
+    public func descendants(_ names: [String]) -> XElementSequence {
+        XElementSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.descendants(names) })
+    }
+    
+    public func descendants(_ names: String...) -> XElementSequence {
+        XElementSequenceDependingOnContentSequence(sequence: self, nextSequenceGetter: { content in content.descendants(names) })
     }
     
     public func descendants(_ name: String) -> XElementSequence {
