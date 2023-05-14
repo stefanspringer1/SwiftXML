@@ -438,6 +438,12 @@ To get the names of all attributes of an element, use:
 var attributeNames: [String]
 ```
 
+Note that you also can a (lazy) sequence of the attribute values of a certain attribute name of a (lazy) sequence of elements by using the same index notation:
+
+```Swift
+print(myElement.children("myChildName")["myAttributeName"].joined(separator: ", "))
+```
+
 ### Attachments
 
 All nodes can have “attachments”. Those are objects that can be attached via a textual key. Those attachments are not considered as belonging to the formal XML tree.
