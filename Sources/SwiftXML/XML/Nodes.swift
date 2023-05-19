@@ -425,6 +425,9 @@ public class XNode {
             return ""
         }
     }
+    
+    public var description: String { String(describing: self) }
+    
 }
 
 public class XContent: XNode {
@@ -1366,7 +1369,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     public override var backLink: XElement? { get { super.backLink as? XElement } }
     public override var finalBackLink: XElement? { get { super.finalBackLink as? XElement } }
     
-    public var description: String {
+    public override var description: String {
         get {
             """
             <\(name)\(_attributes.isEmpty == false ? " " : "")\(_attributes.map { (attributeName,attributeValue) in "\(attributeName)=\"\(escapeDoubleQuotedValue(attributeValue.value))\"" }.joined(separator: " ") ?? "")>
@@ -1705,7 +1708,7 @@ public final class XText: XContent, AutoCombining, CustomStringConvertible {
         }
     }
     
-    public var description: String {
+    public override var description: String {
         get {
             _value
         }
@@ -1830,7 +1833,7 @@ public final class XLiteral: XContent, AutoCombining, CustomStringConvertible {
         }
     }
     
-    public var description: String {
+    public override var description: String {
         get {
             _value
         }
@@ -2012,7 +2015,7 @@ public final class XProcessingInstruction: XContent, CustomStringConvertible {
     var _target: String
     var _data: String?
     
-    public var description: String {
+    public override var description: String {
         get {
             """
             <?\(_target)\(_data?.isEmpty == false ? " " : "")\(_data ?? "")?>
