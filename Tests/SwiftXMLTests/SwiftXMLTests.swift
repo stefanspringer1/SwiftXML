@@ -404,20 +404,20 @@ final class SwiftXMLTests: XCTestCase {
         
         var travesalEvents = [String]()
         document.traverse { node in
-            travesalEvents.append("! down: \(node)")
+            travesalEvents.append("down: \(node)")
             if let text = node as? XText { text.remove() }
         } up: { node in
-            travesalEvents.append("! up: \(node)")
+            travesalEvents.append("up: \(node)")
         }
         
         XCTAssertEqual(travesalEvents.joined(separator: "\n"), """
-        ! down: <a>
-        ! down: <b>
-        ! down: <c>
-        ! up: <c>
-        ! up: <b>
-        ! down: TEXT
-        ! up: <a>
+        down: <a>
+        down: <b>
+        down: <c>
+        up: <c>
+        up: <b>
+        down: TEXT
+        up: <a>
         """)
     }
     
