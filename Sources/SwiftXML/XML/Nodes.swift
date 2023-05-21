@@ -1372,7 +1372,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     public override var description: String {
         get {
             """
-            <\(name)\(_attributes.isEmpty == false ? " " : "")\(_attributes.sorted{ $0.0 < $1.0 }.map { (attributeName,attributeProperties) in "\(attributeName)=\"\(escapeDoubleQuotedValue(attributeProperties.value))\"" }.joined(separator: " ") ?? "")>
+            <\(name)\(_attributes.isEmpty == false ? " " : "")\(_attributes.sorted{ $0.0.caseInsensitiveCompare($1.0) == .orderedAscending }.map { (attributeName,attributeProperties) in "\(attributeName)=\"\(escapeDoubleQuotedValue(attributeProperties.value))\"" }.joined(separator: " ") ?? "")>
             """
         }
     }
@@ -1432,8 +1432,8 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     
     public func hasEqualValues(as other: XElement) -> Bool {
         return self.name == other.name
-        && self.attributeNames.allSatisfy { self[$0] == other[$0] }
-            && other.attributeNames.allSatisfy { self[$0] != nil }
+        && self._attributes.keys.allSatisfy { self[$0] == other[$0] }
+            && other._attributes.keys.allSatisfy { self[$0] != nil }
     }
     
     public var xPath: String {
@@ -1451,7 +1451,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     
     public var attributeNames: [String] {
         get {
-            return Array(_attributes.keys).sorted()
+            return Array(_attributes.keys).sorted{ $0.caseInsensitiveCompare($1) == .orderedAscending }
         }
     }
     
@@ -1613,7 +1613,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     
     override func produceEntering(production: XProduction) throws {
         try production.writeElementStartBeforeAttributes(element: self)
-        try production.sortAttributeNames(attributeNames: Array(_attributes.keys), element: self).forEach { attributeName in
+        try production.sortAttributeNames(attributeNames: attributeNames, element: self).forEach { attributeName in
             try production.writeAttribute(name: attributeName, value: self[attributeName]!, element: self)
         }
         try production.writeElementStartAfterAttributes(element: self)

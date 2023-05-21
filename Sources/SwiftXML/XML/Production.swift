@@ -214,7 +214,7 @@ open class XDefaultProduction: XProduction {
     }
     
     open func sortAttributeNames(attributeNames: [String], element: XElement) -> [String] {
-        return attributeNames.sorted{ $0.caseInsensitiveCompare($1) == .orderedAscending }
+        return attributeNames
     }
     
     open func writeAttributeValue(name: String, value: String, element: XElement) throws {
