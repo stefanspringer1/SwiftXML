@@ -1438,7 +1438,7 @@ public final class XTreeIterator: XContentIteratorProtocol {
                 started = false
             }
             else if let thePrevious = currentNode?._previous {
-                currentNode = thePrevious.getLastInTree()
+                currentNode = thePrevious
                 downDirection = false
             }
             else if let theParent = currentNode?.parent {

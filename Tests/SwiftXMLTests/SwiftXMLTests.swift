@@ -397,4 +397,28 @@ final class SwiftXMLTests: XCTestCase {
         XCTAssertEqual(document.allTexts.map{ "\"\($0.value)\"" }.joined(separator: ", "), #""Hello ", "World", "!""#)
     }
     
+    func testTraversalWithRemoval() throws {
+        let document = try parseXML(fromText: """
+            <a><b><c/></b>TEXT</a>
+            """)
+        
+        var travesalEvents = [String]()
+        document.traverse { node in
+            travesalEvents.append("! down: \(node)")
+            if let text = node as? XText { text.remove() }
+        } up: { node in
+            travesalEvents.append("! up: \(node)")
+        }
+        
+        XCTAssertEqual(travesalEvents.joined(separator: "\n"), """
+        ! down: <a>
+        ! down: <b>
+        ! down: <c>
+        ! up: <c>
+        ! up: <b>
+        ! down: TEXT
+        ! up: <a>
+        """)
+    }
+    
 }
