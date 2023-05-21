@@ -31,12 +31,18 @@ public final class XElementsOfNamesSequence: XElementSequence {
 
 public final class XElementsOfNamesIterator: XElementIterator {
     
-    private let iterators: [XElementsOfSameNameIterator]
+    private let iterators: [XXBidirectionalElementNameIterator]
     private var foundElement = false
     private var iteratorIndex = 0
     
     init(forNames names: [String], forDocument document: XDocument) {
-        iterators = names.map{ XElementsOfSameNameIterator(document: document, name: $0, keepLast: true) }
+        iterators = names.map{ XXBidirectionalElementNameIterator(
+            elementIterator: XElementsOfSameNameIterator(
+                document: document,
+                name: $0,
+                keepLast: true
+            )
+        ) }
     }
     
     public override func next() -> XElement? {
@@ -84,12 +90,20 @@ public final class XAttributesOfNamesSequence: XAttributeSequence {
 
 public final class XAttributesOfNamesIterator: XAttributeIterator {
     
-    private let iterators: [XAttributesOfSameNameIterator]
+    private let iterators: [XBidirectionalAttributeIterator]
     private var foundElement = false
     private var iteratorIndex = 0
     
     init(forNames names: [String], forDocument document: XDocument) {
-        iterators = names.map{ XAttributesOfSameNameIterator(document: document, attributeName: $0, keepLast: true) }
+        iterators = names.map{
+            XBidirectionalAttributeIterator(
+                forAttributeName: $0, attributeIterator: XAttributesOfSameNameIterator(
+                    document: document,
+                    attributeName: $0,
+                    keepLast: true
+                )
+            )
+        }
     }
     
     public override func next() -> XAttributeSpot? {
@@ -105,9 +119,9 @@ public final class XAttributesOfNamesIterator: XAttributeIterator {
                 }
             }
             let iterator = iterators[iteratorIndex]
-            if let next = iterator.next(), let element = next.element {
+            if let next = iterator.next() {
                 foundElement = true
-                return XAttributeSpot(name: iterator.attributeName, value: next.value, element: element)
+                return XAttributeSpot(name: next.name, value: next.value, element: next.element)
             }
             else {
                 iteratorIndex += 1

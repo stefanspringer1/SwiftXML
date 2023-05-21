@@ -69,7 +69,7 @@ public class XTransformation {
             if let elementAction = rule.action as? XElementAction {
                 rule.names.forEach { name in
                     iteratorsWithActions.append((
-                        XElementNameIterator(elementIterator: XElementsOfSameNameIterator(document: document, name: name, keepLast: true), keepLast: true),
+                        XXBidirectionalElementNameIterator(elementIterator: XElementsOfSameNameIterator(document: document, name: name, keepLast: true), keepLast: true),
                         elementAction
                     ))
                 }
@@ -89,7 +89,7 @@ public class XTransformation {
         while !stopped && working {
             working = false
             iteratorsWithActions.forEach { (_iterator,_action) in
-                if !stopped, let iterator = _iterator as? XElementNameIterator, let action = _action as? XElementAction {
+                if !stopped, let iterator = _iterator as? XXBidirectionalElementNameIterator, let action = _action as? XElementAction {
                     while !stopped, let next = iterator.next() {
                         working = true
                         action(next)

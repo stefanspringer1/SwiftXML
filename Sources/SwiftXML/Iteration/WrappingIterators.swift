@@ -144,7 +144,7 @@ public final class XBidirectionalElementIterator: XElementIterator {
     }
 }
 
-public final class XElementNameIterator: XElementIterator {
+public final class XXBidirectionalElementNameIterator: XElementIterator {
     
     public typealias Element = XElement
     

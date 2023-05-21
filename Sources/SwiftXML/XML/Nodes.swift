@@ -1346,13 +1346,13 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         elementIterators.forEach { $0.prefetch() }
     }
     
-    private var nameIterators = WeakList<XElementNameIterator>()
+    private var nameIterators = WeakList<XXBidirectionalElementNameIterator>()
         
-    func addNameIterator(_ elementIterator: XElementNameIterator) {
+    func addNameIterator(_ elementIterator: XXBidirectionalElementNameIterator) {
         nameIterators.append(elementIterator)
     }
     
-    func removeNameIterator(_ elementIterator: XElementNameIterator) {
+    func removeNameIterator(_ elementIterator: XXBidirectionalElementNameIterator) {
         nameIterators.remove(elementIterator)
     }
     

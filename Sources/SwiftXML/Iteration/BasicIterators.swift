@@ -470,6 +470,7 @@ public final class XElementsOfSameNameIterator: XElementIteratorProtocol {
             currentElement = currentElement?.nextWithSameName
         }
         else {
+
             currentElement = document?._elementsOfName_first[name]
             started = true
         }

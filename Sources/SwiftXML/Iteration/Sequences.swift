@@ -545,7 +545,7 @@ public final class XElementsOfSameNameSequence: XElementSequence {
     }
     
     public override func makeIterator() -> XElementIterator {
-        return XElementNameIterator(
+        return XXBidirectionalElementNameIterator(
             elementIterator: XElementsOfSameNameIterator(
                 document: document,
                 name: elementName

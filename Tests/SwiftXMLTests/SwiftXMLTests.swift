@@ -421,4 +421,78 @@ final class SwiftXMLTests: XCTestCase {
         """)
     }
     
+    func testSingleElementNameIteratorWithRemoval() throws {
+        let document = try parseXML(fromText: """
+            <a><b id="1"/><b id="2"/></a>
+            """)
+        
+        var elementFoundInfos = [String]()
+        document.elements(ofName: "b").forEach { element in
+            elementFoundInfos.append(element.description)
+            element.remove()
+        }
+        
+        XCTAssertEqual(elementFoundInfos.joined(separator: "\n"), """
+        <b id="1">
+        <b id="2">
+        """)
+    }
+    
+    func testMultipleElementNamesIteratorWithRemoval() throws {
+        let document = try parseXML(fromText: """
+            <a><b id="1"/><b id="2"/></a>
+            """)
+        
+        var elementFoundInfos = [String]()
+        document.elements(ofName: "a", "b").forEach { element in
+            elementFoundInfos.append(element.description)
+            if element.name == "b" {
+                element.remove()
+            }
+        }
+        
+        XCTAssertEqual(elementFoundInfos.joined(separator: "\n"), """
+        <a>
+        <b id="1">
+        <b id="2">
+        """)
+    }
+    
+    func testSingleAttributeNameIteratorWithRemoval() throws {
+        let document = try parseXML(fromText: """
+            <a><b id="1"/><b id="2"/></a>
+            """)
+        
+        var elementFoundInfos = [String]()
+        document.attributes(ofName: "id").forEach { attributeSpot in
+            elementFoundInfos.append(attributeSpot.element.description)
+            attributeSpot.element.remove()
+        }
+        
+        XCTAssertEqual(elementFoundInfos.joined(separator: "\n"), """
+        <b id="1">
+        <b id="2">
+        """)
+    }
+    
+    func testMultipleAttributeNamesIteratorWithRemoval() throws {
+        let document = try parseXML(fromText: """
+            <a type="type1"><b id="1"/><b id="2"/></a>
+            """)
+        
+        var elementFoundInfos = [String]()
+        document.attributes(ofName: "type", "id").forEach { attributeSpot in
+            elementFoundInfos.append(attributeSpot.element.description)
+            if attributeSpot.name == "id" {
+                attributeSpot.element.remove()
+            }
+        }
+        
+        XCTAssertEqual(elementFoundInfos.joined(separator: "\n"), """
+        <a type="type1">
+        <b id="1">
+        <b id="2">
+        """)
+    }
+    
 }
