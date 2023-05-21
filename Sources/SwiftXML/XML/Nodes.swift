@@ -1372,7 +1372,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     public override var description: String {
         get {
             """
-            <\(name)\(_attributes.isEmpty == false ? " " : "")\(_attributes.map { (attributeName,attributeValue) in "\(attributeName)=\"\(escapeDoubleQuotedValue(attributeValue.value))\"" }.joined(separator: " ") ?? "")>
+            <\(name)\(_attributes.isEmpty == false ? " " : "")\(_attributes.sorted{ $0.0 < $1.0 }.map { (attributeName,attributeProperties) in "\(attributeName)=\"\(escapeDoubleQuotedValue(attributeProperties.value))\"" }.joined(separator: " ") ?? "")>
             """
         }
     }
@@ -1451,7 +1451,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     
     public var attributeNames: [String] {
         get {
-            return Array(_attributes.keys)
+            return Array(_attributes.keys).sorted()
         }
     }
     
