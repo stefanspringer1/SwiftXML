@@ -12,8 +12,6 @@ import XCTest
 import class Foundation.Bundle
 @testable import SwiftXML
 
-extension String: Error {}
-
 final class SwiftXMLTests: XCTestCase {
     
     let documentSource1 = """
