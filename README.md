@@ -37,7 +37,7 @@ let transformation = XTransformation {
 
 **This library is not in a “final” state yet** despite its high version number, i.e. there might still be bugs, or some major improvements will be done, and breaking changes might happen without the major version getting augmented. Addionally, there will be more comments in the code. Also, when such a final state is reached, the library might be further developed using a new repository URL (and the version number set back to a lower one). Further notice will be added here. See [there](https://stefanspringer.com) for contact information.
 
-**UPDATE (May 2023):** We changed the API a little bit recently (no more public `XSpot`, but you can set `isolated` for `XText`) and fixed two bugs and are currently working on adding more tests to this library and to the `SwiftXMLParser`. **We plan for a final release this summer.** (This library will then already be using in a production environment.) For all who are already been interested in this library, thank you for your patience!
+**UPDATE (May 2023):** We changed the API a little bit recently (no more public `XSpot`, but you can set `isolated` for `XText`) and fixed two bugs and are currently working on adding more tests to this library and to the `SwiftXMLParser`. **We plan for a final release this summer.** (This library will then already be used in a production environment.) For all who are already been interested in this library, thank you for your patience!
 
 ---
 
