@@ -1255,24 +1255,20 @@ final class XNodeSampler {
     func add(_ thing: XContentLike) {
         if let node = thing as? XContent {
             nodes.append(node)
-        }
-        else if let s = thing as? String {
+        } else if let s = thing as? String {
             nodes.append(XText(s))
-        }
-        else if let sequence = thing as? XContentSequence {
+        } else if let sequence = thing as? XContentSequence {
             sequence.forEach { self.add($0) }
-        }
-        else if let sequence = thing as? XElementSequence {
+        } else if let sequence = thing as? XElementSequence {
             sequence.forEach { self.add($0) }
-        }
-        else if let sequence = thing as? XTextSequence {
+        } else if let sequence = thing as? XTextSequence {
             sequence.forEach { self.add($0) }
-        }
-        else if let sequence = thing as? XContentLikeSequence {
+        } else if let sequence = thing as? XContentLikeSequence {
             sequence.forEach { self.add($0) }
-        }
-        else if let array = thing as? [XContentLike?] {
+        } else if let array = thing as? [XContentLike?] {
             array.forEach { if let contentLike = $0 { self.add(contentLike) } }
+        } else {
+            print("unkown content for XNodeSampler: \(type(of: thing)) \(thing)")
         }
     }
 }
