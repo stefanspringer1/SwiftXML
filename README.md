@@ -1444,6 +1444,8 @@ Output:
 
 Note that when e.g. inserting nodes, the `XText` nodes of them are then treated as being `isolated` while being moved.
 
+A `String` can be used where an `XText` is required, e.g. you can write `"Hello" as XText"`.
+
 ## Rules
 
 As mentioned in the general description, a set of rules `XRule` in the form of a transformation instance of type `XTransformation` can be used as follows.

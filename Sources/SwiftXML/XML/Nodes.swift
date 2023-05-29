@@ -1634,7 +1634,11 @@ protocol AutoCombining {
     func resetAfterMove()
 }
 
-public final class XText: XContent, AutoCombining, CustomStringConvertible {
+public final class XText: XContent, AutoCombining, CustomStringConvertible, ExpressibleByStringLiteral {
+    
+    public static func fromOptional(_ text: String?, withSpace: Bool = false) -> XText? {
+        if let text { return XText(text) } else { return nil }
+    }
     
     var _textIterators = WeakList<XBidirectionalTextIterator>()
     
@@ -1755,6 +1759,12 @@ public final class XText: XContent, AutoCombining, CustomStringConvertible {
         _value = text
         _isolated = isolated
         _whitespace = whitespace
+    }
+    
+    public init (stringLiteral text: String) {
+        _value = text
+        _isolated = false
+        _whitespace = .UNKNOWN
     }
     
     public var isWhitespace: Bool {
@@ -2073,6 +2083,10 @@ public final class XProcessingInstruction: XContent, CustomStringConvertible {
 
 public final class XComment: XContent {
     
+    public static func fromOptional(_ text: String?, withSpace: Bool = false) -> XComment? {
+        if let text { return XComment(text, withSpace: withSpace) } else { return nil }
+    }
+    
     public override var backLink: XComment? { get { super.backLink as? XComment } }
     public override var finalBackLink: XComment? { get { super.finalBackLink as? XComment } }
     
@@ -2087,8 +2101,8 @@ public final class XComment: XContent {
         }
     }
     
-    public init(_ text: String) {
-        self._value = text
+    public init(_ text: String, withSpace: Bool = false) {
+        self._value = withSpace ? " \(text) " : text
     }
     
     public override func applying(_ f: (XComment) -> ()) -> XComment {
