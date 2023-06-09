@@ -141,15 +141,15 @@ final class FromReadmeTests: XCTestCase {
         }
 
         let expectedOutputAfterReplace = """
-         <a>
-           <wrapper1>
-             <b/>
-             <wrapper2>Hello</wrapper2>
-           </wrapper1>
-         </a>
-        """
+            <a>
+              <wrapper1>
+                <b/>
+                <wrapper2>Hello</wrapper2>
+              </wrapper1>
+            </a>
+            """
         
-        XCTAssertEqual(a.serialized(), expectedOutputAfterReplace)
+        XCTAssertEqual(a.serialized(pretty: true), expectedOutputAfterReplace)
     }
     
     func testAddElementToDocument() throws {
@@ -188,19 +188,21 @@ final class FromReadmeTests: XCTestCase {
         }
 
         XCTAssertEqual(element.serialized(), "<top><a1><a2/></a1><b1><b2/></b1><c1><c2/></c1></top>")
+        
         print("\n---- 1 ----\n")
 
         element.content.forEach { content in
-            content.replace {
+            content.replace(.skipping) {
                 content.content
             }
         }
 
-        XCTAssertEqual(element.serialized(), "<top><a2/><b2/><c2/</top>")
+        XCTAssertEqual(element.serialized(), "<top><a2/><b2/><c2/></top>")
+        
         print("\n---- 2 ----\n")
 
         element.contentReversed.forEach { content in
-            content.insertPrevious {
+            content.insertPrevious(.skipping) {
                 XElement("I" + ((content as? XElement)?.name ?? "?"))
             }
         }
@@ -256,13 +258,34 @@ final class FromReadmeTests: XCTestCase {
         XCTAssertEqual(myElement.serialized(), "<top><a/><b/><c/></top>")
     }
     
+    func testInsertNextElementToSelectedDescendantsButSkipping() throws {
+        let myElement = XElement("top") {
+            XElement("a")
+        }
+
+        myElement.descendants.forEach { element in
+            if element.name == "a" {
+                element.insertNext(.skipping) {
+                    XElement("b")
+                }
+            }
+            else if element.name == "b" {
+                element.insertNext {
+                    XElement("c")
+                }
+            }
+        }
+
+        XCTAssertEqual(myElement.serialized(), "<top><a/><b/></top>")
+    }
+    
     func testReplaceNodeWithContent() throws {
         let document = try parseXML(fromText: """
             <text><bold><bold>Hello</bold></bold></text>
             """)
         document.descendants("bold").forEach { b in b.replace { b.content } }
         
-        XCTAssertEqual(document.serialized(), "<text><bold>Hello</bold></text>")
+        XCTAssertEqual(document.serialized(), "<text>Hello</text>")
     }
     
     func testtest() throws {

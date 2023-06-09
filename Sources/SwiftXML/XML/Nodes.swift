@@ -744,26 +744,32 @@ public class XContent: XNode {
     /**
      Replace the node by other nodes.
      */
-    public func replace(_ insertionMode: InsertionMode = .following, _ content: [XContent]) {
+    private func _replace(insertionMode: InsertionMode, content: [XContent], previousIsolator: _Isolator_) {
         if insertionMode == .following {
             gotoPreviousOnContentIterators()
         }
         else {
             prefetchOnContentIterators()
         }
-        let isolator = _Isolator_()
-        _insertPrevious(isolator)
         moving(content) {
-            content.forEach { isolator._insertPrevious($0) }
+            content.forEach { previousIsolator._insertPrevious($0) }
         }
-        if isolator._next === self {
+        if previousIsolator._next === self {
             remove()
         }
-        isolator.remove()
+        previousIsolator.remove()
+    }
+    
+    public func replace(_ insertionMode: InsertionMode = .following, _ content: [XContent]) {
+        let isolator = _Isolator_()
+        _insertPrevious(isolator)
+        _replace(insertionMode: insertionMode, content: content, previousIsolator: isolator)
     }
     
     public func replace(_ insertionMode: InsertionMode = .following, @XContentBuilder builder: () -> [XContent]) {
-        replace(insertionMode, builder())
+        let isolator = _Isolator_()
+        _insertPrevious(isolator)
+        _replace(insertionMode: insertionMode, content: builder(), previousIsolator: isolator)
     }
     
     public var asSequence: XContentSequence { get { XContentSelfSequence(content: self) } }

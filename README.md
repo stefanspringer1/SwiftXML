@@ -1149,7 +1149,7 @@ myDocument.elements(ofName: "table").forEach { table in
 }
 ```
 
-Note that by default iterations continue while disregarding new nodes inserted by `insertPrevious` or `insertNext`, so that e.g. the following example works intuitively:
+Note that by default iterations continue with new nodes inserted by `insertPrevious` or `insertNext` also being considered. In the following cases, you have to add the `.skipping`  directive to get the output as noted below (in teh second caee, you even get an infinite loop if you do not set `.skipping`):
 
 ```Swift
 let element = XElement("top") {
@@ -1169,7 +1169,7 @@ element.echo(pretty: true)
 print("\n---- 1 ----\n")
 
 element.content.forEach { content in
-    content.replace {
+    content.replace(.skipping) {
         content.content
     }
 }
@@ -1179,7 +1179,7 @@ element.echo(pretty: true)
 print("\n---- 2 ----\n")
 
 element.contentReversed.forEach { content in
-    content.insertPrevious {
+    content.insertPrevious(.skipping) {
         XElement("I" + ((content as? XElement)?.name ?? "?"))
     }
 }
@@ -1320,7 +1320,7 @@ Use `clone()` (or `shallowClone()`) when you actually want content to get duplic
 </a>
 ```
 
-When you _do_ want to also operate on the newly insert content, set `keepPosition: true` on `insertPrevious` or `insertNext`. For example, consider the following code:
+By default, When you insert content, this new content is also followed (insertion mode `.following`), as this best reflects the dynamic nature of this library. If you do not want this, set `.skipping` as first argument of `insertPrevious` or `insertNext`. For example, consider the following code:
 
 ```Swift
 let myElement = XElement("top") {
@@ -1353,7 +1353,7 @@ Output:
 </top>
 ```
 
-When `<b/>` gets inserted, the traversal also follows this inserted content. When you would like to skip the inserted content, use `.skipping` as the first argument of `insertNext` (the default is `.following`, as this “following” mode best reflects the dynamic nature of the library):
+When `<b/>` gets inserted, the traversal also follows this inserted content. When you would like to skip the inserted content, use `.skipping` as the first argument of `insertNext`:
 
 ```Swift
     ...
@@ -1372,7 +1372,7 @@ Output:
 </top>
 ```
 
-Similarly, if you replace a node, the content that gets inserted in place of the node is by default not included in the iteration. Example: Assume you would like to replace every occurrence of some `<bold>` element by its content. You might first try:
+Similarly, if you replace a node, the content that gets inserted in place of the node is by default included in the iteration. Example: Assume you would like to replace every occurrence of some `<bold>` element by its content:
 
 ```Swift
 let document = try parseXML(fromText: """
@@ -1382,21 +1382,7 @@ document.descendants("bold").forEach { b in b.replace { b.content } }
 document.echo()
 ```
 
-But the output is:
-
-```text
-<text><bold>Hello</bold></text>
-```
-
-If you would like to also iterate over the inserted content, use `follow: true` in the call to `replace`. E.g. in the last example:
-
-```Swift
-...
-document.descendants("bold").forEach { b in b.replace(follow: true) { b.content } }
-...
-```
-
-The output then becomes:
+The output is:
 
 ```text
 <text>Hello</text>
