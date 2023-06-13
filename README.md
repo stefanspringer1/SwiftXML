@@ -745,7 +745,7 @@ if let theBs = document.descendants("b").existing {
 }
 ```
 
-Note that what you get by using `existing` still is a lazy sequece, i.e. if you change content between the `existing` test and using its result, then there might be no more items left to be found.
+Note that what you get by using `existing` still is a lazy sequence, i.e. if you change content between the `existing` test and using its result, then there might be no more items left to be found.
 
 You may also ask for the previous or next content item in the tree, in the order of a depth-first traversal. E.g. if a node is the last node of a subtree starting at a certain element and the element has a next sibling, this next sibling is “the next node in the tree” for that last node of the subtree. Getting the next or previous node in the tree is very efficient, as the library keep track of them anyway.
 
@@ -1149,7 +1149,7 @@ myDocument.elements(ofName: "table").forEach { table in
 }
 ```
 
-Note that by default iterations continue with new nodes inserted by `insertPrevious` or `insertNext` also being considered. In the following cases, you have to add the `.skipping`  directive to get the output as noted below (in teh second caee, you even get an infinite loop if you do not set `.skipping`):
+Note that by default iterations continue with new nodes inserted by `insertPrevious` or `insertNext` also being considered. In the following cases, you have to add the `.skipping`  directive to get the output as noted below (in the second case, you even get an infinite loop if you do not set `.skipping`):
 
 ```Swift
 let element = XElement("top") {
