@@ -434,6 +434,8 @@ Result:
 1, 2, 3
 ```
 
+If you want to get an attribute value and at the same time remove the attribute, use the method `pullAttribute(...)` of the element.
+
 To get the names of all attributes of an element, use:
 
 ```Swift
