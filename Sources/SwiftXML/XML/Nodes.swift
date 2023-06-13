@@ -1564,6 +1564,15 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         }
     }
     
+    public func pullAttribute(_ name: String) -> String? {
+        if let value = self[name] {
+            self[name] = nil
+            return value
+        } else {
+            return nil
+        }
+    }
+    
     public init(_ name: String, _ attributes: [String:String?]? = nil, attached: [String:Any?]? = nil) {
         self._name = name
         super.init()
