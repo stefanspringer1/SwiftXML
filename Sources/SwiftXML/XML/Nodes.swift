@@ -305,13 +305,13 @@ public class XNode {
     public func traverse(down: (XNode) throws -> (), up: ((XNode) throws -> ())? = nil) rethrows {
         let directionIndicator = XDirectionIndicator()
         try XTraversalSequence(node: self, directionIndicator: directionIndicator).forEach { node in
-            if directionIndicator.up {
+            if directionIndicator.down {
+                try down(node)
+            }
+            else {
                 if let branch = node as? XBranchInternal {
                     try up?(branch)
                 }
-            }
-            else {
-                try down(node)
             }
         }
     }
@@ -319,13 +319,13 @@ public class XNode {
     public func traverse(down: (XNode) async throws -> (), up: ((XNode) async throws -> ())? = nil) async rethrows {
         let directionIndicator = XDirectionIndicator()
         try await XTraversalSequence(node: self, directionIndicator: directionIndicator).forEachAsync { node in
-            if directionIndicator.up {
+            if directionIndicator.down {
+                try await down(node)
+            }
+            else {
                 if let branch = node as? XBranchInternal {
                     try await up?(branch)
                 }
-            }
-            else {
-                try await down(node)
             }
         }
     }

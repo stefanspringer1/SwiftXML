@@ -1355,7 +1355,7 @@ public final class XDescendantsIncludingSelfIterator: XElementIteratorProtocol {
 }
 
 public final class XDirectionIndicator {
-    public var up = false
+    public var down = true
     
     public init() {}
 }
@@ -1390,12 +1390,12 @@ public final class XTreeIterator: XContentIteratorProtocol {
                    let branch = currentNode as? XBranchInternal {
                     if let firstChild = branch.__firstContent {
                         currentNode = firstChild
-                        directionIndicator.up = false
+                        directionIndicator.down = true
                         return currentNode as? XContent
                     }
                     else {
                         downDirection = false
-                        directionIndicator.up = true
+                        directionIndicator.down = false
                         return branch as? XContent
                     }
                 }
@@ -1406,7 +1406,7 @@ public final class XTreeIterator: XContentIteratorProtocol {
                 if let next = currentNode?._next {
                     currentNode = next
                     downDirection = true
-                    directionIndicator.up = false
+                    directionIndicator.down = true
                     return next
                 }
                 else {
@@ -1415,7 +1415,7 @@ public final class XTreeIterator: XContentIteratorProtocol {
                     }
                     currentNode = currentNode?._parent
                     if let theCurrentNode = currentNode as? XBranchInternal {
-                        directionIndicator.up = true
+                        directionIndicator.down = false
                         return theCurrentNode as? XContent
                     }
                     else {
