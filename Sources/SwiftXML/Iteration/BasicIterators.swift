@@ -1356,6 +1356,8 @@ public final class XDescendantsIncludingSelfIterator: XElementIteratorProtocol {
 
 public final class XDirectionIndicator {
     var up = false
+    
+    public init() {}
 }
 
 /**

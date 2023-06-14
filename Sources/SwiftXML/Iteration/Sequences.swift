@@ -31,7 +31,7 @@ public final class XContentSequenceWithCondition: XContentSequence {
     let sequence: XContentSequence
     let condition: (XContent) -> Bool
     
-    init(sequence: XContentSequence, condition: @escaping (XContent) -> Bool) {
+    public init(sequence: XContentSequence, condition: @escaping (XContent) -> Bool) {
         self.sequence = sequence
         self.condition = condition
     }
@@ -49,7 +49,7 @@ public final class XContentSequenceWhileCondition: XContentSequence {
     let sequence: XContentSequence
     let condition: (XContent) -> Bool
     
-    init(sequence: XContentSequence, while condition: @escaping (XContent) -> Bool) {
+    public init(sequence: XContentSequence, while condition: @escaping (XContent) -> Bool) {
         self.sequence = sequence
         self.condition = condition
     }
@@ -67,7 +67,7 @@ public final class XContentSequenceUntilCondition: XContentSequence {
     let sequence: XContentSequence
     let condition: (XContent) -> Bool
     
-    init(sequence: XContentSequence, until condition: @escaping (XContent) -> Bool) {
+    public init(sequence: XContentSequence, until condition: @escaping (XContent) -> Bool) {
         self.sequence = sequence
         self.condition = condition
     }
@@ -85,7 +85,7 @@ public final class XTextSequenceWithCondition: XTextSequence {
     let sequence: XTextSequence
     let condition: (XText) -> Bool
     
-    init(sequence: XTextSequence, condition: @escaping (XText) -> Bool) {
+    public init(sequence: XTextSequence, condition: @escaping (XText) -> Bool) {
         self.sequence = sequence
         self.condition = condition
     }
@@ -103,7 +103,7 @@ public final class XTextSequenceWhileCondition: XTextSequence {
     let sequence: XTextSequence
     let condition: (XText) -> Bool
     
-    init(sequence: XTextSequence, while condition: @escaping (XText) -> Bool) {
+    public init(sequence: XTextSequence, while condition: @escaping (XText) -> Bool) {
         self.sequence = sequence
         self.condition = condition
     }
@@ -121,7 +121,7 @@ public final class XTextSequenceUntilCondition: XTextSequence {
     let sequence: XTextSequence
     let condition: (XText) -> Bool
     
-    init(sequence: XTextSequence, until condition: @escaping (XText) -> Bool) {
+    public init(sequence: XTextSequence, until condition: @escaping (XText) -> Bool) {
         self.sequence = sequence
         self.condition = condition
     }
@@ -139,12 +139,12 @@ public final class XElementSequenceWithCondition: XElementSequence {
     let sequence: XElementSequence
     let condition: (XElement) -> Bool
     
-    init(sequence: XElementSequence, condition: @escaping (XElement) -> Bool) {
+    public init(sequence: XElementSequence, condition: @escaping (XElement) -> Bool) {
         self.sequence = sequence
         self.condition = condition
     }
     
-    init(sequence: XElementSequence, elementName: String) {
+    public init(sequence: XElementSequence, elementName: String) {
         self.sequence = sequence
         self.condition = { $0.name == elementName }
     }
@@ -162,12 +162,12 @@ public final class XElementSequenceWhileCondition: XElementSequence {
     let sequence: XElementSequence
     let condition: (XElement) -> Bool
     
-    init(sequence: XElementSequence, while condition: @escaping (XElement) -> Bool) {
+    public init(sequence: XElementSequence, while condition: @escaping (XElement) -> Bool) {
         self.sequence = sequence
         self.condition = condition
     }
     
-    init(sequence: XElementSequence, elementName: String) {
+    public init(sequence: XElementSequence, elementName: String) {
         self.sequence = sequence
         self.condition = { $0.name == elementName }
     }
@@ -185,12 +185,12 @@ public final class XElementSequenceUntilCondition: XElementSequence {
     let sequence: XElementSequence
     let condition: (XElement) -> Bool
     
-    init(sequence: XElementSequence, until condition: @escaping (XElement) -> Bool) {
+    public init(sequence: XElementSequence, until condition: @escaping (XElement) -> Bool) {
         self.sequence = sequence
         self.condition = condition
     }
     
-    init(sequence: XElementSequence, elementName: String) {
+    public init(sequence: XElementSequence, elementName: String) {
         self.sequence = sequence
         self.condition = { $0.name == elementName }
     }
@@ -208,7 +208,7 @@ public final class XAttributeSequenceWithCondition: XAttributeSequence {
     let sequence: XAttributeSequence
     let condition: (XAttributeSpot) -> Bool
     
-    init(sequence: XAttributeSequence, condition: @escaping (XAttributeSpot) -> Bool) {
+    public init(sequence: XAttributeSequence, condition: @escaping (XAttributeSpot) -> Bool) {
         self.sequence = sequence
         self.condition = condition
     }
@@ -226,7 +226,7 @@ public final class XAttributeSequenceWhileCondition: XAttributeSequence {
     let sequence: XAttributeSequence
     let condition: (XAttributeSpot) -> Bool
     
-    init(sequence: XAttributeSequence, while condition: @escaping (XAttributeSpot) -> Bool) {
+    public init(sequence: XAttributeSequence, while condition: @escaping (XAttributeSpot) -> Bool) {
         self.sequence = sequence
         self.condition = condition
     }
@@ -244,7 +244,7 @@ public final class XAttributeSequenceUntilCondition: XAttributeSequence {
     let sequence: XAttributeSequence
     let condition: (XAttributeSpot) -> Bool
     
-    init(sequence: XAttributeSequence, until condition: @escaping (XAttributeSpot) -> Bool) {
+    public init(sequence: XAttributeSequence, until condition: @escaping (XAttributeSpot) -> Bool) {
         self.sequence = sequence
         self.condition = condition
     }
@@ -264,7 +264,7 @@ public final class XTraversalSequence: XContentSequence {
     let node: XNode
     let directionIndicator: XDirectionIndicator
     
-    init(node: XNode, directionIndicator: XDirectionIndicator) {
+    public init(node: XNode, directionIndicator: XDirectionIndicator) {
         self.node = node
         self.directionIndicator = directionIndicator
     }
@@ -278,7 +278,7 @@ public final class XNextSequence: XContentSequence {
     
     let theContent: XContent
     
-    init(content: XContent) {
+    public init(content: XContent) {
         self.theContent = content
     }
     
@@ -291,7 +291,7 @@ public final class XPreviousSequence: XContentSequence {
     
     let theContent: XContent
     
-    init(content: XContent) {
+    public init(content: XContent) {
         self.theContent = content
     }
     
@@ -304,7 +304,7 @@ public final class XNextTextsSequence: XTextSequence {
     
     let theContent: XContent
     
-    init(content: XContent) {
+    public init(content: XContent) {
         self.theContent = content
     }
     
@@ -317,7 +317,7 @@ public final class XPreviousTextsSequence: XTextSequence {
     
     let theContent: XContent
     
-    init(content: XContent) {
+    public init(content: XContent) {
         self.theContent = content
     }
     
@@ -330,7 +330,7 @@ public final class XNextElementsSequence: XElementSequence {
     
     let theContent: XContent
     
-    init(content: XContent) {
+    public init(content: XContent) {
         self.theContent = content
     }
     
@@ -343,7 +343,7 @@ public final class XPreviousElementsSequence: XElementSequence {
     
     let theContent: XContent
     
-    init(content: XContent) {
+    public init(content: XContent) {
         self.theContent = content
     }
     
@@ -356,7 +356,7 @@ public final class XSequenceOfContent: XContentSequence {
     
     let node: XNode
     
-    init(node: XNode) {
+    public init(node: XNode) {
         self.node = node
     }
     
@@ -369,7 +369,7 @@ public final class XReversedSequenceOfContent: XContentSequence {
     
     let node: XNode
     
-    init(node: XNode) {
+    public init(node: XNode) {
         self.node = node
     }
     
@@ -382,7 +382,7 @@ public final class XSequenceOfTexts: XTextSequence {
     
     let node: XNode
     
-    init(node: XNode) {
+    public init(node: XNode) {
         self.node = node
     }
     
@@ -395,7 +395,7 @@ public final class XSequenceOfAllTexts: XTextSequence {
     
     let node: XNode
     
-    init(node: XNode) {
+    public init(node: XNode) {
         self.node = node
     }
     
@@ -408,7 +408,7 @@ public final class XReversedSequenceOfTexts: XTextSequence {
     
     let node: XNode
     
-    init(node: XNode) {
+    public init(node: XNode) {
         self.node = node
     }
     
@@ -421,7 +421,7 @@ public final class XChildrenSequence: XElementSequence {
     
     let node: XNode
     
-    init(node: XNode) {
+    public init(node: XNode) {
         self.node = node
     }
     
@@ -434,7 +434,7 @@ public final class XReversedChildrenSequence: XElementSequence {
     
     let node: XNode
     
-    init(node: XNode) {
+    public init(node: XNode) {
         self.node = node
     }
     
@@ -447,7 +447,7 @@ public final class XAncestorsSequence: XElementSequence {
     
     let node: XNode
     
-    init(node: XNode) {
+    public init(node: XNode) {
         self.node = node
     }
     
@@ -460,7 +460,7 @@ public final class XAncestorsSequenceIncludingSelf: XElementSequence {
     
     let node: XNode
     
-    init(node: XNode) {
+    public init(node: XNode) {
         self.node = node
     }
     
@@ -473,7 +473,7 @@ public final class XAllContentSequence: XContentSequence {
     
     let node: XNode
     
-    init(node: XNode) {
+    public init(node: XNode) {
         self.node = node
     }
     
@@ -486,7 +486,7 @@ public final class XAllContentIncludingSelfSequence: XContentSequence {
     
     let node: XNode
     
-    init(node: XNode) {
+    public init(node: XNode) {
         self.node = node
     }
     
@@ -499,7 +499,7 @@ public final class XAllTextsSequence: XTextSequence {
     
     let node: XNode
     
-    init(node: XNode) {
+    public init(node: XNode) {
         self.node = node
     }
     
@@ -512,7 +512,7 @@ public final class XDescendantsSequence: XElementSequence {
     
     let node: XNode
     
-    init(node: XNode) {
+    public init(node: XNode) {
         self.node = node
     }
     
@@ -525,7 +525,7 @@ public final class XDescendantsIncludingSelfSequence: XElementSequence {
     
     let element: XElement
     
-    init(element: XElement) {
+    public init(element: XElement) {
         self.element = element
     }
     
@@ -539,7 +539,7 @@ public final class XElementsOfSameNameSequence: XElementSequence {
     let document: XDocument
     let elementName: String
     
-    init(document: XDocument, name: String) {
+    public init(document: XDocument, name: String) {
         self.document = document
         self.elementName = name
     }
@@ -559,7 +559,7 @@ public final class XAttributesOfSameNameSequence: XAttributeSequence {
     let document: XDocument
     let attributeName: String
     
-    init(document: XDocument, attributeName: String) {
+    public init(document: XDocument, attributeName: String) {
         self.document = document
         self.attributeName = attributeName
     }
@@ -581,7 +581,7 @@ public final class XElementSelfSequence: XElementSequence {
     
     let element: XElement
     
-    init(element: XElement) {
+    public init(element: XElement) {
         self.element = element
     }
     
@@ -601,7 +601,7 @@ public final class XContentSelfSequence: XContentSequence {
     
     let theContent: XContent
     
-    init(content: XContent) {
+    public init(content: XContent) {
         self.theContent = content
     }
     
