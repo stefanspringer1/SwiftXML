@@ -40,6 +40,10 @@ public extension XNode {
         return XElementSequenceUntilCondition(sequence: XAncestorsSequence(node: self), until: condition)
     }
     
+    func ancestors(including condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceIncludingCondition(sequence: XAncestorsSequence(node: self), including: condition)
+    }
+    
     var ancestorsIncludingSelf: XElementSequence {
         get { XAncestorsSequenceIncludingSelf(node: self) }
     }
@@ -68,6 +72,10 @@ public extension XNode {
         return XElementSequenceUntilCondition(sequence: XAncestorsSequenceIncludingSelf(node: self), until: condition)
     }
     
+    func ancestorsIncludingSelf(including condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceIncludingCondition(sequence: XAncestorsSequenceIncludingSelf(node: self), including: condition)
+    }
+    
     var content: XContentSequence {
         get { XSequenceOfContent(node: self) }
     }
@@ -82,6 +90,10 @@ public extension XNode {
     
     func content(until condition: @escaping (XContent) -> Bool) -> XContentSequence {
         return XContentSequenceUntilCondition(sequence: XSequenceOfContent(node: self), until: condition)
+    }
+    
+    func content(including condition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentSequenceIncludingCondition(sequence: XSequenceOfContent(node: self), including: condition)
     }
     
     var contentReversed: XContentSequence {
@@ -100,6 +112,10 @@ public extension XNode {
         return XContentSequenceUntilCondition(sequence: XReversedSequenceOfContent(node: self), until: condition)
     }
     
+    func contentReversed(including condition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentSequenceIncludingCondition(sequence: XReversedSequenceOfContent(node: self), including: condition)
+    }
+    
     var texts: XTextSequence {
         get { XSequenceOfTexts(node: self) }
     }
@@ -114,6 +130,10 @@ public extension XNode {
     
     func texts(until condition: @escaping (XText) -> Bool) -> XTextSequence {
         return XTextSequenceUntilCondition(sequence: XSequenceOfTexts(node: self), until: condition)
+    }
+    
+    func texts(including condition: @escaping (XText) -> Bool) -> XTextSequence {
+        return XTextSequenceIncludingCondition(sequence: XSequenceOfTexts(node: self), including: condition)
     }
     
     var textsReversed: XTextSequence {
@@ -132,6 +152,10 @@ public extension XNode {
         return XTextSequenceUntilCondition(sequence: XReversedSequenceOfTexts(node: self), until: condition)
     }
     
+    func textsReversed(including condition: @escaping (XText) -> Bool) -> XTextSequence {
+        return XTextSequenceIncludingCondition(sequence: XReversedSequenceOfTexts(node: self), including: condition)
+    }
+    
     var allTexts: XTextSequence {
         get { XSequenceOfAllTexts(node: self) }
     }
@@ -146,6 +170,10 @@ public extension XNode {
     
     func allTexts(until condition: @escaping (XText) -> Bool) -> XTextSequence {
         return XTextSequenceUntilCondition(sequence: XSequenceOfAllTexts(node: self), until: condition)
+    }
+    
+    func allTexts(including condition: @escaping (XText) -> Bool) -> XTextSequence {
+        return XTextSequenceIncludingCondition(sequence: XSequenceOfAllTexts(node: self), including: condition)
     }
     
     var children: XElementSequence {
@@ -176,6 +204,10 @@ public extension XNode {
         return XElementSequenceUntilCondition(sequence: XChildrenSequence(node: self), until: condition)
     }
     
+    func children(including condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceIncludingCondition(sequence: XChildrenSequence(node: self), including: condition)
+    }
+    
     var childrenReversed: XElementSequence {
         get { XReversedChildrenSequence(node: self) }
     }
@@ -204,6 +236,10 @@ public extension XNode {
         return XElementSequenceUntilCondition(sequence: XReversedChildrenSequence(node: self), until: condition)
     }
     
+    func childrenReversed(including condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceIncludingCondition(sequence: XReversedChildrenSequence(node: self), including: condition)
+    }
+    
     var allContent: XContentSequence {
         get { XAllContentSequence(node: self) }
     }
@@ -220,6 +256,10 @@ public extension XNode {
         return XContentSequenceUntilCondition(sequence: XAllContentSequence(node: self), until: condition)
     }
     
+    func allContent(including condition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentSequenceIncludingCondition(sequence: XAllContentSequence(node: self), including: condition)
+    }
+    
     var allContentIncludingSelf: XContentSequence {
         get { XAllContentIncludingSelfSequence(node: self) }
     }
@@ -234,6 +274,10 @@ public extension XNode {
     
     func allContentIncludingSelf(until condition: @escaping (XContent) -> Bool) -> XContentSequence {
         return XContentSequenceUntilCondition(sequence: XAllContentIncludingSelfSequence(node: self), until: condition)
+    }
+    
+    func allContentIncludingSelf(including condition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentSequenceIncludingCondition(sequence: XAllContentIncludingSelfSequence(node: self), including: condition)
     }
     
     var descendants: XElementSequence {
@@ -264,6 +308,10 @@ public extension XNode {
         return XElementSequenceUntilCondition(sequence: XDescendantsSequence(node: self), until: condition)
     }
     
+    func descendants(including condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceIncludingCondition(sequence: XDescendantsSequence(node: self), including: condition)
+    }
+    
 }
 
 public extension XContent {
@@ -284,6 +332,10 @@ public extension XContent {
         return XContentSequenceUntilCondition(sequence: XNextSequence(content: self), until: condition)
     }
     
+    func next(including condition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentSequenceIncludingCondition(sequence: XNextSequence(content: self), including: condition)
+    }
+    
     var previous: XContentSequence {
         get { XPreviousSequence(content: self) }
     }
@@ -298,6 +350,10 @@ public extension XContent {
     
     func previous(until condition: @escaping (XContent) -> Bool) -> XContentSequence {
         return XContentSequenceUntilCondition(sequence: XPreviousSequence(content: self), until: condition)
+    }
+    
+    func previous(including condition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentSequenceIncludingCondition(sequence: XPreviousSequence(content: self), including: condition)
     }
     
     var nextTexts: XTextSequence {
@@ -316,6 +372,10 @@ public extension XContent {
         return XTextSequenceUntilCondition(sequence: XNextTextsSequence(content: self), until: condition)
     }
     
+    func nextTexts(including condition: @escaping (XText) -> Bool) -> XTextSequence {
+        return XTextSequenceIncludingCondition(sequence: XNextTextsSequence(content: self), including: condition)
+    }
+    
     var previousTexts: XTextSequence {
         get { XPreviousTextsSequence(content: self) }
     }
@@ -330,6 +390,10 @@ public extension XContent {
     
     func previousTexts(until condition: @escaping (XText) -> Bool) -> XTextSequence {
         return XTextSequenceUntilCondition(sequence: XPreviousTextsSequence(content: self), until: condition)
+    }
+    
+    func previousTexts(including condition: @escaping (XText) -> Bool) -> XTextSequence {
+        return XTextSequenceIncludingCondition(sequence: XPreviousTextsSequence(content: self), including: condition)
     }
     
     var nextElements: XElementSequence {
@@ -360,6 +424,10 @@ public extension XContent {
         return XElementSequenceUntilCondition(sequence: XNextElementsSequence(content: self), until: condition)
     }
     
+    func nextElements(including condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceIncludingCondition(sequence: XNextElementsSequence(content: self), including: condition)
+    }
+    
     var previousElements: XElementSequence {
         get { XPreviousElementsSequence(content: self) }
     }
@@ -388,6 +456,10 @@ public extension XContent {
         return XElementSequenceUntilCondition(sequence: XPreviousElementsSequence(content: self), until: condition)
     }
     
+    func previousElements(including condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceIncludingCondition(sequence: XPreviousElementsSequence(content: self), including: condition)
+    }
+    
 }
 
 public extension XElement {
@@ -412,6 +484,10 @@ public extension XElement {
     
     func descendantsIncludingSelf(until condition: @escaping (XElement) -> Bool) -> XElementSequence {
         return XElementSequenceUntilCondition(sequence: XDescendantsIncludingSelfSequence(element: self), until: condition)
+    }
+    
+    func descendantsIncludingSelf(including condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceIncludingCondition(sequence: XDescendantsIncludingSelfSequence(element: self), including: condition)
     }
 }
 

@@ -92,6 +92,28 @@ public class XContentIteratorUntilCondition: XContentIterator {
     }
 }
 
+public class XContentIteratorIncludingCondition: XContentIterator {
+    
+    let iterator: XContentIterator
+    let condition: (XContent) -> Bool
+    var found = false
+    
+    init(iterator: XContentIterator, including condition: @escaping (XContent) -> Bool) {
+        self.iterator = iterator
+        self.condition = condition
+    }
+    
+    public override func next() -> XContent? {
+        if found {
+            return nil
+        } else if let node = iterator.next() {
+            found = condition(node)
+            return node
+        } else {
+            return nil
+        }
+    }
+}
 
 public class XTextIteratorWithCondition: XTextIterator {
     
@@ -146,10 +168,33 @@ public class XTextIteratorUntilCondition: XTextIterator {
     }
     
     public override func next() -> XText? {
-        if let node = iterator.next(), !condition(node) {
-            return node
+        if let text = iterator.next(), !condition(text) {
+            return text
         }
         else {
+            return nil
+        }
+    }
+}
+
+public class XTextIteratorIncludingCondition: XTextIterator {
+    
+    let iterator: XTextIterator
+    let condition: (XText) -> Bool
+    var found = false
+    
+    init(iterator: XTextIterator, including condition: @escaping (XText) -> Bool) {
+        self.iterator = iterator
+        self.condition = condition
+    }
+    
+    public override func next() -> XText? {
+        if found {
+            return nil
+        } else if let text = iterator.next() {
+            found = condition(text)
+            return text
+        } else {
             return nil
         }
     }
@@ -261,6 +306,34 @@ public class XElementIteratorUntilCondition: XElementIterator {
     }
 }
 
+public class XElementIteratorIncludingCondition: XElementIterator {
+    
+    let iterator: XElementIterator
+    let condition: (XElement) -> Bool
+    var found = false
+    
+    init(iterator: XElementIterator, including condition: @escaping (XElement) -> Bool) {
+        self.iterator = iterator
+        self.condition = condition
+    }
+    
+    init(iterator: XElementIterator, elementName: String) {
+        self.iterator = iterator
+        self.condition = { $0.name == elementName }
+    }
+    
+    public override func next() -> XElement? {
+        if found {
+            return nil
+        } else if let element = iterator.next() {
+            found = condition(element)
+            return element
+        } else {
+            return nil
+        }
+    }
+}
+
 public class XElementSequence: LazySequenceProtocol, Sequence {
     public typealias Element = XElement
     public func makeIterator() -> XElementIterator {
@@ -339,6 +412,29 @@ public class XAttributeIteratorUntilCondition: XAttributeIterator {
             return attributeSpot
         }
         else {
+            return nil
+        }
+    }
+}
+
+public class XAttributeIteratorIncludingCondition: XAttributeIterator {
+    
+    let iterator: XAttributeIterator
+    let condition: (XAttributeSpot) -> Bool
+    var found = false
+    
+    init(iterator: XAttributeIterator, including condition: @escaping (XAttributeSpot) -> Bool) {
+        self.iterator = iterator
+        self.condition = condition
+    }
+    
+    public override func next() -> XAttributeSpot? {
+        if found {
+            return nil
+        } else if let attributeSpot = iterator.next() {
+            found = condition(attributeSpot)
+            return attributeSpot
+        } else {
             return nil
         }
     }
@@ -1303,7 +1399,7 @@ public final class XAllTextsIterator: XTextIteratorProtocol {
 }
 
 /**
- Iterates though all elements (tree traversal) of a branch, inlcuding teh start node itself if it is an element.
+ Iterates though all elements (tree traversal) of a branch, including teh start node itself if it is an element.
  */
 public final class XDescendantsIncludingSelfIterator: XElementIteratorProtocol {
     
