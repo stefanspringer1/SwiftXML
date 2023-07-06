@@ -793,10 +793,10 @@ All of the methods in the previous section that return a sequence also allow a c
 func content((XContent) -> Bool) -> XContentSequence
 func content(while: (XContent) -> Bool) -> XContentSequence
 func content(until: (XContent) -> Bool) -> XContentSequence
-func content(untilIncluding: (XContent) -> Bool) -> XContentSequence
+func content(untilAndIncluding: (XContent) -> Bool) -> XContentSequence
 ```
 
-The `untilIncluding` version also stops where the condition is fullfilled, but _includes_ the according item.
+The `untilAndIncluding` version also stops where the condition is fullfilled, but _includes_ the according item.
 
 Sequences of a more specific type are returned in sensible cases.
 

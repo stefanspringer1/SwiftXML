@@ -85,7 +85,7 @@ public final class XContentSequenceIncludingCondition: XContentSequence {
     let sequence: XContentSequence
     let condition: (XContent) -> Bool
     
-    public init(sequence: XContentSequence, untilIncluding condition: @escaping (XContent) -> Bool) {
+    public init(sequence: XContentSequence, untilAndIncluding condition: @escaping (XContent) -> Bool) {
         self.sequence = sequence
         self.condition = condition
     }
@@ -93,7 +93,7 @@ public final class XContentSequenceIncludingCondition: XContentSequence {
     public override func makeIterator() -> XContentIterator {
         return XContentIteratorIncludingCondition(
             iterator: sequence.makeIterator(),
-            untilIncluding: condition
+            untilAndIncluding: condition
         )
     }
 }
@@ -157,7 +157,7 @@ public final class XTextSequenceIncludingCondition: XTextSequence {
     let sequence: XTextSequence
     let condition: (XText) -> Bool
     
-    public init(sequence: XTextSequence, untilIncluding condition: @escaping (XText) -> Bool) {
+    public init(sequence: XTextSequence, untilAndIncluding condition: @escaping (XText) -> Bool) {
         self.sequence = sequence
         self.condition = condition
     }
@@ -165,7 +165,7 @@ public final class XTextSequenceIncludingCondition: XTextSequence {
     public override func makeIterator() -> XTextIterator {
         return XTextIteratorIncludingCondition(
             iterator: sequence.makeIterator(),
-            untilIncluding: condition
+            untilAndIncluding: condition
         )
     }
 }
@@ -244,7 +244,7 @@ public final class XElementSequenceIncludingCondition: XElementSequence {
     let sequence: XElementSequence
     let condition: (XElement) -> Bool
     
-    public init(sequence: XElementSequence, untilIncluding condition: @escaping (XElement) -> Bool) {
+    public init(sequence: XElementSequence, untilAndIncluding condition: @escaping (XElement) -> Bool) {
         self.sequence = sequence
         self.condition = condition
     }
@@ -257,7 +257,7 @@ public final class XElementSequenceIncludingCondition: XElementSequence {
     public override func makeIterator() -> XElementIterator {
         return XElementIteratorIncludingCondition(
             iterator: sequence.makeIterator(),
-            untilIncluding: condition
+            untilAndIncluding: condition
         )
     }
 }
@@ -321,7 +321,7 @@ public final class XAttributeSequenceIncludingCondition: XAttributeSequence {
     let sequence: XAttributeSequence
     let condition: (XAttributeSpot) -> Bool
     
-    public init(sequence: XAttributeSequence, untilIncluding condition: @escaping (XAttributeSpot) -> Bool) {
+    public init(sequence: XAttributeSequence, untilAndIncluding condition: @escaping (XAttributeSpot) -> Bool) {
         self.sequence = sequence
         self.condition = condition
     }
@@ -329,7 +329,7 @@ public final class XAttributeSequenceIncludingCondition: XAttributeSequence {
     public override func makeIterator() -> XAttributeIterator {
         return XAttributeIteratorIncludingCondition(
             iterator: sequence.makeIterator(),
-            untilIncluding: condition
+            untilAndIncluding: condition
         )
     }
 }

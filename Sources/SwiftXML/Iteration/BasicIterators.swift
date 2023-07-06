@@ -98,7 +98,7 @@ public class XContentIteratorIncludingCondition: XContentIterator {
     let condition: (XContent) -> Bool
     var found = false
     
-    init(iterator: XContentIterator, untilIncluding condition: @escaping (XContent) -> Bool) {
+    init(iterator: XContentIterator, untilAndIncluding condition: @escaping (XContent) -> Bool) {
         self.iterator = iterator
         self.condition = condition
     }
@@ -183,7 +183,7 @@ public class XTextIteratorIncludingCondition: XTextIterator {
     let condition: (XText) -> Bool
     var found = false
     
-    init(iterator: XTextIterator, untilIncluding condition: @escaping (XText) -> Bool) {
+    init(iterator: XTextIterator, untilAndIncluding condition: @escaping (XText) -> Bool) {
         self.iterator = iterator
         self.condition = condition
     }
@@ -312,7 +312,7 @@ public class XElementIteratorIncludingCondition: XElementIterator {
     let condition: (XElement) -> Bool
     var found = false
     
-    init(iterator: XElementIterator, untilIncluding condition: @escaping (XElement) -> Bool) {
+    init(iterator: XElementIterator, untilAndIncluding condition: @escaping (XElement) -> Bool) {
         self.iterator = iterator
         self.condition = condition
     }
@@ -423,7 +423,7 @@ public class XAttributeIteratorIncludingCondition: XAttributeIterator {
     let condition: (XAttributeSpot) -> Bool
     var found = false
     
-    init(iterator: XAttributeIterator, untilIncluding condition: @escaping (XAttributeSpot) -> Bool) {
+    init(iterator: XAttributeIterator, untilAndIncluding condition: @escaping (XAttributeSpot) -> Bool) {
         self.iterator = iterator
         self.condition = condition
     }
