@@ -22,6 +22,18 @@ final class SwiftXMLTests: XCTestCase {
         </a>
         """
     
+    func testForInLoop() throws {
+        let document = try parseXML(fromText: """
+            <a id="1">
+                <b id="2"/>
+                <b id="3"/>
+            </a>
+            """)
+        for element in document.children {
+            print(element.name)
+        }
+    }
+    
     func testAttributeFromDocument() throws {
         let document = try parseXML(fromText: """
             <a id="1">
