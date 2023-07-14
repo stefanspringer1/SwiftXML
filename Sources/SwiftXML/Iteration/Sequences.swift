@@ -262,78 +262,6 @@ public final class XElementSequenceIncludingCondition: XElementSequence {
     }
 }
 
-public final class XAttributeSequenceWithCondition: XAttributeSequence {
-    
-    let sequence: XAttributeSequence
-    let condition: (XAttributeSpot) -> Bool
-    
-    public init(sequence: XAttributeSequence, condition: @escaping (XAttributeSpot) -> Bool) {
-        self.sequence = sequence
-        self.condition = condition
-    }
-    
-    public override func makeIterator() -> XAttributeIterator {
-        return XAttributeIteratorWithCondition(
-            iterator: sequence.makeIterator(),
-            condition: condition
-        )
-    }
-}
-
-public final class XAttributeSequenceWhileCondition: XAttributeSequence {
-    
-    let sequence: XAttributeSequence
-    let condition: (XAttributeSpot) -> Bool
-    
-    public init(sequence: XAttributeSequence, while condition: @escaping (XAttributeSpot) -> Bool) {
-        self.sequence = sequence
-        self.condition = condition
-    }
-    
-    public override func makeIterator() -> XAttributeIterator {
-        return XAttributeIteratorWhileCondition(
-            iterator: sequence.makeIterator(),
-            while: condition
-        )
-    }
-}
-
-public final class XAttributeSequenceUntilCondition: XAttributeSequence {
-    
-    let sequence: XAttributeSequence
-    let condition: (XAttributeSpot) -> Bool
-    
-    public init(sequence: XAttributeSequence, until condition: @escaping (XAttributeSpot) -> Bool) {
-        self.sequence = sequence
-        self.condition = condition
-    }
-    
-    public override func makeIterator() -> XAttributeIterator {
-        return XAttributeIteratorUntilCondition(
-            iterator: sequence.makeIterator(),
-            until: condition
-        )
-    }
-}
-
-public final class XAttributeSequenceIncludingCondition: XAttributeSequence {
-    
-    let sequence: XAttributeSequence
-    let condition: (XAttributeSpot) -> Bool
-    
-    public init(sequence: XAttributeSequence, untilAndIncluding condition: @escaping (XAttributeSpot) -> Bool) {
-        self.sequence = sequence
-        self.condition = condition
-    }
-    
-    public override func makeIterator() -> XAttributeIterator {
-        return XAttributeIteratorIncludingCondition(
-            iterator: sequence.makeIterator(),
-            untilAndIncluding: condition
-        )
-    }
-}
-
 // <<<<<<<<<<<<<<<<
 
 public final class XTraversalSequence: XContentSequence {
@@ -626,26 +554,6 @@ public final class XElementsOfSameNameSequence: XElementSequence {
             elementIterator: XElementsOfSameNameIterator(
                 document: document,
                 name: elementName
-            )
-        )
-    }
-}
-
-public final class XAttributesOfSameNameSequence: XAttributeSequence {
-    
-    let document: XDocument
-    let attributeName: String
-    
-    public init(document: XDocument, attributeName: String) {
-        self.document = document
-        self.attributeName = attributeName
-    }
-    
-    public override func makeIterator() -> XAttributeIterator {
-        return XBidirectionalAttributeIterator(
-            forAttributeName: attributeName, attributeIterator: XAttributesOfSameNameIterator(
-                document: document,
-                attributeName: attributeName
             )
         )
     }

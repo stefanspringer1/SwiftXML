@@ -34,18 +34,6 @@ final class SwiftXMLTests: XCTestCase {
         }
     }
     
-    func testAttributeFromDocument() throws {
-        let document = try parseXML(fromText: """
-            <a id="1">
-                <b id="2"/>
-                <b id="3"/>
-            </a>
-            """)
-        let element = document.children.first!
-        XCTAssertEqual(element["id"], "1")
-        XCTAssertEqual(document.attributes(ofName: "id").map { attributeSpot in attributeSpot.value }.joined(separator: ", "), "1, 2, 3")
-    }
-    
     func testClone() throws {
         let source = """
             <a id="1">
@@ -305,8 +293,8 @@ final class SwiftXMLTests: XCTestCase {
         
         _ = [1, 2, 3].map { String($0) }  // okay: map does not throw because the closure does not throw
         _ = try ["1", "2", "3"].map { (string: String) -> Int in
-          guard let result = Int(string) else { throw "nanana" }
-          return result
+            guard let result = Int(string) else { throw "nanana" }
+            return result
         } // okay: map can throw because the closure can throw
     }
     
@@ -335,62 +323,6 @@ final class SwiftXMLTests: XCTestCase {
         }
         
         XCTAssertEqual(collectedIDs.joined(separator: ", "), "b1, b2, c1, c2, d1, d2, bInserted1")
-    }
-    
-    func testAttributesWithNames() async throws {
-        
-        let document = try parseXML(fromText: """
-            <a>
-                <x b="b1"/>
-                <x c="c1"/>
-                <x d="d1"/>
-                <x b="b2"/>
-                <x c="c2"/>
-                <x d="d2"/>
-            </a>
-            """)
-        
-        var collectedAttributeValues = [String]()
-        
-        document.attributes(ofName: "b").forEach { attribute in print(attribute) }
-        
-        document.attributes(ofName: "b", "c", "d").forEach { attribute in
-            collectedAttributeValues.append(attribute.value)
-            if attribute.value == "c1" {
-                attribute.element.insertPrevious { XElement("x", ["b": "bInserted1"]) }
-            }
-        }
-        
-        let _ = XTransformation {
-            
-            XRule(forElements: "table") { table in
-                table.insertNext {
-                    XElement("caption") {
-                        "Table: "
-                        table.children({ $0.name.contains("title") }).content
-                    }
-                }
-            }
-            
-            XRule(forElements: "tbody", "tfoot") { tablePart in
-                tablePart
-                    .children("tr")
-                    .children("th")
-                    .forEach { cell in
-                        cell.name = "td"
-                    }
-            }
-            
-            XRule(forAttributes: "id") { id in
-                print("\n----- Rule for attribute \"id\" -----\n")
-                print("  \(id.element) --> ", terminator: "")
-                id.element["id"] = "done-" + id.value
-                print(id.element)
-            }
-            
-        }
-        
-        XCTAssertEqual(collectedAttributeValues.joined(separator: ", "), "b1, b2, c1, c2, d1, d2, bInserted1")
     }
     
     func testTexts() throws {
@@ -463,43 +395,6 @@ final class SwiftXMLTests: XCTestCase {
         
         XCTAssertEqual(elementFoundInfos.joined(separator: "\n"), """
         <a>
-        <b id="1">
-        <b id="2">
-        """)
-    }
-    
-    func testSingleAttributeNameIteratorWithRemoval() throws {
-        let document = try parseXML(fromText: """
-            <a><b id="1"/><b id="2"/></a>
-            """)
-        
-        var elementFoundInfos = [String]()
-        document.attributes(ofName: "id").forEach { attributeSpot in
-            elementFoundInfos.append(attributeSpot.element.description)
-            attributeSpot.element.remove()
-        }
-        
-        XCTAssertEqual(elementFoundInfos.joined(separator: "\n"), """
-        <b id="1">
-        <b id="2">
-        """)
-    }
-    
-    func testMultipleAttributeNamesIteratorWithRemoval() throws {
-        let document = try parseXML(fromText: """
-            <a type="type1"><b id="1"/><b id="2"/></a>
-            """)
-        
-        var elementFoundInfos = [String]()
-        document.attributes(ofName: "type", "id").forEach { attributeSpot in
-            elementFoundInfos.append(attributeSpot.element.description)
-            if attributeSpot.name == "id" {
-                attributeSpot.element.remove()
-            }
-        }
-        
-        XCTAssertEqual(elementFoundInfos.joined(separator: "\n"), """
-        <a type="type1">
         <b id="1">
         <b id="2">
         """)

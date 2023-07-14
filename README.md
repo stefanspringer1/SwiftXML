@@ -25,10 +25,6 @@ let transformation = XTransformation {
             }
     }
     
-    XRule(forAttributes: "label") { label in
-        label.element["label"] = label.value + ")"
-    }
-    
 }
 ```
 
@@ -38,6 +34,8 @@ let transformation = XTransformation {
 **This library is not in a “final” state yet** despite its high version number, i.e. there might still be bugs, or some major improvements will be done, and breaking changes might happen without the major version getting augmented. Addionally, there will be more comments in the code. Also, when such a final state is reached, the library might be further developed using a new repository URL (and the version number set back to a lower one). Further notice will be added here. See [there](https://stefanspringer.com) for contact information.
 
 **UPDATE (May 2023):** We changed the API a little bit recently (no more public `XSpot`, but you can set `isolated` for `XText`) and fixed some problems and are currently working on adding more tests to this library and to the `SwiftXMLParser`. **We plan for a final release this summer.** (This library will then already be used in a production environment.) For all who are already been interested in this library, thank you for your patience!
+
+**UPDATE (July 2023):** In order to keep the XML tree small **we removed the ability to directly access the attributes of a certain name in a document,** and accordingly also to formulate rules for attributes. You will instead have to inspect the descendants of a document, maybe saving the result and using `XDocument.setChangedAction(forAttributeName:)` to keep track of according changes. An easier replacement for the lost functionality will be available when we add a validation tool, you will then be able to look up which elements could have a certain attribute set, and you then can lookup those elements.
 
 ---
 
@@ -493,9 +491,9 @@ up: { node in
 }
 ```
 
-## Direct access to elements and attributes
+## Direct access to elements
 
-As mentioned and the general description, the library allows to efficiently find elements or attributes of a certain name in a document without having to traverse the whole tree. 
+As mentioned and the general description, the library allows to efficiently find elements of a certain name in a document without having to traverse the whole tree. 
 
 Finding the elements of a certain name:
 
@@ -513,27 +511,7 @@ myDocument.elements(ofName: "paragraph").forEach { paragraph in
 }
 ```
 
-Finding the attributes of a certain name:
-
-```Swift
-func attributes(ofName: String) -> XAttributesOfSameNameSequence
-```
-
-The items of the returned sequence are of type `XAttributeSpot`, which is a pair of the value of the attribute at when it is found, and the `element`.
-
-Example:
-
-```Swift
-myDocument.attributes(ofName: "id").forEach { id in
-    if id.element.name == "paragraph" {
-        print("found paragraph with ID \"\(id.value)\"")
-    }
-}
-```
-
-Note that we did not use something like `...forEach { attribute in ... attribute.value ...}` but we used the attribute name for the name of the variable in the `forEach` loop to make clear what attribute is used, without an unnecesary complex variable name.
-
-Find the elements of several names or the attributes of several names by using sevearal names in `elements(ofName:)` or `attributes(ofName:)`, respectively. Note that just like the methods for single names, what you add during the iteration will then also be considered.
+Find the elements of several name alternatives by using several names in `elements(ofName:)`. Note that just like the methods for single names, what you add during the iteration will then also be considered.
 
 ## Finding related content
 

@@ -12,8 +12,6 @@ import Foundation
 
 public typealias XElementAction = (XElement)->()
 
-public typealias XAttributeAction = (XAttributeSpot)->()
-
 public struct XRule {
     
     public let names: [String]
@@ -29,15 +27,6 @@ public struct XRule {
         self.action = action
     }
     
-    public init(forAttributes names: [String], action: @escaping XAttributeAction) {
-        self.names = names
-        self.action = action
-    }
-    
-    public init(forAttributes names: String..., action: @escaping XAttributeAction) {
-        self.names = names
-        self.action = action
-    }
 }
 
 @resultBuilder
@@ -74,15 +63,6 @@ public class XTransformation {
                     ))
                 }
             }
-            else if let attributeAction = rule.action as? XAttributeAction {
-                rule.names.forEach { name in
-                    iteratorsWithActions.append((
-                        XBidirectionalAttributeIterator(forAttributeName: name, attributeIterator: XAttributesOfSameNameIterator(document: document, attributeName: name, keepLast: true), keepLast: true),
-                        attributeAction
-                    ))
-                }
-            }
-            
         }
         
         var working = true; stopped = false
@@ -93,12 +73,6 @@ public class XTransformation {
                     while !stopped, let next = iterator.next() {
                         working = true
                         action(next)
-                    }
-                }
-                else if !stopped, let iterator = _iterator as? XBidirectionalAttributeIterator, let action = _action as? XAttributeAction {
-                    while !stopped, let attribute = iterator.next() {
-                        working = true
-                        action(attribute)
                     }
                 }
             }
