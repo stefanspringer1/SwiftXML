@@ -1231,7 +1231,7 @@ final class XNodeSampler {
         } else if let array = thing as? [XContentLike?] {
             array.forEach { if let contentLike = $0 { self.add(contentLike) } }
         } else {
-            print("unkown content for XNodeSampler: \(type(of: thing)) \(thing)")
+            fatalError("unkown content for XNodeSampler: \(type(of: thing)) \(thing)")
         }
     }
 }
