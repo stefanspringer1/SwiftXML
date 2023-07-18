@@ -1339,7 +1339,7 @@ public final class XTreeIterator: XContentIteratorProtocol {
     
     private var downDirection = true
     
-    public func next() -> XContent? {
+    private func _next() -> XContent? {
         if started {
             while true {
                 if downDirection,
@@ -1390,7 +1390,16 @@ public final class XTreeIterator: XContentIteratorProtocol {
         }
     }
     
-    public func previous() -> XContent? {
+    public func next() -> XContent? {
+        while true {
+            let node = _next()
+            if !(node is _Isolator_) {
+                return node
+            }
+        }
+    }
+    
+    private func _previous() -> XContent? {
         if started {
             if currentNode === startNode {
                 currentNode = nil
@@ -1411,6 +1420,15 @@ public final class XTreeIterator: XContentIteratorProtocol {
             return currentNode as? XContent
         }
         return nil
+    }
+    
+    public func previous() -> XContent? {
+        while true {
+            let node = _previous()
+            if !(node is _Isolator_) {
+                return node
+            }
+        }
     }
     
 }
