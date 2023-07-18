@@ -619,6 +619,8 @@ The content item next to the subject:
 var nextTouching: XContent?
 ```
 
+(Note that for autocompletion it might be better to start type “touch...” instead of “prev...” or “next...”.)
+
 You might also just be interested if a previous or next node exists:
 
 ```Swift
