@@ -1498,7 +1498,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         get {
             return _attributes[attributeName]
         }
-        set(newValue) {
+        set {
             if newValue != _attributes[attributeName] {
                 _attributes[attributeName] = newValue
                 _document?.attributeValueChanged(element: self, name: attributeName, oldValue: nil, newValue: newValue)
@@ -2178,7 +2178,7 @@ public final class XInternalEntityDeclaration: XDeclarationInInternalSubset {
         get {
             return _value
         }
-        set(newValue) {
+        set {
             _value = newValue
         }
     }
@@ -2414,7 +2414,7 @@ public final class XParameterEntityDeclaration: XDeclarationInInternalSubset {
         get {
             return _value
         }
-        set(newValue) {
+        set {
             _value = newValue
         }
     }
