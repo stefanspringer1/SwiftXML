@@ -12,16 +12,31 @@ import Foundation
 import SwiftXMLInterfaces
 import SwiftXMLParser
 
+/// Use this function to announce that certain content (denoted by an array array of `XContent`)
+/// is being moved inside the `action` closure.
+///
+/// The content will then first be prepared for being moved, and at the end this preparation
+/// will be repealed.
+///
+/// Actually, only for content conforming to protocol `ToBePeparedForMoving` such a preparation
+/// and the according repeal will be done by calling the according members of the protocol.
 func moving(_ content: [XContent], action: () -> ()) {
-    content.forEach { ($0 as? AutoCombining)?.prepareForMove() }
+    content.forEach { ($0 as? ToBePeparedForMoving)?.prepareForMove() }
     action()
-    content.forEach { ($0 as? AutoCombining)?.resetAfterMove() }
+    content.forEach { ($0 as? ToBePeparedForMoving)?.resetAfterMove() }
 }
 
+/// The insertion mode determines if when insertion content into the tree,
+/// should an iteration at an appropriate place also iterate through this
+/// inserted content or should it be skipped instead.
 public enum InsertionMode { case skipping; case following }
 
+/// This is the general kind of thing that can occur as the content in the body of an XML document.
+/// (The body of an XML document is everything except the XML declaration and the XML document
+/// declaration with the optional internal subset.
 public class XNode {
     
+    /// Return the first ancestor with a certain name if it exists.
     public func ancestor(_ name: String) -> XElement? {
         var element = parent
         while let theElement = element {
@@ -33,7 +48,8 @@ public class XNode {
         return nil
     }
     
-    public func ancestor(_ names: String...) -> XElement? {
+    /// Return the first ancestor with a certain name if it exists.
+    public func ancestor(_ names: [String]) -> XElement? {
         var element = parent
         while let theElement = element {
             if names.contains(theElement.name) {
@@ -44,38 +60,34 @@ public class XNode {
         return nil
     }
     
+    /// Return the first ancestor with a certain name if it exists.
+    public func ancestor(_ names: String...) -> XElement? {
+        ancestor(names)
+    }
+    
+    /// Every node can have attachments (of any type).
     public var attached = [String:Any]()
     
     var _sourceRange: XTextRange? = nil
     
+    /// For every node its range in the source text can be noted.
     public var sourceRange: XTextRange? { _sourceRange }
     
-    /**
-     The reference to the original node after cloning.
-     But this is a weak reference, the clone must be contained by
-     other means to exist.
-     */
     weak var _backLink: XNode? = nil
     
+    /// After cloning, this is the reference to the original node or to the cloned node respectively,
+    /// acoording to the parameter used when cloning.
+    ///
+    /// Note that this is a weak reference, the clone must be contained by other means to exist.
     public var backLink: XNode? {
         get {
             return _backLink
         }
     }
     
-    public func backLink(_ condition: (XNode) -> Bool) -> XNode? {
-        let node = _backLink
-        if let theNode = node, condition(theNode) {
-            return node
-        }
-        else {
-            return nil
-        }
-    }
-    
-    /**
-     The oldest source of cloning.
-     */
+    /// Here, the `backlink` reference are followed while they are non-nil.
+    ///
+    /// It is thhe oldest source or furthest target of cloning respectively, so to speak.
     public var finalBackLink: XNode? {
         get {
             var ref = _backLink
@@ -86,16 +98,7 @@ public class XNode {
         }
     }
     
-    public func finalBackLink(_ condition: (XNode) -> Bool) -> XNode? {
-        let node = finalBackLink
-        if let theNode = node, condition(theNode) {
-            return node
-        }
-        else {
-            return nil
-        }
-    }
-    
+    /// Follows the ´backlink´ property and finally returns an array of the according nodes.
     public var backLinkPath: [XNode]? {
         get {
             var ref = _backLink
@@ -114,15 +117,14 @@ public class XNode {
         }
     }
     
+    /// Return the document that the node belongs to if it exists.
     public weak var document: XDocument? {
         get {
             return (self as? XBranchInternal)?._document ?? self.parent?._document
         }
     }
     
-    /**
-     Make a shallow clone (without content).
-     */
+    /// Make a shallow clone (without content).
     public func shallowClone() -> XNode {
         let theClone = XNode()
         theClone._backLink = self
@@ -130,20 +132,28 @@ public class XNode {
         return theClone
     }
     
+    /// Make a full clone, i.e. including clones of the content (in the same tree order), recursively.
     public func clone() -> XNode {
         return shallowClone()
     }
     
     private var contentIterators = WeakList<XBidirectionalContentIterator>()
     
+    /// Register a content iterator which have this node as the current position.
+    ///
+    /// This will be called for the found node when `previous`, `next`, or `prefetch` is called on the iterator.
     func addContentIterator(_ nodeIterator: XBidirectionalContentIterator) {
         contentIterators.append(nodeIterator)
     }
     
+    /// Deregister a content iterator, because its current position will not be this node after some operation.
+    ///
+    /// This will be called for this node when `previous`, `next`, or `prefetch` is called on the iterator.
     func removeContentIterator(_ nodeIterator: XBidirectionalContentIterator) {
         contentIterators.remove(nodeIterator)
     }
     
+    /// Go to previous on all registered content operators, because this node will not be at same position after some operation.
     func gotoPreviousOnContentIterators() {
         contentIterators.forEach { _ = $0.previous() }
     }
@@ -1583,12 +1593,12 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     }
 }
 
-protocol AutoCombining {
+protocol ToBePeparedForMoving {
     func prepareForMove()
     func resetAfterMove()
 }
 
-public final class XText: XContent, AutoCombining, CustomStringConvertible, ExpressibleByStringLiteral {
+public final class XText: XContent, ToBePeparedForMoving, CustomStringConvertible, ExpressibleByStringLiteral {
     
     public static func fromOptional(_ text: String?, withSpace: Bool = false) -> XText? {
         if let text { return XText(text) } else { return nil }
@@ -1774,7 +1784,7 @@ public final class XText: XContent, AutoCombining, CustomStringConvertible, Expr
 /*
  `XLiteral` has a text value that is meant to be serialized "as is" without XML-escaping.
  */
-public final class XLiteral: XContent, AutoCombining, CustomStringConvertible {
+public final class XLiteral: XContent, ToBePeparedForMoving, CustomStringConvertible {
     
     public override var backLink: XLiteral? { get { super.backLink as? XLiteral } }
     public override var finalBackLink: XLiteral? { get { super.finalBackLink as? XLiteral } }
