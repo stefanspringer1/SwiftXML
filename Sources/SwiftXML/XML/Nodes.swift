@@ -164,6 +164,7 @@ public class XNode {
     
     weak var _parent: XBranchInternal? = nil
     
+    // Get the parent of the node.
     public weak var parent: XElement? {
         get {
             return _parent as? XElement
