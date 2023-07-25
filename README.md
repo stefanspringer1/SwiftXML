@@ -33,9 +33,11 @@ let transformation = XTransformation {
 
 **This library is not in a “final” state yet** despite its high version number, i.e. there might still be bugs, or some major improvements will be done, and breaking changes might happen without the major version getting augmented. Addionally, there will be more comments in the code. Also, when such a final state is reached, the library might be further developed using a new repository URL (and the version number set back to a lower one). Further notice will be added here. See [there](https://stefanspringer.com) for contact information.
 
-**UPDATE (May 2023):** We changed the API a little bit recently (no more public `XSpot`, but you can set `isolated` for `XText`) and fixed some problems and are currently working on adding more tests to this library and to the `SwiftXMLParser`. **We plan for a final release this summer.** (This library will then already be used in a production environment.) For all who are already been interested in this library, thank you for your patience!
+**UPDATE 1 (May 2023):** We changed the API a little bit recently (no more public `XSpot`, but you can set `isolated` for `XText`) and fixed some problems and are currently working on adding more tests to this library and to the `SwiftXMLParser`. **We plan for a final release this summer.** (This library will then already be used in a production environment.) For all who are already been interested in this library, thank you for your patience!
 
-**UPDATE (July 2023):** In order to keep the XML tree small **we removed the ability to directly access the attributes of a certain name in a document,** and accordingly also to formulate rules for attributes (rules for attributes were rarely used in applications). Instead of directly accessing attributes of certain names, you will have to inspect the descendants of a document (if not catching according events during parsing), maybe saving the result and using `XDocument.setChangedAction(forAttributeName:)` to keep track of according changes. _An easier replacement for the lost functionality will be available when we add a validation tool:_ When using an appropriate schema you will then be able to look up which elements – according to the schema – could have a certain attribute set, and you can then access these elements directly.
+**UPDATE 2 (July 2023):** In order to keep the XML tree small **we removed the ability to directly access the attributes of a certain name in a document,** and accordingly also to formulate rules for attributes (rules for attributes were rarely used in applications). Instead of directly accessing attributes of certain names, you will have to inspect the descendants of a document (if not catching according events during parsing), maybe saving the result and using `XDocument.setChangedAction(forAttributeName:)` to keep track of according changes. _An easier replacement for the lost functionality will be available when we add a validation tool:_ When using an appropriate schema you will then be able to look up which elements – according to the schema – could have a certain attribute set, and you can then access these elements directly.
+
+**UPDATE 3 (July 2023):** Renamed `havingProperties` to `conformingTo`.
 
 ---
 
@@ -968,7 +970,7 @@ b1
 
 The same applies to e.g. the `filter` method, which, besides letting the code look more complex when used instead of the filter options described above, is not a good option when defining content.
 
-For a single node, use the `havingProperties(...)` method to see if a condition is met; if yes, the node is returned, if not, `nil` is returned. Use `hasProperties(...)` to just see if a node has a certain properties., without returning the node.
+For a single node, use the `conformingTo(...)` method to see if a condition is met; if yes, the node is returned, if not, `nil` is returned. Use `hasProperties(...)` to just see if a node has a certain properties., without returning the node.
 
 The content of elements containing other elements while defining their content is being built from the inside to the ouside: Consider the following example:
 

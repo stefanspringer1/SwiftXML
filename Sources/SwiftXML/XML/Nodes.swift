@@ -305,7 +305,7 @@ public class XNode {
         return self
     }
     
-    public func havingProperties(_ f: (XNode) -> Bool) -> XNode? {
+    public func conformingTo(_ f: (XNode) -> Bool) -> XNode? {
         return f(self) ? self : nil
     }
     
@@ -1372,7 +1372,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         return self
     }
     
-    public override func havingProperties(_ f: (XElement) -> Bool) -> XElement? {
+    public override func conformingTo(_ f: (XElement) -> Bool) -> XElement? {
         return f(self) ? self : nil
     }
     
@@ -1758,7 +1758,7 @@ public final class XText: XContent, ToBePeparedForMoving, CustomStringConvertibl
         return self
     }
     
-    public override func havingProperties(_ f: (XText) -> Bool) -> XText? {
+    public override func conformingTo(_ f: (XText) -> Bool) -> XText? {
         return f(self) ? self : nil
     }
     
@@ -1856,7 +1856,7 @@ public final class XLiteral: XContent, ToBePeparedForMoving, CustomStringConvert
         return self
     }
     
-    public override func havingProperties(_ f: (XLiteral) -> Bool) -> XLiteral? {
+    public override func conformingTo(_ f: (XLiteral) -> Bool) -> XLiteral? {
         return f(self) ? self : nil
     }
     
@@ -1905,7 +1905,7 @@ public final class XInternalEntity: XContent {
         return self
     }
     
-    public override func havingProperties(_ f: (XInternalEntity) -> Bool) -> XInternalEntity? {
+    public override func conformingTo(_ f: (XInternalEntity) -> Bool) -> XInternalEntity? {
         return f(self) ? self : nil
     }
     
@@ -1954,7 +1954,7 @@ public final class XExternalEntity: XContent {
         return self
     }
     
-    public override func havingProperties(_ f: (XExternalEntity) -> Bool) -> XExternalEntity? {
+    public override func conformingTo(_ f: (XExternalEntity) -> Bool) -> XExternalEntity? {
         return f(self) ? self : nil
     }
     
@@ -2022,7 +2022,7 @@ public final class XProcessingInstruction: XContent, CustomStringConvertible {
         return self
     }
     
-    public override func havingProperties(_ f: (XProcessingInstruction) -> Bool) -> XProcessingInstruction? {
+    public override func conformingTo(_ f: (XProcessingInstruction) -> Bool) -> XProcessingInstruction? {
         return f(self) ? self : nil
     }
     
@@ -2075,7 +2075,7 @@ public final class XComment: XContent {
         return self
     }
     
-    public override func havingProperties(_ f: (XComment) -> Bool) -> XComment? {
+    public override func conformingTo(_ f: (XComment) -> Bool) -> XComment? {
         return f(self) ? self : nil
     }
     
@@ -2124,7 +2124,7 @@ public final class XCDATASection: XContent {
         return self
     }
     
-    public override func havingProperties(_ f: (XCDATASection) -> Bool) -> XCDATASection? {
+    public override func conformingTo(_ f: (XCDATASection) -> Bool) -> XCDATASection? {
         return f(self) ? self : nil
     }
     
