@@ -1117,6 +1117,8 @@ extension String: XContentLike {}
 extension XContentSequence: XContentLike {}
 extension XElementSequence: XContentLike {}
 extension XContentLikeSequence: XContentLike {}
+extension LazyMapSequence<XContentSequence, XContentLike>: XContentLike {}
+extension LazyFilterSequence<XContentSequence>: XContentLike {}
 
 extension Array: XContentLike where Element == XContentLike? {}
 
@@ -1241,6 +1243,10 @@ final class XNodeSampler {
             sequence.forEach { self.add($0) }
         } else if let array = thing as? [XContentLike?] {
             array.forEach { if let contentLike = $0 { self.add(contentLike) } }
+        } else if let sequence = thing as? LazyMapSequence<XContentSequence, XContentLike> {
+            sequence.forEach { self.add($0) }
+        } else if let sequence = thing as? LazyFilterSequence<XContentSequence> {
+            sequence.forEach { self.add($0) }
         } else {
             fatalError("unkown content for XNodeSampler: \(type(of: thing)) \(thing)")
         }
