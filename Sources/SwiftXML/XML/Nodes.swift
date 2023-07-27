@@ -453,6 +453,15 @@ public class XContent: XNode {
         return self
     }
     
+    public override func applying(_ f: (XContent) -> ()) -> XContent {
+        f(self)
+        return self
+    }
+    
+    public override func conformingTo(_ f: (XContent) -> Bool) -> XContent? {
+        return f(self) ? self : nil
+    }
+    
     /**
      Correct the tree order after this node has been inserted.
      */
