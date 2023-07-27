@@ -1583,6 +1583,8 @@ XDocument.setNamespace(:withPossiblyFullPrefix:)
 
 Here the prefix might be a “full” prefix, i.e. it could contain a closing `:`. An existing namespace declaration for the same namespace but with another prefix is not (!) removed.
 
+Note that methods in this section are also avalaible for en element.
+
 ### Using async/await
 
 You can use `traverse` with closures using `await`. And you can use the `async` property of the [Swift Async Algorithms package](https://github.com/apple/swift-async-algorithms) (giving a `AsyncLazySequence`) to apply `map` etc. with closures using `await` (e.g. `element.children.async.map { await a.f($0) }`).

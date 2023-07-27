@@ -78,41 +78,20 @@ public final class XDocument: XNode, XBranchInternal {
     /// "Full" means that a closing ":" is added automatically.
     /// If no prefix is defined, an empty string is returned.
     public func fullPrefix(forNamespace namespace: String) -> String {
-        var foundPrefix: String? = nil
-        let namespaceDeclarationPrefix = "xmlns:"
-        for root in self.children {
-            for attributeName in root.attributeNames {
-                if attributeName.hasPrefix(namespaceDeclarationPrefix), let value = root[attributeName], value == namespace {
-                    foundPrefix = String(attributeName.dropFirst(namespaceDeclarationPrefix.count)) + ":"
-                    break
-                }
-            }
-        }
-        return foundPrefix ?? ""
+        self.children.first?.fullPrefix(forNamespace: namespace) ?? ""
     }
     
     /// Read a map from the namespace URL strings to the full prefixes from the root element.
     /// "Full" means that a closing ":" is added automatically.
     public var fullPrefixesForNamespaces: [String:String] {
-        var result = [String:String]()
-        let namespaceDeclarationPrefix = "xmlns:"
-        for root in self.children {
-            for attributeName in root.attributeNames {
-                if attributeName.hasPrefix(namespaceDeclarationPrefix), let value = root[attributeName] {
-                    result[value] = String(attributeName.dropFirst(namespaceDeclarationPrefix.count)) + ":"
-                }
-            }
-        }
-        return result
+        self.children.first?.fullPrefixesForNamespaces ?? [String:String]()
     }
     
     /// Add the according namespace declaration at the root element.
     /// The prefix might be a "full" prefix, i.e. it could contain a closing ":".
     /// An existing namespace declaration for the same namespace but with another prefix is not (!) removed.
     public func setNamespace(_ namespace: String, withPossiblyFullPrefix possiblyFullPrefix: String) {
-        if !possiblyFullPrefix.isEmpty {
-            self.children.first?["xmlns:\(possiblyFullPrefix.hasSuffix(":") ? String(possiblyFullPrefix.dropLast()) : possiblyFullPrefix)"] = namespace
-        }
+        self.children.first?.setNamespace(namespace, withPossiblyFullPrefix: possiblyFullPrefix)
     }
     
     var type: String? = nil
