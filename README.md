@@ -1583,7 +1583,7 @@ XDocument.setNamespace(:withPossiblyFullPrefix:)
 
 Here the prefix might be a “full” prefix, i.e. it could contain a closing `:`. An existing namespace declaration for the same namespace but with another prefix is not (!) removed.
 
-Note that methods in this section are also avalaible for en element.
+Note these three helper methods are also avalaible for an element.
 
 ### Using async/await
 
