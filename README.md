@@ -1463,13 +1463,6 @@ let transformation = XTransformation {
         }
     }
     
-    XRule(forAttributes: "id") { id in
-        print("\n----- Rule for attribute \"id\" -----\n")
-        print("  \(id.element) --> ", terminator: "")
-        id.element["id"] = "done-" + id.value
-        print(id.element)
-    }
-    
 }
 
 transformation.execute(inDocument: document)
@@ -1491,25 +1484,13 @@ document.echo()
   <image id="2">
   add formula
 
------ Rule for attribute "id" -----
-
-  <formula id="1"> --> <formula id="done-1">
-
------ Rule for attribute "id" -----
-
-  <image id="2"> --> <image id="done-2">
-
------ Rule for attribute "id" -----
-
-  <formula id="3"> --> <formula id="done-3">
-
 ----- Rule for element "formula" -----
 
-  <formula id="done-3">
+  <formula id="3">
 
 ----------------------------------------
 
-<a><formula id="done-3"/><image id="done-2"/><formula id="done-1"/></a>
+<a><formula id="3"/><image id="2"/><formula id="1"/></a>
 
 ```
 
