@@ -1575,6 +1575,14 @@ let transformation = XTransformation {
     ...
 ```
 
+If you would like to add a namespace declaration at the root element, use the following method:
+
+```Swift
+XDocument.setNamespace(:withPossiblyFullPrefix:)
+```
+
+Here the prefix might be a “full” prefix, i.e. it could contain a closing `:`. An existing namespace declaration for the same namespace but with another prefix is not (!) removed.
+
 ### Using async/await
 
 You can use `traverse` with closures using `await`. And you can use the `async` property of the [Swift Async Algorithms package](https://github.com/apple/swift-async-algorithms) (giving a `AsyncLazySequence`) to apply `map` etc. with closures using `await` (e.g. `element.children.async.map { await a.f($0) }`).

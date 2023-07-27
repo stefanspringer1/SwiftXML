@@ -106,6 +106,15 @@ public final class XDocument: XNode, XBranchInternal {
         return result
     }
     
+    /// Add the according namespace declaration at the root element.
+    /// The prefix might be a "full" prefix, i.e. it could contain a closing ":".
+    /// An existing namespace declaration for the same namespace but with another prefix is not (!) removed.
+    public func setNamespace(_ namespace: String, withPossiblyFullPrefix possiblyFullPrefix: String) {
+        if !possiblyFullPrefix.isEmpty {
+            self.children.first?["xmlns:\(possiblyFullPrefix.hasSuffix(":") ? String(possiblyFullPrefix.dropLast()) : possiblyFullPrefix)"] = namespace
+        }
+    }
+    
     var type: String? = nil
     public var publicID: String? = nil
     public var systemID: String? = nil
