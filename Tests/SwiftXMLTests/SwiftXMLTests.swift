@@ -400,4 +400,21 @@ final class SwiftXMLTests: XCTestCase {
         """)
     }
     
+    func testNamespacePrefixes() throws {
+        let document = try parseXML(fromText: """
+            <a xmlns:a="http://a"  xmlns:b="http://b"/>
+            """)
+        
+        XCTAssertEqual([
+            document.fullPrefixesForNamespaces
+                .sorted(by: { $0.0 < $1.0 })
+                .map{ (namespace,prefix) in "namespace: \"\(namespace)\": prefix \"\(prefix)\"" }
+                .joined(separator: ", "),
+            "\"\(document.fullPrefix(forNamespace: "http://b"))\""
+        ].joined(separator: "\n"), """
+        namespace: "http://a": prefix "a:", namespace: "http://b": prefix "b:"
+        "b:"
+        """)
+    }
+    
 }

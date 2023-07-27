@@ -39,6 +39,8 @@ let transformation = XTransformation {
 
 **UPDATE 3 (July 2023):** Renamed `havingProperties` to `conformingTo`.
 
+**UPDATE 4 (July 2023):** The namespace handling is now in a conclusive state, see the new section about limitations of the XML input and the changed section on how to handle XML namespaces.
+
 ---
 
 ## Related packages
@@ -50,6 +52,11 @@ When using SwiftXML in the context of the [SwiftWorkflow](https://github.com/ste
 The library reads XML from a source into an XML document instance, and provides methods to transform (or manipulate) the document, and others to write the document to a file.
 
 The library should be efficient and applications that use it should be very intelligible.
+
+### Limitations of the XML input
+
+- The encoding of the source must be UTF-8 (ASCII is considered as a subset of it). The parser checks for correct UTF-8 encoding and also checks (according to the data available to the currently used Swift implementation) if a found codepoint is a valid Unicode codepoint.
+- The annotations of namespace prefixes via `xmlns:...` attributes should only be at the root element. 
 
 ### Manipulation of an XML document
 
@@ -126,9 +133,7 @@ This library gives full control of how to handle entities. Named entity referenc
 
 Automated inclusion of the content external parsed entities can be configurated, the content might then be wrapped by elements with according information of the enities.
 
-In the current state, the library does not recognize XML namespaces; elements or attributes with namespace prefixes are give the full name “prefix:unprefixed". See the section on handling of namespaces for motivation and about how to handle namespaces.
-
-The encoding of the source should always be UTF-8 (ASCII is considered as a subset of it). The parser checks for correct UTF-8 encoding and also checks (according to the data available to the currently used Swift implementation) if a found codepoint is a valid Unicode codepoint.
+Elements or attributes with namespace prefixes are given the full name “prefix:unprefixed". See the section on handling of namespaces for motivation and about how to handle namespaces.
 
 For any error during parsing an error is thrown and no document is then provided.
 
@@ -1538,34 +1543,40 @@ func removeChangedAction(forAttributeName: String)
 
 ## Handling of namespaces
 
-The library is very strong when it comes to tracking element or attributes of a certain name and in that respect coping with manipulations of the XML tree. Adding an additional layer by supporting namespace directly by the library would make the implementaion of the library more complicated and less efficient. Let us see then how one would then handle XML documents which are using namespaces.
+The library is very strong when it comes to tracking elements of a certain name and formulating according rules. Adding an additional layer by supporting namespaces directly at those points would make the implementation of the library more complicated and less efficient. Let us see then how one would then handle XML documents which are using namespaces.
 
-### How to handle namespaces
+First, you can always look up the namespace prefix settings (attributes `xmlns:...`) in your document. As mentioned in the section about limitations of the XML input, the annotations of namespace prefixes via `xmlns:...` attributes should only be at the root element of the XML source. There are then the following two helper methods to help you with the task of handling the namespaces:
 
-First, you can always look up the namespace prefix settings (attributes `xmlns:...`) in your document. When you then like to change element in that namespace, add this prefix dynamically in your code:
-
+Read the the full prefix for a namespace URL string from the root element:
 
 ```Swift
+XDocument.fullPrefix(forNamespace:) -> String
+```
+
+“Full” means that a closing `:` is added automatically. If no prefix is defined, an empty string is returned.
+
+Get a map from the namespace URL strings to the full prefixes from the root element:
+
+```Swift
+XDocument.fullPrefixesForNamespaces
+```
+
+When you then like to access or change elements in that namespace, add the according prefix dynamically in your code:
+
+```Swift
+let fullMathMLPrefix = myDocument.fullPrefix(forNamespace: "http://www.w3.org/1998/Math/MathML") 
+
 let transformation = XTransformation {
     
-    XRule(forElements: "\(myprefix):a") { a in
+    XRule(forElements: "\(fullMathMLPrefix)a") { a in
         ...
     }
     
     ...
 ```
 
-Also, in most applications you have control over the namespace prefixes, so you do not even need to handle the prefix dynamically in those cases.
-
 ### Using async/await
 
 You can use `traverse` with closures using `await`. And you can use the `async` property of the [Swift Async Algorithms package](https://github.com/apple/swift-async-algorithms) (giving a `AsyncLazySequence`) to apply `map` etc. with closures using `await` (e.g. `element.children.async.map { await a.f($0) }`).
 
 Currently the SwiftXML packages defined a `forEachAsync` method for closure arguments using `await`, but this method might be removed in future versions of the package if the Swift Async Algorithms package should define it for `AsyncLazySequence`.
-
-### Possible future directions
-
-Although we do not think that a special treatment of namespaces by the library is necessary, we certainly could add some features in case our current approach should prove to be insufficient. The following possibilities immediately come to mind:
-
-1. Add support for namespaces in the whole handling of element and attribute names (in a transparent way). As explained above, this would make the library more complicated and less efficient, but the library should then still be very efficient in comparsion to other libraries.
-2. Add some helper functions e.g. for understanding the prefix settings in the document.

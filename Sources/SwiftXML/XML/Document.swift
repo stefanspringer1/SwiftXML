@@ -74,6 +74,38 @@ public final class XDocument: XNode, XBranchInternal {
     public var encoding: String? = nil
     public var standalone: String? = nil
     
+    /// Read the the full prefix for a namespace URL string from the root element.
+    /// "Full" means that a closing ":" is added automatically.
+    /// If no prefix is defined, an empty string is returned.
+    public func fullPrefix(forNamespace namespace: String) -> String {
+        var foundPrefix: String? = nil
+        let namespaceDeclarationPrefix = "xmlns:"
+        for root in self.children {
+            for attributeName in root.attributeNames {
+                if attributeName.hasPrefix(namespaceDeclarationPrefix), let value = root[attributeName], value == namespace {
+                    foundPrefix = String(attributeName.dropFirst(namespaceDeclarationPrefix.count)) + ":"
+                    break
+                }
+            }
+        }
+        return foundPrefix ?? ""
+    }
+    
+    /// Read a map from the namespace URL strings to the full prefixes from the root element.
+    /// "Full" means that a closing ":" is added automatically.
+    public var fullPrefixesForNamespaces: [String:String] {
+        var result = [String:String]()
+        let namespaceDeclarationPrefix = "xmlns:"
+        for root in self.children {
+            for attributeName in root.attributeNames {
+                if attributeName.hasPrefix(namespaceDeclarationPrefix), let value = root[attributeName] {
+                    result[value] = String(attributeName.dropFirst(namespaceDeclarationPrefix.count)) + ":"
+                }
+            }
+        }
+        return result
+    }
+    
     var type: String? = nil
     public var publicID: String? = nil
     public var systemID: String? = nil
