@@ -56,7 +56,7 @@ The library should be efficient and applications that use it should be very inte
 ### Limitations of the XML input
 
 - The encoding of the source must be UTF-8 (ASCII is considered as a subset of it). The parser checks for correct UTF-8 encoding and also checks (according to the data available to the currently used Swift implementation) if a found codepoint is a valid Unicode codepoint.
-- The annotations of namespace prefixes via `xmlns:...` attributes should only be at the root element. 
+- Declarations of namespace prefixes via `xmlns:...` attributes should only be at the root element. 
 
 ### Manipulation of an XML document
 
