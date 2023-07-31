@@ -1564,7 +1564,6 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         set {
             if newValue != _attributes[attributeName] {
                 _attributes[attributeName] = newValue
-                _document?.attributeValueChanged(element: self, name: attributeName, oldValue: nil, newValue: newValue)
             }
         }
     }

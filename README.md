@@ -35,11 +35,13 @@ let transformation = XTransformation {
 
 **UPDATE 1 (May 2023):** We changed the API a little bit recently (no more public `XSpot`, but you can set `isolated` for `XText`) and fixed some problems and are currently working on adding more tests to this library and to the `SwiftXMLParser`. **We plan for a final release this summer.** (This library will then already be used in a production environment.) For all who are already been interested in this library, thank you for your patience!
 
-**UPDATE 2 (July 2023):** In order to keep the XML tree small **we removed the ability to directly access the attributes of a certain name in a document,** and accordingly also to formulate rules for attributes (rules for attributes were rarely used in applications). Instead of directly accessing attributes of certain names, you will have to inspect the descendants of a document (if not catching according events during parsing), maybe saving the result and using `XDocument.setChangedAction(forAttributeName:)` to keep track of according changes. _An easier replacement for the lost functionality will be available when we add a validation tool:_ When using an appropriate schema you will then be able to look up which elements – according to the schema – could have a certain attribute set, and you can then access these elements directly.
+**UPDATE 2 (July 2023):** In order to keep the XML tree small **we removed the ability to directly access the attributes of a certain name in a document,** and accordingly also to formulate rules for attributes (rules for attributes were rarely used in applications). Instead of directly accessing attributes of certain names, you will have to inspect the descendants of a document (if not catching according events during parsing), maybe saving the result. _An easier replacement for the lost functionality will be available when we add a validation tool:_ When using an appropriate schema you will then be able to look up which elements – according to the schema – could have a certain attribute set, and you can then access these elements directly.
 
 **UPDATE 3 (July 2023):** Renamed `havingProperties` to `conformingTo`.
 
 **UPDATE 4 (July 2023):** The namespace handling is now in a conclusive state, see the new section about limitations of the XML input and the changed section on how to handle XML namespaces.
+
+**UPDATE 5 (July 2023):** In order to further streamline the library, the functionality for tracking changes (of attributes) was removed. In most cases when you have to track changes you need a better way of setting those attributes, so there was a burden whenever setting attributes, but without much use.
 
 ---
 
@@ -1515,30 +1517,6 @@ let transformation = XTransformation {
 transformationAlias = transformation
 
 transformation.execute(inDocument: myDocument)
-```
-
-## Tracking changes
-
-It might be helpful to get notified when certain things in the XML document are changed. A common use case is the change of an attribute. You can register for the notification for the change of the value of any attribute of a certain name using:
-
-```Swift
-func setChangedAction(forAttributeName: String, action: (XElement, String?, String?) -> ())
-```
-
-The string arguments are the new and the old value, respectively. Only one action can be set for a specific attribute name.
-
-Example: get notified if an "id" attribute gets changed:
-
-```Swift
-myDocument.setChangedAction(forAttributeName: "id") { (element, oldValue, newValue) in
-    // ... do something ...
-}
-```
-
-To stop the notification, use
-
-```Swift
-func removeChangedAction(forAttributeName: String)
 ```
 
 ## Handling of namespaces

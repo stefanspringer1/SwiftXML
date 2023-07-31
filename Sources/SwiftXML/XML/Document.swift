@@ -98,20 +98,6 @@ public final class XDocument: XNode, XBranchInternal {
     public var publicID: String? = nil
     public var systemID: String? = nil
     
-    var attributeValueChangedActions = [String:(XElement,String?,String?)->()]()
-    
-    func attributeValueChanged(element: XElement, name: String, oldValue: String?, newValue: String?) {
-        attributeValueChangedActions[name]?(element,oldValue,newValue)
-    }
-    
-    public func setChangedAction(forAttributeName attributeName: String, action: @escaping (XElement,String?,String?)->()) {
-        attributeValueChangedActions[attributeName] = action
-    }
-    
-    public func removeChangedAction(forAttributeName attributeName: String) {
-        attributeValueChangedActions[attributeName] = nil
-    }
-    
     // ------------------------------------------------------------------------
     // repeat methods from XBranchInternal:
     
