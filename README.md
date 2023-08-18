@@ -1430,6 +1430,8 @@ Note that when e.g. inserting nodes, the `XText` nodes of them are then treated 
 
 A `String` can be used where an `XText` is required, e.g. you can write `"Hello" as XText"`.
 
+`XText`, as well as `XLiteral` and `XCDATASection`, conforms to the `XTextualContentRepresentation` protocol, i.e. they all have a `String` property of name `value` that can be read and set and which represents content as it would be written into the serialized document (with some character escapes necessary in the case of `XText` when it is being written). Note that `XComment` does not conform to the `XTextualContentRepresentation` protocol.
+
 ## Rules
 
 As mentioned in the general description, a set of rules `XRule` in the form of a transformation instance of type `XTransformation` can be used as follows.

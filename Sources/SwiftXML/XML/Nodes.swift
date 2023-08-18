@@ -1117,6 +1117,10 @@ extension XBranchInternal {
     }
 }
 
+public protocol XTextualContentRepresentation {
+    var value: String { get set }
+}
+
 public protocol XContentLike {}
 
 extension XContent: XContentLike {}
@@ -1650,7 +1654,7 @@ protocol ToBePeparedForMoving {
     func resetAfterMove()
 }
 
-public final class XText: XContent, ToBePeparedForMoving, CustomStringConvertible, ExpressibleByStringLiteral {
+public final class XText: XContent, XTextualContentRepresentation, ToBePeparedForMoving, CustomStringConvertible, ExpressibleByStringLiteral {
     
     public static func fromOptional(_ text: String?, withSpace: Bool = false) -> XText? {
         if let text { return XText(text) } else { return nil }
@@ -1836,7 +1840,7 @@ public final class XText: XContent, ToBePeparedForMoving, CustomStringConvertibl
 /*
  `XLiteral` has a text value that is meant to be serialized "as is" without XML-escaping.
  */
-public final class XLiteral: XContent, ToBePeparedForMoving, CustomStringConvertible {
+public final class XLiteral: XContent, XTextualContentRepresentation, ToBePeparedForMoving, CustomStringConvertible {
     
     public override var backLink: XLiteral? { get { super.backLink as? XLiteral } }
     public override var finalBackLink: XLiteral? { get { super.finalBackLink as? XLiteral } }
@@ -2150,7 +2154,7 @@ public final class XComment: XContent {
     }
 }
 
-public final class XCDATASection: XContent {
+public final class XCDATASection: XContent, XTextualContentRepresentation {
     
     public override var backLink: XCDATASection? { get { super.backLink as? XCDATASection } }
     public override var finalBackLink: XCDATASection? { get { super.finalBackLink as? XCDATASection } }
