@@ -43,6 +43,8 @@ let transformation = XTransformation {
 
 **UPDATE 5 (July 2023):** In order to further streamline the library, the functionality for tracking changes (of attributes) was removed. In most cases when you have to track changes you need a better way of setting those attributes, so there was a burden whenever setting attributes, but without much use.
 
+**UPDATE 6 (August 2023):** Renamed `conformingTo` to `when`.
+
 ---
 
 ## Related packages
@@ -977,7 +979,7 @@ b1
 
 The same applies to e.g. the `filter` method, which, besides letting the code look more complex when used instead of the filter options described above, is not a good option when defining content.
 
-For a single node, use the `conformingTo(...)` method to see if a condition is met; if yes, the node is returned, if not, `nil` is returned. Use `hasProperties(...)` to just see if a node has a certain properties., without returning the node.
+For a single node, use the `when(...)` method to see if a condition is met; if yes, the node is returned, if not, `nil` is returned. Use `hasProperties(...)` to just see if a node has a certain properties., without returning the node.
 
 The content of elements containing other elements while defining their content is being built from the inside to the ouside: Consider the following example:
 
