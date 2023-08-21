@@ -1129,6 +1129,7 @@ extension String: XContentLike {}
 
 extension XContentSequence: XContentLike {}
 extension XElementSequence: XContentLike {}
+extension XTextSequence: XContentLike {}
 extension XContentLikeSequence: XContentLike {}
 extension LazyMapSequence<XContentSequence, XContentLike>: XContentLike {}
 extension LazyFilterSequence<XContentSequence>: XContentLike {}

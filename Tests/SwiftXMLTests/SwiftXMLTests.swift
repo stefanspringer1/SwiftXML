@@ -417,4 +417,48 @@ final class SwiftXMLTests: XCTestCase {
         """)
     }
     
+    @available(macOS 13.0.0, *)
+    func testContentLikeInConstruction() {
+        let element1 = XElement("element1")
+        
+        let _ = XElement("element") {
+            element1.content
+        }
+        let zzz = Array(element1.content)
+        let _ = XElement("element") {
+            Array(element1.content)
+        }
+        let _ = XElement("element") {
+            element1.texts
+        }
+        let _ = XElement("element") {
+            Array(element1.texts)
+        }
+        
+        let _ = XElement("element") {
+            element1.content
+            element1.texts
+            XElement("element")
+        }
+        let _ = XElement("element") {
+            element1.content
+            "u"
+        }
+        let _ = XElement("element") {
+            ["a", "b"].asContent
+        }
+        let _ = XElement("element") {
+            [XElement("element"), XElement("element")]
+        }
+        let _ = XElement("element") {
+            element1.texts.map{ $0.text }.asContent
+        }
+        let _ = XElement("element") {
+            element1.content
+            element1.texts.map{ $0.text }.asContent
+            "u"
+            XElement("element")
+        }
+    }
+    
 }
