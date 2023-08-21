@@ -135,7 +135,7 @@ public final class XDocument: XNode, XBranchInternal {
     
     // ------------------------------------------------------------------------
     
-    public override func applying(_ f: (XDocument) -> ()) -> XDocument {
+    public override func with(_ f: (XDocument) -> ()) -> XDocument {
         f(self)
         return self
     }

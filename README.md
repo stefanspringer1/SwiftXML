@@ -47,6 +47,8 @@ let transformation = XTransformation {
 
 **UPDATE 7 (August 2023):** In order to conform to some type checks in Swift 5.9, we have to demand macOS 13, iOS 16, tvOS 16, or watchOS 9 for Apple platforms.
 
+**UPDATE 8 (August 2023):** Renamed `applying` to `with`.
+
 ---
 
 ## Related packages
@@ -877,7 +879,7 @@ Output:
 <d>
 ```
 
-Also, in those chains operations finding single nodes when applied to a single node like `parent` also work, and you can use e.g. `insertNext` (see the section on tree manipulations), or `applying` (see the next section on constructing XML), or `echo()`.
+Also, in those chains operations finding single nodes when applied to a single node like `parent` also work, and you can use e.g. `insertNext` (see the section on tree manipulations), or `with` (see the next section on constructing XML), or `echo()`.
 
 ## Constructing XML
 
@@ -937,21 +939,21 @@ let myElement = XElement("p") {
 }
 ```
 
-By using the method `applying((XNode) -> ()) -> XNode` to a node (the argument and the return value are more specific if the subject is more specific) you can apply a function to a content node before returning it:
+By using the method `with((XNode) -> ()) -> XNode` to a node (the argument and the return value are more specific if the subject is more specific) you can apply a function to a content node before returning it:
 
 Example:
 
 ```Swift
 let myDocument = XDocument {
-    myElement.applying{ $0["level"] = "top" }
+    myElement.with{ $0["level"] = "top" }
 }
 ```
 
-`applying` can also be used on a content sequence or element sequence where it is shorter than using the `map` method in the general case (where a `return` statement might have to be included) and you can directly use it to define content (without the `asContent` property decribed above):
+`with` can also be used on a content sequence or element sequence where it is shorter than using the `map` method in the general case (where a `return` statement might have to be included) and you can directly use it to define content (without the `asContent` property decribed above):
 
 ```Swift
 let myDocument = XDocument {
-    myElement.descendants.applying{ $0["inserted"] = "yes" }
+    myElement.descendants.with{ $0["inserted"] = "yes" }
 }
 ```
 

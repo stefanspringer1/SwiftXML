@@ -300,7 +300,7 @@ public class XNode {
     
     public var lastInTree: XNode { get { getLastInTree() } }
     
-    public func applying(_ f: (XNode) -> ()) -> XNode {
+    public func with(_ f: (XNode) -> ()) -> XNode {
         f(self)
         return self
     }
@@ -453,7 +453,7 @@ public class XContent: XNode {
         return self
     }
     
-    public override func applying(_ f: (XContent) -> ()) -> XContent {
+    public override func with(_ f: (XContent) -> ()) -> XContent {
         f(self)
         return self
     }
@@ -1423,7 +1423,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         return theClone
     }
     
-    public override func applying(_ f: (XElement) -> ()) -> XElement {
+    public override func with(_ f: (XElement) -> ()) -> XElement {
         f(self)
         return self
     }
@@ -1808,7 +1808,7 @@ public final class XText: XContent, XTextualContentRepresentation, ToBePeparedFo
         return self
     }
     
-    public override func applying(_ f: (XText) -> ()) -> XText {
+    public override func with(_ f: (XText) -> ()) -> XText {
         f(self)
         return self
     }
@@ -1906,7 +1906,7 @@ public final class XLiteral: XContent, XTextualContentRepresentation, ToBePepare
         self._value = text
     }
     
-    public override func applying(_ f: (XLiteral) -> ()) -> XLiteral {
+    public override func with(_ f: (XLiteral) -> ()) -> XLiteral {
         f(self)
         return self
     }
@@ -1955,7 +1955,7 @@ public final class XInternalEntity: XContent {
         self._name = name
     }
     
-    public override func applying(_ f: (XInternalEntity) -> ()) -> XInternalEntity {
+    public override func with(_ f: (XInternalEntity) -> ()) -> XInternalEntity {
         f(self)
         return self
     }
@@ -2004,7 +2004,7 @@ public final class XExternalEntity: XContent {
         self._name = name
     }
     
-    public override func applying(_ f: (XExternalEntity) -> ()) -> XExternalEntity {
+    public override func with(_ f: (XExternalEntity) -> ()) -> XExternalEntity {
         f(self)
         return self
     }
@@ -2072,7 +2072,7 @@ public final class XProcessingInstruction: XContent, CustomStringConvertible {
         self._data = data
     }
     
-    public override func applying(_ f: (XProcessingInstruction) -> ()) -> XProcessingInstruction {
+    public override func with(_ f: (XProcessingInstruction) -> ()) -> XProcessingInstruction {
         f(self)
         return self
     }
@@ -2125,7 +2125,7 @@ public final class XComment: XContent {
         self._value = withSpace ? " \(text) " : text
     }
     
-    public override func applying(_ f: (XComment) -> ()) -> XComment {
+    public override func with(_ f: (XComment) -> ()) -> XComment {
         f(self)
         return self
     }
@@ -2174,7 +2174,7 @@ public final class XCDATASection: XContent, XTextualContentRepresentation {
         self._value = text
     }
     
-    public override func applying(_ f: (XCDATASection) -> ()) -> XCDATASection {
+    public override func with(_ f: (XCDATASection) -> ()) -> XCDATASection {
         f(self)
         return self
     }
