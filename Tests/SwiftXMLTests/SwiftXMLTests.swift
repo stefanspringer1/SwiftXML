@@ -166,37 +166,33 @@ final class SwiftXMLTests: XCTestCase {
         """)
         }
         
-        if #available(macOS 13.0.0, *) {
-            do {
-                let document = try parseXML(fromText: documentSource1)
-                let element = XElement("test") {
-                    document.children.children.filter { $0.name == "b" }.drop(while: { Int($0["id"] ?? "1") ?? 1 < 2 }).filter { $0["drop"] != "yes" }
-                }
-                
-                XCTAssertEqual(element.serialized(pretty: true), """
-            <test>
-              <b id="2"/>
-            </test>
-            """)
+        do {
+            let document = try parseXML(fromText: documentSource1)
+            let element = XElement("test") {
+                document.children.children.filter { $0.name == "b" }.drop(while: { Int($0["id"] ?? "1") ?? 1 < 2 }).filter { $0["drop"] != "yes" }
             }
+            
+            XCTAssertEqual(element.serialized(pretty: true), """
+        <test>
+          <b id="2"/>
+        </test>
+        """)
         }
         
-        if #available(macOS 13.0.0, *) {
-            do {
-                let document1 = try parseXML(fromText: documentSource1)
-                let document2 = try parseXML(fromText: documentSource1)
-                let element = XElement("test") {
-                    document1.children.children.filter { $0.name == "b" }.drop(while: { Int($0["id"] ?? "1") ?? 1 < 2 }).filter { $0["drop"] != "yes" }
-                    document2.children.children.filter { $0.name == "b" }.drop(while: { Int($0["id"] ?? "1") ?? 1 < 2 }).filter { $0["drop"] != "yes" }
-                }
-                
-                XCTAssertEqual(element.serialized(pretty: true), """
-            <test>
-              <b id="2"/>
-              <b id="2"/>
-            </test>
-            """)
+        do {
+            let document1 = try parseXML(fromText: documentSource1)
+            let document2 = try parseXML(fromText: documentSource1)
+            let element = XElement("test") {
+                document1.children.children.filter { $0.name == "b" }.drop(while: { Int($0["id"] ?? "1") ?? 1 < 2 }).filter { $0["drop"] != "yes" }
+                document2.children.children.filter { $0.name == "b" }.drop(while: { Int($0["id"] ?? "1") ?? 1 < 2 }).filter { $0["drop"] != "yes" }
             }
+            
+            XCTAssertEqual(element.serialized(pretty: true), """
+        <test>
+          <b id="2"/>
+          <b id="2"/>
+        </test>
+        """)
         }
     }
     
@@ -417,14 +413,12 @@ final class SwiftXMLTests: XCTestCase {
         """)
     }
     
-    @available(macOS 13.0.0, *)
     func testContentLikeInConstruction() {
         let element1 = XElement("element1")
         
         let _ = XElement("element") {
             element1.content
         }
-        let zzz = Array(element1.content)
         let _ = XElement("element") {
             Array(element1.content)
         }

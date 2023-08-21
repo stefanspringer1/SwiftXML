@@ -45,6 +45,8 @@ let transformation = XTransformation {
 
 **UPDATE 6 (August 2023):** Renamed `conformingTo` to `when`.
 
+**UPDATE 7 (August 2023):** In order to conform to some type checks in Swift 5.9, we have to demand macOS 13, iOS 16, tvOS 16, or watchOS 9 for Apple platforms.
+
 ---
 
 ## Related packages

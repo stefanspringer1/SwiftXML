@@ -1276,7 +1276,6 @@ public struct XContentBuilder {
         return sampler.nodes
     }
     
-    @available(macOS 13.0.0, *)
     public static func buildBlock<T: XContent>(_ sequences: any Sequence<T>...) -> [XContent] {
         let sampler = XNodeSampler()
         sequences.forEach{ $0.forEach { sampler.add($0 as! XContent) } }

@@ -22,11 +22,7 @@ public protocol Writer {
 
 extension FileHandle {
     func write(text: String) throws {
-        if #available(macOS 10.15.4, *) {
-            try self.write(contentsOf: text.data(using: .utf8)!)
-        } else {
-            self.write(text.data(using: .utf8)!)
-        }
+        try self.write(contentsOf: text.data(using: .utf8)!)
     }
 }
 
