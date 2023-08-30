@@ -231,6 +231,26 @@ public class XNode {
         }
     }
     
+    public var previousElement: XElement? {
+        get {
+            var content = _previous
+            while let theContent = content, !(theContent is XElement) {
+                content = theContent._previous
+            }
+            return content as? XElement
+        }
+    }
+    
+    public var nextElement: XElement? {
+        get {
+            var content = _next
+            while let theContent = content, !(theContent is XElement) {
+                content = theContent._next
+            }
+            return content as? XElement
+        }
+    }
+    
     public func previousTouching(_ condition: (XContent) -> Bool) -> XContent? {
         let content = previousTouching
         if let theContent = content, condition(theContent) {
