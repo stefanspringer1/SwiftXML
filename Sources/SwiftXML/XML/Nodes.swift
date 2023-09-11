@@ -2141,7 +2141,7 @@ public final class XComment: XContent {
         }
     }
     
-    public init(_ text: String, withSpace: Bool = false) {
+    public init(_ text: String, withSpace: Bool = true) {
         self._value = withSpace ? " \(text) " : text
     }
     
