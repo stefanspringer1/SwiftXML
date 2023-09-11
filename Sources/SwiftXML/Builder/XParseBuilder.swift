@@ -145,7 +145,7 @@ public final class XParseBuilder: XEventHandler {
     
     public func comment(text: String, textRange: XTextRange?, dataRange _: XDataRange?) {
         if keepComments {
-            let node = XComment(text)
+            let node = XComment(text, withAdditionalSpace: false)
             node._sourceRange = textRange
             currentBranch._add(node)
         }

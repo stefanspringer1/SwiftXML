@@ -1676,7 +1676,7 @@ protocol ToBePeparedForMoving {
 
 public final class XText: XContent, XTextualContentRepresentation, ToBePeparedForMoving, CustomStringConvertible, ExpressibleByStringLiteral {
     
-    public static func fromOptional(_ text: String?, withSpace: Bool = false) -> XText? {
+    public static func fromOptional(_ text: String?) -> XText? {
         if let text { return XText(text) } else { return nil }
     }
     
@@ -2123,8 +2123,8 @@ public final class XProcessingInstruction: XContent, CustomStringConvertible {
 
 public final class XComment: XContent {
     
-    public static func fromOptional(_ text: String?, withSpace: Bool = false) -> XComment? {
-        if let text { return XComment(text, withSpace: withSpace) } else { return nil }
+    public static func fromOptional(_ text: String?, withAdditionalSpace: Bool = true) -> XComment? {
+        if let text { return XComment(text, withAdditionalSpace: withAdditionalSpace) } else { return nil }
     }
     
     public override var backLink: XComment? { get { super.backLink as? XComment } }
@@ -2141,8 +2141,8 @@ public final class XComment: XContent {
         }
     }
     
-    public init(_ text: String, withSpace: Bool = true) {
-        self._value = withSpace ? " \(text) " : text
+    public init(_ text: String, withAdditionalSpace: Bool = true) {
+        self._value = withAdditionalSpace ? " \(text) " : text
     }
     
     public override func with(_ f: (XComment) -> ()) -> XComment {
