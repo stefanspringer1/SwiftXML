@@ -302,4 +302,37 @@ final class FromReadmeTests: XCTestCase {
         
         element.descendants.echo()
     }
+    
+    func testWithAndWhen() throws {
+        
+        let element1 = XElement("a") {
+            XElement("child-of-a") {
+                XElement("more", ["special": "yes"])
+            }
+        }
+
+        let element2 = XElement("b")
+        
+        if let childOfA = element1.fullfilling({ $0.name == "a" })?.children.first,
+           childOfA.children.first?.fullfills({ $0["special"] == "yes" && $0["moved"] != "yes"  }) == true {
+            element2.add {
+                childOfA.applying { $0["moved"] = "yes" }
+            }
+        }
+        
+        XCTAssertEqual(element2.serialized(), #"<b><child-of-a moved="yes"><more special="yes"/></child-of-a></b>"#)
+    }
+    
+    func testApplyingForSequence() throws {
+        
+        let myElement = XElement("a") {
+            XElement("b", ["inserted": "yes"]) {
+                XElement("c", ["inserted": "yes"])
+            }
+        }
+        
+        let inserted = Array(myElement.descendants.filter{ $0["inserted"] == "yes" }.applying{ $0["found"] = "yes" })
+        
+        XCTAssertEqual(inserted.description, #"[<b found="yes" inserted="yes">, <c found="yes" inserted="yes">]"#)
+    }
 }

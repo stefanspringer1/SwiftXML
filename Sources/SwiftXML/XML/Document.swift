@@ -135,11 +135,6 @@ public final class XDocument: XNode, XBranchInternal {
     
     // ------------------------------------------------------------------------
     
-    public override func with(_ f: (XDocument) -> ()) -> XDocument {
-        f(self)
-        return self
-    }
-    
     public override func shallowClone() -> XDocument {
         let theClone = XDocument()
         theClone._backLink = self

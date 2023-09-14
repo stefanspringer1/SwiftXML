@@ -49,6 +49,8 @@ let transformation = XTransformation {
 
 **UPDATE 8 (August 2023):** Renamed `applying` to `with`.
 
+**UPDATE 9 (September 2023):** Renamed `with` to `applying` again. Renamed `when` to `fullfilling`. Renamed `hasProperties` to `fullfills`. Their implementations for a single items is now done via protocols.
+
 ---
 
 ## Related packages
@@ -939,24 +941,6 @@ let myElement = XElement("p") {
 }
 ```
 
-By using the method `with((XNode) -> ()) -> XNode` to a node (the argument and the return value are more specific if the subject is more specific) you can apply a function to a content node before returning it:
-
-Example:
-
-```Swift
-let myDocument = XDocument {
-    myElement.with{ $0["level"] = "top" }
-}
-```
-
-`with` can also be used on a content sequence or element sequence where it is shorter than using the `map` method in the general case (where a `return` statement might have to be included) and you can directly use it to define content (without the `asContent` property decribed above):
-
-```Swift
-let myDocument = XDocument {
-    myElement.descendants.with{ $0["inserted"] = "yes" }
-}
-```
-
 When not defining content, using `map` might be a sensible option:
 
 ```Swift
@@ -982,8 +966,6 @@ b1
 ```
 
 The same applies to e.g. the `filter` method, which, besides letting the code look more complex when used instead of the filter options described above, is not a good option when defining content.
-
-For a single node, use the `when(...)` method to see if a condition is met; if yes, the node is returned, if not, `nil` is returned. Use `hasProperties(...)` to just see if a node has a certain properties., without returning the node.
 
 The content of elements containing other elements while defining their content is being built from the inside to the ouside: Consider the following example:
 
@@ -1576,3 +1558,60 @@ Note these three helper methods are also avalaible for an element.
 You can use `traverse` with closures using `await`. And you can use the `async` property of the [Swift Async Algorithms package](https://github.com/apple/swift-async-algorithms) (giving a `AsyncLazySequence`) to apply `map` etc. with closures using `await` (e.g. `element.children.async.map { await a.f($0) }`).
 
 Currently the SwiftXML packages defined a `forEachAsync` method for closure arguments using `await`, but this method might be removed in future versions of the package if the Swift Async Algorithms package should define it for `AsyncLazySequence`.
+
+### Convenience extensions
+
+`XContent` has the following extensions that are very convenient when working with XML in a complex manner:
+
+- `applying`: apply some changes to an instance and return the instance
+- `fullfilling`: test a condition for an instance and return it the condition is true, else return `nil`
+- `fullfills`: test a condition on an instance return its result
+
+(`fullfilling` is, in principle, a variant of the `filter` method for just one item.)
+
+It is difficult to show the convenience of those extension with simple examples, where is easy to formulate the code without them. But they come in handy if the situation gets more complex.
+
+Example:
+
+```Swift
+let element1 = XElement("a") {
+    XElement("child-of-a") {
+        XElement("more", ["special": "yes"])
+    }
+}
+
+let element2 = XElement("b")
+
+if let childOfA = element1.fullfilling({ $0.name == "a" })?.children.first,
+   childOfA.children.first?.fullfills({ $0["special"] == "yes" && $0["moved"] != "yes"  }) == true {
+    element2.add {
+        childOfA.applying { $0["moved"] = "yes" }
+    }
+}
+
+element2.echo()
+```
+
+Result:
+
+```text
+<b><child-of-a moved="yes"><more special="yes"/></child-of-a></b>
+```
+
+`applying` is also predefined for a content sequence or a element sequence where it is shorter than using the `map` method in the general case (where a `return` statement might have to be included) and you can directly use it to define content (without the `asContent` property decribed above):
+
+```Swift
+let myElement = XElement("a") {
+    XElement("b", ["inserted": "yes"]) {
+        XElement("c", ["inserted": "yes"])
+    }
+}
+
+print(Array(myElement.descendants.applying{ $0["inserted"] = "yes" }))
+```
+
+Result:
+
+```text
+[<b inserted="yes">, <c inserted="yes">]
+```

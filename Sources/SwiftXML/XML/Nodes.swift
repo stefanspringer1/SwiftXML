@@ -320,19 +320,6 @@ public class XNode {
     
     public var lastInTree: XNode { get { getLastInTree() } }
     
-    public func with(_ f: (XNode) -> ()) -> XNode {
-        f(self)
-        return self
-    }
-    
-    public func when(_ f: (XNode) -> Bool) -> XNode? {
-        return f(self) ? self : nil
-    }
-    
-    public func hasProperties(_ f: (XNode) -> Bool) -> Bool {
-        return f(self)
-    }
-    
     public func traverse(down: (XNode) throws -> (), up: ((XNode) throws -> ())? = nil) rethrows {
         let directionIndicator = XDirectionIndicator()
         try XTraversalSequence(node: self, directionIndicator: directionIndicator).forEach { node in
@@ -471,15 +458,6 @@ public class XContent: XNode {
     public override func shallowClone() -> XContent {
         _ = super.shallowClone()
         return self
-    }
-    
-    public override func with(_ f: (XContent) -> ()) -> XContent {
-        f(self)
-        return self
-    }
-    
-    public override func when(_ f: (XContent) -> Bool) -> XContent? {
-        return f(self) ? self : nil
     }
     
     /**
@@ -1443,19 +1421,6 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         return theClone
     }
     
-    public override func with(_ f: (XElement) -> ()) -> XElement {
-        f(self)
-        return self
-    }
-    
-    public override func when(_ f: (XElement) -> Bool) -> XElement? {
-        return f(self) ? self : nil
-    }
-    
-    public override func hasProperties(_ f: (XElement) -> Bool) -> Bool {
-        return f(self)
-    }
-    
     var _name: String
     
     public var name: String {
@@ -1828,19 +1793,6 @@ public final class XText: XContent, XTextualContentRepresentation, ToBePeparedFo
         return self
     }
     
-    public override func with(_ f: (XText) -> ()) -> XText {
-        f(self)
-        return self
-    }
-    
-    public override func when(_ f: (XText) -> Bool) -> XText? {
-        return f(self) ? self : nil
-    }
-    
-    public override func hasProperties(_ f: (XText) -> Bool) -> Bool {
-        return f(self)
-    }
-    
     public override func produceEntering(production: XProduction) throws {
         try production.writeText(text: self)
     }
@@ -1926,19 +1878,6 @@ public final class XLiteral: XContent, XTextualContentRepresentation, ToBePepare
         self._value = text
     }
     
-    public override func with(_ f: (XLiteral) -> ()) -> XLiteral {
-        f(self)
-        return self
-    }
-    
-    public override func when(_ f: (XLiteral) -> Bool) -> XLiteral? {
-        return f(self) ? self : nil
-    }
-    
-    public override func hasProperties(_ f: (XLiteral) -> Bool) -> Bool {
-        return f(self)
-    }
-    
     public override func produceEntering(production: XProduction) throws {
         try production.writeLiteral(literal: self)
     }
@@ -1975,19 +1914,6 @@ public final class XInternalEntity: XContent {
         self._name = name
     }
     
-    public override func with(_ f: (XInternalEntity) -> ()) -> XInternalEntity {
-        f(self)
-        return self
-    }
-    
-    public override func when(_ f: (XInternalEntity) -> Bool) -> XInternalEntity? {
-        return f(self) ? self : nil
-    }
-    
-    public override func hasProperties(_ f: (XInternalEntity) -> Bool) -> Bool {
-        return f(self)
-    }
-    
     override func produceEntering(production: XProduction) throws {
         try production.writeInternalEntity(internalEntity: self)
     }
@@ -2022,19 +1948,6 @@ public final class XExternalEntity: XContent {
     
     public init(_ name: String) {
         self._name = name
-    }
-    
-    public override func with(_ f: (XExternalEntity) -> ()) -> XExternalEntity {
-        f(self)
-        return self
-    }
-    
-    public override func when(_ f: (XExternalEntity) -> Bool) -> XExternalEntity? {
-        return f(self) ? self : nil
-    }
-    
-    public override func hasProperties(_ f: (XExternalEntity) -> Bool) -> Bool {
-        return f(self)
     }
     
     override func produceEntering(production: XProduction) throws {
@@ -2092,19 +2005,6 @@ public final class XProcessingInstruction: XContent, CustomStringConvertible {
         self._data = data
     }
     
-    public override func with(_ f: (XProcessingInstruction) -> ()) -> XProcessingInstruction {
-        f(self)
-        return self
-    }
-    
-    public override func when(_ f: (XProcessingInstruction) -> Bool) -> XProcessingInstruction? {
-        return f(self) ? self : nil
-    }
-    
-    public override func hasProperties(_ f: (XProcessingInstruction) -> Bool) -> Bool {
-        return f(self)
-    }
-    
     override func produceEntering(production: XProduction) throws {
         try production.writeProcessingInstruction(processingInstruction: self)
     }
@@ -2145,19 +2045,6 @@ public final class XComment: XContent {
         self._value = withAdditionalSpace ? " \(text) " : text
     }
     
-    public override func with(_ f: (XComment) -> ()) -> XComment {
-        f(self)
-        return self
-    }
-    
-    public override func when(_ f: (XComment) -> Bool) -> XComment? {
-        return f(self) ? self : nil
-    }
-    
-    public override func hasProperties(_ f: (XComment) -> Bool) -> Bool {
-        return f(self)
-    }
-    
     override func produceEntering(production: XProduction) throws {
         try production.writeComment(comment: self)
     }
@@ -2192,19 +2079,6 @@ public final class XCDATASection: XContent, XTextualContentRepresentation {
     
     public init(_ text: String) {
         self._value = text
-    }
-    
-    public override func with(_ f: (XCDATASection) -> ()) -> XCDATASection {
-        f(self)
-        return self
-    }
-    
-    public override func when(_ f: (XCDATASection) -> Bool) -> XCDATASection? {
-        return f(self) ? self : nil
-    }
-    
-    public override func hasProperties(_ f: (XCDATASection) -> Bool) -> Bool {
-        return f(self)
     }
     
     override func produceEntering(production: XProduction) throws {
