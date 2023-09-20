@@ -469,16 +469,14 @@ public class XAttributeValueDependingOnElementIterator: XStringIterator {
     }
     
     public override func next() -> String? {
-        if let element = iterator.next() {
-            if let attributeName {
-                return element[attributeName]
+        guard let attributeName else { return nil }
+        while true {
+            guard let element = iterator.next() else { return nil }
+            if let attributeValue = element[attributeName] {
+                return attributeValue
+            } else {
+                continue
             }
-            else {
-                return nil
-            }
-        }
-        else {
-            return nil
         }
     }
 }
@@ -1255,6 +1253,7 @@ extension Sequence<XElement> {
         get { XNameSequenceDependingOnElementSequence(sequence: self) }
     }
     
+    /// Return an iterator for the attribute name, skipping elements in the sequence without the attribue.
     public subscript(attributeName: String) -> XStringSequence {
         get { XAttributeValueSequenceDependingOnElementSequence(sequence: self, attributeName: attributeName) }
     }
