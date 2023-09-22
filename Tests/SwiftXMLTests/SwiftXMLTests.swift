@@ -328,6 +328,11 @@ final class SwiftXMLTests: XCTestCase {
         XCTAssertEqual(document.children.first!.texts.map{ "\"\($0.value)\"" }.joined(separator: ", "), #""Hello ", "!""#)
     }
     
+    func testExpressibleByStringLiteral() throws {
+        let text: XText = "the text"
+        XCTAssertEqual(String(describing: type(of: text)), "XText")
+    }
+    
     func testAllTexts() throws {
         let document = try parseXML(fromText: """
             <paragraph>Hello <bold>World</bold>!</paragraph>
