@@ -288,7 +288,7 @@ final class FromReadmeTests: XCTestCase {
         XCTAssertEqual(document.serialized(), "<text>Hello</text>")
     }
     
-    func testtest() throws {
+    func testDescendants() throws {
         let element = XElement("z") {
             XElement("a") {
                 XElement("a1")
@@ -300,7 +300,7 @@ final class FromReadmeTests: XCTestCase {
             }
         }
         
-        element.descendants.echo()
+        XCTAssertEqual(element.descendants.map{ $0.description }.joined(separator: ", "), "<a>, <a1>, <a2>, <b>, <b1>, <b2>")
     }
     
     func testWithAndWhen() throws {
