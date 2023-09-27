@@ -29,10 +29,44 @@ public struct XRule {
     
 }
 
+public protocol XRulesConvertible {
+    func asXRules() -> [XRule]
+}
+
+extension XRule: XRulesConvertible {
+    public func asXRules() -> [XRule] {
+        return [self]
+    }
+}
+
+extension Optional: XRulesConvertible where Wrapped == XRule {
+    public func asXRules() -> [XRule] {
+        switch self {
+            case .some(let wrapped): return [wrapped]
+            case .none: return []
+        }
+    }
+}
+
+extension Array: XRulesConvertible where Element == XRule {
+    public func asXRules() -> [XRule] {
+        return self
+    }
+}
+
+
 @resultBuilder
 public struct XRulesBuilder {
-    public static func buildBlock(_ components: XRule...) -> [XRule] {
-        return components
+    public static func buildBlock(_ components: XRulesConvertible...) -> [XRule] {
+        return components.flatMap({ $0.asXRules() })
+    }
+
+    public static func buildEither(first component: XRulesConvertible) -> [XRule] {
+        return component.asXRules()
+    }
+
+    public static func buildEither(second component: XRulesConvertible) -> [XRule] {
+        return component.asXRules()
     }
 }
 

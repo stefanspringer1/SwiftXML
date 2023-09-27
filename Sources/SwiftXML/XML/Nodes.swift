@@ -1279,6 +1279,14 @@ public struct XContentBuilder {
         sequences.forEach{ $0.forEach { sampler.add($0 as! XContent) } }
         return sampler.nodes
     }
+
+    public static func buildEither(first component: [XContent]) -> [XContent] {
+        component
+    }
+
+    public static func buildEither(second component: [XContent]) -> [XContent] {
+        component
+    }
     
 }
 
