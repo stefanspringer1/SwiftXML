@@ -157,7 +157,7 @@ final class FromReadmeTests: XCTestCase {
         <a><b id="1"/><b id="2"/></a>
         """)
 
-        document.elements(ofName: "b").forEach { element in
+        document.elements("b").forEach { element in
             if element["id"] == "2" {
                 element.insertNext {
                     XElement("c") {

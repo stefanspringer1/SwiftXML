@@ -203,15 +203,15 @@ public final class XDocument: XNode, XBranchInternal {
         element.nextWithSameName = nil
     }
     
-    public func elements(ofName name: String) -> XElementSequence {
+    public func elements(_ name: String) -> XElementSequence {
         return XElementsOfSameNameSequence(document: self, name: name)
     }
     
-    public func elements(ofName names: String...) -> XElementSequence {
-        return elements(ofName: names)
+    public func elements(_ names: String...) -> XElementSequence {
+        return elements(names)
     }
     
-    public func elements(ofName names: [String]) -> XElementSequence {
+    public func elements(_ names: [String]) -> XElementSequence {
         return XElementsOfNamesSequence(forNames: names, forDocument: self)
     }
     

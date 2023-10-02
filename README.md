@@ -51,6 +51,8 @@ let transformation = XTransformation {
 
 **UPDATE 9 (September 2023):** Renamed `with` to `applying` again. Renamed `when` to `fullfilling`. Renamed `hasProperties` to `fullfills`. Their implementations for a single items is now done via protocols.
 
+**UPDATE 10 (October 2023):** Instead of `element(ofName:)` use `element(_:)` to better match the other methods that take names.
+
 ---
 
 ## Related packages
@@ -85,7 +87,7 @@ let document = try parseXML(fromText: """
 <a><item multiply="3"/></a>
 """)
 
-document.elements(ofName: "item").forEach { item in
+document.elements("item").forEach { item in
     if let multiply = item["multiply"], let n = Int(multiply), n > 1 {
         item.insertPrevious {
             XElement("item", ["multiply": n > 2 ? String(n-1) : nil])
@@ -515,24 +517,24 @@ As mentioned and the general description, the library allows to efficiently find
 Finding the elements of a certain name:
 
 ```Swift
-func elements(ofName: String) -> XElementsOfSameNameSequence
+func elements(_: String) -> XElementsOfSameNameSequence
 ```
 
 Example:
 
 ```Swift
-myDocument.elements(ofName: "paragraph").forEach { paragraph in
+myDocument.elements("paragraph").forEach { paragraph in
     if let id = paragraph["id"] {
         print("found paragraph with ID \"\(ID)\"")
     }
 }
 ```
 
-Find the elements of several name alternatives by using several names in `elements(ofName:)`. Note that just like the methods for single names, what you add during the iteration will then also be considered.
+Find the elements of several name alternatives by using several names in `elements(_:)`. Note that just like the methods for single names, what you add during the iteration will then also be considered.
 
 ## Finding related content
 
-Starting from some content, you might want to find related content, e.g. its children. The names chosen for the accordings methods come from the idea that all content have a natural order, namely the order of a depth-first traversal, which is the same order in which the content of an XML document is stored in a text file. This order gives a meaning to method names such a `nextTouching`. Note that, other than for the iterations you get via `elements(ofName:)` and `attributes(ofName:)`, even nodes that stay in the same document can occur in such an iteration sevaral times if moved accordingly during the iteration.
+Starting from some content, you might want to find related content, e.g. its children. The names chosen for the accordings methods come from the idea that all content have a natural order, namely the order of a depth-first traversal, which is the same order in which the content of an XML document is stored in a text file. This order gives a meaning to method names such a `nextTouching`. Note that, other than for the iterations you get via `elements(_:)`, even nodes that stay in the same document can occur in such an iteration sevaral times if moved accordingly during the iteration.
 
 Sequences returned are always lazy sequences, iterating through them gives items of the obvious type. As mentioned in the general description of the library, manipulating the XML tree during such an iteration is allowed.
 
@@ -1010,9 +1012,9 @@ First, the element “wrapper2” is built, and at that moment the sequence `b.n
 
 ### Document membership in constructed elements
 
-Elements that are part of a document (`XDocument`) are registered in the document. The same is true for its attributes. The reason is that this allows fast access to elements and attributes of a certain name via `elements(ofName:)` and `attributes(ofName:)` and the exact functioning of rules (see the section below on rules).
+Elements that are part of a document (`XDocument`) are registered in the document. The reason is that this allows fast access to elements and attributes of a certain name via `elements(_:)` and the exact functioning of rules (see the section below on rules).
 
-In the moment of constructing a new element with its content defined in `{...}` brackets during construction, the element is not part any document. The nodes inserted to it leave the document tree, but they are not (!) unregistered from the document. I.e. the iterations `elements(ofName:)` and `attributes(ofName:)` will still find them, and according rules will apply to them. The reason for this behaviour is the common case of the new element getting inserted into the same document. If the content of the new element would first get unregistered from the document and then get reinserted into the same document again, they would then count as new elements, and the mentioned iterations might iterate over them again.
+In the moment of constructing a new element with its content defined in `{...}` brackets during construction, the element is not part any document. The nodes inserted to it leave the document tree, but they are not (!) unregistered from the document. I.e. the iteration `elements(_:)` will still find them, and according rules will apply to them. The reason for this behaviour is the common case of the new element getting inserted into the same document. If the content of the new element would first get unregistered from the document and then get reinserted into the same document again, they would then count as new elements, and the mentioned iterations might iterate over them again.
 
 If you would like to get the content a newly built element to get unregistered from the document, use its method `adjustDocument()`. This method diffuses the current document of the element to its content. For a newly built element this document is `nil`, which unregisters a node from its document. You might also set the attribute `adjustDocument` to `true` in the initializer of the element to automatically call `adjustDocument()` when the building of the new element is accomplished. This call or setting to adjust of the document is only necessary at the top-level element, it is dispersed through the whole tree.
 
@@ -1025,7 +1027,7 @@ let document = try parseXML(fromText: """
 <a><b id="1"/><b id="2"/></a>
 """)
 
-document.elements(ofName: "b").forEach { element in
+document.elements("b").forEach { element in
     print("applying the rule to \(element)")
     if element["id"] == "2" {
         element.insertNext {
@@ -1121,7 +1123,7 @@ func setContent(builder: () -> [XContent])
 Example:
 
 ```Swift
-myDocument.elements(ofName: "table").forEach { table in
+myDocument.elements("table").forEach { table in
     table.insertNext {
         XElement("legend") {
             "this is the table legend"

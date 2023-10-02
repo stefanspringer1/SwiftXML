@@ -28,7 +28,6 @@ public final class XElementsOfNamesSequence: XElementSequence {
     
 }
 
-
 public final class XElementsOfNamesIterator: XElementIterator {
     
     private let iterators: [XXBidirectionalElementNameIterator]
