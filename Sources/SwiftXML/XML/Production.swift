@@ -225,7 +225,7 @@ open class XActiveDefaultProduction: XActiveProduction {
     }
     
     open func writeAttributeValue(name: String, value: String, element: XElement) throws {
-        try write(escapeDoubleQuotedValue(value))
+        try write(escapeDoubleQuotedValue(value).replacingOccurrences(of: "\n", with: "&#x0A;").replacingOccurrences(of: "\r", with: "&#x0D;"))
     }
     
     open func writeAttribute(name: String, value: String, element: XElement) throws {
@@ -345,8 +345,8 @@ open class XActivePrettyPrintProduction: XActiveDefaultProduction {
     
     private var mixed = [Bool]()
     
-    open func hasMixedContent(element: XElement) -> Bool {
-        return element.content.contains(where: { $0 is XText })
+    open func mightHaveMixedContent(element: XElement) -> Bool {
+        return element.content.contains(where: { $0 is XText || $0 is XInternalEntity || $0 is XInternalEntity })
     }
     
     open override func writeElementStartBeforeAttributes(element: XElement) throws {
@@ -364,7 +364,7 @@ open class XActivePrettyPrintProduction: XActiveDefaultProduction {
     open override func writeElementStartAfterAttributes(element: XElement) throws {
         try super.writeElementStartAfterAttributes(element: element)
         if !element.isEmpty {
-            mixed.append(mixed.last == true || hasMixedContent(element: element))
+            mixed.append(mixed.last == true || mightHaveMixedContent(element: element))
             indentationLevel += 1
         }
     }
@@ -446,7 +446,7 @@ open class XActiveHTMLProduction: XActivePrettyPrintProduction {
         }()
     }
     
-    open override func hasMixedContent(element: XElement) -> Bool {
+    open override func mightHaveMixedContent(element: XElement) -> Bool {
         return element.content.contains(where: { isInline($0) })
     }
     

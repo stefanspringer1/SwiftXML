@@ -460,4 +460,21 @@ final class SwiftXMLTests: XCTestCase {
         }
     }
     
+    func testPretty() {
+        let element1 = XElement("element1") { XInternalEntity("ent1")}
+        
+        XCTAssertEqual(element1.serialized(pretty: true), "<element1>&ent1;</element1>")
+    }
+    
+    func testNewlineInAttribute() {
+        let element1 = XElement("element1", ["att1": "hello\nworld"])
+        
+        XCTAssertEqual(element1.serialized(pretty: true), #"<element1 att1="hello&#x0A;world"/>"#)
+    }
+    
+    func testNewlineInAttributeReverse() throws {
+        let document = try parseXML(fromText: #"<element1 att1="hello&#x0A;world"/>"#)
+        
+        XCTAssertEqual(document.children.first?["att1"], "hello\nworld")
+    }
 }
