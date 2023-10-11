@@ -50,11 +50,11 @@ public class CollectingWriter: Writer, CustomStringConvertible {
     }
 }
 
-public protocol XProduction {
-    
-    func setWriter(_ writer: Writer?)
-    
-    func getWriter() -> Writer?
+public protocol XProductionTemplate {
+    func activeProduction(for writer: Writer) -> XActiveProduction
+}
+
+public protocol XActiveProduction {
     
     func write(_ text: String) throws
     
@@ -115,20 +115,28 @@ public protocol XProduction {
     func writeDocumentEnd(document: XDocument) throws
 }
 
-open class XDefaultProduction: XProduction {
+public class XDefaultProductionTemplate: XProductionTemplate {
     
-    private var _writer: Writer? = nil
+    public let writeEmptyTags: Bool
+    public let linebreak: String
     
-    public func setWriter(_ writer: Writer?) {
-        self._writer = writer
+    public init(writeEmptyTags: Bool = true, linebreak: String = "\n") {
+        self.writeEmptyTags = writeEmptyTags
+        self.linebreak = linebreak
     }
     
-    public func getWriter() -> Writer? {
-        return _writer
+    public func activeProduction(for writer: Writer) -> XActiveProduction {
+        XActiveDefaultProduction(writer: writer, writeEmptyTags: writeEmptyTags, linebreak: linebreak)
     }
+    
+}
+
+open class XActiveDefaultProduction: XActiveProduction {
+    
+    private var writer: Writer
     
     public func write(_ text: String) throws {
-        try _writer?.write(text)
+        try writer.write(text)
     }
     
     private let writeEmptyTags: Bool
@@ -139,7 +147,8 @@ open class XDefaultProduction: XProduction {
         get { _linebreak }
     }
     
-    public init(writeEmptyTags: Bool = true, linebreak: String = "\n") {
+    public init(writer: Writer, writeEmptyTags: Bool = true, linebreak: String = "\n") {
+        self.writer = writer
         self.writeEmptyTags = writeEmptyTags
         self._linebreak = linebreak
     }
@@ -303,13 +312,31 @@ open class XDefaultProduction: XProduction {
     }
 }
 
-open class XPrettyPrintProduction: XDefaultProduction {
-
-    private var _indentation: String
+public class XPrettyPrintProductionTemplate: XProductionTemplate {
+    
+    public let writeEmptyTags: Bool
+    public let indentation: String
+    public let linebreak: String
     
     public init(writeEmptyTags: Bool = true, indentation: String = "  ", linebreak: String = "\n") {
-        self._indentation = indentation
-        super.init(writeEmptyTags: writeEmptyTags, linebreak: linebreak)
+        self.writeEmptyTags = writeEmptyTags
+        self.indentation = indentation
+        self.linebreak = linebreak
+    }
+    
+    public func activeProduction(for writer: Writer) -> XActiveProduction {
+        XActivePrettyPrintProduction(writer: writer, writeEmptyTags: writeEmptyTags, linebreak: linebreak)
+    }
+    
+}
+
+open class XActivePrettyPrintProduction: XActiveDefaultProduction {
+
+    private var indentation: String
+    
+    public init(writer: Writer, writeEmptyTags: Bool = true, indentation: String = "  ", linebreak: String = "\n") {
+        self.indentation = indentation
+        super.init(writer: writer, writeEmptyTags: writeEmptyTags, linebreak: linebreak)
     }
     
     private var indentationLevel = 0
@@ -325,7 +352,7 @@ open class XPrettyPrintProduction: XDefaultProduction {
             if indentationLevel > 0 {
                 try write(linebreak)
                 for _ in 1...indentationLevel {
-                    try write(_indentation)
+                    try write(indentation)
                 }
             }
         }
@@ -347,7 +374,7 @@ open class XPrettyPrintProduction: XDefaultProduction {
                 try write(linebreak)
                 if indentationLevel > 0 {
                     for _ in 1...indentationLevel {
-                        try write(_indentation)
+                        try write(indentation)
                     }
                 }
             }
@@ -357,10 +384,26 @@ open class XPrettyPrintProduction: XDefaultProduction {
     }
 }
 
-open class XHTMLProduction: XPrettyPrintProduction {
-
+public class XHTMLProductionTemplate: XProductionTemplate {
+    
+    public let indentation: String
+    public let linebreak: String
+    
     public init(indentation: String = "  ", linebreak: String = "\n") {
-        super.init(writeEmptyTags: false, indentation: indentation, linebreak: linebreak)
+        self.indentation = indentation
+        self.linebreak = linebreak
+    }
+    
+    public func activeProduction(for writer: Writer) -> XActiveProduction {
+        XActiveHTMLProduction(writer: writer, linebreak: linebreak)
+    }
+    
+}
+
+open class XActiveHTMLProduction: XActivePrettyPrintProduction {
+
+    public init(writer: Writer, indentation: String = "  ", linebreak: String = "\n") {
+        super.init(writer: writer, writeEmptyTags: false, indentation: indentation, linebreak: linebreak)
     }
     
     open override func writeXMLDeclaration(version: String, encoding: String?, standalone: String?) {

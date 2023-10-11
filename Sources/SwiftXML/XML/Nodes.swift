@@ -12,6 +12,10 @@ import Foundation
 import SwiftXMLInterfaces
 import SwiftXMLParser
 
+public enum WriteTarget {
+    case url(URL); case writer(Writer); case fileHandle(FileHandle)
+}
+
 /// Use this function to announce that certain content (denoted by an array array of `XContent`)
 /// is being moved inside the `action` closure.
 ///
@@ -348,41 +352,41 @@ public class XNode {
         }
     }
     
-    func produceEntering(production: XProduction) throws {
+    func produceEntering(activeProduction: XActiveProduction) throws {
         // to be implemented by subclass
     }
     
-    public func applyProduction(production: XProduction) throws {
-        try (self as? XDocument)?.produceEntering(production: production)
+    public func applyProduction(activeProduction: XActiveProduction) throws {
+        try (self as? XDocument)?.produceEntering(activeProduction: activeProduction)
         try traverse { node in
-            try node.produceEntering(production: production)
+            try node.produceEntering(activeProduction: activeProduction)
         } up: { branch in
             if let element = branch as? XElement {
-                try element.produceLeaving(production: production)
+                try element.produceLeaving(activeProduction: activeProduction)
             }
             else if let document = branch as? XDocument {
-                try document.produceLeaving(production: production)
+                try document.produceLeaving(activeProduction: activeProduction)
             }
         }
-        try (self as? XDocument)?.produceLeaving(production: production)
+        try (self as? XDocument)?.produceLeaving(activeProduction: activeProduction)
     }
     
-    public func write(toWriter writer: Writer, usingProduction production: XProduction = XDefaultProduction()) throws {
-        production.setWriter(writer)
-        try self.applyProduction(production: production)
+    public func write(toWriter writer: Writer, usingProductionTemplate productionTemplate: XProductionTemplate = XDefaultProductionTemplate()) throws {
+        let activeProduction = productionTemplate.activeProduction(for: writer)
+        try self.applyProduction(activeProduction: activeProduction)
     }
     
-    public func write(toFileHandle fileHandle: FileHandle, usingProduction production: XProduction = XDefaultProduction()) throws {
-        try write(toWriter: FileWriter(fileHandle), usingProduction: production)
+    public func write(toFileHandle fileHandle: FileHandle, usingProductionTemplate productionTemplate: XProductionTemplate = XDefaultProductionTemplate()) throws {
+        try write(toWriter: FileWriter(fileHandle), usingProductionTemplate: productionTemplate)
     }
     
-    public func write(toFile path: String, usingProduction production: XProduction = XDefaultProduction()) throws {
+    public func write(toFile path: String, usingProductionTemplate productionTemplate: XProductionTemplate = XDefaultProductionTemplate()) throws {
         let fileManager = FileManager.default
     
         fileManager.createFile(atPath: path,  contents:Data("".utf8), attributes: nil)
         
         if let fileHandle = FileHandle(forWritingAtPath: path) {
-            try write(toFileHandle: fileHandle, usingProduction: production)
+            try write(toFileHandle: fileHandle, usingProductionTemplate: productionTemplate)
             fileHandle.closeFile()
         }
         else {
@@ -391,13 +395,23 @@ public class XNode {
         
     }
     
-    public func write(toURL url: URL, usingProduction production: XProduction = XDefaultProduction()) throws {
-        try write(toFile: url.path, usingProduction: production)
+    public func write(toURL url: URL, usingProductionTemplate productionTemplate: XProductionTemplate = XDefaultProductionTemplate()) throws {
+        try write(toFile: url.path, usingProductionTemplate: productionTemplate)
     }
     
-    public func echo(usingProduction production: XProduction, terminator: String = "\n") {
+    public func write(to writeTarget: WriteTarget, usingProductionTemplate productionTemplate: XProductionTemplate = XDefaultProductionTemplate()) throws {
+        switch writeTarget {case .url(let url):
+            try write(toFile: url.path, usingProductionTemplate: productionTemplate)
+        case .writer(let writer):
+            try write(toWriter: writer, usingProductionTemplate: productionTemplate)
+        case .fileHandle(let fileHandle):
+            try write(toFileHandle: fileHandle, usingProductionTemplate: productionTemplate)
+        }
+    }
+    
+    public func echo(usingProductionTemplate productionTemplate: XProductionTemplate, terminator: String = "\n") {
         do {
-            try write(toFileHandle: FileHandle.standardOutput, usingProduction: production); print(terminator, terminator: "")
+            try write(toFileHandle: FileHandle.standardOutput, usingProductionTemplate: productionTemplate); print(terminator, terminator: "")
         }
         catch {
             // writing to standard output does not really throw
@@ -405,13 +419,13 @@ public class XNode {
     }
     
     public func echo(pretty: Bool = false, indentation: String = "  ", terminator: String = "\n") {
-        echo(usingProduction: pretty ? XPrettyPrintProduction(indentation: indentation) : XDefaultProduction(), terminator: terminator)
+        echo(usingProductionTemplate: pretty ? XPrettyPrintProductionTemplate(indentation: indentation) : XDefaultProductionTemplate(), terminator: terminator)
     }
     
-    public func serialized(usingProduction production: XProduction) -> String {
+    public func serialized(usingProductionTemplate productionTemplate: XProductionTemplate) -> String {
         let writer = CollectingWriter()
         do {
-            try write(toWriter: writer, usingProduction: production)
+            try write(toWriter: writer, usingProductionTemplate: productionTemplate)
         }
         catch {
             // CollectingWriter does not really throw
@@ -420,7 +434,7 @@ public class XNode {
     }
     
     public func serialized(pretty: Bool = false, indentation: String = "  ") -> String {
-        serialized(usingProduction: pretty ? XPrettyPrintProduction(indentation: indentation) : XDefaultProduction())
+        serialized(usingProductionTemplate: pretty ? XPrettyPrintProductionTemplate(indentation: indentation) : XDefaultProductionTemplate())
     }
     
     public var text: String {
@@ -1102,7 +1116,7 @@ extension XBranchInternal {
         _setContent(builder())
     }
     
-    func produceLeaving(production: XProduction) throws {
+    func produceLeaving(activeProduction: XActiveProduction) throws {
         // to be implemented by subclass
     }
     
@@ -1620,16 +1634,16 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         setDocument(document: _document)
     }
     
-    override func produceEntering(production: XProduction) throws {
-        try production.writeElementStartBeforeAttributes(element: self)
-        try production.sortAttributeNames(attributeNames: attributeNames, element: self).forEach { attributeName in
-            try production.writeAttribute(name: attributeName, value: self[attributeName]!, element: self)
+    override func produceEntering(activeProduction: XActiveProduction) throws {
+        try activeProduction.writeElementStartBeforeAttributes(element: self)
+        try activeProduction.sortAttributeNames(attributeNames: attributeNames, element: self).forEach { attributeName in
+            try activeProduction.writeAttribute(name: attributeName, value: self[attributeName]!, element: self)
         }
-        try production.writeElementStartAfterAttributes(element: self)
+        try activeProduction.writeElementStartAfterAttributes(element: self)
     }
     
-    func produceLeaving(production: XProduction) throws {
-        try production.writeElementEnd(element: self)
+    func produceLeaving(activeProduction: XActiveProduction) throws {
+        try activeProduction.writeElementEnd(element: self)
     }
     
     public func trimWhiteSpace() {
@@ -1801,8 +1815,8 @@ public final class XText: XContent, XTextualContentRepresentation, ToBePeparedFo
         return self
     }
     
-    public override func produceEntering(production: XProduction) throws {
-        try production.writeText(text: self)
+    public override func produceEntering(activeProduction: XActiveProduction) throws {
+        try activeProduction.writeText(text: self)
     }
     
     public override func shallowClone() -> XText {
@@ -1886,8 +1900,8 @@ public final class XLiteral: XContent, XTextualContentRepresentation, ToBePepare
         self._value = text
     }
     
-    public override func produceEntering(production: XProduction) throws {
-        try production.writeLiteral(literal: self)
+    public override func produceEntering(activeProduction: XActiveProduction) throws {
+        try activeProduction.writeLiteral(literal: self)
     }
     
     public override func shallowClone() -> XLiteral {
@@ -1922,8 +1936,8 @@ public final class XInternalEntity: XContent {
         self._name = name
     }
     
-    override func produceEntering(production: XProduction) throws {
-        try production.writeInternalEntity(internalEntity: self)
+    override func produceEntering(activeProduction: XActiveProduction) throws {
+        try activeProduction.writeInternalEntity(internalEntity: self)
     }
     
     public override func shallowClone() -> XInternalEntity {
@@ -1958,8 +1972,8 @@ public final class XExternalEntity: XContent {
         self._name = name
     }
     
-    override func produceEntering(production: XProduction) throws {
-        try production.writeExternalEntity(externalEntity: self)
+    override func produceEntering(activeProduction: XActiveProduction) throws {
+        try activeProduction.writeExternalEntity(externalEntity: self)
     }
     
     public override func shallowClone() -> XExternalEntity {
@@ -2013,8 +2027,8 @@ public final class XProcessingInstruction: XContent, CustomStringConvertible {
         self._data = data
     }
     
-    override func produceEntering(production: XProduction) throws {
-        try production.writeProcessingInstruction(processingInstruction: self)
+    override func produceEntering(activeProduction: XActiveProduction) throws {
+        try activeProduction.writeProcessingInstruction(processingInstruction: self)
     }
     
     public override func shallowClone() -> XProcessingInstruction {
@@ -2053,8 +2067,8 @@ public final class XComment: XContent {
         self._value = withAdditionalSpace ? " \(text) " : text
     }
     
-    override func produceEntering(production: XProduction) throws {
-        try production.writeComment(comment: self)
+    override func produceEntering(activeProduction: XActiveProduction) throws {
+        try activeProduction.writeComment(comment: self)
     }
     
     public override func shallowClone() -> XComment {
@@ -2089,8 +2103,8 @@ public final class XCDATASection: XContent, XTextualContentRepresentation {
         self._value = text
     }
     
-    override func produceEntering(production: XProduction) throws {
-        try production.writeCDATASection(cdataSection: self)
+    override func produceEntering(activeProduction: XActiveProduction) throws {
+        try activeProduction.writeCDATASection(cdataSection: self)
     }
     
     public override func shallowClone() -> XCDATASection {
@@ -2126,7 +2140,7 @@ public class XDeclarationInInternalSubset {
         self._name = name
     }
     
-    func produceEntering(production: XProduction) throws {}
+    func produceEntering(activeProduction: XActiveProduction) throws {}
     
     func clone() -> XDeclarationInInternalSubset {
         let theClone = XDeclarationInInternalSubset(name: _name)
@@ -2156,8 +2170,8 @@ public final class XInternalEntityDeclaration: XDeclarationInInternalSubset {
         super.init(name: name)
     }
     
-    override func produceEntering(production: XProduction) throws {
-        try production.writeInternalEntityDeclaration(internalEntityDeclaration: self)
+    override func produceEntering(activeProduction: XActiveProduction) throws {
+        try activeProduction.writeInternalEntityDeclaration(internalEntityDeclaration: self)
     }
     
     public override func clone() -> XInternalEntityDeclaration {
@@ -2199,8 +2213,8 @@ public final class XExternalEntityDeclaration: XDeclarationInInternalSubset {
         super.init(name: name)
     }
     
-    override func produceEntering(production: XProduction) throws {
-        try production.writeExternalEntityDeclaration(externalEntityDeclaration: self)
+    override func produceEntering(activeProduction: XActiveProduction) throws {
+        try activeProduction.writeExternalEntityDeclaration(externalEntityDeclaration: self)
     }
     
     public override func clone() -> XExternalEntityDeclaration {
@@ -2253,8 +2267,8 @@ public final class XUnparsedEntityDeclaration: XDeclarationInInternalSubset {
         super.init(name: name)
     }
     
-    override func produceEntering(production: XProduction) throws {
-        try production.writeUnparsedEntityDeclaration(unparsedEntityDeclaration: self)
+    override func produceEntering(activeProduction: XActiveProduction) throws {
+        try activeProduction.writeUnparsedEntityDeclaration(unparsedEntityDeclaration: self)
     }
     
     public override func clone() -> XUnparsedEntityDeclaration {
@@ -2296,8 +2310,8 @@ public final class XNotationDeclaration: XDeclarationInInternalSubset {
         super.init(name: name)
     }
     
-    override func produceEntering(production: XProduction) throws {
-        try production.writeNotationDeclaration(notationDeclaration: self)
+    override func produceEntering(activeProduction: XActiveProduction) throws {
+        try activeProduction.writeNotationDeclaration(notationDeclaration: self)
     }
     
     public override func clone() -> XNotationDeclaration {
@@ -2328,8 +2342,8 @@ public final class XElementDeclaration: XDeclarationInInternalSubset {
         super.init(name: name)
     }
     
-    override func produceEntering(production: XProduction) throws {
-        try production.writeElementDeclaration(elementDeclaration: self)
+    override func produceEntering(activeProduction: XActiveProduction) throws {
+        try activeProduction.writeElementDeclaration(elementDeclaration: self)
     }
     
     public override func clone() -> XElementDeclaration {
@@ -2360,8 +2374,8 @@ public final class XAttributeListDeclaration: XDeclarationInInternalSubset {
         super.init(name: name)
     }
     
-    override func produceEntering(production: XProduction) throws {
-        try production.writeAttributeListDeclaration(attributeListDeclaration: self)
+    override func produceEntering(activeProduction: XActiveProduction) throws {
+        try activeProduction.writeAttributeListDeclaration(attributeListDeclaration: self)
     }
     
     public override func clone() -> XAttributeListDeclaration {
@@ -2392,8 +2406,8 @@ public final class XParameterEntityDeclaration: XDeclarationInInternalSubset {
         super.init(name: name)
     }
     
-    override func produceEntering(production: XProduction) throws {
-        try production.writeParameterEntityDeclaration(parameterEntityDeclaration: self)
+    override func produceEntering(activeProduction: XActiveProduction) throws {
+        try activeProduction.writeParameterEntityDeclaration(parameterEntityDeclaration: self)
     }
     
     public override func clone() -> XParameterEntityDeclaration {

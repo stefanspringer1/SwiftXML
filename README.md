@@ -53,6 +53,8 @@ let transformation = XTransformation {
 
 **UPDATE 10 (October 2023):** Instead of `element(ofName:)` use `element(_:)` to better match the other methods that take names.
 
+**UPDATE 11 (October 2023):** Instead of `XProduction`, `XProductionTemplate` and `XActiveProduction` are now used, see the updated description below.
+
 ---
 
 ## Related packages
@@ -290,7 +292,7 @@ func echo(pretty: Bool, indentation: String, terminator: String)
 With more control:
 
 ```Swift
-func echo(usingProduction: XProduction, terminator: String)
+func echo(usingProductionTemplate: XProductionTemplate, terminator: String)
 ```
 
 Productions are explained in the next section. 
@@ -316,18 +318,28 @@ Do not use `serialized` to print a tree or document, use `echo` instead, because
 Any XML node (including an XML document) can be written, including the tree of nodes that is started by it, via the following methods.
 
 ```Swift
-func write(toURL: URL, usingProduction: XProduction) throws
+func write(toURL: URL, usingProductionTemplate: XProductionTemplate) throws
 ```
 
 ```Swift
-func write(toFile: String, usingProduction: XProduction) throws
+func write(toFile: String, usingProductionTemplate: XProductionTemplate) throws
 ```
 
 ```Swift
-func write(toFileHandle: FileHandle, usingProduction: XProduction) throws
+func write(toFileHandle: FileHandle, usingProductionTemplate: XProductionTemplate) throws
 ```
 
-The production argument has to implement the `XProduction` protocol and defines how each part of the document is written, e.g. if `>` or `"` are written literally or as predefined XML entities in text sections. The production defaults to an instance of `XDefaultProduction`, which also should be extended if only some details of how the document is written are to be changed, which is a common use case. The productions `XPrettyPrintProduction` and `XHTMLProduction` already extend `XDefaultProduction`, which might be used to pretty-print XML or output HTML. But you also extend one of those classes youself, e.g. you could override `func writeText(text: XText)` and `func writeAttributeValue(name: String, value: String, element: XElement)` to again write some characters as named entity references. Or you just provide an instance of `XDefaultProduction` itself and change its `linebreak` property to define how line breaks should be written (e.g. Unix or Windows style). You might also want to consider `func sortAttributeNames(attributeNames: [String], element: XElement) -> [String]` to sort the attributes for output.
+```Swift
+func write(toWriter: Writer, usingProductionTemplate: XProductionTemplate) throws
+```
+
+By the argument `usingProductionTemplate:` you can define a production, i.e. details of the serialization, e.g. if linebreaks are inserted to make the result look pretty. Its value defaults a an instance of `XActiveProductionTemplate`, which will give a a standard output.
+
+The definition of such a production comes in two parts, a template that can be initialized with values for a further configuration of the serialization, and an active production which is to be applied to a certain target. This way the user has the ability to define completely what the serialization should look like, and then apply this definition to one or several serializations. In more detail:
+
+A `XProductionTemplate` has a method `activeProduction(for writer: Writer) -> XActiveProduction` which by using the `writer` initializes an `XActiveProduction` where the according events trigger a writing to the `writer`. The configuration for such a production are to be provided via arguments to the initializer of the `XProductionTemplate`.
+
+So an `XActiveProduction` defines how each part of the document is written, e.g. if `>` or `"` are written literally or as predefined XML entities in text sections. The production in the above function calls defaults to an instance of `XDefaultProductionTemplate` which results in instances of `XActiveDefaultProduction`. `XActiveDefaultProduction` should be extended if only some details of how the document is written are to be changed. The productions `XActivePrettyPrintProduction` (which might be used by defining an `XPrettyPrintProductionTemplate`) and `XActiveHTMLProduction` (which might be used by defining an `XHTMLProductionTemplate`) already extend `XActiveDefaultProduction`, which might be used to pretty-print XML or output HTML. But you also extend one of those classes youself, e.g. you could override `func writeText(text: XText)` and `func writeAttributeValue(name: String, value: String, element: XElement)` to again write some characters as named entity references. Or you just provide an instance of `XDefaultProduction` itself and change its `linebreak` property to define how line breaks should be written (e.g. Unix or Windows style). You might also want to consider `func sortAttributeNames(attributeNames: [String], element: XElement) -> [String]` to sort the attributes for output.
 
 Example: write a linebreak before all elements:
 
@@ -344,10 +356,10 @@ class MyProduction: XDefaultProduction {
 try document.write(toFile: "myFile.xml", usingProduction: MyProduction())
 ```
 
-For generality, the following method is provided to apply any `XProduction` to a node and its contained tree:
+For generality, the following method is provided to apply any `XActiveProduction` to a node and its contained tree:
 
 ```Swift
-func applyProduction(production: XProduction) throws
+func applyProduction(activeProduction: XActiveProduction) throws
 ```
 
 ## Cloning and document versions
