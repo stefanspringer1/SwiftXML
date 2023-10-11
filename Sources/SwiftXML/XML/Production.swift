@@ -41,6 +41,8 @@ public class FileWriter: Writer {
 
 public class CollectingWriter: Writer, CustomStringConvertible {
     
+    public init() {}
+    
     private var texts = [String]()
     
     public var description: String { get { texts.joined() } }
