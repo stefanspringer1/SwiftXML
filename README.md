@@ -204,6 +204,15 @@ func parseXML(
 ) throws -> XDocument
 ```
 
+If you want to be indifferent about which kind of source to process, use `XDocumentSource` for the source definition and use:
+
+```Swift
+func parseXML(
+    from: XDocumentSource,
+    ...
+) throws -> XDocument
+```
+
 The optional `textAllowedInElementWithName` method gets the name of the surrounding element when text is found inside an element and should notify whether text is allowed in the specific context. If not, the text is discarded is it is whitespace. If no text is allowed in the context but the text is not whitespace, an error is thrown. If you need a more specific context than the element name to decide if text is allowed, use an `XEventHandler` to track more specific context information.
 
 All internal entity references in attribute values have to be replaced by text during parsing. In order to achieve this (in case that internal entity references occur at all in attribute values in the source), an `InternalEntityResolver` can be provided. An `InternalEntityResolver` has to implement the following method:

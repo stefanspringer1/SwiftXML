@@ -13,7 +13,7 @@ import SwiftXMLInterfaces
 import SwiftXMLParser
 
 public func parseXML(
-    fromPath path: String,
+    from documentSource: XDocumentSource,
     sourceInfo: String? = nil,
     textAllowedInElementWithName: ((String) -> Bool)? = nil,
     internalEntityAutoResolve: Bool = false,
@@ -26,8 +26,17 @@ public func parseXML(
     keepCDATASections: Bool = false,
     eventHandlers: [XEventHandler]? = nil
 ) throws -> XDocument {
+    
     let document = XDocument()
-    document._sourcePath = path
+    
+    switch documentSource {
+    case .url(url: let url):
+        document._sourcePath = url.path
+    case .path(path: let path):
+        document._sourcePath = path
+    default:
+        break
+    }
     
     let parser = ConvenienceParser(
         parser: XParser(
@@ -46,9 +55,39 @@ public func parseXML(
         )
     )
     
-    try parser.parse(fromPath: path, sourceInfo: sourceInfo, eventHandlers: eventHandlers)
+    try parser.parse(from: documentSource, sourceInfo: sourceInfo, eventHandlers: eventHandlers)
     
     return document
+}
+
+public func parseXML(
+    fromPath path: String,
+    sourceInfo: String? = nil,
+    textAllowedInElementWithName: ((String) -> Bool)? = nil,
+    internalEntityAutoResolve: Bool = false,
+    internalEntityResolver: InternalEntityResolver? = nil,
+    insertExternalParsedEntities: Bool = false,
+    externalParsedEntitySystemResolver: ((String) -> URL?)? = nil,
+    externalParsedEntityGetter: ((String) -> Data?)? = nil,
+    externalWrapperElement: String? = nil,
+    keepComments: Bool = false,
+    keepCDATASections: Bool = false,
+    eventHandlers: [XEventHandler]? = nil
+) throws -> XDocument {
+    try parseXML(
+        from: .path(path),
+        sourceInfo: sourceInfo,
+        textAllowedInElementWithName: textAllowedInElementWithName,
+        internalEntityAutoResolve: internalEntityAutoResolve,
+        internalEntityResolver: internalEntityResolver,
+        insertExternalParsedEntities: insertExternalParsedEntities,
+        externalParsedEntitySystemResolver: externalParsedEntitySystemResolver,
+        externalParsedEntityGetter: externalParsedEntityGetter,
+        externalWrapperElement: externalWrapperElement,
+        keepComments: keepComments,
+        keepCDATASections: keepCDATASections,
+        eventHandlers: eventHandlers
+    )
 }
 
 public func parseXML(
@@ -65,29 +104,20 @@ public func parseXML(
     keepCDATASections: Bool = false,
     eventHandlers: [XEventHandler]? = nil
 ) throws -> XDocument {
-    let document = XDocument()
-    document._sourcePath = url.path
-    
-    let parser = ConvenienceParser(
-        parser: XParser(
-            internalEntityAutoResolve: internalEntityAutoResolve,
-            internalEntityResolver: internalEntityResolver,
-            textAllowedInElementWithName: textAllowedInElementWithName,
-            insertExternalParsedEntities: insertExternalParsedEntities,
-            externalParsedEntitySystemResolver: externalParsedEntitySystemResolver,
-            externalParsedEntityGetter: externalParsedEntityGetter
-        ),
-        mainEventHandler: XParseBuilder(
-            document: document,
-            keepComments: keepComments,
-            keepCDATASections: keepCDATASections,
-            externalWrapperElement: externalWrapperElement
-        )
+    try parseXML(
+        from: .url(url),
+        sourceInfo: sourceInfo,
+        textAllowedInElementWithName: textAllowedInElementWithName,
+        internalEntityAutoResolve: internalEntityAutoResolve,
+        internalEntityResolver: internalEntityResolver,
+        insertExternalParsedEntities: insertExternalParsedEntities,
+        externalParsedEntitySystemResolver: externalParsedEntitySystemResolver,
+        externalParsedEntityGetter: externalParsedEntityGetter,
+        externalWrapperElement: externalWrapperElement,
+        keepComments: keepComments,
+        keepCDATASections: keepCDATASections,
+        eventHandlers: eventHandlers
     )
-    
-    try parser.parse(fromURL: url, sourceInfo: sourceInfo, eventHandlers: eventHandlers)
-    
-    return document
 }
 
 public func parseXML(
@@ -104,28 +134,20 @@ public func parseXML(
     keepCDATASections: Bool = false,
     eventHandlers: [XEventHandler]? = nil
 ) throws -> XDocument {
-    let document = XDocument()
-    
-    let parser = ConvenienceParser(
-        parser: XParser(
-            internalEntityAutoResolve: internalEntityAutoResolve,
-            internalEntityResolver: internalEntityResolver,
-            textAllowedInElementWithName: textAllowedInElementWithName,
-            insertExternalParsedEntities: insertExternalParsedEntities,
-            externalParsedEntitySystemResolver: externalParsedEntitySystemResolver,
-            externalParsedEntityGetter: externalParsedEntityGetter
-        ),
-        mainEventHandler: XParseBuilder(
-            document: document,
-            keepComments: keepComments,
-            keepCDATASections: keepCDATASections,
-            externalWrapperElement: externalWrapperElement
-        )
+    try parseXML(
+        from: .text(text),
+        sourceInfo: sourceInfo,
+        textAllowedInElementWithName: textAllowedInElementWithName,
+        internalEntityAutoResolve: internalEntityAutoResolve,
+        internalEntityResolver: internalEntityResolver,
+        insertExternalParsedEntities: insertExternalParsedEntities,
+        externalParsedEntitySystemResolver: externalParsedEntitySystemResolver,
+        externalParsedEntityGetter: externalParsedEntityGetter,
+        externalWrapperElement: externalWrapperElement,
+        keepComments: keepComments,
+        keepCDATASections: keepCDATASections,
+        eventHandlers: eventHandlers
     )
-    
-    try parser.parse(fromText: text, sourceInfo: sourceInfo, eventHandlers: eventHandlers)
-    
-    return document
 }
 
 public func parseXML(
@@ -144,26 +166,18 @@ public func parseXML(
     externalWrapperNameAttribute: String? = nil,
     externalWrapperPathAttribute: String? = nil
 ) throws -> XDocument {
-    let document = XDocument()
-    
-    let parser = ConvenienceParser(
-        parser: XParser(
-            internalEntityAutoResolve: internalEntityAutoResolve,
-            internalEntityResolver: internalEntityResolver,
-            textAllowedInElementWithName: textAllowedInElementWithName,
-            insertExternalParsedEntities: insertExternalParsedEntities,
-            externalParsedEntitySystemResolver: externalParsedEntitySystemResolver,
-            externalParsedEntityGetter: externalParsedEntityGetter
-        ),
-        mainEventHandler: XParseBuilder(
-            document: document,
-            keepComments: keepComments,
-            keepCDATASections: keepCDATASections,
-            externalWrapperElement: externalWrapperElement
-        )
+    try parseXML(
+        from: .data(data),
+        sourceInfo: sourceInfo,
+        textAllowedInElementWithName: textAllowedInElementWithName,
+        internalEntityAutoResolve: internalEntityAutoResolve,
+        internalEntityResolver: internalEntityResolver,
+        insertExternalParsedEntities: insertExternalParsedEntities,
+        externalParsedEntitySystemResolver: externalParsedEntitySystemResolver,
+        externalParsedEntityGetter: externalParsedEntityGetter,
+        externalWrapperElement: externalWrapperElement,
+        keepComments: keepComments,
+        keepCDATASections: keepCDATASections,
+        eventHandlers: eventHandlers
     )
-    
-    try parser.parse(fromData: data, sourceInfo: sourceInfo, eventHandlers: eventHandlers)
-    
-    return document
 }
