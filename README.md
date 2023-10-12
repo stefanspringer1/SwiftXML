@@ -926,7 +926,7 @@ Note that when inserting content into an element or document and that content al
 
 Be “courageous” when formulating your code, more might function than you might have thought. Anticipating the explanations in the following sections, e.g. the following code examples _do_ work:
 
-Bringing the “a” children and the “b” children of an element to the beginning of the element:
+Moving the “a” children and the “b” children of an element to the beginning of the element:
 
 ```Swift
 element.addFirst {
