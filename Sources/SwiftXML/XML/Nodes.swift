@@ -371,16 +371,16 @@ public class XNode {
         try (self as? XDocument)?.produceLeaving(activeProduction: activeProduction)
     }
     
-    public func write(toWriter writer: Writer, usingProductionTemplate productionTemplate: XProductionTemplate = XDefaultProductionTemplate()) throws {
+    public func write(toWriter writer: Writer, usingProductionTemplate productionTemplate: XProductionTemplate = DefaultProductionTemplate()) throws {
         let activeProduction = productionTemplate.activeProduction(for: writer)
         try self.applyProduction(activeProduction: activeProduction)
     }
     
-    public func write(toFileHandle fileHandle: FileHandle, usingProductionTemplate productionTemplate: XProductionTemplate = XDefaultProductionTemplate()) throws {
+    public func write(toFileHandle fileHandle: FileHandle, usingProductionTemplate productionTemplate: XProductionTemplate = DefaultProductionTemplate()) throws {
         try write(toWriter: FileWriter(fileHandle), usingProductionTemplate: productionTemplate)
     }
     
-    public func write(toFile path: String, usingProductionTemplate productionTemplate: XProductionTemplate = XDefaultProductionTemplate()) throws {
+    public func write(toFile path: String, usingProductionTemplate productionTemplate: XProductionTemplate = DefaultProductionTemplate()) throws {
         let fileManager = FileManager.default
     
         fileManager.createFile(atPath: path,  contents:Data("".utf8), attributes: nil)
@@ -395,11 +395,11 @@ public class XNode {
         
     }
     
-    public func write(toURL url: URL, usingProductionTemplate productionTemplate: XProductionTemplate = XDefaultProductionTemplate()) throws {
+    public func write(toURL url: URL, usingProductionTemplate productionTemplate: XProductionTemplate = DefaultProductionTemplate()) throws {
         try write(toFile: url.path, usingProductionTemplate: productionTemplate)
     }
     
-    public func write(to writeTarget: WriteTarget, usingProductionTemplate productionTemplate: XProductionTemplate = XDefaultProductionTemplate()) throws {
+    public func write(to writeTarget: WriteTarget, usingProductionTemplate productionTemplate: XProductionTemplate = DefaultProductionTemplate()) throws {
         switch writeTarget {case .url(let url):
             try write(toURL: url, usingProductionTemplate: productionTemplate)
         case .writer(let writer):
@@ -421,7 +421,7 @@ public class XNode {
     }
     
     public func echo(pretty: Bool = false, indentation: String = "  ", terminator: String = "\n") {
-        echo(usingProductionTemplate: pretty ? XPrettyPrintProductionTemplate(indentation: indentation) : XDefaultProductionTemplate(), terminator: terminator)
+        echo(usingProductionTemplate: pretty ? PrettyPrintProductionTemplate(indentation: indentation) : DefaultProductionTemplate(), terminator: terminator)
     }
     
     public func serialized(usingProductionTemplate productionTemplate: XProductionTemplate) -> String {
@@ -436,7 +436,7 @@ public class XNode {
     }
     
     public func serialized(pretty: Bool = false, indentation: String = "  ") -> String {
-        serialized(usingProductionTemplate: pretty ? XPrettyPrintProductionTemplate(indentation: indentation) : XDefaultProductionTemplate())
+        serialized(usingProductionTemplate: pretty ? PrettyPrintProductionTemplate(indentation: indentation) : DefaultProductionTemplate())
     }
     
     public var text: String {

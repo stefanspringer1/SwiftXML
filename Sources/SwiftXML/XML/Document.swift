@@ -293,7 +293,7 @@ public final class XDocument: XNode, XBranchInternal {
         try activeProduction.writeDocumentTypeDeclarationAfterInternalSubset(hasInternalSubset: _hasInternalSubset)
     }
 
-    func produceLeaving(activeProduction: XActiveDefaultProduction) throws {
+    func produceLeaving(activeProduction: ActiveDefaultProduction) throws {
         try activeProduction.writeDocumentEnd(document: self)
     }
     

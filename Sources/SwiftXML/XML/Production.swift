@@ -117,7 +117,7 @@ public protocol XActiveProduction {
     func writeDocumentEnd(document: XDocument) throws
 }
 
-public class XDefaultProductionTemplate: XProductionTemplate {
+public class DefaultProductionTemplate: XProductionTemplate {
     
     public let writeEmptyTags: Bool
     public let linebreak: String
@@ -128,12 +128,12 @@ public class XDefaultProductionTemplate: XProductionTemplate {
     }
     
     public func activeProduction(for writer: Writer) -> XActiveProduction {
-        XActiveDefaultProduction(writer: writer, writeEmptyTags: writeEmptyTags, linebreak: linebreak)
+        ActiveDefaultProduction(writer: writer, writeEmptyTags: writeEmptyTags, linebreak: linebreak)
     }
     
 }
 
-open class XActiveDefaultProduction: XActiveProduction {
+open class ActiveDefaultProduction: XActiveProduction {
     
     private var writer: Writer
     
@@ -314,7 +314,7 @@ open class XActiveDefaultProduction: XActiveProduction {
     }
 }
 
-public class XPrettyPrintProductionTemplate: XProductionTemplate {
+public class PrettyPrintProductionTemplate: XProductionTemplate {
     
     public let writeEmptyTags: Bool
     public let indentation: String
@@ -327,12 +327,12 @@ public class XPrettyPrintProductionTemplate: XProductionTemplate {
     }
     
     public func activeProduction(for writer: Writer) -> XActiveProduction {
-        XActivePrettyPrintProduction(writer: writer, writeEmptyTags: writeEmptyTags, linebreak: linebreak)
+        ActivePrettyPrintProduction(writer: writer, writeEmptyTags: writeEmptyTags, linebreak: linebreak)
     }
     
 }
 
-open class XActivePrettyPrintProduction: XActiveDefaultProduction {
+open class ActivePrettyPrintProduction: ActiveDefaultProduction {
 
     private var indentation: String
     
@@ -386,7 +386,7 @@ open class XActivePrettyPrintProduction: XActiveDefaultProduction {
     }
 }
 
-public class XHTMLProductionTemplate: XProductionTemplate {
+public class HTMLProductionTemplate: XProductionTemplate {
     
     public let indentation: String
     public let linebreak: String
@@ -397,12 +397,12 @@ public class XHTMLProductionTemplate: XProductionTemplate {
     }
     
     public func activeProduction(for writer: Writer) -> XActiveProduction {
-        XActiveHTMLProduction(writer: writer, linebreak: linebreak)
+        ActiveHTMLProduction(writer: writer, linebreak: linebreak)
     }
     
 }
 
-open class XActiveHTMLProduction: XActivePrettyPrintProduction {
+open class ActiveHTMLProduction: ActivePrettyPrintProduction {
 
     public init(writer: Writer, indentation: String = "  ", linebreak: String = "\n") {
         super.init(writer: writer, writeEmptyTags: false, indentation: indentation, linebreak: linebreak)
