@@ -937,7 +937,7 @@ element.addFirst {
 
 As the content is first constructed and then inserted, there is no inifinite loop here.
 
-Note that in the result, the order of the content is just like defined inside the parentheses `{...}`, so in the example inside the resulting `element` there are first the “a” children and the “b” children.
+Note that in the result, the order of the content is just like defined inside the parentheses `{...}`, so in the example inside the resulting `element` there are first the “a” children and then the “b” children.
 
 Wrap an element with another element:
 
