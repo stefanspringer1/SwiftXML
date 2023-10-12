@@ -920,7 +920,34 @@ let myElement = XElement("paragraph", ["id": "1", "style": "note"])
 
 ### About the insertion of content
 
+We would first like to give some important hints before we explain the corresponding functionalities in detail.
+
 Note that when inserting content into an element or document that already exists somewhere else, the inserted content is _moved_ from its orginal place, and not copied. If you would like to insert a copy, insert the result of the `clone()` method of the content.
+
+Be “courageous” when formulating your code, more might function than you migth have thought. Anticipating the explanations in the following sections, e.g. the following code examples _do_ work:
+
+Bringing the `a` children and the `b` children of an element to the beginning of this element:
+
+```Swift
+element.addFirst {
+  element.children(“a”)
+  element.children(“b”)
+}
+```
+
+As the content is first constructed and then inserted, there no inifinite loop here.
+
+Wrap an element with another element:
+
+```Swift
+element.replace {
+   XElement("wrapper") {
+      element
+   }
+}
+```
+
+From the note above you might think that the elemewnt is not as its original place any more when the content of the “wrapper” element is constructed. Yes, this is true, but nevertheless the `replace` method still knows where to insert this “wrapper” element. The operation does work as you would expect from a naïve perspective.
 
 ### Defining content
 
