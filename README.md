@@ -924,7 +924,7 @@ We would first like to give some important hints before we explain the correspon
 
 Note that when inserting content into an element or document that already exists somewhere else, the inserted content is _moved_ from its orginal place, and not copied. If you would like to insert a copy, insert the result of the `clone()` method of the content.
 
-Be “courageous” when formulating your code, more might function than you migth have thought. Anticipating the explanations in the following sections, e.g. the following code examples _do_ work:
+Be “courageous” when formulating your code, more might function than you might have thought. Anticipating the explanations in the following sections, e.g. the following code examples _do_ work:
 
 Bringing the `a` children and the `b` children of an element to the beginning of this element:
 
