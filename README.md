@@ -308,7 +308,7 @@ func serialized(pretty: Bool) -> String
 With more control:
 
 ```Swift
-func serialized(usingProduction: XProduction) -> String
+func serialized(usingProductionTemplate: XProductionTemplate) -> String
 ```
 
 Do not use `serialized` to print a tree or document, use `echo` instead, because using `echo` is more efficient in this case.
