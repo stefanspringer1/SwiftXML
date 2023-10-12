@@ -1245,6 +1245,10 @@ extension Sequence<XContent> {
     public func echo(pretty: Bool = false, indentation: String = "  ", terminator: String = "\n") {
         self.forEach { content in content.echo(pretty: pretty, indentation: indentation, terminator: terminator) }
     }
+    
+    public func echo(usingProductionTemplate productionTemplate: XProductionTemplate, terminator: String = "\n") {
+        self.forEach { element in element.echo(usingProductionTemplate: productionTemplate, terminator: terminator) }
+    }
 }
 
 extension Sequence<XElement> {
@@ -1756,6 +1760,10 @@ extension Sequence<XElement> {
     
     public func echo(pretty: Bool = false, indentation: String = "  ", terminator: String = "\n") {
         self.forEach { element in element.echo(pretty: pretty, indentation: indentation, terminator: terminator) }
+    }
+    
+    public func echo(usingProductionTemplate productionTemplate: XProductionTemplate, terminator: String = "\n") {
+        self.forEach { element in element.echo(usingProductionTemplate: productionTemplate, terminator: terminator) }
     }
     
 }
