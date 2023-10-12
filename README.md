@@ -947,7 +947,7 @@ element.replace {
 }
 ```
 
-The content that you define inside parentheses `{...}` is always constructed from the inside to the outside. From the notes above you might then think that the element in the example is not as its original place any more when the content of the “wrapper” element is constructed. Yes, this is true, but nevertheless the `replace` method still knows where to insert this “wrapper” element. The operation does work as you would expect from a naïve perspective.
+The content that you define inside parentheses `{...}` is constructed from the inside to the outside. From the notes above you might then think that the element in the example is not as its original place any more when the content of the “wrapper” element is constructed. Yes, this is true, but nevertheless the `replace` method still knows where to insert this “wrapper” element. The operation does work as you would expect from a naïve perspective.
 
 ### Defining content
 
