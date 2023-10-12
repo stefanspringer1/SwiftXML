@@ -918,6 +918,10 @@ Example: constructing an empty “paragraph” element with attributes `id="1"` 
 let myElement = XElement("paragraph", ["id": "1", "style": "note"])
 ```
 
+### About the insertion of content
+
+Note that when inserting content into an element or document that already exists somewhere else, the inserted content is _moved_ from its orginal place, and not copied. If you would like to insert a copy, insert the result of the `clone()` method of the content.
+
 ### Defining content
 
 When constructing an element, its contents are given in parentheses `{...}` (those parentheses are the `builder` argument of the initializer).
