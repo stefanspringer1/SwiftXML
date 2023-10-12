@@ -947,7 +947,7 @@ element.replace {
 }
 ```
 
-From the note above you might think that the element is not as its original place any more when the content of the “wrapper” element is constructed. Yes, this is true, but nevertheless the `replace` method still knows where to insert this “wrapper” element. The operation does work as you would expect from a naïve perspective.
+From the notes above you might think that the element is not as its original place any more when the content of the “wrapper” element is constructed. Yes, this is true, but nevertheless the `replace` method still knows where to insert this “wrapper” element. The operation does work as you would expect from a naïve perspective.
 
 ### Defining content
 
