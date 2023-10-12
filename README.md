@@ -935,7 +935,7 @@ element.addFirst {
 }
 ```
 
-As the content is first constructed and then inserted, there no inifinite loop here.
+As the content is first constructed and then inserted, there is no inifinite loop here.
 
 Wrap an element with another element:
 
