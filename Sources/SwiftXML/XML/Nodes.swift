@@ -13,7 +13,7 @@ import SwiftXMLInterfaces
 import SwiftXMLParser
 
 public enum WriteTarget {
-    case url(_: URL); case path(_: String); case writer(_: Writer); case fileHandle(_: FileHandle)
+    case url(_: URL); case path(_: String); case file(_: FileHandle); case writer(_: Writer)
 }
 
 /// Use this function to announce that certain content (denoted by an array array of `XContent`)
@@ -402,12 +402,12 @@ public class XNode {
     public func write(to writeTarget: WriteTarget, usingProductionTemplate productionTemplate: XProductionTemplate = DefaultProductionTemplate()) throws {
         switch writeTarget {case .url(let url):
             try write(toURL: url, usingProductionTemplate: productionTemplate)
-        case .writer(let writer):
-            try write(toWriter: writer, usingProductionTemplate: productionTemplate)
-        case .fileHandle(let fileHandle):
-            try write(toFile: fileHandle, usingProductionTemplate: productionTemplate)
         case .path(let path):
             try write(toPath: path, usingProductionTemplate: productionTemplate)
+        case .file(let fileHandle):
+            try write(toFile: fileHandle, usingProductionTemplate: productionTemplate)
+        case .writer(let writer):
+            try write(toWriter: writer, usingProductionTemplate: productionTemplate)
         }
     }
     
