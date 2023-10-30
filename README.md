@@ -59,6 +59,8 @@ let transformation = XTransformation {
 
 **UPDATE 11 (October 2023):** Dropping the “X” prefix for implementations of `XProductionTemplate` and `XActiveProduction`.
 
+**UPDATE 12 (October 2023):** `XNode.write(toFile:)` is renamed to `XNode.write(toPath:)`, and `XNode.write(toFile:)` is renamed to `XNode.write(toPath:)`.
+
 ---
 
 ## Related packages
@@ -326,15 +328,21 @@ func write(toURL: URL, usingProductionTemplate: XProductionTemplate) throws
 ```
 
 ```Swift
-func write(toFile: String, usingProductionTemplate: XProductionTemplate) throws
+func write(toPath: String, usingProductionTemplate: XProductionTemplate) throws
 ```
 
 ```Swift
-func write(toFileHandle: FileHandle, usingProductionTemplate: XProductionTemplate) throws
+func write(toFile: FileHandle, usingProductionTemplate: XProductionTemplate) throws
 ```
 
 ```Swift
 func write(toWriter: Writer, usingProductionTemplate: XProductionTemplate) throws
+```
+
+You can also use the `WriteTarget` protocol to allow all the above possiblities:
+
+```Swift
+func write(to writeTarget: WriteTarget, usingProductionTemplate: XProductionTemplate) throws
 ```
 
 By the argument `usingProductionTemplate:` you can define a production, i.e. details of the serialization, e.g. if linebreaks are inserted to make the result look pretty. Its value defaults a an instance of `XActiveProductionTemplate`, which will give a a standard output.

@@ -376,17 +376,17 @@ public class XNode {
         try self.applyProduction(activeProduction: activeProduction)
     }
     
-    public func write(toFileHandle fileHandle: FileHandle, usingProductionTemplate productionTemplate: XProductionTemplate = DefaultProductionTemplate()) throws {
+    public func write(toFile fileHandle: FileHandle, usingProductionTemplate productionTemplate: XProductionTemplate = DefaultProductionTemplate()) throws {
         try write(toWriter: FileWriter(fileHandle), usingProductionTemplate: productionTemplate)
     }
     
-    public func write(toFile path: String, usingProductionTemplate productionTemplate: XProductionTemplate = DefaultProductionTemplate()) throws {
+    public func write(toPath path: String, usingProductionTemplate productionTemplate: XProductionTemplate = DefaultProductionTemplate()) throws {
         let fileManager = FileManager.default
     
         fileManager.createFile(atPath: path,  contents:Data("".utf8), attributes: nil)
         
         if let fileHandle = FileHandle(forWritingAtPath: path) {
-            try write(toFileHandle: fileHandle, usingProductionTemplate: productionTemplate)
+            try write(toFile: fileHandle, usingProductionTemplate: productionTemplate)
             fileHandle.closeFile()
         }
         else {
@@ -396,7 +396,7 @@ public class XNode {
     }
     
     public func write(toURL url: URL, usingProductionTemplate productionTemplate: XProductionTemplate = DefaultProductionTemplate()) throws {
-        try write(toFile: url.path, usingProductionTemplate: productionTemplate)
+        try write(toPath: url.path, usingProductionTemplate: productionTemplate)
     }
     
     public func write(to writeTarget: WriteTarget, usingProductionTemplate productionTemplate: XProductionTemplate = DefaultProductionTemplate()) throws {
@@ -405,15 +405,15 @@ public class XNode {
         case .writer(let writer):
             try write(toWriter: writer, usingProductionTemplate: productionTemplate)
         case .fileHandle(let fileHandle):
-            try write(toFileHandle: fileHandle, usingProductionTemplate: productionTemplate)
+            try write(toFile: fileHandle, usingProductionTemplate: productionTemplate)
         case .path(let path):
-            try write(toFile: path, usingProductionTemplate: productionTemplate)
+            try write(toPath: path, usingProductionTemplate: productionTemplate)
         }
     }
     
     public func echo(usingProductionTemplate productionTemplate: XProductionTemplate, terminator: String = "\n") {
         do {
-            try write(toFileHandle: FileHandle.standardOutput, usingProductionTemplate: productionTemplate); print(terminator, terminator: "")
+            try write(toFile: FileHandle.standardOutput, usingProductionTemplate: productionTemplate); print(terminator, terminator: "")
         }
         catch {
             // writing to standard output does not really throw
