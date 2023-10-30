@@ -59,7 +59,7 @@ let transformation = XTransformation {
 
 **UPDATE 11 (October 2023):** Dropping the “X” prefix for implementations of `XProductionTemplate` and `XActiveProduction`.
 
-**UPDATE 12 (October 2023):** `XNode.write(toFile:)` is renamed to `XNode.write(toPath:)`, and `XNode.write(toFile:)` is renamed to `XNode.write(toPath:)`.
+**UPDATE 12 (October 2023):** `XNode.write(toFile:)` is renamed to `XNode.write(toPath:)`, and `XNode.write(toFileHandle:)` is renamed to `XNode.write(toFile:)`.
 
 ---
 
