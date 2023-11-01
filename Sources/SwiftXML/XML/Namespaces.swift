@@ -11,6 +11,7 @@
 import Foundation
 
 public enum NamespaceReference {
+    
     case uri(uri: String)
     case fullPrefix(fullPrefix: String)
     
