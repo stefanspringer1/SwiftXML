@@ -12,18 +12,18 @@ import Foundation
 
 public enum NamespaceReference {
     
-    case uri(uri: String)
-    case fullPrefix(fullPrefix: String)
+    case uri(_ uri: String)
+    case fullPrefix(_ fullPrefix: String)
     
     public init(withURI uri: String) {
-        self = .uri(uri: uri)
+        self = .uri(uri)
     }
     
     public init(withPossiblyFullPrefix possiblyFullPrefix: String? = nil) {
         if let possiblyFullPrefix, !possiblyFullPrefix.isEmpty {
-            self = .fullPrefix(fullPrefix: possiblyFullPrefix.hasSuffix(":") ? possiblyFullPrefix : "\(possiblyFullPrefix):")
+            self = .fullPrefix(possiblyFullPrefix.hasSuffix(":") ? possiblyFullPrefix : "\(possiblyFullPrefix):")
         } else {
-            self = .fullPrefix(fullPrefix: "")
+            self = .fullPrefix("")
         }
     }
     

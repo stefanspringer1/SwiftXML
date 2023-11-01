@@ -333,7 +333,7 @@ public class PrettyPrintProductionTemplate: XProductionTemplate {
 }
 
 open class ActivePrettyPrintProduction: ActiveDefaultProduction {
-
+    
     private var indentation: String
     
     public init(writer: Writer, writeEmptyTags: Bool = true, indentation: String = "  ", linebreak: String = "\n") {
@@ -395,7 +395,7 @@ public class HTMLProductionTemplate: XProductionTemplate {
     public init(
         indentation: String = "  ",
         linebreak: String = "\n",
-        withHTMLNamespaceReference htmlNamespaceReference: NamespaceReference = .fullPrefix(fullPrefix: "")
+        withHTMLNamespaceReference htmlNamespaceReference: NamespaceReference = .fullPrefix("")
     ) {
         self.indentation = indentation
         self.linebreak = linebreak
