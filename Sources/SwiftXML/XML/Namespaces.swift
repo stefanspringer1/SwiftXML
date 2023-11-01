@@ -18,13 +18,9 @@ public enum NamespaceReference {
         self = .uri(uri: uri)
     }
     
-    public init(withFullPrefix fullPrefix: String) {
-        self = .fullPrefix(fullPrefix: fullPrefix)
-    }
-    
-    public init(withPrefix prefix: String?) {
-        if let prefix, !prefix.isEmpty {
-            self = .fullPrefix(fullPrefix: "\(prefix):")
+    public init(withPossiblyFullPrefix possiblyFullPrefix: String? = nil) {
+        if let possiblyFullPrefix, !possiblyFullPrefix.isEmpty {
+            self = .fullPrefix(fullPrefix: possiblyFullPrefix.hasSuffix(":") ? possiblyFullPrefix : "\(possiblyFullPrefix):")
         } else {
             self = .fullPrefix(fullPrefix: "")
         }
