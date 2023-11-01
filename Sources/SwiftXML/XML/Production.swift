@@ -53,7 +53,7 @@ public class CollectingWriter: Writer, CustomStringConvertible {
 }
 
 public protocol XProductionTemplate {
-    func activeProduction(for writer: Writer) -> XActiveProduction
+    func activeProduction(for writer: Writer, atNode node: XNode) -> XActiveProduction
 }
 
 public protocol XActiveProduction {
@@ -127,7 +127,7 @@ public class DefaultProductionTemplate: XProductionTemplate {
         self.linebreak = linebreak
     }
     
-    public func activeProduction(for writer: Writer) -> XActiveProduction {
+    public func activeProduction(for writer: Writer, atNode node: XNode) -> XActiveProduction {
         ActiveDefaultProduction(writer: writer, writeEmptyTags: writeEmptyTags, linebreak: linebreak)
     }
     
@@ -326,7 +326,7 @@ public class PrettyPrintProductionTemplate: XProductionTemplate {
         self.linebreak = linebreak
     }
     
-    public func activeProduction(for writer: Writer) -> XActiveProduction {
+    public func activeProduction(for writer: Writer, atNode node: XNode) -> XActiveProduction {
         ActivePrettyPrintProduction(writer: writer, writeEmptyTags: writeEmptyTags, linebreak: linebreak)
     }
     
@@ -390,21 +390,93 @@ public class HTMLProductionTemplate: XProductionTemplate {
     
     public let indentation: String
     public let linebreak: String
+    public let htmlNamespaceReference: NamespaceReference
     
-    public init(indentation: String = "  ", linebreak: String = "\n") {
+    public init(
+        indentation: String = "  ",
+        linebreak: String = "\n",
+        withHTMLNamespaceReference htmlNamespaceReference: NamespaceReference = .fullPrefix(fullPrefix: "")
+    ) {
         self.indentation = indentation
         self.linebreak = linebreak
+        self.htmlNamespaceReference = htmlNamespaceReference
     }
     
-    public func activeProduction(for writer: Writer) -> XActiveProduction {
-        ActiveHTMLProduction(writer: writer, linebreak: linebreak)
+    public func activeProduction(for writer: Writer, atNode node: XNode) -> XActiveProduction {
+        ActiveHTMLProduction(
+            writer: writer,
+            linebreak: linebreak,
+            atNode: node,
+            withHTMLNamespaceReference: htmlNamespaceReference
+        )
     }
     
 }
 
 open class ActiveHTMLProduction: ActivePrettyPrintProduction {
 
-    public init(writer: Writer, indentation: String = "  ", linebreak: String = "\n") {
+    public var htmlEmptyTags: [String]
+    public var htmlStrictInlines: [String]
+    
+    public init(
+        writer: Writer,
+        indentation: String = "  ",
+        linebreak: String = "\n",
+        atNode node: XNode,
+        withHTMLNamespaceReference htmlNamespaceReference: NamespaceReference
+    ) {
+        let fullHTMLPrefix =
+        switch htmlNamespaceReference {
+        case .uri(uri: let uri):
+            if let top = node.top {
+                top.fullPrefix(forNamespace: uri)
+            } else {
+                ""
+            }
+        case .fullPrefix(fullPrefix: let fullPrefix):
+            fullPrefix
+        }
+        htmlEmptyTags = [
+            "\(fullHTMLPrefix)area",
+            "\(fullHTMLPrefix)base",
+            "\(fullHTMLPrefix)br",
+            "\(fullHTMLPrefix)col",
+            "\(fullHTMLPrefix)embed",
+            "\(fullHTMLPrefix)hr",
+            "\(fullHTMLPrefix)img",
+            "\(fullHTMLPrefix)input",
+            "\(fullHTMLPrefix)link",
+            "\(fullHTMLPrefix)meta",
+            "\(fullHTMLPrefix)param",
+            "\(fullHTMLPrefix)source",
+            "\(fullHTMLPrefix)track",
+            "\(fullHTMLPrefix)wbr"
+        ]
+        htmlStrictInlines = [
+            "\(fullHTMLPrefix)a",
+            "\(fullHTMLPrefix)abbr",
+            "\(fullHTMLPrefix)acronym",
+            "\(fullHTMLPrefix)b",
+            "\(fullHTMLPrefix)bdo",
+            "\(fullHTMLPrefix)big",
+            "\(fullHTMLPrefix)br",
+            "\(fullHTMLPrefix)cite",
+            "\(fullHTMLPrefix)code",
+            "\(fullHTMLPrefix)dfn",
+            "\(fullHTMLPrefix)em",
+            "\(fullHTMLPrefix)i",
+            "\(fullHTMLPrefix)kbd",
+            "\(fullHTMLPrefix)output",
+            "\(fullHTMLPrefix)q",
+            "\(fullHTMLPrefix)samp",
+            "\(fullHTMLPrefix)small",
+            "\(fullHTMLPrefix)span",
+            "\(fullHTMLPrefix)strong",
+            "\(fullHTMLPrefix)sub",
+            "\(fullHTMLPrefix)sup",
+            "\(fullHTMLPrefix)time",
+            "\(fullHTMLPrefix)var"
+        ]
         super.init(writer: writer, writeEmptyTags: false, indentation: indentation, linebreak: linebreak)
     }
     
@@ -419,21 +491,10 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
     override open func writeDocumentTypeDeclarationAfterInternalSubset(hasInternalSubset: Bool) throws {
         try write(">\(linebreak)")
     }
-
-    public var htmlEmptyTags = [
-        "area", "base", "br", "col", "embed", "hr", "img", "input",
-        "link", "meta", "param", "source", "track", "wbr"
-    ]
     
     open override func writeAsEmptyTagIfEmpty(element: XElement) -> Bool {
         return htmlEmptyTags.contains(element.name)
     }
-    
-    public var htmlStrictInlines = [
-        "a", "abbr", "acronym", "b", "bdo", "big", "br", "cite", "code", "dfn", "em", "i",
-        "kbd", "output", "q", "samp", "small", "span", "strong", "sub",
-        "sup", "time", "var"
-    ]
     
     private func isInline(_ node: XNode) -> Bool {
         return node is XText || {

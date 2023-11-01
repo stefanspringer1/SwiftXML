@@ -74,26 +74,6 @@ public final class XDocument: XNode, XBranchInternal {
     public var encoding: String? = nil
     public var standalone: String? = nil
     
-    /// Read the the full prefix for a namespace URL string from the root element.
-    /// "Full" means that a closing ":" is added automatically.
-    /// If no prefix is defined, an empty string is returned.
-    public func fullPrefix(forNamespace namespace: String) -> String {
-        self.children.first?.fullPrefix(forNamespace: namespace) ?? ""
-    }
-    
-    /// Read a map from the namespace URL strings to the full prefixes from the root element.
-    /// "Full" means that a closing ":" is added automatically.
-    public var fullPrefixesForNamespaces: [String:String] {
-        self.children.first?.fullPrefixesForNamespaces ?? [String:String]()
-    }
-    
-    /// Add the according namespace declaration at the root element.
-    /// The prefix might be a "full" prefix, i.e. it could contain a closing ":".
-    /// An existing namespace declaration for the same namespace but with another prefix is not (!) removed.
-    public func setNamespace(_ namespace: String, withPossiblyFullPrefix possiblyFullPrefix: String) {
-        self.children.first?.setNamespace(namespace, withPossiblyFullPrefix: possiblyFullPrefix)
-    }
-    
     var type: String? = nil
     public var publicID: String? = nil
     public var systemID: String? = nil

@@ -64,6 +64,14 @@ public class XNode {
         return nil
     }
     
+    var top: XElement? {
+        guard var element = self as? XElement ?? parent else { return nil }
+        while let nextParent = element.parent {
+            element = nextParent
+        }
+        return element
+    }
+    
     /// Return the first ancestor with a certain name if it exists.
     public func ancestor(_ names: String...) -> XElement? {
         ancestor(names)
@@ -372,7 +380,7 @@ public class XNode {
     }
     
     public func write(toWriter writer: Writer, usingProductionTemplate productionTemplate: XProductionTemplate = DefaultProductionTemplate()) throws {
-        let activeProduction = productionTemplate.activeProduction(for: writer)
+        let activeProduction = productionTemplate.activeProduction(for: writer, atNode: self)
         try self.applyProduction(activeProduction: activeProduction)
     }
     
@@ -1338,43 +1346,6 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     }
     
     weak var _document: XDocument? = nil
-    
-    /// Read the the full prefix for a namespace URL string from the element.
-    /// "Full" means that a closing ":" is added automatically.
-    /// If no prefix is defined, an empty string is returned.
-    public func fullPrefix(forNamespace namespace: String) -> String {
-        var foundPrefix: String? = nil
-        let namespaceDeclarationPrefix = "xmlns:"
-        for attributeName in attributeNames {
-            if attributeName.hasPrefix(namespaceDeclarationPrefix), let value = self[attributeName], value == namespace {
-                foundPrefix = String(attributeName.dropFirst(namespaceDeclarationPrefix.count)) + ":"
-                break
-            }
-        }
-        return foundPrefix ?? ""
-    }
-    
-    /// Read a map from the namespace URL strings to the full prefixes from the element.
-    /// "Full" means that a closing ":" is added automatically.
-    public var fullPrefixesForNamespaces: [String:String] {
-        var result = [String:String]()
-        let namespaceDeclarationPrefix = "xmlns:"
-        for attributeName in attributeNames {
-            if attributeName.hasPrefix(namespaceDeclarationPrefix), let value = self[attributeName] {
-                result[value] = String(attributeName.dropFirst(namespaceDeclarationPrefix.count)) + ":"
-            }
-        }
-        return result
-    }
-    
-    /// Add the according namespace declaration at the element.
-    /// The prefix might be a "full" prefix, i.e. it could contain a closing ":".
-    /// An existing namespace declaration for the same namespace but with another prefix is not (!) removed.
-    public func setNamespace(_ namespace: String, withPossiblyFullPrefix possiblyFullPrefix: String) {
-        if !possiblyFullPrefix.isEmpty {
-            self["xmlns:\(possiblyFullPrefix.hasSuffix(":") ? String(possiblyFullPrefix.dropLast()) : possiblyFullPrefix)"] = namespace
-        }
-    }
     
     private var elementIterators = WeakList<XBidirectionalElementIterator>()
     
