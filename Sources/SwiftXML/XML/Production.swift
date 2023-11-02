@@ -498,7 +498,9 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
     }
     
     override open func writeDocumentTypeDeclarationAfterInternalSubset(hasInternalSubset: Bool) throws {
-        try write(">\(linebreak)")
+        if !suppressDocumentTypeDeclaration {
+            try write(">\(linebreak)")
+        }
     }
     
     open override func writeAsEmptyTagIfEmpty(element: XElement) -> Bool {
