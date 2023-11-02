@@ -15,11 +15,11 @@ public enum NamespaceReference {
     case uri(_ uri: String)
     case fullPrefix(_ fullPrefix: String)
     
-    public init(withURI uri: String) {
+    public init(usingURI uri: String) {
         self = .uri(uri)
     }
     
-    public init(withPossiblyFullPrefix possiblyFullPrefix: String? = nil) {
+    public init(usingPossiblyFullPrefix possiblyFullPrefix: String? = nil) {
         if let possiblyFullPrefix, !possiblyFullPrefix.isEmpty {
             self = .fullPrefix(possiblyFullPrefix.hasSuffix(":") ? possiblyFullPrefix : "\(possiblyFullPrefix):")
         } else {
