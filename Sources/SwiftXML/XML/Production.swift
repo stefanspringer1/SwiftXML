@@ -391,15 +391,18 @@ public class HTMLProductionTemplate: XProductionTemplate {
     public let indentation: String
     public let linebreak: String
     public let htmlNamespaceReference: NamespaceReference
+    public let suppressDocumentTypeDeclaration: Bool
     
     public init(
         indentation: String = "  ",
         linebreak: String = "\n",
-        withHTMLNamespaceReference htmlNamespaceReference: NamespaceReference = .fullPrefix("")
+        withHTMLNamespaceReference htmlNamespaceReference: NamespaceReference = .fullPrefix(""),
+        suppressDocumentTypeDeclaration: Bool = false
     ) {
         self.indentation = indentation
         self.linebreak = linebreak
         self.htmlNamespaceReference = htmlNamespaceReference
+        self.suppressDocumentTypeDeclaration = suppressDocumentTypeDeclaration
     }
     
     public func activeProduction(for writer: Writer, atNode node: XNode) -> XActiveProduction {
@@ -407,7 +410,8 @@ public class HTMLProductionTemplate: XProductionTemplate {
             writer: writer,
             linebreak: linebreak,
             atNode: node,
-            withHTMLNamespaceReference: htmlNamespaceReference
+            withHTMLNamespaceReference: htmlNamespaceReference,
+            suppressDocumentTypeDeclaration: suppressDocumentTypeDeclaration
         )
     }
     
@@ -417,13 +421,15 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
 
     public var htmlEmptyTags: [String]
     public var htmlStrictInlines: [String]
+    public var suppressDocumentTypeDeclaration: Bool
     
     public init(
         writer: Writer,
         indentation: String = "  ",
         linebreak: String = "\n",
         atNode node: XNode,
-        withHTMLNamespaceReference htmlNamespaceReference: NamespaceReference
+        withHTMLNamespaceReference htmlNamespaceReference: NamespaceReference,
+        suppressDocumentTypeDeclaration: Bool
     ) {
         let fullHTMLPrefix =
         switch htmlNamespaceReference {
@@ -477,6 +483,7 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
             "\(fullHTMLPrefix)time",
             "\(fullHTMLPrefix)var"
         ]
+        self.suppressDocumentTypeDeclaration = suppressDocumentTypeDeclaration
         super.init(writer: writer, writeEmptyTags: false, indentation: indentation, linebreak: linebreak)
     }
     
@@ -485,7 +492,9 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
     }
     
     open override func writeDocumentTypeDeclarationBeforeInternalSubset(type: String, publicID: String?, systemID: String?, hasInternalSubset: Bool) throws {
-        try write("<!DOCTYPE html")
+        if !suppressDocumentTypeDeclaration {
+            try write("<!DOCTYPE html")
+        }
     }
     
     override open func writeDocumentTypeDeclarationAfterInternalSubset(hasInternalSubset: Bool) throws {
