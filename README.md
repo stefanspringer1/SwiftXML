@@ -1659,7 +1659,7 @@ Note that this method might not be fully applicable in some transformations.
 
 ## Transformations with attachments for context information
 
-To have information about the context in the original document of transformed elements, attachements might be used. See how in the following code `attached: ["source": element.name]` is used in the construction of the `div` elememnt, and how this information is then used in the rules for the `paragraph` element:
+To have information about the context in the original document of transformed elements, attachements might be used. See how in the following code `attached: ["source": element.name]` is used in the construction of the `div` elememnt, and how this information is then used in the rules for the `paragraph` element (note that the inverse order described in the last section is _not_ used here):
 
 ```Swift
 let document = try parseXML(fromText: """
