@@ -1490,6 +1490,8 @@ A `String` can be used where an `XText` is required, e.g. you can write `"Hello"
 
 ## Rules
 
+When only want to apply a few changes to a document, you better just go directly to the few according elements and apply the changes you want. But if you would like to transform a whole document into “something else”, you need a better tool to organise your manipulations of the document, you need a “transformation”.
+
 As mentioned in the general description, a set of rules `XRule` in the form of a transformation instance of type `XTransformation` can be used as follows.
 
 In a rule, the user defines what to do with elements or attributes certain names. The set of rules can then be applied to a document, i.e. the rules are applied in the order of their definition. This is repeated, guaranteeing that a rule is only applied once to the same object (if not removed from the document and added again), until no application takes place. So elements can be added during application of a rule and then later be processed by the same or another rule.
@@ -1560,7 +1562,7 @@ document.echo()
 <a><formula id="3"/><image id="2"/><formula id="1"/></a>
 ```
 
-Instead of using a transformation with a very large number of rules, you should use several transformations, each dedicated to a separate “topic”. E.g. for some document format you might first transform the inline elements and then the block elements. Splitting a transformation into several transformations practically does not hurt performance; the concept of `XTransformation` even fits perfectly if you would like to use a lot of small separate corrections for a document.
+Instead of using a transformation with a very large number of rules, you should use several transformations, each dedicated to a separate “topic”. E.g. for some document format you might first transform the inline elements and then the block elements. Splitting a transformation into several transformations practically does not hurt performance.
 
 Note that the order of the rules matters: If you need to look up e.g. the parent of the element in a rule, it is important to know if this parent has already been changed by another rule, i.e. if a preceding rule has transformed this element. The usage of several transformations as described in the preciding paragraph might help here.
 
@@ -1583,8 +1585,6 @@ transformationAlias = transformation
 
 transformation.execute(inDocument: myDocument)
 ```
-
-When only want to apply a few changes to a document, then you do not need a full transformation, you better just go directly to the few according elements and apply the changes you want.
 
 ## Transforming using a traversal
 
