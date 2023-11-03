@@ -369,7 +369,7 @@ final class FromReadmeTests: XCTestCase {
                             nil
                         }
                         element.replace(.skipping) {
-                            XElement("div", ["style": style]) {
+                            XElement("p", ["style": style]) {
                                 element.content
                             }
                         }
@@ -396,11 +396,11 @@ final class FromReadmeTests: XCTestCase {
               <section>
                 <div>
                   <p style="bold">HINT</p>
-                  <div>This is a hint.</div>
+                  <p>This is a hint.</p>
                 </div>
                 <div>
                   <p style="bold">WARNING</p>
-                  <div style="color:Red">This is a warning.</div>
+                  <p style="color:Red">This is a warning.</p>
                 </div>
               </section>
             </document>
