@@ -1655,7 +1655,7 @@ Result:
 </document>
 ```
 
-Note that this method might not be fully applicable in some transformations.
+This method might not be fully applicable in some transformations.
 
 ## Transformations with attachments for context information
 
