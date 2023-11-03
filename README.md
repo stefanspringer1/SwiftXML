@@ -1584,7 +1584,7 @@ transformationAlias = transformation
 transformation.execute(inDocument: myDocument)
 ```
 
-When only want to apply a few changes to a document you do not need a full transformation, you better just go directly to the few according elements and apply the changes you want.
+When only want to apply a few changes to a document, then you do not need a full transformation, you better just go directly to the few according elements and apply the changes you want.
 
 ## Transforming using a traversal
 
