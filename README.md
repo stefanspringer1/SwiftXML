@@ -1613,7 +1613,6 @@ for section in document.elements("section") {
         // -
     } up: { node in
         if let element = node as? XElement {
-            guard element !== section else { return }
             switch element.name {
             case "paragraph":
                 let style: String? =
