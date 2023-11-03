@@ -1659,7 +1659,7 @@ Result:
 
 As explained in the above section about rules, sometimes you need to know the original context of a transformed element. For this you can use document versions, as explained below.
 
-Note that this method comes with an penalty regarding efficiency because to need to crate a (temparary) clone, but for very difficult transformations that might come in handy. The method might be used when you need to examine the orginal context in a complex way.
+Note that this method comes with an penalty regarding efficiency because to need to create a (temparary) clone, but for very difficult transformations that might come in handy. The method might be used when you need to examine the orginal context in a complex way.
 
 You first create a document version (this creates a clone such that your current document contains backlinks to the clone), and in certian rules, you might then copy the backlink from the node to be replaced by using the `withBackLinkFrom:` argument in the creation of an element:
 
@@ -1719,7 +1719,7 @@ The result is the same as in the section “Transformations with attachments for
 
 ## Transformations with traversals
 
-There is also another possibility for formulating transformations, which is more similar to conventional transformation processes in other XML transformation languages and can also be applied to parts of a document or XML trees that are not part of a document.
+There is also another possibility for formulating transformations, which uses traversals and which and can also be applied to parts of a document or to XML trees that are not part of a document.
 
 This other possibility uses a traversal – as the XML tree can be changed during a traversal, you can traverse an XML tree and change the tree during the traversal by e.g. formulating manipulations according to the name of the current element inside a `switch` statement.
 
