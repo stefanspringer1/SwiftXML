@@ -362,8 +362,7 @@ final class FromReadmeTests: XCTestCase {
                 if let element = node as? XElement {
                     switch element.name {
                     case "paragraph":
-                        let style: String? =
-                        if element.parent?.name == "warning" {
+                        let style: String? = if element.parent?.name == "warning" {
                             "color:Red"
                         } else {
                             nil
