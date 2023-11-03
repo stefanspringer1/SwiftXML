@@ -1558,6 +1558,11 @@ document.echo()
 <a><formula id="3"/><image id="2"/><formula id="1"/></a>
 
 ```
+Instead of using a transformation with a very large number of rules, you should use several transformations, each dedicated to a separate “topic”. E.g. for some document format you might first transform the inline elements and then the block elements. Splitting a transformation into several transformation practically does not hurt performance; the concept of `XTransformation` even fits perfectly if you would like to use a lot of small separate corrections for a document.
+
+Note that the order of the rules matters: If you need to look up e.g. the parent of the element in a rule, it is important to know if this parent has already been changed by another rule, i.e. if a preceding rule has transformed this element. The usage of several transformations as described in the preciding paragraph might help here.
+
+Also note that using an `XTransformation` you can only transform a whole document. In the next section, another possibility is described for transforming an XML tree.
 
 A transformation can be stopped by calling `stop()` on the transformation, although that only works indirectly:
 
@@ -1576,6 +1581,89 @@ transformationAlias = transformation
 
 transformation.execute(inDocument: myDocument)
 ```
+
+## Transforming using a traversal
+
+There is also another possibility for formulating transformations, which is more similar to conventional transformation processes in other XML transformation languages and can also be applied to parts of a document or XML trees that are not part of a document.
+
+This other possibility uses a traversal – as the XML tree can be changed during a traversal, you can traverse an XML tree and change the tree during the traversal by e.g. formulating manipulations according to the name of the current element inside a `switch` statement.
+
+If you then formulate manipulations during the down direction of the traversal, you know that parents or other ancestors of the current node have already been transformed. Conversely, if you formulate manipulations only inside the `up:` traversal part and never manipulate any ancestors of the current element, you know that the parent and other ancestors are still the original ones:
+
+```Swift
+let document = XDocument {
+    XElement("document") {
+        XElement("section") {
+            XElement("hint") {
+                XElement("paragraph") {
+                    "This is a hint."
+                }
+            }
+            XElement("warning") {
+                XElement("paragraph") {
+                    "This is a warning."
+                }
+            }
+        }
+    }
+}
+
+for section in document.elements("section") {
+    section.traverse { node in
+        // -
+    } up: { node in
+        if let element = node as? XElement {
+            guard element !== section else { return }
+            switch element.name {
+            case "paragraph":
+                let style: String? =
+                if element.parent?.name == "warning" {
+                    "color:Red"
+                } else {
+                    nil
+                }
+                element.replace(.skipping) {
+                    XElement("div", ["style": style]) {
+                        element.content
+                    }
+                }
+            case "hint", "warning":
+                element.replace(.skipping) {
+                    XElement("div") {
+                        XElement("p", ["style": "bold"]) {
+                            element.name.uppercased()
+                        }
+                        element.content
+                    }
+                }
+            default:
+                break
+            }
+        }
+    }
+}
+
+document.echo(pretty: true)
+```
+
+Result:
+
+```XML
+<document>
+  <section>
+    <div>
+      <p style="bold">HINT</p>
+      <div>This is a hint.</div>
+    </div>
+    <div>
+      <p style="bold">WARNING</p>
+      <div style="color:Red">This is a warning.</div>
+    </div>
+  </section>
+</document>
+```
+
+Note that when using traversals for transforming an XML tree, using several transformations instead of one does have a negative impact on efficiency.
 
 ## Handling of namespaces
 

@@ -335,4 +335,77 @@ final class FromReadmeTests: XCTestCase {
         
         XCTAssertEqual(inserted.description, #"[<b found="yes" inserted="yes">, <c found="yes" inserted="yes">]"#)
     }
+    
+    func testTransformWithTraversal() throws {
+        
+        let document = XDocument {
+            XElement("document") {
+                XElement("section") {
+                    XElement("hint") {
+                        XElement("paragraph") {
+                            "This is a hint."
+                        }
+                    }
+                    XElement("warning") {
+                        XElement("paragraph") {
+                            "This is a warning."
+                        }
+                    }
+                }
+            }
+        }
+        
+        for section in document.elements("section") {
+            section.traverse { node in
+                // -
+            } up: { node in
+                if let element = node as? XElement {
+                    guard element !== section else { return }
+                    switch element.name {
+                    case "paragraph":
+                        let style: String? =
+                        if element.parent?.name == "warning" {
+                            "color:Red"
+                        } else {
+                            nil
+                        }
+                        element.replace(.skipping) {
+                            XElement("div", ["style": style]) {
+                                element.content
+                            }
+                        }
+                    case "hint", "warning":
+                        element.replace(.skipping) {
+                            XElement("div") {
+                                XElement("p", ["style": "bold"]) {
+                                    element.name.uppercased()
+                                }
+                                element.content
+                            }
+                        }
+                    default:
+                        break
+                    }
+                }
+            }
+        }
+        
+        XCTAssertEqual(
+            document.serialized(pretty: true),
+            """
+            <document>
+              <section>
+                <div>
+                  <p style="bold">HINT</p>
+                  <div>This is a hint.</div>
+                </div>
+                <div>
+                  <p style="bold">WARNING</p>
+                  <div style="color:Red">This is a warning.</div>
+                </div>
+              </section>
+            </document>
+            """
+        )
+    }
 }
