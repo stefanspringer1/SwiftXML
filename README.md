@@ -1564,7 +1564,7 @@ document.echo()
 
 Instead of using a transformation with a very large number of rules, you should use several transformations, each dedicated to a separate “topic”. E.g. for some document format you might first transform the inline elements and then the block elements. Splitting a transformation into several transformations practically does not hurt performance.
 
-Note that the order of the rules matters: If you need to look up e.g. the parent of the element in a rule, it is important to know if this parent has already been changed by another rule, i.e. if a preceding rule has transformed this element. The usage of several transformations as described in the preciding paragraph might help here. Methods to work with better contextual information are described in the sections “Transformations with attachments for context information”, “Transformations with document versions”, and “Transformations with traversals” below.
+Note that the order of the rules matters: If you need to look up e.g. the parent of the element in a rule, it is important to know if this parent has already been changed by another rule, i.e. if a preceding rule has transformed this element. An example is given in the following section “Transformations with inverse order”. The usage of several transformations as described in the preciding paragraph might help here. Methods to work with better contextual information are described in the sections “Transformations with attachments for context information”, “Transformations with document versions”, and “Transformations with traversals” below.
 
 Also note that using an `XTransformation` you can only transform a whole document. In the section “Transformations with traversals” below, another option is described for transforming any XML tree.
 
@@ -1585,6 +1585,77 @@ transformationAlias = transformation
 
 transformation.execute(inDocument: myDocument)
 ```
+
+## Transformations with inverse order
+
+As noted in the last section, the order of rules a crucial in some transformation, e.g. if the original context is important.
+
+The “inverse order” of rules goes from the inner elements to the outer element so that teh context is still unchanged when the rule applies:
+
+```Swift
+let document = try parseXML(fromText: """
+    <document>
+        <section>
+            <hint>
+                <paragraph>This is a hint.</paragraph>
+            </hint>
+            <warning>
+                <paragraph>This is a warning.</paragraph>
+            </warning>
+        </section>
+    </document>
+    """, textAllowedInElementWithName: { $0 == "paragraph" })
+
+let transformation = XTransformation {
+    
+    XRule(forElements: "paragraph") { element in
+        let style: String? = if element.parent?.name == "warning" {
+            "color:Red"
+        } else {
+            nil
+        }
+        element.replace(.skipping) {
+            XElement("p", ["style": style]) {
+                element.content
+            }
+        }
+    }
+    
+    XRule(forElements: "hint", "warning") { element in
+        element.replace(.skipping) {
+            XElement("div") {
+                XElement("p", ["style": "bold"]) {
+                    element.name.uppercased()
+                }
+                element.content
+            }
+        }
+    }
+}
+
+transformation.execute(inDocument: document)
+
+document.echo(pretty: true)
+```
+
+Result:
+
+```XML
+<document>
+  <section>
+    <div>
+      <p style="bold">HINT</p>
+      <p>This is a hint.</p>
+    </div>
+    <div>
+      <p style="bold">WARNING</p>
+      <p style="color:Red">This is a warning.</p>
+    </div>
+  </section>
+</document>
+```
+
+Note that this method might not be fully applicable in some transformations.
 
 ## Transformations with attachments for context information
 
@@ -1632,24 +1703,11 @@ let transformation = XTransformation {
 }
 
 transformation.execute(inDocument: document)
+
+document.echo(pretty: true)
 ```
 
-Result:
-
-```XML
-<document>
-  <section>
-    <div>
-      <p style="bold">HINT</p>
-      <p>This is a hint.</p>
-    </div>
-    <div>
-      <p style="bold">WARNING</p>
-      <p style="color:Red">This is a warning.</p>
-    </div>
-  </section>
-</document>
-```
+The result is the same as in the section “Transformations with inverse order” above.
 
 ## Transformations with document versions
 
@@ -1707,7 +1765,7 @@ document.forgetVersions()
 document.echo(pretty: true)
 ```
 
-The result is the same as in the section “Transformations with attachments for context information” above.
+The result is the same as in the section “Transformations with inverse order” above.
 
 ## Transformations with traversals
 
@@ -1770,7 +1828,7 @@ document.echo(pretty: true)
 
 As the root of the traversal is not to be removed during the traversal, there is an according `guard` statement. 
 
-The result is the same as in the section “Transformations with attachments for context information” above.
+The result is the same as in the section “Transformations with inverse order” above.
 
 Note that when using traversals for transforming an XML tree, using several transformations instead of one does have a negative impact on efficiency.
 

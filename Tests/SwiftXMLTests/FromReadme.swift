@@ -336,6 +336,70 @@ final class FromReadmeTests: XCTestCase {
         XCTAssertEqual(inserted.description, #"[<b found="yes" inserted="yes">, <c found="yes" inserted="yes">]"#)
     }
     
+    
+    func testTransformationWithInverseOrder() throws {
+        
+        let document = try parseXML(fromText: """
+            <document>
+                <section>
+                    <hint>
+                        <paragraph>This is a hint.</paragraph>
+                    </hint>
+                    <warning>
+                        <paragraph>This is a warning.</paragraph>
+                    </warning>
+                </section>
+            </document>
+            """, textAllowedInElementWithName: { $0 == "paragraph" })
+        
+        let transformation = XTransformation {
+            
+            XRule(forElements: "paragraph") { element in
+                let style: String? = if element.parent?.name == "warning" {
+                    "color:Red"
+                } else {
+                    nil
+                }
+                element.replace(.skipping) {
+                    XElement("p", ["style": style]) {
+                        element.content
+                    }
+                }
+            }
+            
+            XRule(forElements: "hint", "warning") { element in
+                element.replace(.skipping) {
+                    XElement("div") {
+                        XElement("p", ["style": "bold"]) {
+                            element.name.uppercased()
+                        }
+                        element.content
+                    }
+                }
+            }
+        }
+        
+        transformation.execute(inDocument: document)
+        
+        XCTAssertEqual(
+            document.serialized(pretty: true),
+            """
+            <document>
+              <section>
+                <div>
+                  <p style="bold">HINT</p>
+                  <p>This is a hint.</p>
+                </div>
+                <div>
+                  <p style="bold">WARNING</p>
+                  <p style="color:Red">This is a warning.</p>
+                </div>
+              </section>
+            </document>
+            """
+        )
+    }
+    
     func testTransformationWithAnnotations() throws {
         
         let document = try parseXML(fromText: """
