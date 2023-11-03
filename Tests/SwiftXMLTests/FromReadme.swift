@@ -338,22 +338,18 @@ final class FromReadmeTests: XCTestCase {
     
     func testTransformationWithAnnotations() throws {
         
-        let document = XDocument {
-            XElement("document") {
-                XElement("section") {
-                    XElement("hint") {
-                        XElement("paragraph") {
-                            "This is a hint."
-                        }
-                    }
-                    XElement("warning") {
-                        XElement("paragraph") {
-                            "This is a warning."
-                        }
-                    }
-                }
-            }
-        }
+        let document = try parseXML(fromText: """
+            <document>
+                <section>
+                    <hint>
+                        <paragraph>This is a hint.</paragraph>
+                    </hint>
+                    <warning>
+                        <paragraph>This is a warning.</paragraph>
+                    </warning>
+                </section>
+            </document>
+            """, textAllowedInElementWithName: { $0 == "paragraph" })
         
         let transformation = XTransformation {
             
@@ -405,22 +401,18 @@ final class FromReadmeTests: XCTestCase {
     
     func testTransformationWithBackLinks() throws {
         
-        let document = XDocument {
-            XElement("document") {
-                XElement("section") {
-                    XElement("hint") {
-                        XElement("paragraph") {
-                            "This is a hint."
-                        }
-                    }
-                    XElement("warning") {
-                        XElement("paragraph") {
-                            "This is a warning."
-                        }
-                    }
-                }
-            }
-        }
+        let document = try parseXML(fromText: """
+            <document>
+                <section>
+                    <hint>
+                        <paragraph>This is a hint.</paragraph>
+                    </hint>
+                    <warning>
+                        <paragraph>This is a warning.</paragraph>
+                    </warning>
+                </section>
+            </document>
+            """, textAllowedInElementWithName: { $0 == "paragraph" })
         
         let transformation = XTransformation {
             
@@ -474,22 +466,18 @@ final class FromReadmeTests: XCTestCase {
     
     func testTransformWithTraversal() throws {
         
-        let document = XDocument {
-            XElement("document") {
-                XElement("section") {
-                    XElement("hint") {
-                        XElement("paragraph") {
-                            "This is a hint."
-                        }
-                    }
-                    XElement("warning") {
-                        XElement("paragraph") {
-                            "This is a warning."
-                        }
-                    }
-                }
-            }
-        }
+        let document = try parseXML(fromText: """
+            <document>
+                <section>
+                    <hint>
+                        <paragraph>This is a hint.</paragraph>
+                    </hint>
+                    <warning>
+                        <paragraph>This is a warning.</paragraph>
+                    </warning>
+                </section>
+            </document>
+            """, textAllowedInElementWithName: { $0 == "paragraph" })
         
         for section in document.elements("section") {
             section.traverse { node in

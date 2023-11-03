@@ -1591,22 +1591,18 @@ transformation.execute(inDocument: myDocument)
 To have information about the context in the original document of transformed elements, attachements might be used:
 
 ```Swift
-let document = XDocument {
-    XElement("document") {
-        XElement("section") {
-            XElement("hint") {
-                XElement("paragraph") {
-                    "This is a hint."
-                }
-            }
-            XElement("warning") {
-                XElement("paragraph") {
-                    "This is a warning."
-                }
-            }
-        }
-    }
-}
+let document = try parseXML(fromText: """
+    <document>
+        <section>
+            <hint>
+                <paragraph>This is a hint.</paragraph>
+            </hint>
+            <warning>
+                <paragraph>This is a warning.</paragraph>
+            </warning>
+        </section>
+    </document>
+    """, textAllowedInElementWithName: { $0 == "paragraph" })
 
 let transformation = XTransformation {
     
@@ -1664,22 +1660,18 @@ Note that this method comes with an penalty regarding efficiency because to need
 You first create a document version (this creates a clone such that your current document contains backlinks to the clone), and in certian rules, you might then copy the backlink from the node to be replaced by using the `withBackLinkFrom:` argument in the creation of an element:
 
 ```Swift
-let document = XDocument {
-    XElement("document") {
-        XElement("section") {
-            XElement("hint") {
-                XElement("paragraph") {
-                    "This is a hint."
-                }
-            }
-            XElement("warning") {
-                XElement("paragraph") {
-                    "This is a warning."
-                }
-            }
-        }
-    }
-}
+let document = try parseXML(fromText: """
+    <document>
+        <section>
+            <hint>
+                <paragraph>This is a hint.</paragraph>
+            </hint>
+            <warning>
+                <paragraph>This is a warning.</paragraph>
+            </warning>
+        </section>
+    </document>
+    """, textAllowedInElementWithName: { $0 == "paragraph" })
 
 let transformation = XTransformation {
     
@@ -1726,22 +1718,18 @@ As the XML tree can be changed during a traversal, you can traverse an XML tree 
 If you then formulate manipulations during the down direction of the traversal, you know that parents or other ancestors of the current node have already been transformed. Conversely, if you formulate manipulations only inside the `up:` traversal part and never manipulate any ancestors of the current element, you know that the parent and other ancestors are still the original ones:
 
 ```Swift
-let document = XDocument {
-    XElement("document") {
-        XElement("section") {
-            XElement("hint") {
-                XElement("paragraph") {
-                    "This is a hint."
-                }
-            }
-            XElement("warning") {
-                XElement("paragraph") {
-                    "This is a warning."
-                }
-            }
-        }
-    }
-}
+let document = try parseXML(fromText: """
+    <document>
+        <section>
+            <hint>
+                <paragraph>This is a hint.</paragraph>
+            </hint>
+            <warning>
+                <paragraph>This is a warning.</paragraph>
+            </warning>
+        </section>
+    </document>
+    """, textAllowedInElementWithName: { $0 == "paragraph" })
 
 for section in document.elements("section") {
     section.traverse { node in
