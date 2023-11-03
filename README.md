@@ -1719,7 +1719,7 @@ The result is the same as in the section “Transformations with attachments for
 
 ## Transformations with traversals
 
-There is also another possibility for formulating transformations, which uses traversals and which and can also be applied to parts of a document or to XML trees that are not part of a document.
+There is also another possibility for formulating transformations which uses traversals and which and can also be applied to parts of a document or to XML trees that are not part of a document.
 
 This other possibility uses a traversal – as the XML tree can be changed during a traversal, you can traverse an XML tree and change the tree during the traversal by e.g. formulating manipulations according to the name of the current element inside a `switch` statement.
 
