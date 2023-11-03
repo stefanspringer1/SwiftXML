@@ -543,6 +543,8 @@ up: { node in
 }
 ```
 
+Note that the root of the traversal is not to be removed during the traversal.
+
 ## Direct access to elements
 
 As mentioned and the general description, the library allows to efficiently find elements of a certain name in a document without having to traverse the whole tree. 
@@ -1613,6 +1615,7 @@ for section in document.elements("section") {
         // -
     } up: { node in
         if let element = node as? XElement {
+            guard node !== section else { return }
             switch element.name {
             case "paragraph":
                 let style: String? = if element.parent?.name == "warning" {
@@ -1643,6 +1646,8 @@ for section in document.elements("section") {
 
 document.echo(pretty: true)
 ```
+
+As the root of the traversal is not to be removed during the traversal, there is an according guard statement. 
 
 Result:
 

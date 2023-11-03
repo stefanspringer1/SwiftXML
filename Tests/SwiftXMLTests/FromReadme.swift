@@ -360,6 +360,7 @@ final class FromReadmeTests: XCTestCase {
                 // -
             } up: { node in
                 if let element = node as? XElement {
+                    guard node !== section else { return }
                     switch element.name {
                     case "paragraph":
                         let style: String? = if element.parent?.name == "warning" {
