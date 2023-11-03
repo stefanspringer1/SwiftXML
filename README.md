@@ -1721,7 +1721,7 @@ The result is the same as in the section “Transformations with attachments for
 
 There is also another possibility for formulating transformations which uses traversals and which and can also be applied to parts of a document or to XML trees that are not part of a document.
 
-This other possibility uses a traversal – as the XML tree can be changed during a traversal, you can traverse an XML tree and change the tree during the traversal by e.g. formulating manipulations according to the name of the current element inside a `switch` statement.
+As the XML tree can be changed during a traversal, you can traverse an XML tree and change the tree during the traversal by e.g. formulating manipulations according to the name of the current element inside a `switch` statement.
 
 If you then formulate manipulations during the down direction of the traversal, you know that parents or other ancestors of the current node have already been transformed. Conversely, if you formulate manipulations only inside the `up:` traversal part and never manipulate any ancestors of the current element, you know that the parent and other ancestors are still the original ones:
 
