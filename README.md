@@ -1647,7 +1647,7 @@ for section in document.elements("section") {
 document.echo(pretty: true)
 ```
 
-As the root of the traversal is not to be removed during the traversal, there is an according guard statement. 
+As the root of the traversal is not to be removed during the traversal, there is an according `guard` statement. 
 
 Result:
 
