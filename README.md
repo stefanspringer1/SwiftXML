@@ -1490,7 +1490,7 @@ A `String` can be used where an `XText` is required, e.g. you can write `"Hello"
 
 ## Rules
 
-When only want to apply a few changes to a document, you better just go directly to the few according elements and apply the changes you want. But if you would like to transform a whole document into “something else”, you need a better tool to organise your manipulations of the document, you need a “transformation”.
+When you only want to apply a few changes to a document, you better just go directly to the few according elements and apply the changes you want. But if you would like to transform a whole document into “something else”, you need a better tool to organise your manipulations of the document, you need a “transformation”.
 
 As mentioned in the general description, a set of rules `XRule` in the form of a transformation instance of type `XTransformation` can be used as follows.
 
