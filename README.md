@@ -1558,7 +1558,7 @@ document.echo()
 <a><formula id="3"/><image id="2"/><formula id="1"/></a>
 
 ```
-Instead of using a transformation with a very large number of rules, you should use several transformations, each dedicated to a separate “topic”. E.g. for some document format you might first transform the inline elements and then the block elements. Splitting a transformation into several transformation practically does not hurt performance; the concept of `XTransformation` even fits perfectly if you would like to use a lot of small separate corrections for a document.
+Instead of using a transformation with a very large number of rules, you should use several transformations, each dedicated to a separate “topic”. E.g. for some document format you might first transform the inline elements and then the block elements. Splitting a transformation into several transformations practically does not hurt performance; the concept of `XTransformation` even fits perfectly if you would like to use a lot of small separate corrections for a document.
 
 Note that the order of the rules matters: If you need to look up e.g. the parent of the element in a rule, it is important to know if this parent has already been changed by another rule, i.e. if a preceding rule has transformed this element. The usage of several transformations as described in the preciding paragraph might help here.
 
