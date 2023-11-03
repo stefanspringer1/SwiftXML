@@ -1564,9 +1564,9 @@ document.echo()
 
 Instead of using a transformation with a very large number of rules, you should use several transformations, each dedicated to a separate “topic”. E.g. for some document format you might first transform the inline elements and then the block elements. Splitting a transformation into several transformations practically does not hurt performance.
 
-Note that the order of the rules matters: If you need to look up e.g. the parent of the element in a rule, it is important to know if this parent has already been changed by another rule, i.e. if a preceding rule has transformed this element. The usage of several transformations as described in the preciding paragraph might help here. Methods to work with better contextual information are described in the sections “Transformations with attachments for context information”, “Transformations with document versions”, and “Transforming using a traversal” below.
+Note that the order of the rules matters: If you need to look up e.g. the parent of the element in a rule, it is important to know if this parent has already been changed by another rule, i.e. if a preceding rule has transformed this element. The usage of several transformations as described in the preciding paragraph might help here. Methods to work with better contextual information are described in the sections “Transformations with attachments for context information”, “Transformations with document versions”, and “Transformations with traversals” below.
 
-Also note that using an `XTransformation` you can only transform a whole document. In the section “Transforming using a traversal” below, another option is described for transforming any XML tree.
+Also note that using an `XTransformation` you can only transform a whole document. In the section “Transformations with traversals” below, another option is described for transforming any XML tree.
 
 A transformation can be stopped by calling `stop()` on the transformation, although that only works indirectly:
 
@@ -1717,7 +1717,7 @@ document.echo(pretty: true)
 
 The result is the same as in the section “Transformations with attachments for context information” above.
 
-## Transforming using a traversal
+## Transformations with traversals
 
 There is also another possibility for formulating transformations, which is more similar to conventional transformation processes in other XML transformation languages and can also be applied to parts of a document or XML trees that are not part of a document.
 
