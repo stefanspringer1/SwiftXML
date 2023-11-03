@@ -1588,7 +1588,7 @@ transformation.execute(inDocument: myDocument)
 
 ## Transformations with attachments for context information
 
-To have information about the context in the original document of transformed elements, attachements might be used:
+To have information about the context in the original document of transformed elements, attachements might be used. See how in the follwoing code `attached: ["source": element.name]` is used in the construction of the `div` elememnt, and how this information is then used in the rules for the `paragraph` element:
 
 ```Swift
 let document = try parseXML(fromText: """
