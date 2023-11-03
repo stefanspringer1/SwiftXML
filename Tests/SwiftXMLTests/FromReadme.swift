@@ -336,6 +336,142 @@ final class FromReadmeTests: XCTestCase {
         XCTAssertEqual(inserted.description, #"[<b found="yes" inserted="yes">, <c found="yes" inserted="yes">]"#)
     }
     
+    func testTransformationWithAnnotations() throws {
+        
+        let document = XDocument {
+            XElement("document") {
+                XElement("section") {
+                    XElement("hint") {
+                        XElement("paragraph") {
+                            "This is a hint."
+                        }
+                    }
+                    XElement("warning") {
+                        XElement("paragraph") {
+                            "This is a warning."
+                        }
+                    }
+                }
+            }
+        }
+        
+        let transformation = XTransformation {
+            
+            XRule(forElements: "hint", "warning") { element in
+                element.replace(.skipping) {
+                    XElement("div", attached: ["source": element.name]) {
+                        XElement("p", ["style": "bold"]) {
+                            element.name.uppercased()
+                        }
+                        element.content
+                    }
+                }
+            }
+            
+            XRule(forElements: "paragraph") { element in
+                let style: String? = if element.parent?.attached["source"] as? String == "warning" {
+                    "color:Red"
+                } else {
+                    nil
+                }
+                element.replace(.skipping) {
+                    XElement("p", ["style": style]) {
+                        element.content
+                    }
+                }
+            }
+        }
+        
+        transformation.execute(inDocument: document)
+        
+        XCTAssertEqual(
+            document.serialized(pretty: true),
+            """
+            <document>
+              <section>
+                <div>
+                  <p style="bold">HINT</p>
+                  <p>This is a hint.</p>
+                </div>
+                <div>
+                  <p style="bold">WARNING</p>
+                  <p style="color:Red">This is a warning.</p>
+                </div>
+              </section>
+            </document>
+            """
+        )
+    }
+    
+    func testTransformationWithBackLinks() throws {
+        
+        let document = XDocument {
+            XElement("document") {
+                XElement("section") {
+                    XElement("hint") {
+                        XElement("paragraph") {
+                            "This is a hint."
+                        }
+                    }
+                    XElement("warning") {
+                        XElement("paragraph") {
+                            "This is a warning."
+                        }
+                    }
+                }
+            }
+        }
+        
+        let transformation = XTransformation {
+            
+            XRule(forElements: "hint", "warning") { element in
+                element.replace(.skipping) {
+                    XElement("div", withBackLinkFrom: element) {
+                        XElement("p", ["style": "bold"]) {
+                            element.name.uppercased()
+                        }
+                        element.content
+                    }
+                }
+            }
+            
+            XRule(forElements: "paragraph") { element in
+                let style: String? = if element.parent?.backLink?.name == "warning" {
+                    "color:Red"
+                } else {
+                    nil
+                }
+                element.replace(.skipping) {
+                    XElement("p", ["style": style]) {
+                        element.content
+                    }
+                }
+            }
+        }
+        
+        document.makeVersion()
+        transformation.execute(inDocument: document)
+        document.forgetVersions()
+        
+        XCTAssertEqual(
+            document.serialized(pretty: true),
+            """
+            <document>
+              <section>
+                <div>
+                  <p style="bold">HINT</p>
+                  <p>This is a hint.</p>
+                </div>
+                <div>
+                  <p style="bold">WARNING</p>
+                  <p style="color:Red">This is a warning.</p>
+                </div>
+              </section>
+            </document>
+            """
+        )
+    }
+    
     func testTransformWithTraversal() throws {
         
         let document = XDocument {

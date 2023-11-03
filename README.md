@@ -1564,9 +1564,9 @@ document.echo()
 
 Instead of using a transformation with a very large number of rules, you should use several transformations, each dedicated to a separate “topic”. E.g. for some document format you might first transform the inline elements and then the block elements. Splitting a transformation into several transformations practically does not hurt performance.
 
-Note that the order of the rules matters: If you need to look up e.g. the parent of the element in a rule, it is important to know if this parent has already been changed by another rule, i.e. if a preceding rule has transformed this element. The usage of several transformations as described in the preciding paragraph might help here.
+Note that the order of the rules matters: If you need to look up e.g. the parent of the element in a rule, it is important to know if this parent has already been changed by another rule, i.e. if a preceding rule has transformed this element. The usage of several transformations as described in the preciding paragraph might help here. Methods to work with better contextual information are described in the sections “Transformations with attachments for context information”, “Transformations with document versions”, and “Transforming using a traversal” below.
 
-Also note that using an `XTransformation` you can only transform a whole document. In the next section, another option is described for transforming an XML tree.
+Also note that using an `XTransformation` you can only transform a whole document. In the section “Transforming using a traversal” below, another option is described for transforming any XML tree.
 
 A transformation can be stopped by calling `stop()` on the transformation, although that only works indirectly:
 
@@ -1585,6 +1585,137 @@ transformationAlias = transformation
 
 transformation.execute(inDocument: myDocument)
 ```
+
+## Transformations with attachments for context information
+
+To have information about the context in the original document of transformed elements, attachements might be used:
+
+```Swift
+let document = XDocument {
+    XElement("document") {
+        XElement("section") {
+            XElement("hint") {
+                XElement("paragraph") {
+                    "This is a hint."
+                }
+            }
+            XElement("warning") {
+                XElement("paragraph") {
+                    "This is a warning."
+                }
+            }
+        }
+    }
+}
+
+let transformation = XTransformation {
+    
+    XRule(forElements: "hint", "warning") { element in
+        element.replace(.skipping) {
+            XElement("div", attached: ["source": element.name]) {
+                XElement("p", ["style": "bold"]) {
+                    element.name.uppercased()
+                }
+                element.content
+            }
+        }
+    }
+    
+    XRule(forElements: "paragraph") { element in
+        let style: String? = if element.parent?.attached["source"] as? String == "warning" {
+            "color:Red"
+        } else {
+            nil
+        }
+        element.replace(.skipping) {
+            XElement("p", ["style": style]) {
+                element.content
+            }
+        }
+    }
+}
+
+transformation.execute(inDocument: document)
+```
+
+Result:
+
+```XML
+<document>
+  <section>
+    <div>
+      <p style="bold">HINT</p>
+      <p>This is a hint.</p>
+    </div>
+    <div>
+      <p style="bold">WARNING</p>
+      <p style="color:Red">This is a warning.</p>
+    </div>
+  </section>
+</document>
+```
+
+## Transformations with document versions
+
+As explained in the above section about rules, sometimes you need to know the original context of a transformed element. For this you can use document versions, as explained below.
+
+Note that this method comes with an penalty regarding efficiency because to need to crate a (temparary) clone, but for very difficult transformations that might come in handy. The method might be used when you need to examine the orginal context in a complex way.
+
+You first create a document version (this creates a clone such that your current document contains backlinks to the clone), and in certian rules, you might then copy the backlink from the node to be replaced by using the `withBackLinkFrom:` argument in the creation of an element:
+
+```Swift
+let document = XDocument {
+    XElement("document") {
+        XElement("section") {
+            XElement("hint") {
+                XElement("paragraph") {
+                    "This is a hint."
+                }
+            }
+            XElement("warning") {
+                XElement("paragraph") {
+                    "This is a warning."
+                }
+            }
+        }
+    }
+}
+
+let transformation = XTransformation {
+    
+    XRule(forElements: "hint", "warning") { element in
+        element.replace(.skipping) {
+            XElement("div", withBackLinkFrom: element) {
+                XElement("p", ["style": "bold"]) {
+                    element.name.uppercased()
+                }
+                element.content
+            }
+        }
+    }
+    
+    XRule(forElements: "paragraph") { element in
+        let style: String? = if element.parent?.backLink?.name == "warning" {
+            "color:Red"
+        } else {
+            nil
+        }
+        element.replace(.skipping) {
+            XElement("p", ["style": style]) {
+                element.content
+            }
+        }
+    }
+}
+
+document.makeVersion()
+transformation.execute(inDocument: document)
+document.forgetVersions()
+
+document.echo(pretty: true)
+```
+
+The result is the same as in the section “Transformations with attachments for context information” above.
 
 ## Transforming using a traversal
 
@@ -1651,22 +1782,7 @@ document.echo(pretty: true)
 
 As the root of the traversal is not to be removed during the traversal, there is an according `guard` statement. 
 
-Result:
-
-```XML
-<document>
-  <section>
-    <div>
-      <p style="bold">HINT</p>
-      <p>This is a hint.</p>
-    </div>
-    <div>
-      <p style="bold">WARNING</p>
-      <p style="color:Red">This is a warning.</p>
-    </div>
-  </section>
-</document>
-```
+The result is the same as in the section “Transformations with attachments for context information” above.
 
 Note that when using traversals for transforming an XML tree, using several transformations instead of one does have a negative impact on efficiency.
 

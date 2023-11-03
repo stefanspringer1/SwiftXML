@@ -1561,7 +1561,12 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         }
     }
     
-    public init(_ name: String, _ attributes: [String:String?]? = nil, attached: [String:Any?]? = nil) {
+    public init(
+        _ name: String,
+        _ attributes: [String:String?]? = nil,
+        withBackLinkFrom backLinkSource: XElement? = nil,
+        attached: [String:Any?]? = nil
+    ) {
         self._name = name
         super.init()
         self._lastInTree = self
@@ -1573,10 +1578,20 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
                 self.attached[key] =  value
             }
         }
+        if let backLinkSource {
+            self._backLink = backLinkSource._backLink
+        }
     }
     
-    public convenience init(_ name: String, _ attributes: [String:String?]? = nil, attached: [String:Any?]? = nil, adjustDocument _adjustDocument: Bool = false, @XContentBuilder builder: () -> [XContent]) {
-        self.init(name, attributes, attached: attached)
+    public convenience init(
+        _ name: String,
+        _ attributes: [String:String?]? = nil,
+        withBackLinkFrom backLinkSource: XElement? = nil,
+        attached: [String:Any?]? = nil,
+        adjustDocument _adjustDocument: Bool = false,
+        @XContentBuilder builder: () -> [XContent]
+    ) {
+        self.init(name, attributes, withBackLinkFrom: backLinkSource, attached: attached)
         self.add(builder: builder)
         if _adjustDocument {
             adjustDocument()
