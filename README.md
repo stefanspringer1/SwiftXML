@@ -1662,18 +1662,8 @@ This method might not be fully applicable in some transformations.
 To have information about the context in the original document of transformed elements, attachements might be used. See how in the following code `attached: ["source": element.name]` is used in the construction of the `div` elememnt, and how this information is then used in the rules for the `paragraph` element (note that the inverse order described in the last section is _not_ used here):
 
 ```Swift
-let document = try parseXML(fromText: """
-    <document>
-        <section>
-            <hint>
-                <paragraph>This is a hint.</paragraph>
-            </hint>
-            <warning>
-                <paragraph>This is a warning.</paragraph>
-            </warning>
-        </section>
-    </document>
-    """, textAllowedInElementWithName: { $0 == "paragraph" })
+// The input document is the same as in the section
+// “Transformations with inverse order” above.
 
 let transformation = XTransformation {
     
@@ -1718,18 +1708,8 @@ Note that this method comes with an penalty regarding efficiency because to need
 You first create a document version (this creates a clone such that your current document contains backlinks to the clone), and in certian rules, you might then copy the backlink from the node to be replaced by using the `withBackLinkFrom:` argument in the creation of an element:
 
 ```Swift
-let document = try parseXML(fromText: """
-    <document>
-        <section>
-            <hint>
-                <paragraph>This is a hint.</paragraph>
-            </hint>
-            <warning>
-                <paragraph>This is a warning.</paragraph>
-            </warning>
-        </section>
-    </document>
-    """, textAllowedInElementWithName: { $0 == "paragraph" })
+// The input document is the same as in the section
+// “Transformations with inverse order” above.
 
 let transformation = XTransformation {
     
@@ -1776,18 +1756,8 @@ As the XML tree can be changed during a traversal, you can traverse an XML tree 
 If you then formulate manipulations during the down direction of the traversal, you know that parents or other ancestors of the current node have already been transformed. Conversely, if you formulate manipulations only inside the `up:` traversal part and never manipulate any ancestors of the current element, you know that the parent and other ancestors are still the original ones:
 
 ```Swift
-let document = try parseXML(fromText: """
-    <document>
-        <section>
-            <hint>
-                <paragraph>This is a hint.</paragraph>
-            </hint>
-            <warning>
-                <paragraph>This is a warning.</paragraph>
-            </warning>
-        </section>
-    </document>
-    """, textAllowedInElementWithName: { $0 == "paragraph" })
+// The input document is the same as in the section
+// “Transformations with inverse order” above.
 
 for section in document.elements("section") {
     section.traverse { node in
