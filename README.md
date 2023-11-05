@@ -1732,7 +1732,8 @@ let transformation = XTransformation {
     }
 }
 
-// make a clone with backlinks pointing from the original document:
+// make a clone with inverse backlinks,
+// pointing from the original document to the clone:
 document.makeVersion()
 
 transformation.execute(inDocument: document)
