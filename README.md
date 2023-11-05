@@ -1590,7 +1590,7 @@ transformation.execute(inDocument: myDocument)
 
 As noted in the last section, the order of rules a crucial in some transformation, e.g. if the original context is important.
 
-The “inverse order” of rules goes from the inner elements to the outer element so that teh context is still unchanged when the rule applies:
+The “inverse order” of rules goes from the inner elements to the outer element so that the context is still unchanged when the rule applies, note the lookup of `element.parent?.name`:
 
 ```Swift
 let document = try parseXML(fromText: """
