@@ -1739,7 +1739,7 @@ document.makeVersion()
 transformation.execute(inDocument: document)
 
 // remove the clone:
-document.forgetVersions()
+document.forgetLastVersion()
 
 document.echo(pretty: true)
 ```

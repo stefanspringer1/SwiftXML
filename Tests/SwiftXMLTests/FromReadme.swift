@@ -505,9 +505,14 @@ final class FromReadmeTests: XCTestCase {
             }
         }
         
+        // make a clone with inverse backlinks,
+        // pointing from the original document to the clone:
         document.makeVersion()
+        
         transformation.execute(inDocument: document)
-        document.forgetVersions()
+        
+        // remove the clone:
+        document.forgetLastVersion()
         
         XCTAssertEqual(
             document.serialized(pretty: true),

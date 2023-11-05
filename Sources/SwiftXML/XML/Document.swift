@@ -51,6 +51,14 @@ public final class XDocument: XNode, XBranchInternal {
         clone._addClones(from: self, pointingToClone: true)
     }
     
+    /// Remove the last version.
+    public func forgetLastVersion() {
+        if versions.count > 0 {
+            versions.removeLast()
+        }
+    }
+    
+    /// Remove versions but keep the last n ones.
     public func forgetVersions(keeping n: Int = 0) {
         if versions.count > 0 {
             let oldVersions = versions
