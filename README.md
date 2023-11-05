@@ -1732,8 +1732,12 @@ let transformation = XTransformation {
     }
 }
 
+// make a clone with backlinks pointing from the original document:
 document.makeVersion()
+
 transformation.execute(inDocument: document)
+
+// remove the clone:
 document.forgetVersions()
 
 document.echo(pretty: true)
