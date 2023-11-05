@@ -1659,12 +1659,9 @@ This method might not be fully applicable in some transformations.
 
 ## Transformations with attachments for context information
 
-To have information about the context in the original document of transformed elements, attachements might be used. See how in the following code `attached: ["source": element.name]` is used in the construction of the `div` elememnt, and how this information is then used in the rules for the `paragraph` element (note that the inverse order described in the last section is _not_ used here):
+To have information about the context in the original document of transformed elements, attachements might be used. See how in the following code `attached: ["source": element.name]` is used in the construction of the `div` elememnt, and how this information is then used in the rules for the `paragraph` element (the input document is the same as in the section “Transformations with inverse order” above; note that the inverse order described that section is _not_ used here):
 
 ```Swift
-// The input document is the same as in the section
-// “Transformations with inverse order” above.
-
 let transformation = XTransformation {
     
     XRule(forElements: "hint", "warning") { element in
@@ -1705,12 +1702,9 @@ As explained in the above section about rules, sometimes you need to know the or
 
 Note that this method comes with an penalty regarding efficiency because to need to create a (temparary) clone, but for very difficult transformations that might come in handy. The method might be used when you need to examine the orginal context in a complex way.
 
-You first create a document version (this creates a clone such that your current document contains backlinks to the clone), and in certian rules, you might then copy the backlink from the node to be replaced by using the `withBackLinkFrom:` argument in the creation of an element:
+You first create a document version (this creates a clone such that your current document contains backlinks to the clone), and in certian rules, you might then copy the backlink from the node to be replaced by using the `withBackLinkFrom:` argument in the creation of an element (the input document is the same as in the section “Transformations with inverse order” above):
 
 ```Swift
-// The input document is the same as in the section
-// “Transformations with inverse order” above.
-
 let transformation = XTransformation {
     
     XRule(forElements: "hint", "warning") { element in
@@ -1753,12 +1747,9 @@ There is also another possibility for formulating transformations which uses tra
 
 As the XML tree can be changed during a traversal, you can traverse an XML tree and change the tree during the traversal by e.g. formulating manipulations according to the name of the current element inside a `switch` statement.
 
-If you then formulate manipulations during the down direction of the traversal, you know that parents or other ancestors of the current node have already been transformed. Conversely, if you formulate manipulations only inside the `up:` traversal part and never manipulate any ancestors of the current element, you know that the parent and other ancestors are still the original ones:
+If you then formulate manipulations during the down direction of the traversal, you know that parents or other ancestors of the current node have already been transformed. Conversely, if you formulate manipulations only inside the `up:` traversal part and never manipulate any ancestors of the current element, you know that the parent and other ancestors are still the original ones (the input document is the same as in the section “Transformations with inverse order” above):
 
 ```Swift
-// The input document is the same as in the section
-// “Transformations with inverse order” above.
-
 for section in document.elements("section") {
     section.traverse { node in
         // -
