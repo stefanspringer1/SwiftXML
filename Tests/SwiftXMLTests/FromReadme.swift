@@ -360,7 +360,7 @@ final class FromReadmeTests: XCTestCase {
                 } else {
                     nil
                 }
-                element.replace(.skipping) {
+                element.replace {
                     XElement("p", ["style": style]) {
                         element.content
                     }
@@ -368,7 +368,7 @@ final class FromReadmeTests: XCTestCase {
             }
             
             XRule(forElements: "hint", "warning") { element in
-                element.replace(.skipping) {
+                element.replace {
                     XElement("div") {
                         XElement("p", ["style": "bold"]) {
                             element.name.uppercased()
@@ -418,7 +418,7 @@ final class FromReadmeTests: XCTestCase {
         let transformation = XTransformation {
             
             XRule(forElements: "hint", "warning") { element in
-                element.replace(.skipping) {
+                element.replace {
                     XElement("div", attached: ["source": element.name]) {
                         XElement("p", ["style": "bold"]) {
                             element.name.uppercased()
@@ -434,7 +434,7 @@ final class FromReadmeTests: XCTestCase {
                 } else {
                     nil
                 }
-                element.replace(.skipping) {
+                element.replace {
                     XElement("p", ["style": style]) {
                         element.content
                     }
@@ -481,7 +481,7 @@ final class FromReadmeTests: XCTestCase {
         let transformation = XTransformation {
             
             XRule(forElements: "hint", "warning") { element in
-                element.replace(.skipping) {
+                element.replace {
                     XElement("div", withBackLinkFrom: element) {
                         XElement("p", ["style": "bold"]) {
                             element.name.uppercased()
@@ -497,7 +497,7 @@ final class FromReadmeTests: XCTestCase {
                 } else {
                     nil
                 }
-                element.replace(.skipping) {
+                element.replace {
                     XElement("p", ["style": style]) {
                         element.content
                     }
@@ -556,13 +556,13 @@ final class FromReadmeTests: XCTestCase {
                         } else {
                             nil
                         }
-                        element.replace(.skipping) {
+                        element.replace {
                             XElement("p", ["style": style]) {
                                 element.content
                             }
                         }
                     case "hint", "warning":
-                        element.replace(.skipping) {
+                        element.replace {
                             XElement("div") {
                                 XElement("p", ["style": "bold"]) {
                                     element.name.uppercased()

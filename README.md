@@ -1614,7 +1614,7 @@ let transformation = XTransformation {
         } else {
             nil
         }
-        element.replace(.skipping) {
+        element.replace {
             XElement("p", ["style": style]) {
                 element.content
             }
@@ -1622,7 +1622,7 @@ let transformation = XTransformation {
     }
     
     XRule(forElements: "hint", "warning") { element in
-        element.replace(.skipping) {
+        element.replace {
             XElement("div") {
                 XElement("p", ["style": "bold"]) {
                     element.name.uppercased()
@@ -1668,7 +1668,7 @@ To have information about the context in the original document of transformed el
 let transformation = XTransformation {
     
     XRule(forElements: "hint", "warning") { element in
-        element.replace(.skipping) {
+        element.replace {
             XElement("div", attached: ["source": element.name]) {
                 XElement("p", ["style": "bold"]) {
                     element.name.uppercased()
@@ -1684,7 +1684,7 @@ let transformation = XTransformation {
         } else {
             nil
         }
-        element.replace(.skipping) {
+        element.replace {
             XElement("p", ["style": style]) {
                 element.content
             }
@@ -1714,7 +1714,7 @@ You first create a document version (this creates a clone such that your current
 let transformation = XTransformation {
     
     XRule(forElements: "hint", "warning") { element in
-        element.replace(.skipping) {
+        element.replace {
             XElement("div", withBackLinkFrom: element) {
                 XElement("p", ["style": "bold"]) {
                     element.name.uppercased()
@@ -1730,7 +1730,7 @@ let transformation = XTransformation {
         } else {
             nil
         }
-        element.replace(.skipping) {
+        element.replace {
             XElement("p", ["style": style]) {
                 element.content
             }
@@ -1772,13 +1772,13 @@ for section in document.elements("section") {
                 } else {
                     nil
                 }
-                element.replace(.skipping) {
+                element.replace {
                     XElement("p", ["style": style]) {
                         element.content
                     }
                 }
             case "hint", "warning":
-                element.replace(.skipping) {
+                element.replace {
                     XElement("div") {
                         XElement("p", ["style": "bold"]) {
                             element.name.uppercased()
