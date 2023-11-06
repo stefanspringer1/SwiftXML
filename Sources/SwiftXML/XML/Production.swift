@@ -422,6 +422,7 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
     public var htmlEmptyTags: [String]
     public var htmlStrictInlines: [String]
     public var suppressDocumentTypeDeclaration: Bool
+    public let fullHTMLPrefix: String
     
     public init(
         writer: Writer,
@@ -431,17 +432,7 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
         withHTMLNamespaceReference htmlNamespaceReference: NamespaceReference,
         suppressDocumentTypeDeclaration: Bool
     ) {
-        let fullHTMLPrefix =
-        switch htmlNamespaceReference {
-        case .uri(uri: let uri):
-            if let top = node.top {
-                top.fullPrefix(forNamespace: uri)
-            } else {
-                ""
-            }
-        case .fullPrefix(fullPrefix: let fullPrefix):
-            fullPrefix
-        }
+        fullHTMLPrefix = node.top?.fullPrefix(forNamespaceReference: htmlNamespaceReference) ?? ""
         htmlEmptyTags = [
             "\(fullHTMLPrefix)area",
             "\(fullHTMLPrefix)base",
