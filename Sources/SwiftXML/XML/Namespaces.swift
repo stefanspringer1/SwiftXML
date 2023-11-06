@@ -38,6 +38,16 @@ extension XDocument {
         self.children.first?.fullPrefix(forNamespace: namespace) ?? ""
     }
     
+    /// Read the the full prefix for a namespace reference.
+    public func fullPrefix(forNamespaceReference namespaceReference: NamespaceReference) -> String {
+        switch namespaceReference {
+        case .uri(uri: let uri):
+            fullPrefix(forNamespace: uri)
+        case .fullPrefix(fullPrefix: let fullPrefix):
+            fullPrefix
+        }
+    }
+    
     /// Read a map from the namespace URL strings to the full prefixes from the root element.
     /// "Full" means that a closing ":" is added automatically.
     public var fullPrefixesForNamespaces: [String:String] {
@@ -68,6 +78,16 @@ extension XElement {
             }
         }
         return foundPrefix ?? ""
+    }
+    
+    /// Read the the full prefix for a namespace reference.
+    public func fullPrefix(forNamespaceReference namespaceReference: NamespaceReference) -> String {
+        switch namespaceReference {
+        case .uri(uri: let uri):
+            fullPrefix(forNamespace: uri)
+        case .fullPrefix(fullPrefix: let fullPrefix):
+            fullPrefix
+        }
     }
     
     /// Read a map from the namespace URL strings to the full prefixes from the element.
