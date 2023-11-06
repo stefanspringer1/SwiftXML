@@ -386,7 +386,7 @@ open class ActivePrettyPrintProduction: ActiveDefaultProduction {
     }
 }
 
-public class HTMLProductionTemplate: XProductionTemplate {
+open class HTMLProductionTemplate: XProductionTemplate {
     
     public let indentation: String
     public let linebreak: String
@@ -405,7 +405,7 @@ public class HTMLProductionTemplate: XProductionTemplate {
         self.suppressDocumentTypeDeclaration = suppressDocumentTypeDeclaration
     }
     
-    public func activeProduction(for writer: Writer, atNode node: XNode) -> XActiveProduction {
+    open func activeProduction(for writer: Writer, atNode node: XNode) -> XActiveProduction {
         ActiveHTMLProduction(
             writer: writer,
             linebreak: linebreak,
@@ -522,7 +522,7 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
         return element.content.contains(where: { isInline($0) })
     }
     
-    public func sort(texts: [String], preferring preferred: String) -> [String] {
+    open func sort(texts: [String], preferring preferred: String) -> [String] {
         return texts.sorted { name1, name2 in
             if name2 == preferred {
                 return false
