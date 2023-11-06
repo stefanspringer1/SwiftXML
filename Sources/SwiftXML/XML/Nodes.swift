@@ -64,7 +64,7 @@ public class XNode {
         return nil
     }
     
-    var top: XElement? {
+    public var top: XElement? {
         guard var element = self as? XElement ?? parent else { return nil }
         while let nextParent = element.parent {
             element = nextParent
