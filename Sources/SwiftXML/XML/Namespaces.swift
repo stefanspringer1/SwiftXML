@@ -113,3 +113,32 @@ extension XElement {
     }
     
 }
+
+extension XBranch {
+    
+    /// Read the the full prefix for a namespace URL string from the root element.
+    /// "Full" means that a closing ":" is added automatically.
+    /// If no prefix is defined, an empty string is returned.
+    public func fullPrefix(forNamespace namespace: String) -> String {
+        (self as? XDocument)?.fullPrefix(forNamespace: namespace) ?? (self as? XElement)?.fullPrefix(forNamespace: namespace) ?? ""
+    }
+    
+    /// Read the the full prefix for a namespace reference.
+    public func fullPrefix(forNamespaceReference namespaceReference: NamespaceReference) -> String {
+        (self as? XDocument)?.fullPrefix(forNamespaceReference: namespaceReference) ?? (self as? XElement)?.fullPrefix(forNamespaceReference: namespaceReference) ?? ""
+    }
+    
+    /// Read a map from the namespace URL strings to the full prefixes from the root element.
+    /// "Full" means that a closing ":" is added automatically.
+    public var fullPrefixesForNamespaces: [String:String] {
+        (self as? XDocument)?.fullPrefixesForNamespaces ?? (self as? XElement)?.fullPrefixesForNamespaces ?? [String:String]()
+    }
+    
+    /// Add the according namespace declaration at the root element.
+    /// The prefix might be a "full" prefix, i.e. it could contain a closing ":".
+    /// An existing namespace declaration for the same namespace but with another prefix is not (!) removed.
+    public func setNamespace(_ namespace: String, withPossiblyFullPrefix possiblyFullPrefix: String) {
+        (self as? XDocument)?.setNamespace(namespace, withPossiblyFullPrefix: possiblyFullPrefix) ?? (self as? XElement)?.setNamespace(namespace, withPossiblyFullPrefix: possiblyFullPrefix)
+    }
+    
+}

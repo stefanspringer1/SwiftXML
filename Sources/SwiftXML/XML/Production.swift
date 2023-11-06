@@ -432,7 +432,7 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
         withHTMLNamespaceReference htmlNamespaceReference: NamespaceReference,
         suppressDocumentTypeDeclaration: Bool
     ) {
-        fullHTMLPrefix = node.top?.fullPrefix(forNamespaceReference: htmlNamespaceReference) ?? ""
+        fullHTMLPrefix = ((node as? XDocument ?? node.top) as XBranch?)?.fullPrefix(forNamespaceReference: htmlNamespaceReference) ?? ""
         htmlEmptyTags = [
             "\(fullHTMLPrefix)area",
             "\(fullHTMLPrefix)base",
