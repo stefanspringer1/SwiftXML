@@ -496,14 +496,40 @@ public class XElementDependingOnElementIterator: XElementIterator {
         var element2: XElement? = nil
         while element2 == nil {
             element1 = iterator1.next()
-            if let theContent1 = element1 {
-                element2 = elementGetter(theContent1)
+            if let theElement = element1 {
+                element2 = elementGetter(theElement)
             }
             else {
                 return nil
             }
         }
         return element2
+    }
+}
+
+public class XStringDependingOnElementIterator: XStringIterator {
+    
+    private var iterator: TypedIterator<XElement>
+    private var element: XElement? = nil
+    let stringGetter: (XElement) -> String?
+    
+    init(sequence: any Sequence<XElement>, stringGetter: @escaping (XElement) -> String?) {
+        iterator = TypedIterator(for: sequence)
+        self.stringGetter = stringGetter
+    }
+    
+    public override func next() -> String? {
+        var s: String? = nil
+        while s == nil {
+            element = iterator.next()
+            if let theElement = element {
+                s = stringGetter(theElement)
+            }
+            else {
+                return nil
+            }
+        }
+        return s
     }
 }
 
@@ -699,6 +725,21 @@ public class XElementDependingOnElementSequence: XElementSequence {
     
     override public func makeIterator() -> XElementIterator {
         return XElementDependingOnElementIterator(sequence: sequence, elementGetter: elementGetter)
+    }
+}
+
+public class XStringDependingOnElementSequence: XStringSequence {
+    
+    let sequence: any Sequence<XElement>
+    let stringGetter: (XElement) -> String?
+    
+    init(sequence: any Sequence<XElement>, stringGetter: @escaping (XElement) -> String?) {
+        self.sequence = sequence
+        self.stringGetter = stringGetter
+    }
+    
+    override public func makeIterator() -> XStringIterator {
+        return XStringDependingOnElementIterator(sequence: sequence, stringGetter: stringGetter)
     }
 }
 
@@ -1356,6 +1397,10 @@ extension Sequence<XElement> {
     
     public func contentReversed(untilAndIncluding condition: @escaping (XContent) -> Bool) -> XContentSequence {
         XContentSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { content in content.contentReversed(untilAndIncluding: condition) })
+    }
+    
+    public var text: XStringSequence {
+        get { XStringDependingOnElementSequence(sequence: self, stringGetter: { element in element.text }) }
     }
     
     public var texts: XTextSequence {
