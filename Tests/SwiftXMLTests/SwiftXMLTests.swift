@@ -477,4 +477,15 @@ final class SwiftXMLTests: XCTestCase {
         
         XCTAssertEqual(document.children.first?["att1"], "hello\nworld")
     }
+    
+    func testTextForElementSequence() throws {
+        let document = try parseXML(fromText: """
+        <sentences>
+            <sentence><word>Hello</word> <word>World</word></sentence>
+            <sentence><word>Feel</word> <word>good</word></sentence>
+        </sentences>
+        """)
+        
+        XCTAssertEqual(document.elements("sentence").text.map{ "\"\($0)\"" }.joined(separator: ", "), #""Hello World", "Feel good""#)
+    }
 }
