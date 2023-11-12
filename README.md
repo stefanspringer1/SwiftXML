@@ -1162,6 +1162,8 @@ Remove the node from the tree structure and the document:
 func remove()
 ```
 
+You might also use the method `removed()` of a node to remove the node but also use the node. 
+
 Replace the node by other nodes:
 
 ```Swift

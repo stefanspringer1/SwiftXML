@@ -484,6 +484,11 @@ public class XContent: XNode {
         return self
     }
     
+    public func removed() -> XNode {
+        remove()
+        return self
+    }
+    
     /**
      Correct the tree order after this node has been inserted.
      */
@@ -1416,6 +1421,11 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         return theClone
     }
     
+    public override func removed() -> XElement {
+        remove()
+        return self
+    }
+    
     var _name: String
     
     public var name: String {
@@ -1817,6 +1827,11 @@ public final class XText: XContent, XTextualContentRepresentation, ToBePeparedFo
     public override func clone() -> XText {
         return shallowClone()
     }
+    
+    public override func removed() -> XText {
+        remove()
+        return self
+    }
 }
 
 /*
@@ -1902,6 +1917,11 @@ public final class XLiteral: XContent, XTextualContentRepresentation, ToBePepare
     public override func clone() -> XLiteral {
         return shallowClone()
     }
+    
+    public override func removed() -> XLiteral {
+        remove()
+        return self
+    }
 }
 
 public final class XInternalEntity: XContent {
@@ -1938,6 +1958,11 @@ public final class XInternalEntity: XContent {
     public override func clone() -> XInternalEntity {
         return shallowClone()
     }
+    
+    public override func removed() -> XInternalEntity {
+        remove()
+        return self
+    }
 }
 
 public final class XExternalEntity: XContent {
@@ -1973,6 +1998,11 @@ public final class XExternalEntity: XContent {
     
     public override func clone() -> XExternalEntity {
         return shallowClone()
+    }
+    
+    public override func removed() -> XExternalEntity {
+        remove()
+        return self
     }
 }
 
@@ -2029,6 +2059,11 @@ public final class XProcessingInstruction: XContent, CustomStringConvertible {
     public override func clone() -> XProcessingInstruction {
         return shallowClone()
     }
+    
+    public override func removed() -> XProcessingInstruction {
+        remove()
+        return self
+    }
 }
 
 public final class XComment: XContent {
@@ -2069,6 +2104,11 @@ public final class XComment: XContent {
     public override func clone() -> XComment {
         return shallowClone()
     }
+    
+    public override func removed() -> XComment {
+        remove()
+        return self
+    }
 }
 
 public final class XCDATASection: XContent, XTextualContentRepresentation {
@@ -2104,6 +2144,11 @@ public final class XCDATASection: XContent, XTextualContentRepresentation {
     
     public override func clone() -> XCDATASection {
         return shallowClone()
+    }
+    
+    public override func removed() -> XCDATASection {
+        remove()
+        return self
     }
 }
 
