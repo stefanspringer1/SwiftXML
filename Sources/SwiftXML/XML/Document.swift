@@ -28,6 +28,10 @@ public final class XDocument: XNode, XBranchInternal {
     
     var _lastInTree: XNode!
     
+    public override var top: XElement? {
+        self.children.first
+    }
+    
     override func getLastInTree() -> XNode {
         return _lastInTree
     }
