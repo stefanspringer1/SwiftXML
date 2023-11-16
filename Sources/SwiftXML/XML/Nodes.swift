@@ -838,6 +838,8 @@ public protocol XBranch: XNode {
     var lastContent: XContent? { get }
     func lastContent(_ condition: (XContent) -> Bool) -> XContent?
     func child(_ name: String) -> XElement?
+    func child(_ names: [String]) -> XElement?
+    func child(_ name: String...) -> XElement?
     var isEmpty: Bool { get }
     func add(@XContentBuilder builder: () -> [XContent])
     func addFirst(@XContentBuilder builder: () -> [XContent])
@@ -866,7 +868,7 @@ extension XBranchInternal {
         return nil
     }
     
-    public func child(_ names: String...) -> XElement? {
+    public func child(_ names: [String]) -> XElement? {
         var node = __firstContent
         while let theNode = node {
             if let child = theNode as? XElement, names.contains(child.name) {
@@ -875,6 +877,10 @@ extension XBranchInternal {
             node = theNode._next
         }
         return nil
+    }
+    
+    public func child(_ names: String...) -> XElement? {
+        child(names)
     }
     
     /**
