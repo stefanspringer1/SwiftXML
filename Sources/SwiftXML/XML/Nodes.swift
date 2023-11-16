@@ -65,7 +65,7 @@ public class XNode {
     }
     
     public var top: XElement? {
-        guard var element = self as? XElement ?? parent else { return nil }
+        guard var element = parent else { return nil }
         while let nextParent = element.parent {
             element = nextParent
         }
@@ -1348,6 +1348,10 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     
     override func getLastInTree() -> XNode {
         return _lastInTree
+    }
+    
+    public override var top: XElement {
+        super.top ?? self
     }
     
     weak var _document: XDocument? = nil
