@@ -846,6 +846,7 @@ public protocol XBranch: XNode {
     func setContent(@XContentBuilder builder: () -> [XContent])
     func clear()
     func trimWhiteSpace()
+    var xPath: String { get }
 }
 
 protocol XBranchInternal: XBranch {
