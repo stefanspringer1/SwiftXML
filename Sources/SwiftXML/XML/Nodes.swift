@@ -233,6 +233,10 @@ public class XNode {
         }
     }
     
+    public var hasPreviousTouching: Bool {
+        previousTouching != nil
+    }
+    
     public var nextTouching: XContent? {
         get {
             var content = _next
@@ -241,6 +245,10 @@ public class XNode {
             }
             return content
         }
+    }
+    
+    public var hasNextTouching: Bool {
+        nextTouching != nil
     }
     
     public var previousElement: XElement? {
@@ -253,6 +261,10 @@ public class XNode {
         }
     }
     
+    public var hasPreviousElement: Bool {
+        previousElement != nil
+    }
+    
     public var nextElement: XElement? {
         get {
             var content = _next
@@ -262,6 +274,11 @@ public class XNode {
             return content as? XElement
         }
     }
+    
+    public var hasNextElement: Bool {
+        nextElement != nil
+    }
+    
     
     public func previousTouching(_ condition: (XContent) -> Bool) -> XContent? {
         let content = previousTouching
@@ -273,6 +290,10 @@ public class XNode {
         }
     }
     
+    public func hasPreviousTouching(_ condition: (XContent) -> Bool) -> Bool {
+        previousTouching(condition) != nil
+    }
+    
     public func nextTouching(_ condition: (XContent) -> Bool) -> XContent? {
         let content = nextTouching
         if let theContent = content, condition(theContent) {
@@ -281,6 +302,10 @@ public class XNode {
         else {
             return nil
         }
+    }
+    
+    public func hasNextTouching(_ condition: (XContent) -> Bool) -> Bool {
+        nextTouching(condition) != nil
     }
     
     weak var _previousInTree: XNode? = nil
@@ -296,6 +321,10 @@ public class XNode {
         }
     }
     
+    public var hasPreviousInTreeTouching: Bool {
+        previousInTreeTouching != nil
+    }
+    
     public var nextInTreeTouching: XContent? {
         get {
             var content = _nextInTree
@@ -304,6 +333,10 @@ public class XNode {
             }
             return content as? XContent
         }
+    }
+    
+    public var hasNextInTreeTouching: Bool {
+        nextInTreeTouching != nil
     }
     
     public func previousInTreeTouching(_ condition: (XContent) -> Bool) -> XContent? {
@@ -316,6 +349,10 @@ public class XNode {
         }
     }
     
+    public func hasPreviousInTreeTouching(_ condition: (XContent) -> Bool) -> Bool {
+        previousInTreeTouching(condition) != nil
+    }
+    
     public func nextInTreeTouching(_ condition: (XContent) -> Bool) -> XContent? {
         let content = nextInTreeTouching
         if let theContent = content, condition(theContent) {
@@ -324,6 +361,10 @@ public class XNode {
         else {
             return nil
         }
+    }
+    
+    public func hasNextInTreeTouching(_ condition: (XContent) -> Bool) -> Bool {
+        nextInTreeTouching(condition) != nil
     }
     
     func getLastInTree() -> XNode {
