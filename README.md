@@ -61,7 +61,7 @@ let transformation = XTransformation {
 
 **UPDATE 12 (October 2023):** `XNode.write(toFile:)` is renamed to `XNode.write(toPath:)`, and `XNode.write(toFileHandle:)` is renamed to `XNode.write(toFile:)`.
 
-**UPDATE 13 (December 2023):** `texts` is renamed to `immediateTexts` so as not to confuse it with `allTexts`, and `text` is renamed to `allTextsCollected`. `immediateTextsCollected` is added.
+**UPDATE 13 (December 2023):** `texts` is renamed to `immediateTexts` so as not to confuse it with `allTexts`, and `text` is renamed to `allTextsCollected`. `immediateTextsCollected` and the `allTextsReversed` variants are added.
 
 ---
 

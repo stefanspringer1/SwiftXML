@@ -117,43 +117,43 @@ public extension XNode {
     }
     
     var immediateTexts: XTextSequence {
-        get { XSequenceOfTexts(node: self) }
+        get { XSequenceOfImmediateTexts(node: self) }
     }
     
     func immediateTexts(_ condition: @escaping (XText) -> Bool) -> XTextSequence {
-        return XTextSequenceWithCondition(sequence: XSequenceOfTexts(node: self), condition: condition)
+        return XTextSequenceWithCondition(sequence: XSequenceOfImmediateTexts(node: self), condition: condition)
     }
     
     func immediateTexts(while condition: @escaping (XText) -> Bool) -> XTextSequence {
-        return XTextSequenceWhileCondition(sequence: XSequenceOfTexts(node: self), while: condition)
+        return XTextSequenceWhileCondition(sequence: XSequenceOfImmediateTexts(node: self), while: condition)
     }
     
     func immediateTexts(until condition: @escaping (XText) -> Bool) -> XTextSequence {
-        return XTextSequenceUntilCondition(sequence: XSequenceOfTexts(node: self), until: condition)
+        return XTextSequenceUntilCondition(sequence: XSequenceOfImmediateTexts(node: self), until: condition)
     }
     
     func immediateTexts(untilAndIncluding condition: @escaping (XText) -> Bool) -> XTextSequence {
-        return XTextSequenceIncludingCondition(sequence: XSequenceOfTexts(node: self), untilAndIncluding: condition)
+        return XTextSequenceIncludingCondition(sequence: XSequenceOfImmediateTexts(node: self), untilAndIncluding: condition)
     }
     
     var immediateTextsReversed: XTextSequence {
-        get { XReversedSequenceOfTexts(node: self) }
+        get { XReversedSequenceOfImmediateTexts(node: self) }
     }
     
     func immediateTextsReversed(_ condition: @escaping (XText) -> Bool) -> XTextSequence {
-        return XTextSequenceWithCondition(sequence: XReversedSequenceOfTexts(node: self), condition: condition)
+        return XTextSequenceWithCondition(sequence: XReversedSequenceOfImmediateTexts(node: self), condition: condition)
     }
     
     func immediateTextsReversed(while condition: @escaping (XText) -> Bool) -> XTextSequence {
-        return XTextSequenceWhileCondition(sequence: XReversedSequenceOfTexts(node: self), while: condition)
+        return XTextSequenceWhileCondition(sequence: XReversedSequenceOfImmediateTexts(node: self), while: condition)
     }
     
     func immediateTextsReversed(until condition: @escaping (XText) -> Bool) -> XTextSequence {
-        return XTextSequenceUntilCondition(sequence: XReversedSequenceOfTexts(node: self), until: condition)
+        return XTextSequenceUntilCondition(sequence: XReversedSequenceOfImmediateTexts(node: self), until: condition)
     }
     
     func immediateTextsReversed(untilAndIncluding condition: @escaping (XText) -> Bool) -> XTextSequence {
-        return XTextSequenceIncludingCondition(sequence: XReversedSequenceOfTexts(node: self), untilAndIncluding: condition)
+        return XTextSequenceIncludingCondition(sequence: XReversedSequenceOfImmediateTexts(node: self), untilAndIncluding: condition)
     }
     
     var allTexts: XTextSequence {
@@ -174,6 +174,26 @@ public extension XNode {
     
     func allTexts(untilAndIncluding condition: @escaping (XText) -> Bool) -> XTextSequence {
         return XTextSequenceIncludingCondition(sequence: XSequenceOfAllTexts(node: self), untilAndIncluding: condition)
+    }
+    
+    var allTextsReversed: XTextSequence {
+        get { XReversedSequenceOfAllTexts(node: self) }
+    }
+    
+    func allTextsReversed(_ condition: @escaping (XText) -> Bool) -> XTextSequence {
+        return XTextSequenceWithCondition(sequence: XReversedSequenceOfAllTexts(node: self), condition: condition)
+    }
+    
+    func allTextsReversed(while condition: @escaping (XText) -> Bool) -> XTextSequence {
+        return XTextSequenceWhileCondition(sequence: XReversedSequenceOfAllTexts(node: self), while: condition)
+    }
+    
+    func allTextsReversed(until condition: @escaping (XText) -> Bool) -> XTextSequence {
+        return XTextSequenceUntilCondition(sequence: XReversedSequenceOfAllTexts(node: self), until: condition)
+    }
+    
+    func allTextsReversed(untilAndIncluding condition: @escaping (XText) -> Bool) -> XTextSequence {
+        return XTextSequenceIncludingCondition(sequence: XReversedSequenceOfAllTexts(node: self), untilAndIncluding: condition)
     }
     
     var children: XElementSequence {

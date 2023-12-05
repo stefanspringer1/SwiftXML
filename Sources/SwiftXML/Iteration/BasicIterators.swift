@@ -769,7 +769,7 @@ public final class XTextsIterator: XTextIterator {
 /**
  Iterates though the texts of a branch, reversely.
  */
-public final class XReversedTextsIterator: XTextIteratorProtocol {
+public final class XReversedAllTextsIterator: XTextIteratorProtocol {
     
     private var started = false
     weak var node: XNode?
