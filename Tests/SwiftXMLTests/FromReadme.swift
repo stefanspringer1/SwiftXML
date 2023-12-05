@@ -616,8 +616,8 @@ final class FromReadmeTests: XCTestCase {
         )
         
         XCTAssertEqual(document.children.children("p")["id"].joined(separator: " "), "1 2")
-        XCTAssertEqual(document.children.children("p")[2]?.description ?? "-", #"<p id="2">"#)
+        XCTAssertEqual(document.children.children("p")[1]?.description ?? "-", #"<p id="2">"#)
         XCTAssertEqual(document.children.children("p")[99]?.description ?? "-", "-")
-        XCTAssertEqual(document.allTexts[2]?.value ?? "-", "The first paragraph.")
+        XCTAssertEqual(document.allTexts[1]?.value ?? "-", "The first paragraph.")
     }
 }

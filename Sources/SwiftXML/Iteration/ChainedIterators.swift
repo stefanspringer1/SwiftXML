@@ -1293,7 +1293,7 @@ extension Sequence<XContent> {
     
     /// Get the nth item.
     public subscript(index: Int) -> Element? {
-        index == 0 ? self.first : self.dropFirst(index-1).first
+        self.dropFirst(index).first
     }
 }
 
@@ -1310,7 +1310,7 @@ extension Sequence<XElement> {
     
     /// Get the nth item.
     public subscript(index: Int) -> Element? {
-        index == 0 ? self.first : self.dropFirst(index-1).first
+        self.dropFirst(index).first
     }
     
     public func clone() -> XElementSequence {
@@ -1827,7 +1827,7 @@ extension XTextSequence {
     
     /// Get the nth item.
     public subscript(index: Int) -> Element? {
-        index == 0 ? self.first : self.dropFirst(index-1).first
+        self.dropFirst(index).first
     }
     
 }
