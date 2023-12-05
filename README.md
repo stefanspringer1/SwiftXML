@@ -947,6 +947,8 @@ if let secondCHild = element.children[2] {
 
 If you use this subscript notation `[n]` for a sequence of XContent, XElement, or XText, then – despite using integer values – this is not (!) a random access to the elements (each time using such a subscript, the sequence is followed until the according item is found by counting), and the counting starts at 1 as in the XPath language, and not at 0 as e.g. for Swift arrays.
 
+You should see this integer subscript more as a subscript with names, the integer values being the names that the positions are given in the XML, where counting from 1 is common.
+
 ---
 
 ## Constructing XML
