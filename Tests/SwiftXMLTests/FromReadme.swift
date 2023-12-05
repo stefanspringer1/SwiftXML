@@ -601,20 +601,23 @@ final class FromReadmeTests: XCTestCase {
         )
     }
     
-    func testSequenceIndex() throws {
+    func testSubscriptsOfSequences() throws {
         
-        let document = try parseXML(fromText: """
+        let document = try parseXML(
+            fromText: """
             <document>
-                <title>The Document</title>
-                <p id="1">This is it.</p>
-                <p id="2">And more.</p>
+                <title>The Title</title>
+                <p id="1">The first paragraph.</p>
+                <p id="2">The second paragraph.</p>
                 <annex>This is the annex.</annex>
             </document>
-            """)
+            """,
+            textAllowedInElementWithName: { ["title", "p", "annex"].contains($0) }
+        )
         
         XCTAssertEqual(document.children.children("p")["id"].joined(separator: " "), "1 2")
         XCTAssertEqual(document.children.children("p")[2]?.description ?? "-", #"<p id="2">"#)
-        XCTAssertEqual(document.children.children("p")[20]?.description ?? "-", "-")
-        
+        XCTAssertEqual(document.children.children("p")[99]?.description ?? "-", "-")
+        XCTAssertEqual(document.allTexts[2]?.value ?? "-", "The first paragraph.")
     }
 }

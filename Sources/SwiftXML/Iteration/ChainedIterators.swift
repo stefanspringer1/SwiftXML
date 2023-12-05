@@ -1822,3 +1822,12 @@ extension Sequence<XElement> {
     }
     
 }
+
+extension XTextSequence {
+    
+    /// Get the nth item.
+    public subscript(index: Int) -> Element? {
+        index == 0 ? self.first : self.dropFirst(index-1).first
+    }
+    
+}
