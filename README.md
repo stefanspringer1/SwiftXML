@@ -65,6 +65,8 @@ let transformation = XTransformation {
 
 **UPDATE 14 (December 2023):** The subscript notation with integer values for a sequence of XContent, XElement, or XText now starts counting at 1.
 
+**UPDATE 15 (December 2023):** Neither `allTextsCollected` nor `immediateTextsCollected` are available for sequences any more because of their semantic ambiguity.
+
 ---
 
 ## Related packages

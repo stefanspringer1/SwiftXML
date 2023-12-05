@@ -486,6 +486,6 @@ final class SwiftXMLTests: XCTestCase {
         </sentences>
         """)
         
-        XCTAssertEqual(document.elements("sentence").allTextsCollected.map{ "\"\($0)\"" }.joined(separator: ", "), #""Hello World", "Feel good""#)
+        XCTAssertEqual(document.elements("sentence").map{ "\"\($0.allTextsCollected)\"" }.joined(separator: ", "), #""Hello World", "Feel good""#)
     }
 }
