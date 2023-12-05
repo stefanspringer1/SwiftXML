@@ -665,6 +665,12 @@ All texts in the tree of nodes that is started by the node itself, without the n
 var allTexts: XTextSequence
 ```
 
+The same but only for the nodes contained as direct content:
+
+```swift
+var immediateTexts: XTextSequence
+```
+
 The (direct) content of an branch (element or document) are “siblings” to each other.
 
 The content item previous to the subject:
@@ -803,11 +809,19 @@ The previous content item in the tree:
 var previousInTreeTouching: XContent?
 ```
 
-Find all text contained in a node (being composed into a single `String`):
+Find all text contained in a node and compose them into a single `String`:
 
 ```swift
 var allTextsCollected: String
 ```
+
+The same but for all texts contained as direct content:
+
+```swift
+var immediateTextsCollected: String
+```
+
+You may use these text collecting properties even when you know that there is only one text to be “collected”, this case is efficiently implemented.
 
 You might also turn a single content item or, more specifically, an element into an appropriate sequence using the following methods:
 
