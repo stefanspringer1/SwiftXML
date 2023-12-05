@@ -488,7 +488,28 @@ public class XNode {
         serialized(usingProductionTemplate: pretty ? PrettyPrintProductionTemplate(indentation: indentation) : DefaultProductionTemplate())
     }
     
-    public var collectedText: String {
+    public var immediateTextsCollected: String {
+        if let meAsBranch = self as? XBranch {
+            if let text = meAsBranch.firstContent as? XText, text._next == nil {
+                return text.value
+            }
+            var texts = [String]()
+            for node in meAsBranch.content {
+                if let text = node as? XText {
+                    texts.append(text.value)
+                }
+            }
+            return texts.joined()
+        }
+        else if let meAsText = self as? XText {
+            return meAsText.value
+        }
+        else {
+            return ""
+        }
+    }
+    
+    public var allTextsCollected: String {
         if let meAsBranch = self as? XBranch {
             if let text = meAsBranch.firstContent as? XText, text._next == nil {
                 return text.value

@@ -1409,8 +1409,8 @@ extension Sequence<XElement> {
         XContentSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { content in content.contentReversed(untilAndIncluding: condition) })
     }
     
-    public var collectedTexts: XStringSequence {
-        get { XStringDependingOnElementSequence(sequence: self, stringGetter: { element in element.collectedText }) }
+    public var allTextsCollected: XStringSequence {
+        get { XStringDependingOnElementSequence(sequence: self, stringGetter: { element in element.allTextsCollected }) }
     }
     
     public var immediateTexts: XTextSequence {

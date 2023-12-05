@@ -61,7 +61,7 @@ let transformation = XTransformation {
 
 **UPDATE 12 (October 2023):** `XNode.write(toFile:)` is renamed to `XNode.write(toPath:)`, and `XNode.write(toFileHandle:)` is renamed to `XNode.write(toFile:)`.
 
-**UPDATE 13 (December 2023):** `texts` is renamed to `immediateTexts` so as not to confuse it with `allTexts`, and `text` is renamed to `collectedText` (or `collectedTexts` for sequences).
+**UPDATE 13 (December 2023):** `texts` is renamed to `immediateTexts` so as not to confuse it with `allTexts`, and `text` is renamed to `allTextsCollected`. `immediateTextsCollected` is added.
 
 ---
 
@@ -802,7 +802,7 @@ var previousInTreeTouching: XContent?
 Find all text contained in a node (being composed into a single `String`):
 
 ```swift
-var collectedText: String
+var allTextsCollected: String
 ```
 
 You might also turn a single content item or, more specifically, an element into an appropriate sequence using the following methods:
