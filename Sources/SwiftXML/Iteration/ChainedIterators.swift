@@ -1291,9 +1291,9 @@ extension Sequence<XContent> {
         self.forEach { element in element.echo(usingProductionTemplate: productionTemplate, terminator: terminator) }
     }
     
-    /// Get the nth item.
+    // Get the nth item, counting starts at 1.
     public subscript(index: Int) -> Element? {
-        self.dropFirst(index).first
+        self.dropFirst(index-1).first
     }
 }
 
@@ -1308,9 +1308,9 @@ extension Sequence<XElement> {
         get { XAttributeValueSequenceDependingOnElementSequence(sequence: self, attributeName: attributeName) }
     }
     
-    /// Get the nth item.
+    // Get the nth item, counting starts at 1.
     public subscript(index: Int) -> Element? {
-        self.dropFirst(index).first
+        self.dropFirst(index-1).first
     }
     
     public func clone() -> XElementSequence {
@@ -1823,11 +1823,11 @@ extension Sequence<XElement> {
     
 }
 
-extension XTextSequence {
+extension Sequence<XText> {
     
-    /// Get the nth item.
+    // Get the nth item, counting starts at 1.
     public subscript(index: Int) -> Element? {
-        self.dropFirst(index).first
+        self.dropFirst(index-1).first
     }
     
 }

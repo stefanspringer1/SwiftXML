@@ -930,13 +930,20 @@ for childID in element.children["id"] {
 }
 ```
 
-Note that when using an `Int` as subscript value, you get the child of the according index (counting from 0):
+Note that when using an `Int` as subscript value for a sequence of content, you get the child of the according index:
 
 ```swift
 if let secondCHild = element.children[2] {
     print("second child: \(secondChild)")
 }
 ```
+
+---
+**NOTE**
+
+If you use this subscript notation `[n]` for a sequence of XContent, XElement, or XText, then – despite using integer values – this is not (!) a random access to the elements (each time using such a subscript, the sequence is followed until the according item is found by counting), and the counting starts at 1 as in the XPath language, and not at 0 as e.g. for Swift arrays.
+
+---
 
 ## Constructing XML
 
