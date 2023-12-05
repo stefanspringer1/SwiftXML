@@ -488,7 +488,7 @@ public class XNode {
         serialized(usingProductionTemplate: pretty ? PrettyPrintProductionTemplate(indentation: indentation) : DefaultProductionTemplate())
     }
     
-    public var text: String {
+    public var collectedText: String {
         if let meAsBranch = self as? XBranch {
             if let text = meAsBranch.firstContent as? XText, text._next == nil {
                 return text.value

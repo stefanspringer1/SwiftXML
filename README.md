@@ -33,7 +33,7 @@ let transformation = XTransformation {
 
 **This library is not in a “final” state yet** despite its high version number, i.e. there might still be bugs, or some major improvements will be done, and breaking changes might happen without the major version getting augmented. Addionally, there will be more comments in the code. Also, when such a final state is reached, the library might be further developed using a new repository URL (and the version number set back to a lower one). Further notice will be added here. See [there](https://stefanspringer.com) for contact information.
 
-**We plan for a final release in 2023.** (This library will then already be used in a production environment.) For all who are already been interested in this library, thank you for your patience!
+**We plan for a final release in early 2024.** (This library will then already be used in a production environment.) For all who are already been interested in this library, thank you for your patience!
 
 **UPDATE 1 (May 2023):** We changed the API a little bit recently (no more public `XSpot`, but you can set `isolated` for `XText`) and fixed some problems and are currently working on adding more tests to this library and to the `SwiftXMLParser`.
 
@@ -60,6 +60,8 @@ let transformation = XTransformation {
 **UPDATE 11 (October 2023):** Dropping the “X” prefix for implementations of `XProductionTemplate` and `XActiveProduction`.
 
 **UPDATE 12 (October 2023):** `XNode.write(toFile:)` is renamed to `XNode.write(toPath:)`, and `XNode.write(toFileHandle:)` is renamed to `XNode.write(toFile:)`.
+
+**UPDATE 13 (December 2023):** `texts` is renamed to `immediateTexts` so as not to confuse it with `allTexts`, and `text` is renamed to `collectedText` (or `collectedTexts` for sequences).
 
 ---
 
@@ -624,7 +626,7 @@ var children: XElementSequence
 The direct content that is text:
 
 ```swift
-var texts: XTextSequence
+var immediateTexts: XTextSequence
 ```
 
 For the `content` and `children` sequences, there also exist the sequences `contentReversed`, `childrenReversed`, and `textsReversed` which iterate from the last corresponding item to the first.
@@ -800,7 +802,7 @@ var previousInTreeTouching: XContent?
 Find all text contained in a node (being composed into a single `String`):
 
 ```swift
-var text: String
+var collectedText: String
 ```
 
 You might also turn a single content item or, more specifically, an element into an appropriate sequence using the following methods:

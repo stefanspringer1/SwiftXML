@@ -325,7 +325,7 @@ final class SwiftXMLTests: XCTestCase {
         let document = try parseXML(fromText: """
             <paragraph>Hello <bold>World</bold>!</paragraph>
             """)
-        XCTAssertEqual(document.children.first!.texts.map{ "\"\($0.value)\"" }.joined(separator: ", "), #""Hello ", "!""#)
+        XCTAssertEqual(document.children.first!.immediateTexts.map{ "\"\($0.value)\"" }.joined(separator: ", "), #""Hello ", "!""#)
     }
     
     func testExpressibleByStringLiteral() throws {
@@ -428,15 +428,15 @@ final class SwiftXMLTests: XCTestCase {
             Array(element1.content)
         }
         let _ = XElement("element") {
-            element1.texts
+            element1.immediateTexts
         }
         let _ = XElement("element") {
-            Array(element1.texts)
+            Array(element1.immediateTexts)
         }
         
         let _ = XElement("element") {
             element1.content
-            element1.texts
+            element1.immediateTexts
             XElement("element")
         }
         let _ = XElement("element") {
@@ -450,11 +450,11 @@ final class SwiftXMLTests: XCTestCase {
             [XElement("element"), XElement("element")]
         }
         let _ = XElement("element") {
-            element1.texts.map{ $0.text }.asContent
+            element1.immediateTexts.map{ $0.collectedText }.asContent
         }
         let _ = XElement("element") {
             element1.content
-            element1.texts.map{ $0.text }.asContent
+            element1.immediateTexts.map{ $0.collectedText }.asContent
             "u"
             XElement("element")
         }
@@ -486,6 +486,6 @@ final class SwiftXMLTests: XCTestCase {
         </sentences>
         """)
         
-        XCTAssertEqual(document.elements("sentence").text.map{ "\"\($0)\"" }.joined(separator: ", "), #""Hello World", "Feel good""#)
+        XCTAssertEqual(document.elements("sentence").collectedTexts.map{ "\"\($0)\"" }.joined(separator: ", "), #""Hello World", "Feel good""#)
     }
 }
