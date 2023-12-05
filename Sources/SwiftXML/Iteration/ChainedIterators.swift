@@ -1290,6 +1290,11 @@ extension Sequence<XContent> {
     public func echo(usingProductionTemplate productionTemplate: XProductionTemplate, terminator: String = "\n") {
         self.forEach { element in element.echo(usingProductionTemplate: productionTemplate, terminator: terminator) }
     }
+    
+    /// Get the nth item.
+    public subscript(index: Int) -> Element? {
+        index == 0 ? self.first : self.dropFirst(index-1).first
+    }
 }
 
 extension Sequence<XElement> {
@@ -1301,6 +1306,11 @@ extension Sequence<XElement> {
     /// Return an iterator for the attribute name, skipping elements in the sequence without the attribue.
     public subscript(attributeName: String) -> XStringSequence {
         get { XAttributeValueSequenceDependingOnElementSequence(sequence: self, attributeName: attributeName) }
+    }
+    
+    /// Get the nth item.
+    public subscript(index: Int) -> Element? {
+        index == 0 ? self.first : self.dropFirst(index-1).first
     }
     
     public func clone() -> XElementSequence {

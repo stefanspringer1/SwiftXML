@@ -600,4 +600,21 @@ final class FromReadmeTests: XCTestCase {
             """
         )
     }
+    
+    func testSequenceIndex() throws {
+        
+        let document = try parseXML(fromText: """
+            <document>
+                <title>The Document</title>
+                <p id="1">This is it.</p>
+                <p id="2">And more.</p>
+                <annex>This is the annex.</annex>
+            </document>
+            """)
+        
+        XCTAssertEqual(document.children.children("p")["id"].joined(separator: " "), "1 2")
+        XCTAssertEqual(document.children.children("p")[2]?.description ?? "-", #"<p id="2">"#)
+        XCTAssertEqual(document.children.children("p")[20]?.description ?? "-", "-")
+        
+    }
 }

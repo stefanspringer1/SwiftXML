@@ -4,7 +4,7 @@ A library written in Swift to process XML.
 
 This library is published under the Apache License v2.0 with Runtime Library Exception.
 
-```Swift
+```swift
 let transformation = XTransformation {
     
     XRule(forElements: "table") { table in
@@ -90,7 +90,7 @@ The following features are important:
 
 The following code takes any `<item>` with an integer value of `multiply` larger than 1 and additionally inserts an item with a `multiply` number one less, while removing the `multiply` value on the existing item (the library will be explained in more detail in subsequent sections):
 
-```Swift
+```swift
 let document = try parseXML(fromText: """
 <a><item multiply="3"/></a>
 """)
@@ -117,7 +117,7 @@ Note that in this example – just to show you that it works – each new item i
 
 The elements returned by an iteration can even be removed without stopping the (lazy!) iteration:
 
-```Swift
+```swift
 let document = try parseXML(fromText: """
 <a><item id="1" remove="true"/><item id="2"/><item id="3" remove="true"/><item id="4"/></a>
 """)
@@ -172,7 +172,7 @@ The following functions take a source and return an XML document instance (`XDoc
 
 Reading from a URL which references a local file:
 
-```Swift
+```swift
 func parseXML(
     fromURL: URL,
     sourceInfo: String?,
@@ -191,21 +191,21 @@ func parseXML(
 
 And accordingly:
 
-```Swift
+```swift
 func parseXML(
     fromPath: String,
     ...
 ) throws -> XDocument
 ```
 
-```Swift
+```swift
 func parseXML(
     fromText: String,
     ...
 ) throws -> XDocument
 ```
 
-```Swift
+```swift
 func parseXML(
     fromData: Data,
     ...
@@ -214,7 +214,7 @@ func parseXML(
 
 If you want to be indifferent about which kind of source to process, use `XDocumentSource` for the source definition and use:
 
-```Swift
+```swift
 func parseXML(
     from: XDocumentSource,
     ...
@@ -225,7 +225,7 @@ The optional `textAllowedInElementWithName` method gets the name of the surround
 
 All internal entity references in attribute values have to be replaced by text during parsing. In order to achieve this (in case that internal entity references occur at all in attribute values in the source), an `InternalEntityResolver` can be provided. An `InternalEntityResolver` has to implement the following method:
 
-```Swift
+```swift
 func resolve(
     entityWithName: String,
     forAttributeWithName: String?,
@@ -289,7 +289,7 @@ When not set explicitely in the XML source, some of those values are set to a se
 
 When printing a content via `print(...)`, only a top-level represenation like the start tag is printed and never the whole tree. When you would like to print the whole tree or document, use:
 
-```Swift
+```swift
 func echo(pretty: Bool, indentation: String, terminator: String)
 ```
 
@@ -297,7 +297,7 @@ func echo(pretty: Bool, indentation: String, terminator: String)
 
 With more control:
 
-```Swift
+```swift
 func echo(usingProductionTemplate: XProductionTemplate, terminator: String)
 ```
 
@@ -305,7 +305,7 @@ Productions are explained in the next section.
 
 When you want a serialization of a whole tree or document as text (`String`), use the following method:
 
-```Swift
+```swift
 func serialized(pretty: Bool) -> String
 ```
 
@@ -313,7 +313,7 @@ func serialized(pretty: Bool) -> String
 
 With more control:
 
-```Swift
+```swift
 func serialized(usingProductionTemplate: XProductionTemplate) -> String
 ```
 
@@ -323,25 +323,25 @@ Do not use `serialized` to print a tree or document, use `echo` instead, because
 
 Any XML node (including an XML document) can be written, including the tree of nodes that is started by it, via the following methods.
 
-```Swift
+```swift
 func write(toURL: URL, usingProductionTemplate: XProductionTemplate) throws
 ```
 
-```Swift
+```swift
 func write(toPath: String, usingProductionTemplate: XProductionTemplate) throws
 ```
 
-```Swift
+```swift
 func write(toFile: FileHandle, usingProductionTemplate: XProductionTemplate) throws
 ```
 
-```Swift
+```swift
 func write(toWriter: Writer, usingProductionTemplate: XProductionTemplate) throws
 ```
 
 You can also use the `WriteTarget` protocol to allow all the above possiblities:
 
-```Swift
+```swift
 func write(to writeTarget: WriteTarget, usingProductionTemplate: XProductionTemplate) throws
 ```
 
@@ -355,7 +355,7 @@ So an `XActiveProduction` defines how each part of the document is written, e.g.
 
 Example: write a linebreak before all elements:
 
-```Swift
+```swift
 class MyProduction: DefaultProduction {
 
     override func writeElementStartBeforeAttributes(element: XElement) throws {
@@ -370,7 +370,7 @@ try document.write(toFile: "myFile.xml", usingProduction: MyProduction())
 
 For generality, the following method is provided to apply any `XActiveProduction` to a node and its contained tree:
 
-```Swift
+```swift
 func applyProduction(activeProduction: XActiveProduction) throws
 ```
 
@@ -378,7 +378,7 @@ func applyProduction(activeProduction: XActiveProduction) throws
 
 Any node (including an XML document) can be cloned, including the tree of nodes that is started by it, using the following method:
 
-```Swift
+```swift
 func clone() -> XNode
 ```
 
@@ -390,7 +390,7 @@ Note that the `backLink` reference references the original node weakly, i.e. if 
 
 If you would like to use cloning to just save a version of your document to a copy, use its following method:
 
-```Swift
+```swift
 func makeVersion()
 ```
 
@@ -400,7 +400,7 @@ The `finalBackLink` property follows the whole chain of `backLink` values and gi
 
 Sometimes, only a “shallow” clone is needed, i.e. the node itself without the whole tree of nodes with the node as root. In this case, just use:
 
-```Swift
+```swift
 func shallowClone(forwardref: Bool) -> XNode
 ```
 
@@ -414,7 +414,7 @@ If the parser (as it is the case with the [SwiftXMLParser](https://github.com/st
 
 Example:
 
-```Swift
+```swift
 let document = try parseXML(fromText: """
 <a>
     <b>Hello</b>
@@ -453,7 +453,7 @@ The attributes of an element can be read and set via the “index notation”. I
 
 Example:
 
-```Swift
+```swift
 // setting the "id" attribute to "1":
 myElement["id"] = "1"
 
@@ -467,7 +467,7 @@ You can also get a sequence of attribute values (optional Strings) from a sequen
 
 Example:
 
-```Swift
+```swift
 let document = try parseXML(fromText: """
     <test>
       <b id="1"/>
@@ -488,13 +488,13 @@ If you want to get an attribute value and at the same time remove the attribute,
 
 To get the names of all attributes of an element, use:
 
-```Swift
+```swift
 var attributeNames: [String]
 ```
 
 Note that you also can a (lazy) sequence of the attribute values of a certain attribute name of a (lazy) sequence of elements by using the same index notation:
 
-```Swift
+```swift
 print(myElement.children("myChildName")["myAttributeName"].joined(separator: ", "))
 ```
 
@@ -510,7 +510,7 @@ You can also set attachments immediately when creating en element or a document 
 
 Get the XPath of a node via:
 
-```Swift
+```swift
 var xPath: String
 ```
 
@@ -518,11 +518,11 @@ var xPath: String
 
 Traversing a tree depth-first starting from a node (including a document) can be done by the following methods:
 
-```Swift
+```swift
 func traverse(down: (XNode) throws -> (), up: ((XNode) throws -> ())? = nil) rethrows
 ```
 
-```Swift
+```swift
 func traverse(down: (XNode) async throws -> (), up: ((XNode) async throws -> ())? = nil) async rethrows
 ```
 
@@ -530,7 +530,7 @@ For a “branch”, i.e. a node that might contain other nodes (like an element,
 
 Example:
 
-```Swift
+```swift
 document.traverse { node in
     if let element = node as? XElement {
         print("entering element \(element.name)")
@@ -551,13 +551,13 @@ As mentioned and the general description, the library allows to efficiently find
 
 Finding the elements of a certain name:
 
-```Swift
+```swift
 func elements(_: String) -> XElementsOfSameNameSequence
 ```
 
 Example:
 
-```Swift
+```swift
 myDocument.elements("paragraph").forEach { paragraph in
     if let id = paragraph["id"] {
         print("found paragraph with ID \"\(ID)\"")
@@ -575,55 +575,55 @@ Sequences returned are always lazy sequences, iterating through them gives items
 
 Finding the document the node is contained in:
 
-```Swift
+```swift
 var document: XDocument?
 ```
 
 Finding the parent element:
 
-```Swift
+```swift
 var parent: XElement?
 ```
 
 All its ancestor elements:
 
-```Swift
+```swift
 var ancestors: XElementSequence
 ```
 
 Get the first content of a branch:
 
-```Swift
+```swift
 var firstContent: XContent?
 ```
 
 Get the last content of a branch:
 
-```Swift
+```swift
 var lastContent: XContent?
 ```
 
 If there is exactly one node contained, get it, else get `nil`:
 
-```Swift
+```swift
 var singleContent: XContent?
 ```
 
 The direct content of a document or an element (“direct” means that their parent is this document or element):
 
-```Swift
+```swift
 var content: XContentSequence
 ```
 
 The direct content that is an element, i.e. all the children:
 
-```Swift
+```swift
 var children: XElementSequence
 ```
 
 The direct content that is text:
 
-```Swift
+```swift
 var texts: XTextSequence
 ```
 
@@ -631,31 +631,31 @@ For the `content` and `children` sequences, there also exist the sequences `cont
 
 All content in the tree of nodes that is started by the node itself, without the node itself, in the order of a depth-first traversal:
 
-```Swift
+```swift
 var allContent: XContentSequence
 ```
 
 All content in the tree of nodes that is started by the node, starting with the node itself:
 
-```Swift
+```swift
 var allContentIncludingSelf: XContentSequence
 ```
 
 The descendants, i.e. all content in the tree of nodes that is started by the node, without the node itself, that is an element:
 
-```Swift
+```swift
 var descendants: XElementSequence
 ```
 
 If a node is an element, the element itself and the descendants, starting with the element itself:
 
-```Swift
+```swift
 var descendantsIncludingSelf: XElementSequence
 ```
 
 All texts in the tree of nodes that is started by the node itself, without the node itself, in the order of a depth-first traversal:
 
-```Swift
+```swift
 var allTexts: XTextSequence
 ```
 
@@ -663,13 +663,13 @@ The (direct) content of an branch (element or document) are “siblings” to ea
 
 The content item previous to the subject:
 
-```Swift
+```swift
 var previousTouching: XContent?
 ```
 
 The content item next to the subject:
 
-```Swift
+```swift
 var nextTouching: XContent?
 ```
 
@@ -677,7 +677,7 @@ var nextTouching: XContent?
 
 You might also just be interested if a previous or next node exists:
 
-```Swift
+```swift
 var hasPrevious: Bool
 var hasNext: Bool 
 ```
@@ -686,31 +686,31 @@ The following very short method names `previous` and `next` actually mean “the
 
 All nodes previous to the node (i.e. the previous siblings) _on the same level,_ i.e. of the same parent, in the order from the node:
 
-```Swift
+```swift
 var previous: XContentSequence
 ```
 
 Of those, the ones that are elements:
 
-```Swift
+```swift
 var previousElements: XElementSequence
 ```
 
 Analogously, the content next to the node:
 
-```Swift
+```swift
 var next: XContentSequence
 ```
 
 Of those, the ones that are elements:
 
-```Swift
+```swift
 var nextElements: XElementSequence
 ```
 
 Example:
 
-```Swift
+```swift
 myElement.descendants.forEach { descendant in
     print("the name of the descendant is \(descendant.name)")
 }
@@ -718,7 +718,7 @@ myElement.descendants.forEach { descendant in
 
 Note that a sequence might be used several times:
 
-```Swift
+```swift
 let document = try parseXML(fromText: """
 <a><c/><d/><e/></a>
 """)
@@ -750,7 +750,7 @@ Note that there is no property getting you the last item of those sequences, as 
 
 Test if something exists in a sequence by using `exist`:
 
-```Swift
+```swift
 var exist: Bool
 ```
 
@@ -764,14 +764,14 @@ var absent: Bool
 
 If you would like to test if certain items exist, and many cases you would also then use those items. The property `existing` of a sequence of content or elements returns the sequence itself if items exist, and `nil` otherwise:
 
-```Swift
+```swift
 var existing: XContentSequence?
 var existing: XElementSequence?
 ```
 
 In the following example, a sequence is first tested for existing items and, if items exist, then used:
 
-```Swift
+```swift
 let document = try parseXML(fromText: """
 <a><c/><b id="1"/><b id="2"/><d/><b id="3"/></a>
 """)
@@ -787,19 +787,19 @@ You may also ask for the previous or next content item in the tree, in the order
 
 The next content item in the tree:
 
-```Swift
+```swift
 var nextInTreeTouching: XContent?
 ```
 
 The previous content item in the tree:
 
-```Swift
+```swift
 var previousInTreeTouching: XContent?
 ```
 
 Find all text contained in a node (being composed into a single `String`):
 
-```Swift
+```swift
 var text: String
 ```
 
@@ -807,13 +807,13 @@ You might also turn a single content item or, more specifically, an element into
 
 For any content:
 
-```Swift
+```swift
 var asSequence: XContentSequence
 ```
 
 For an element:
 
-```Swift
+```swift
 var asElementSequence: XElementSequence
 ```
 
@@ -823,7 +823,7 @@ var asElementSequence: XElementSequence
 
 All of the methods in the previous section that return a sequence also allow a condition as a first argument for filtering. We distinguish between the case of all items of the sequence fullfilling a condition, the case of all items while a condition is fullfilled, and the case of all items until a condition is fullfilled (excluding the found item where the condition fullfilled):
 
-```Swift
+```swift
 func content((XContent) -> Bool) -> XContentSequence
 func content(while: (XContent) -> Bool) -> XContentSequence
 func content(until: (XContent) -> Bool) -> XContentSequence
@@ -836,7 +836,7 @@ Sequences of a more specific type are returned in sensible cases.
 
 Example:
 
-```Swift
+```swift
 let document = try parseXML(fromText: """
 <a><b/><c take="true"/><d/><e take="true"/></a>
 """)
@@ -858,7 +858,7 @@ Note that the round parentheses “(...)” around the condition in the example 
 
 There also exist a shortcut for the common of filtering elements according to a name:
 
-```Swift
+```swift
 document
     .descendants("paragraph")
     .forEach { _ in
@@ -870,19 +870,19 @@ You can also use multiple names (e.g. `descendants("paragraph", "table")`). If n
 
 If you know that there at most one child element with a certain name, use one of the following method (it returns the first child with this name if it exist):
 
-```Swift
+```swift
 func child(_ name: String) -> XElement?
 ```
 
 You might then also consider alternative names (giving you the first child where the name matches):
 
-```Swift
+```swift
 func child(_ names: String...) -> XElement? 
 ```
 
 If you want to get the first ancestor with a certain name, use one of the following methods:
 
-```Swift
+```swift
 func ancestor(_ name: String) -> XElement?
 func ancestor(_ names: String...) -> XElement?
 ```
@@ -893,7 +893,7 @@ Iterators can also be chained. The second iterator is executed on each of the no
 
 Example:
 
-```Swift
+```swift
 let document = try parseXML(fromText: """
 <a>
     <b>
@@ -920,6 +920,22 @@ Output:
 
 Also, in those chains operations finding single nodes when applied to a single node like `parent` also work, and you can use e.g. `insertNext` (see the section on tree manipulations), or `with` (see the next section on constructing XML), or `echo()`.
 
+When using an index with a `String`, you get a sequence of the according attribute values (where set):
+
+```swift
+for childID in element.children["id"] {
+    print("found child ID \(childID)")
+}
+```
+
+Note that when using an `Int` as subscript value, you get the child of the according index (counting from 0):
+
+```swift
+if let secondCHild = element.children[2] {
+    print("second child: \(secondChild)")
+}
+```
+
 ## Constructing XML
 
 ### Constructing an empty element
@@ -928,7 +944,7 @@ When constructing an element (without content), the name is given as the first (
 
 Example: constructing an empty “paragraph” element with attributes `id="1"` and `style="note"`:
 
-```Swift
+```swift
 let myElement = XElement("paragraph", ["id": "1", "style": "note"])
 ```
 
@@ -942,7 +958,7 @@ Be “courageous” when formulating your code, more might function than you mig
 
 Moving the “a” children and the “b” children of an element to the beginning of the element:
 
-```Swift
+```swift
 element.addFirst {
   element.children(“a”)
   element.children(“b”)
@@ -955,7 +971,7 @@ Note that in the result, the order of the content is just like defined inside th
 
 Wrap an element with another element:
 
-```Swift
+```swift
 element.replace {
    XElement("wrapper") {
       element
@@ -969,7 +985,7 @@ The content that you define inside parentheses `{...}` is constructed from the i
 
 When constructing an element, its contents are given in parentheses `{...}` (those parentheses are the `builder` argument of the initializer).
 
-```Swift
+```swift
 let myElement = XElement("div") {
     XElement("hr")
     XElement("paragraph") {
@@ -983,7 +999,7 @@ let myElement = XElement("div") {
 
 The content might be given as an array or an appropriate sequence:
 
-```Swift
+```swift
 let myElement = XElement("div") {
     XElement("hr")
     myOtherElement.content
@@ -993,7 +1009,7 @@ let myElement = XElement("div") {
 
 For resulting arrays of more complex content, use the property `asContent` to insert them (`asContent` also flattens arrays of sequences):
 
-```Swift
+```swift
 let myElement = XElement("div") {
     ["Hello ", " ", "World"].asContent
     myDocument.children.map{ $0.children }.asContent
@@ -1003,7 +1019,7 @@ let myElement = XElement("div") {
 
 You might also use `as XContentLike` to set a common appropriate type where necessary:
 
-```Swift
+```swift
 let myElement = XElement("p") {
     unpack ? myOtherElement.content : myOtherElement as XContentLike
     setPredefinedText ? "my text" : anotherElement.content as XContentLike
@@ -1013,7 +1029,7 @@ let myElement = XElement("p") {
 
 When not defining content, using `map` might be a sensible option:
 
-```Swift
+```swift
 let element = XElement("z") {
     XElement("a") {
         XElement("a1")
@@ -1039,7 +1055,7 @@ The same applies to e.g. the `filter` method, which, besides letting the code lo
 
 The content of elements containing other elements while defining their content is being built from the inside to the ouside: Consider the following example:
 
-```Swift
+```swift
 let b = XElement("b")
 
 let a = XElement("a") {
@@ -1090,7 +1106,7 @@ Note that if you insert an element into another document that is part of a docum
 
 Example: a newly constructed element gets added to a document:
 
-```Swift
+```swift
 let document = try parseXML(fromText: """
 <a><b id="1"/><b id="2"/></a>
 """)
@@ -1130,25 +1146,25 @@ Besides changing the node properties, an XML tree can be changed by the followin
 
 Add nodes at the end of the content of an element or a document respectively:
 
-```Swift
+```swift
 func add(builder: () -> [XContent])
 ```
 
 Add nodes to the start of the content of an element or a document respectively:
 
-```Swift
+```swift
 func addFirst(builder: () -> [XContent])
 ```
 
 Add nodes as the nodes previous to the node:
 
-```Swift
+```swift
 func insertPrevious(_ insertionMode: InsertionMode = .following, builder: () -> [XContent])
 ```
 
 Add nodes as the nodes next to the node:
 
-```Swift
+```swift
 func insertNext(_ insertionMode: InsertionMode = .following, builder: () -> [XContent])
 ```
 
@@ -1158,7 +1174,7 @@ By using the next two methods, a node gets removed.
 
 Remove the node from the tree structure and the document:
 
-```Swift
+```swift
 func remove()
 ```
 
@@ -1166,7 +1182,7 @@ You might also use the method `removed()` of a node to remove the node but also 
 
 Replace the node by other nodes:
 
-```Swift
+```swift
 func replace(_ insertionMode: InsertionMode = .following, builder: () -> [XContent])
 ```
 
@@ -1174,25 +1190,25 @@ Note that the content that replaces a node is allowed to contain the node itself
 
 Clear the contents of an element or a document respectively:
 
-```Swift
+```swift
 func clear()
 ```
 
 Test if an element or a document is empty:
 
-```Swift
+```swift
 var isEmpty: Bool
 ```
 
 Set the contents of an element or a document respectively:
 
-```Swift
+```swift
 func setContent(builder: () -> [XContent])
 ```
 
 Example:
 
-```Swift
+```swift
 myDocument.elements("table").forEach { table in
     table.insertNext {
         XElement("legend") {
@@ -1207,7 +1223,7 @@ myDocument.elements("table").forEach { table in
 
 Note that by default iterations continue with new nodes inserted by `insertPrevious` or `insertNext` also being considered. In the following cases, you have to add the `.skipping`  directive to get the output as noted below (in the second case, you even get an infinite loop if you do not set `.skipping`):
 
-```Swift
+```swift
 let element = XElement("top") {
     XElement("a1") {
         XElement("a2")
@@ -1282,7 +1298,7 @@ Note that there is no such mechanism to skipping inserted content when not using
 
 When using `insertNext`, `replace` etc. in chained iterators, what happens is that the definition of the content in the parentheses `{...}` get _executed_ for each item in the sequence. You might should use the `collect` function to build content specifically for the current item instead. E.g. in the last example, you might use with the same result:
 
-```Swift
+```swift
 print("\n---- 1 ----\n")
 
 element.content.replace { content in
@@ -1306,7 +1322,7 @@ element.echo(pretty: true)
 
 You may also not use `collect`:
 
-```Swift
+```swift
 let e = XElement("a") {
     XElement("b")
     XElement("c")
@@ -1321,7 +1337,7 @@ e.echo(pretty: true)
 
 Output:
 
-```Swift
+```swift
 <a>
   <b>
     <added/>
@@ -1334,7 +1350,7 @@ Output:
 
 Note that a new `<added/>` is created each time. From what has already bee said, it should be clear that this “duplication” does not work with existing content (unless you use `clone()` or `shallowClone()`):
 
-```Swift
+```swift
 let myElement = XElement("a") {
     XElement("to-add")
     XElement("b")
@@ -1378,7 +1394,7 @@ Use `clone()` (or `shallowClone()`) when you actually want content to get duplic
 
 By default, When you insert content, this new content is also followed (insertion mode `.following`), as this best reflects the dynamic nature of this library. If you do not want this, set `.skipping` as first argument of `insertPrevious` or `insertNext`. For example, consider the following code:
 
-```Swift
+```swift
 let myElement = XElement("top") {
     XElement("a")
 }
@@ -1411,7 +1427,7 @@ Output:
 
 When `<b/>` gets inserted, the traversal also follows this inserted content. When you would like to skip the inserted content, use `.skipping` as the first argument of `insertNext`:
 
-```Swift
+```swift
     ...
         element.insertNext(.skipping) {
             XElement("b")
@@ -1430,7 +1446,7 @@ Output:
 
 Similarly, if you replace a node, the content that gets inserted in place of the node is by default included in the iteration. Example: Assume you would like to replace every occurrence of some `<bold>` element by its content:
 
-```Swift
+```swift
 let document = try parseXML(fromText: """
     <text><bold><bold>Hello</bold></bold></text>
     """)
@@ -1452,7 +1468,7 @@ This can be very convenient when processing text, e.g. it is then very straightf
 
 You can avoid merging of text `text` with other texts by setting the `isolated` property to `true` (you can also choose to set this value during initialization of an XText). Consider the following example where the occurrences of a search text gets a greenish background. In this example, you do not want `part` to be added to `text` in the iteration:
 
-```Swift
+```swift
 let searchText = "world"
 
 document.traverse { node in
@@ -1500,7 +1516,7 @@ In a rule, the user defines what to do with elements or attributes certain names
 
 Example:
 
-```Swift
+```swift
 let document = try parseXML(fromText: """
 <a><formula id="1"/></a>
 """)
@@ -1572,7 +1588,7 @@ Also note that using an `XTransformation` you can only transform a whole documen
 
 A transformation can be stopped by calling `stop()` on the transformation, although that only works indirectly:
 
-```Swift
+```swift
 var transformationAlias: XTransformation? = nil
 
 let transformation = XTransformation {
@@ -1594,7 +1610,7 @@ As noted in the last section, the order of rules a crucial in some transformatio
 
 The “inverse order” of rules goes from the inner elements to the outer element so that the context is still unchanged when the rule applies, note the lookup of `element.parent?.name` to differentiate the color of the text:
 
-```Swift
+```swift
 let document = try parseXML(fromText: """
     <document>
         <section>
@@ -1663,7 +1679,7 @@ This method might not be fully applicable in some transformations.
 
 To have information about the context in the original document of transformed elements, attachements might be used. See how in the following code `attached: ["source": element.name]` is used in the construction of the `div` element, and how this information is then used in the rules for the `paragraph` element (the input document is the same as in the section “Transformations with inverse order” above; note that the inverse order described in that section is _not_ used here):
 
-```Swift
+```swift
 let transformation = XTransformation {
     
     XRule(forElements: "hint", "warning") { element in
@@ -1706,7 +1722,7 @@ Note that this method comes with an penalty regarding efficiency because to need
 
 You first create a document version (this creates a clone such that your current document contains backlinks to the clone), and in certian rules, you might then copy the backlink from the node to be replaced by using the `withBackLinkFrom:` argument in the creation of an element (the input document is the same as in the section “Transformations with inverse order” above):
 
-```Swift
+```swift
 let transformation = XTransformation {
     
     XRule(forElements: "hint", "warning") { element in
@@ -1756,7 +1772,7 @@ As the XML tree can be changed during a traversal, you can traverse an XML tree 
 
 If you then formulate manipulations during the down direction of the traversal, you know that parents or other ancestors of the current node have already been transformed. Conversely, if you formulate manipulations only inside the `up:` traversal part and never manipulate any ancestors of the current element, you know that the parent and other ancestors are still the original ones (the input document is the same as in the section “Transformations with inverse order” above):
 
-```Swift
+```swift
 for section in document.elements("section") {
     section.traverse { node in
         // -
@@ -1808,7 +1824,7 @@ First, you can always look up the namespace prefix settings (attributes `xmlns:.
 
 Read the the full prefix for a namespace URL string from the root element:
 
-```Swift
+```swift
 XDocument.fullPrefix(forNamespace:) -> String
 ```
 
@@ -1816,13 +1832,13 @@ XDocument.fullPrefix(forNamespace:) -> String
 
 Get a map from the namespace URL strings to the full prefixes from the root element:
 
-```Swift
+```swift
 XDocument.fullPrefixesForNamespaces
 ```
 
 When you then like to access or change elements in that namespace, add the according prefix dynamically in your code:
 
-```Swift
+```swift
 let fullMathMLPrefix = myDocument.fullPrefix(forNamespace: "http://www.w3.org/1998/Math/MathML") 
 
 let transformation = XTransformation {
@@ -1836,7 +1852,7 @@ let transformation = XTransformation {
 
 If you would like to add a namespace declaration at the root element, use the following method:
 
-```Swift
+```swift
 XDocument.setNamespace(:withPossiblyFullPrefix:)
 ```
 
@@ -1864,7 +1880,7 @@ It is difficult to show the convenience of those extension with simple examples,
 
 Example:
 
-```Swift
+```swift
 let element1 = XElement("a") {
     XElement("child-of-a") {
         XElement("more", ["special": "yes"])
@@ -1891,7 +1907,7 @@ Result:
 
 `applying` is also predefined for a content sequence or a element sequence where it is shorter than using the `map` method in the general case (where a `return` statement might have to be included) and you can directly use it to define content (without the `asContent` property decribed above):
 
-```Swift
+```swift
 let myElement = XElement("a") {
     XElement("b", ["inserted": "yes"]) {
         XElement("c", ["inserted": "yes"])
