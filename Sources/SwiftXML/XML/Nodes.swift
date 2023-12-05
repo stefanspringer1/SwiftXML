@@ -899,9 +899,10 @@ public protocol XBranch: XNode {
     func firstContent(_ condition: (XContent) -> Bool) -> XContent?
     var lastContent: XContent? { get }
     func lastContent(_ condition: (XContent) -> Bool) -> XContent?
-    func child(_ name: String) -> XElement?
-    func child(_ names: [String]) -> XElement?
-    func child(_ name: String...) -> XElement?
+    var firstChild: XElement { get }
+    func firstChild(_ name: String) -> XElement?
+    func firstChild(_ names: [String]) -> XElement?
+    func firstChild(_ names: String...) -> XElement?
     var isEmpty: Bool { get }
     func add(@XContentBuilder builder: () -> [XContent])
     func addFirst(@XContentBuilder builder: () -> [XContent])
@@ -920,7 +921,18 @@ protocol XBranchInternal: XBranch {
 
 extension XBranchInternal {
     
-    public func child(_ name: String) -> XElement? {
+    public var firstChild: XElement? {
+        var node = __firstContent
+        while let theNode = node {
+            if let child = theNode as? XElement {
+                return child
+            }
+            node = theNode._next
+        }
+        return nil
+    }
+    
+    public func firstChild(_ name: String) -> XElement? {
         var node = __firstContent
         while let theNode = node {
             if let child = theNode as? XElement, child.name == name {
@@ -931,7 +943,7 @@ extension XBranchInternal {
         return nil
     }
     
-    public func child(_ names: [String]) -> XElement? {
+    public func firstChild(_ names: [String]) -> XElement? {
         var node = __firstContent
         while let theNode = node {
             if let child = theNode as? XElement, names.contains(child.name) {
@@ -942,8 +954,8 @@ extension XBranchInternal {
         return nil
     }
     
-    public func child(_ names: String...) -> XElement? {
-        child(names)
+    public func firstChild(_ names: String...) -> XElement? {
+        firstChild(names)
     }
     
     /**
@@ -1389,6 +1401,8 @@ public struct XContentBuilder {
 }
 
 public final class XElement: XContent, XBranchInternal, CustomStringConvertible {
+    
+    public var firstChild: XElement { (self as XBranchInternal).firstChild }
     
     func setDocument(document newDocument: XDocument?) {
         

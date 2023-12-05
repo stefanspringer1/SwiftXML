@@ -67,6 +67,8 @@ let transformation = XTransformation {
 
 **UPDATE 15 (December 2023):** Neither `allTextsCollected` nor `immediateTextsCollected` are available for sequences any more because of their semantic ambiguity.
 
+**UPDATE 16 (December 2023):** The method `child(...)` is renamed to `firstChild(...)`.
+
 ---
 
 ## Related packages
@@ -888,16 +890,16 @@ document
 
 You can also use multiple names (e.g. `descendants("paragraph", "table")`). If no name is given, all elements are given in the result regardless the name, e.g. `children()` means the same as `children`.
 
-If you know that there at most one child element with a certain name, use one of the following method (it returns the first child with this name if it exist):
+If you know that there at most one child element with a certain name, use the following method (it returns the first child with this name if it exist):
 
 ```swift
-func child(_ name: String) -> XElement?
+func firstChild(_ name: String) -> XElement?
 ```
 
 You might then also consider alternative names (giving you the first child where the name matches):
 
 ```swift
-func child(_ names: String...) -> XElement? 
+func firstChild(_ names: String...) -> XElement? 
 ```
 
 If you want to get the first ancestor with a certain name, use one of the following methods:

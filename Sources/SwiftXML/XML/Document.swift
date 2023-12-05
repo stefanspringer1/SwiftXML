@@ -20,6 +20,8 @@ final class XValue {
 
 public final class XDocument: XNode, XBranchInternal {
     
+    public var firstChild: XElement { (self as XBranchInternal).firstChild }
+    
     public var xPath: String { "/" }
     
     var __firstContent: XContent? = nil
