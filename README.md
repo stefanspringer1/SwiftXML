@@ -63,6 +63,8 @@ let transformation = XTransformation {
 
 **UPDATE 13 (December 2023):** `texts` is renamed to `immediateTexts` so as not to confuse it with `allTexts`, and `text` is renamed to `allTextsCollected`. `immediateTextsCollected` and the `allTextsReversed` variants are added.
 
+**UPDATE 14 (December 2023):** The subscript notation with integer values for a sequence of XContent, XElement, or XText now starts counting at 1.
+
 ---
 
 ## Related packages
