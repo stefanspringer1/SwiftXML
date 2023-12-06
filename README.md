@@ -69,10 +69,6 @@ let transformation = XTransformation {
 
 **UPDATE 16 (December 2023):** The method `child(...)` is renamed to `firstChild(...)`.
 
-**UPDATE 17 (December 2023):** `immediateTextsCollected` is called `text` again, and `immediateTextsCollected` is removed.
-
-**UPDATE 18 (December 2023):** New: `firstOfAllTexts` and `lastOfAllTexts`.
-
 ---
 
 ## Related packages
@@ -657,13 +653,6 @@ All texts in the tree:
 
 ```swift
 var allTexts: XTextSequence
-```
-
-You can get the first and last text in the tree by:
-
-```swift
-var firstOfAllTexts: XText?
-var lastOfAllTexts: XText?
 ```
 
 The descendants, i.e. all content in the tree of nodes that is started by the node, without the node itself, that is an element:
