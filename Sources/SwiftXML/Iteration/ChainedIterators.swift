@@ -1202,7 +1202,7 @@ extension Sequence<XContent> {
     }
     
     public var previousInTreeTouching: XContentSequence {
-        get { XContentDependingOnContentSequence(sequence: self, contentGetter: { content in content.previousInTreeTouching }) }
+        get { XContentDependingOnContentSequence(sequence: self, contentGetter: { content in content.previousInTree }) }
     }
     
     public func previousInTreeTouching(_ condition: @escaping (XContent) -> Bool) -> XContentSequence {
@@ -1218,7 +1218,7 @@ extension Sequence<XContent> {
     }
     
     public var nextInTreeTouching: XContentSequence {
-        get { XContentDependingOnContentSequence(sequence: self, contentGetter: { content in content.nextInTreeTouching }) }
+        get { XContentDependingOnContentSequence(sequence: self, contentGetter: { content in content.nextInTree }) }
     }
     
     public func nextInTreeTouching(_ condition: @escaping (XContent) -> Bool) -> XContentSequence {
@@ -1702,7 +1702,7 @@ extension Sequence<XElement> {
     }
     
     public var previousInTreeTouching: XContentSequence {
-        get { XContentDependingOnElementSequence(sequence: self, contentGetter: { content in content.previousInTreeTouching }) }
+        get { XContentDependingOnElementSequence(sequence: self, contentGetter: { content in content.previousInTree }) }
     }
     
     public func previousInTreeTouching(_ condition: @escaping (XContent) -> Bool) -> XContentSequence {
@@ -1718,7 +1718,7 @@ extension Sequence<XElement> {
     }
     
     public var nextInTreeTouching: XContentSequence {
-        get { XContentDependingOnElementSequence(sequence: self, contentGetter: { content in content.nextInTreeTouching }) }
+        get { XContentDependingOnElementSequence(sequence: self, contentGetter: { content in content.nextInTree }) }
     }
     
     public func nextInTreeTouching(_ condition: @escaping (XContent) -> Bool) -> XContentSequence {

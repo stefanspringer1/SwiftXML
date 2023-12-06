@@ -71,6 +71,8 @@ let transformation = XTransformation {
 
 **UPDATE 17 (December 2023):** `immediateTextsCollected` is called `text` again, and `immediateTextsCollected` is removed.
 
+**UPDATE 18 (December 2023):** New: `firstOfAllTexts` and `lastOfAllTexts`.
+
 ---
 
 ## Related packages
@@ -637,7 +639,7 @@ The direct content that is text:
 var immediateTexts: XTextSequence
 ```
 
-For the `content` and `children` sequences, there also exist the sequences `contentReversed`, `childrenReversed`, and `textsReversed` which iterate from the last corresponding item to the first.
+For the `content` and `children` sequences, there also exist the sequences `contentReversed`, `childrenReversed`, and `immediateTextsReversed` which iterate from the last corresponding item to the first.
 
 All content in the tree of nodes that is started by the node itself, without the node itself, in the order of a depth-first traversal:
 
@@ -649,6 +651,19 @@ All content in the tree of nodes that is started by the node, starting with the 
 
 ```swift
 var allContentIncludingSelf: XContentSequence
+```
+
+All texts in the tree:
+
+```swift
+var allTexts: XTextSequence
+```
+
+You can get the first and last text in the tree by:
+
+```swift
+var firstOfAllTexts: XText?
+var lastOfAllTexts: XText?
 ```
 
 The descendants, i.e. all content in the tree of nodes that is started by the node, without the node itself, that is an element:
@@ -813,16 +828,10 @@ The previous content item in the tree:
 var previousInTreeTouching: XContent?
 ```
 
-Find all text contained in a node and compose them into a single `String`:
+Find all text contained the tree of a node and compose them into a single `String`:
 
 ```swift
 var allTextsCollected: String
-```
-
-The same but for all texts contained as direct content:
-
-```swift
-var immediateTextsCollected: String
 ```
 
 You may use these text collecting properties even when you know that there is only one text to be “collected”, this case is efficiently implemented.

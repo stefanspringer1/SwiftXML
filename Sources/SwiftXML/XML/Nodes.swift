@@ -311,7 +311,7 @@ public class XNode {
     weak var _previousInTree: XNode? = nil
     weak var _nextInTree: XNode? = nil
     
-    public var previousInTreeTouching: XContent? {
+    public var previousInTree: XContent? {
         get {
             var content = _previousInTree
             while let spot = content as? _Isolator_ {
@@ -321,11 +321,11 @@ public class XNode {
         }
     }
     
-    public var hasPreviousInTreeTouching: Bool {
-        previousInTreeTouching != nil
+    public var hasPreviousInTree: Bool {
+        previousInTree != nil
     }
     
-    public var nextInTreeTouching: XContent? {
+    public var nextInTree: XContent? {
         get {
             var content = _nextInTree
             while let spot = content as? _Isolator_ {
@@ -335,12 +335,12 @@ public class XNode {
         }
     }
     
-    public var hasNextInTreeTouching: Bool {
-        nextInTreeTouching != nil
+    public var hasNextInTree: Bool {
+        nextInTree != nil
     }
     
     public func previousInTreeTouching(_ condition: (XContent) -> Bool) -> XContent? {
-        let content = previousInTreeTouching
+        let content = previousInTree
         if let theContent = content, condition(theContent) {
             return theContent
         }
@@ -354,7 +354,7 @@ public class XNode {
     }
     
     public func nextInTreeTouching(_ condition: (XContent) -> Bool) -> XContent? {
-        let content = nextInTreeTouching
+        let content = nextInTree
         if let theContent = content, condition(theContent) {
             return theContent
         }
@@ -507,6 +507,28 @@ public class XNode {
         }
     }
     
+    public var firstOfAllTexts: XText? {
+        var node: XNode? = self
+        while let theNode = node {
+            if let text = theNode as? XText {
+                return text
+            }
+            node = theNode.nextInTree
+        }
+        return nil
+    }
+    
+    public var lastOfAllTexts: XText? {
+        var node: XNode? = lastInTree
+        while let theNode = node {
+            if let text = theNode as? XText {
+                return text
+            }
+            node = theNode.previousInTree
+        }
+        return nil
+    }
+    
     public var description: String { String(describing: self) }
     
 }
@@ -640,8 +662,8 @@ public class XContent: XNode {
         }
     }
     
-    public override var previousInTreeTouching: XContent? { get { _previousInTree as? XContent } }
-    public override var nextInTreeTouching: XContent? { get { _nextInTree as? XContent } }
+    public override var previousInTree: XContent? { get { _previousInTree as? XContent } }
+    public override var nextInTree: XContent? { get { _nextInTree as? XContent } }
     
     public override var lastInTree: XContent { get { getLastInTree() as! XContent } }
     
