@@ -69,6 +69,8 @@ let transformation = XTransformation {
 
 **UPDATE 16 (December 2023):** The method `child(...)` is renamed to `firstChild(...)`.
 
+**UPDATE 17 (December 2023):** `immediateTextsCollected` is called `text` again, and `immediateTextsCollected` is removed.
+
 ---
 
 ## Related packages

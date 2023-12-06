@@ -450,11 +450,11 @@ final class SwiftXMLTests: XCTestCase {
             [XElement("element"), XElement("element")]
         }
         let _ = XElement("element") {
-            element1.immediateTexts.map{ $0.allTextsCollected }.asContent
+            element1.immediateTexts.map{ $0.text }.asContent
         }
         let _ = XElement("element") {
             element1.content
-            element1.immediateTexts.map{ $0.allTextsCollected }.asContent
+            element1.immediateTexts.map{ $0.text }.asContent
             "u"
             XElement("element")
         }
@@ -486,6 +486,6 @@ final class SwiftXMLTests: XCTestCase {
         </sentences>
         """)
         
-        XCTAssertEqual(document.elements("sentence").map{ "\"\($0.allTextsCollected)\"" }.joined(separator: ", "), #""Hello World", "Feel good""#)
+        XCTAssertEqual(document.elements("sentence").map{ "\"\($0.text)\"" }.joined(separator: ", "), #""Hello World", "Feel good""#)
     }
 }
