@@ -16,6 +16,8 @@ public struct XRule {
 
     public let names: [String]
     public let action: Any
+
+    #if DEBUG
     public let actionFile: String
     public let actionLine: Int
 
@@ -32,6 +34,17 @@ public struct XRule {
         self.actionFile = file
         self.actionLine = line
     }
+    #else
+    public init(forElements names: [String], action: @escaping XElementAction) {
+        self.names = names
+        self.action = action
+    }
+
+    public init(forElements names: String..., action: @escaping XElementAction) {
+        self.names = names
+        self.action = action
+    }
+    #endif
 }
 
 public protocol XRulesConvertible {
@@ -91,17 +104,28 @@ public class XTransformation {
 
     public func execute(inDocument document: XDocument) {
 
+        #if DEBUG
         var iteratorsWithActions = [(Any,Any, String, Int)]()
+        #else
+        var iteratorsWithActions = [(Any,Any)]()
+        #endif
 
         rules.forEach { rule in
             if let elementAction = rule.action as? XElementAction {
                 rule.names.forEach { name in
+                    #if DEBUG
                     iteratorsWithActions.append((
                         XXBidirectionalElementNameIterator(elementIterator: XElementsOfSameNameIterator(document: document, name: name, keepLast: true), keepLast: true),
-                        rule.action,
+                        elementAction,
                         rule.actionFile,
                         rule.actionLine
                     ))
+                    #else
+                    iteratorsWithActions.append((
+                        XXBidirectionalElementNameIterator(elementIterator: XElementsOfSameNameIterator(document: document, name: name, keepLast: true), keepLast: true),
+                        elementAction
+                    ))
+                    #endif
                 }
             }
 
@@ -110,6 +134,7 @@ public class XTransformation {
         var working = true; stopped = false
         while !stopped && working {
             working = false
+            #if DEBUG
             iteratorsWithActions.forEach { (_iterator, _action, actionFile, actionLine) in
                 if !stopped, let iterator = _iterator as? XXBidirectionalElementNameIterator, let action = _action as? XElementAction {
                     while !stopped, let next = iterator.next() {
@@ -119,6 +144,16 @@ public class XTransformation {
                     }
                 }
             }
+            #else
+            iteratorsWithActions.forEach { (_iterator,_action) in
+                if !stopped, let iterator = _iterator as? XXBidirectionalElementNameIterator, let action = _action as? XElementAction {
+                    while !stopped, let next = iterator.next() {
+                        working = true
+                        action(next)
+                    }
+                }
+            }
+            #endif
         }
     }
 }

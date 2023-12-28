@@ -6,7 +6,7 @@ This library is published under the Apache License v2.0 with Runtime Library Exc
 
 ```swift
 let transformation = XTransformation {
-    
+
     XRule(forElements: "table") { table in
         table.insertNext {
             XElement("caption") {
@@ -15,7 +15,7 @@ let transformation = XTransformation {
             }
         }
     }
-    
+
     XRule(forElements: "tbody", "tfoot") { tablePart in
         tablePart
             .children("tr")
@@ -24,7 +24,7 @@ let transformation = XTransformation {
                 cell.name = "td"
             }
     }
-    
+
 }
 ```
 
@@ -69,6 +69,8 @@ let transformation = XTransformation {
 
 **UPDATE 16 (December 2023):** The method `child(...)` is renamed to `firstChild(...)`.
 
+**UPDATE 17 (December 2023):** Added some tracing capabilities for complex transformations
+
 ---
 
 ## Related packages
@@ -84,7 +86,7 @@ The library should be efficient and applications that use it should be very inte
 ### Limitations of the XML input
 
 - The encoding of the source must be UTF-8 (ASCII is considered as a subset of it). The parser checks for correct UTF-8 encoding and also checks (according to the data available to the currently used Swift implementation) if a found codepoint is a valid Unicode codepoint.
-- For easier processing, declarations of namespace prefixes via `xmlns:...` attributes should only be at the root element. 
+- For easier processing, declarations of namespace prefixes via `xmlns:...` attributes should only be at the root element.
 
 ### Manipulation of an XML document
 
@@ -153,7 +155,7 @@ The user of the library can also provide sets of rules to be applied (see the co
 
 The library uses the [SwiftXMLParser](https://github.com/stefanspringer1/SwiftXMLParser) to parse XML which implements the according protocol from [SwiftXMLInterfaces](https://github.com/stefanspringer1/SwiftXMLInterfaces).
 
-Depending on the configuration of the parse process, all parts of the XML source can be retained in the XML document, including all comments and parts of an internal subset e.g. all entity or element definitions. (Elements definitions and attribute list definitions are, besides their reported element names, only retained as their original textual representation, they are not parsed into any other representation.) 
+Depending on the configuration of the parse process, all parts of the XML source can be retained in the XML document, including all comments and parts of an internal subset e.g. all entity or element definitions. (Elements definitions and attribute list definitions are, besides their reported element names, only retained as their original textual representation, they are not parsed into any other representation.)
 
 In the current implementation, the XML library does not implement any validation, i.e. validation against a DTD or other XML schema, telling us e.g. if an element of a certain name can be contained in an element of another certain name. The user has to use other libraries (e.g. [Libxml2Validation](https://github.com/stefanspringer1/Libxml2Validation)) for such validation before reading or after writing the document. Besides validating the structure of an XML document, validation is also important for knowing if the occurrence of a whitespace text is significant (i.e. should be kept) or not. (E.g., whitespace text between elements representing paragraphs of a text document is usually considered insignificant.) To compensate for that last issue, the user of the library can provide a function that decides if an instance of whitespace text between elements should be kept or not. Also, possible default values of attributes have to be set by the user if desired once the document tree is built.
 
@@ -309,7 +311,7 @@ With more control:
 func echo(usingProductionTemplate: XProductionTemplate, terminator: String)
 ```
 
-Productions are explained in the next section. 
+Productions are explained in the next section.
 
 When you want a serialization of a whole tree or document as text (`String`), use the following method:
 
@@ -370,7 +372,7 @@ class MyProduction: DefaultProduction {
         try write(linebreak)
         try super.writeElementStartBeforeAttributes(element: element)
     }
-    
+
 }
 
 try document.write(toFile: "myFile.xml", usingProduction: MyProduction())
@@ -451,7 +453,7 @@ Output:
 
 Element names can be read and set by the using the property `name` of an element. After setting of a new name different from the existing one, the element is registered with the new name in the document, if it is part of a document. Setting the same name does not change anything (it is an efficient non-change).
 
-### Text 
+### Text
 
 For a text content (`XText`) its text can be read and set via its property `value`. So there is no need to replace a `XText` content by another to change text. Please also see the section below on handling of text.
 
@@ -555,7 +557,7 @@ Note that the root of the traversal is not to be removed during the traversal.
 
 ## Direct access to elements
 
-As mentioned and the general description, the library allows to efficiently find elements of a certain name in a document without having to traverse the whole tree. 
+As mentioned and the general description, the library allows to efficiently find elements of a certain name in a document without having to traverse the whole tree.
 
 Finding the elements of a certain name:
 
@@ -699,7 +701,7 @@ You might also just be interested if a previous or next node exists:
 
 ```swift
 var hasPrevious: Bool
-var hasNext: Bool 
+var hasNext: Bool
 ```
 
 The following very short method names `previous` and `next` actually mean “the previous content” and “the next content”, repectively. Those method names are chosen to be so short because they are such a common use case.
@@ -865,7 +867,7 @@ let document = try parseXML(fromText: """
 
 document
     .descendants({ element in element["take"] == "true" })
-    .forEach { descendant in 
+    .forEach { descendant in
         print(descendant)
     }
 ```
@@ -899,7 +901,7 @@ func firstChild(_ name: String) -> XElement?
 You might then also consider alternative names (giving you the first child where the name matches):
 
 ```swift
-func firstChild(_ names: String...) -> XElement? 
+func firstChild(_ names: String...) -> XElement?
 ```
 
 If you want to get the first ancestor with a certain name, use one of the following methods:
@@ -1209,7 +1211,7 @@ Remove the node from the tree structure and the document:
 func remove()
 ```
 
-You might also use the method `removed()` of a node to remove the node but also use the node. 
+You might also use the method `removed()` of a node to remove the node but also use the node.
 
 Replace the node by other nodes:
 
@@ -1555,7 +1557,7 @@ let document = try parseXML(fromText: """
 var count = 1
 
 let transformation = XTransformation {
-    
+
     XRule(forElements: "formula") { element in
         print("\n----- Rule for element \"formula\" -----\n")
         print("  \(element)")
@@ -1565,10 +1567,10 @@ let transformation = XTransformation {
             element.insertPrevious {
                 XElement("image", ["id": "\(count)"])
             }
-            
+
         }
     }
-    
+
     XRule(forElements: "image") { element in
         print("\n----- Rule for element \"image\" -----\n")
         print("  \(element)")
@@ -1580,7 +1582,7 @@ let transformation = XTransformation {
             }
         }
     }
-    
+
 }
 
 transformation.execute(inDocument: document)
@@ -1623,11 +1625,11 @@ A transformation can be stopped by calling `stop()` on the transformation, altho
 var transformationAlias: XTransformation? = nil
 
 let transformation = XTransformation {
-    
+
     XRule(forElements: "a") { _ in
         transformationAlias?.stop()
     }
-    
+
 }
 
 transformationAlias = transformation
@@ -1656,7 +1658,7 @@ let document = try parseXML(fromText: """
     """, textAllowedInElementWithName: { $0 == "paragraph" })
 
 let transformation = XTransformation {
-    
+
     XRule(forElements: "paragraph") { element in
         let style: String? = if element.parent?.name == "warning" {
             "color:Red"
@@ -1669,7 +1671,7 @@ let transformation = XTransformation {
             }
         }
     }
-    
+
     XRule(forElements: "hint", "warning") { element in
         element.replace {
             XElement("div") {
@@ -1712,7 +1714,7 @@ To have information about the context in the original document of transformed el
 
 ```swift
 let transformation = XTransformation {
-    
+
     XRule(forElements: "hint", "warning") { element in
         element.replace {
             XElement("div", attached: ["source": element.name]) {
@@ -1723,7 +1725,7 @@ let transformation = XTransformation {
             }
         }
     }
-    
+
     XRule(forElements: "paragraph") { element in
         let style: String? = if element.parent?.attached["source"] as? String == "warning" {
             "color:Red"
@@ -1755,7 +1757,7 @@ You first create a document version (this creates a clone such that your current
 
 ```swift
 let transformation = XTransformation {
-    
+
     XRule(forElements: "hint", "warning") { element in
         element.replace {
             XElement("div", withBackLinkFrom: element) {
@@ -1766,7 +1768,7 @@ let transformation = XTransformation {
             }
         }
     }
-    
+
     XRule(forElements: "paragraph") { element in
         let style: String? = if element.parent?.backLink?.name == "warning" {
             "color:Red"
@@ -1841,7 +1843,7 @@ for section in document.elements("section") {
 document.echo(pretty: true)
 ```
 
-As the root of the traversal is not to be removed during the traversal, there is an according `guard` statement. 
+As the root of the traversal is not to be removed during the traversal, there is an according `guard` statement.
 
 The result is the same as in the section “Transformations with inverse order” above.
 
@@ -1870,14 +1872,14 @@ XDocument.fullPrefixesForNamespaces
 When you then like to access or change elements in that namespace, add the according prefix dynamically in your code:
 
 ```swift
-let fullMathMLPrefix = myDocument.fullPrefix(forNamespace: "http://www.w3.org/1998/Math/MathML") 
+let fullMathMLPrefix = myDocument.fullPrefix(forNamespace: "http://www.w3.org/1998/Math/MathML")
 
 let transformation = XTransformation {
-    
+
     XRule(forElements: "\(fullMathMLPrefix)a") { a in
         ...
     }
-    
+
     ...
 ```
 
@@ -1953,3 +1955,7 @@ Result:
 ```text
 [<b inserted="yes">, <c inserted="yes">]
 ```
+
+## Debugging
+
+If one uses multiple instances of `XRule` bundled into a `XTRansformation` to transform a whole document, in can be useful to know which actions belonging to which rules "touched" an element. In debug builds all filenames and line numbers that are executed by a transformation during execution are recorded in the `encounteredActionsAt` property.
