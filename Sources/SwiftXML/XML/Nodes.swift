@@ -1335,13 +1335,13 @@ public struct XContentBuilder {
         return xmlCollector.collected
     }
     
-    static func buildExpression(_ expression: XContentLike) -> [XContent] {
+    public static func buildExpression(_ expression: XContentLike) -> [XContent] {
         var xmlCollector = XMLCollector()
         expression.collectXML(by: &xmlCollector)
         return xmlCollector.collected
     }
     
-    static func buildExpression(_ array: [XContentLike]) -> [XContent] {
+    public static func buildExpression(_ array: [XContentLike]) -> [XContent] {
         var xmlCollector = XMLCollector()
         for item in array {
             item.collectXML(by: &xmlCollector)

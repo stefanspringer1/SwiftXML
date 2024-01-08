@@ -109,6 +109,15 @@ final class SwiftXMLTests: XCTestCase {
         XCTAssertEqual(sequence["id"].compactMap{ $0 }.joined(separator: ", "), #"1, 2, 3, 4"#)
     }
     
+    func testAddingArrayOfElements() throws {
+        
+        let x = XElement("x") {
+            [XElement("a"), XElement("b")]
+        }
+        
+        XCTAssertEqual(x.serialized(), #"<x><a/><b/></x>"#)
+    }
+    
     func testXMLConsumable() throws {
         
         do {
