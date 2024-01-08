@@ -1215,11 +1215,11 @@ public struct XMLCollector {
     }
 }
 
-public protocol XMLCollectable {
+public protocol XContentLike {
     func collectXML(by xmlCollector: inout XMLCollector)
 }
 
-public extension XMLCollectable {
+public extension XContentLike {
     func toXML() -> [XContent] {
         var xmlCollector = XMLCollector()
         self.collectXML(by: &xmlCollector)
@@ -1227,19 +1227,19 @@ public extension XMLCollectable {
     }
 }
 
-extension XContent: XMLCollectable {
+extension XContent: XContentLike {
     public func collectXML(by xmlCollector: inout XMLCollector) {
         xmlCollector.collect(self)
     }
 }
 
-extension String: XMLCollectable {
+extension String: XContentLike {
     public func collectXML(by xmlCollector: inout XMLCollector) {
         xmlCollector.collect(XText(self))
     }
 }
 
-extension XContentSequence: XMLCollectable {
+extension XContentSequence: XContentLike {
     public func collectXML(by xmlCollector: inout XMLCollector) {
         for content in self {
             xmlCollector.collect(content)
@@ -1247,7 +1247,7 @@ extension XContentSequence: XMLCollectable {
     }
 }
 
-extension XMLCollectableSequence: XMLCollectable {
+extension XContentLikeSequence: XContentLike {
     public func collectXML(by xmlCollector: inout XMLCollector) {
         for content in self {
             content.collectXML(by: &xmlCollector)
@@ -1255,7 +1255,7 @@ extension XMLCollectableSequence: XMLCollectable {
     }
 }
 
-extension XElementSequence: XMLCollectable {
+extension XElementSequence: XContentLike {
     public func collectXML(by xmlCollector: inout XMLCollector) {
         for content in self {
             xmlCollector.collect(content)
@@ -1263,7 +1263,7 @@ extension XElementSequence: XMLCollectable {
     }
 }
 
-extension XTextSequence: XMLCollectable {
+extension XTextSequence: XContentLike {
     public func collectXML(by xmlCollector: inout XMLCollector) {
         for content in self {
             xmlCollector.collect(content)
@@ -1271,7 +1271,7 @@ extension XTextSequence: XMLCollectable {
     }
 }
 
-extension LazyMapSequence<XContentSequence, XMLCollectable>: XMLCollectable {
+extension LazyMapSequence<XContentSequence, XContentLike>: XContentLike {
     public func collectXML(by xmlCollector: inout XMLCollector) {
         for content in self {
             content.collectXML(by: &xmlCollector)
@@ -1279,7 +1279,7 @@ extension LazyMapSequence<XContentSequence, XMLCollectable>: XMLCollectable {
     }
 }
 
-extension Sequence<XMLCollectable> {
+extension Sequence<XContentLike> {
     public func collectXML(by xmlCollector: inout XMLCollector) {
         for content in self {
             content.collectXML(by: &xmlCollector)
@@ -1287,7 +1287,7 @@ extension Sequence<XMLCollectable> {
     }
 }
 
-extension LazyFilterSequence: XMLCollectable where Base.Element == XElement {
+extension LazyFilterSequence: XContentLike where Base.Element == XElement {
     public func collectXML(by xmlCollector: inout XMLCollector) {
         for content in self {
             content.collectXML(by: &xmlCollector)
@@ -1295,7 +1295,7 @@ extension LazyFilterSequence: XMLCollectable where Base.Element == XElement {
     }
 }
 
-extension LazyDropWhileSequence: XMLCollectable where Base.Element == XElement {
+extension LazyDropWhileSequence: XContentLike where Base.Element == XElement {
     public func collectXML(by xmlCollector: inout XMLCollector) {
         for content in self {
             content.collectXML(by: &xmlCollector)
@@ -1303,7 +1303,7 @@ extension LazyDropWhileSequence: XMLCollectable where Base.Element == XElement {
     }
 }
 
-extension Array: XMLCollectable where Element == XMLCollectable? {
+extension Array: XContentLike where Element == XContentLike? {
     public func collectXML(by xmlCollector: inout XMLCollector) {
         for content in self {
             if let content {
@@ -1313,130 +1313,130 @@ extension Array: XMLCollectable where Element == XMLCollectable? {
     }
 }
 
-public extension Array where Element == XMLCollectable {
-    var asContent: XMLCollectableSequence {
-        get { XMLCollectableSequenceFromArray(fromArray: self) }
+public extension Array where Element == XContentLike {
+    var asContent: XContentLikeSequence {
+        get { XContentLikeSequenceFromArray(fromArray: self) }
     }
 }
 
 public extension Array where Element == XContentIterator.Element {
-    var asContent: XMLCollectableSequence {
-        get { XMLCollectableSequenceFromArray(fromArray: self) }
+    var asContent: XContentLikeSequence {
+        get { XContentLikeSequenceFromArray(fromArray: self) }
     }
 }
 
-public extension Array where Element == XMLCollectable? {
-    var asContent: XMLCollectableSequence {
-        get { XMLCollectableSequenceFromArray(fromArray: self) }
+public extension Array where Element == XContentLike? {
+    var asContent: XContentLikeSequence {
+        get { XContentLikeSequenceFromArray(fromArray: self) }
     }
 }
 
 public extension Array where Element == XElement {
-    var asContent: XMLCollectableSequence {
-        get { XMLCollectableSequenceFromArray(fromArray: self) }
+    var asContent: XContentLikeSequence {
+        get { XContentLikeSequenceFromArray(fromArray: self) }
     }
 }
 
 public extension Array where Element == XElement? {
-    var asContent: XMLCollectableSequence {
-        get { XMLCollectableSequenceFromArray(fromArray: self) }
+    var asContent: XContentLikeSequence {
+        get { XContentLikeSequenceFromArray(fromArray: self) }
     }
 }
 
 public extension Array where Element == XText {
-    var asContent: XMLCollectableSequence {
-        get { XMLCollectableSequenceFromArray(fromArray: self) }
+    var asContent: XContentLikeSequence {
+        get { XContentLikeSequenceFromArray(fromArray: self) }
     }
 }
 
 public extension Array where Element == XText? {
-    var asContent: XMLCollectableSequence {
-        get { XMLCollectableSequenceFromArray(fromArray: self) }
+    var asContent: XContentLikeSequence {
+        get { XContentLikeSequenceFromArray(fromArray: self) }
     }
 }
 
 public extension Array where Element == XInternalEntity {
-    var asContent: XMLCollectableSequence {
-        get { XMLCollectableSequenceFromArray(fromArray: self) }
+    var asContent: XContentLikeSequence {
+        get { XContentLikeSequenceFromArray(fromArray: self) }
     }
 }
 
 public extension Array where Element == XInternalEntity? {
-    var asContent: XMLCollectableSequence {
-        get { XMLCollectableSequenceFromArray(fromArray: self) }
+    var asContent: XContentLikeSequence {
+        get { XContentLikeSequenceFromArray(fromArray: self) }
     }
 }
 
 public extension Array where Element == XExternalEntity {
-    var asContent: XMLCollectableSequence {
-        get { XMLCollectableSequenceFromArray(fromArray: self) }
+    var asContent: XContentLikeSequence {
+        get { XContentLikeSequenceFromArray(fromArray: self) }
     }
 }
 
 public extension Array where Element == XExternalEntity? {
-    var asContent: XMLCollectableSequence {
-        get { XMLCollectableSequenceFromArray(fromArray: self) }
+    var asContent: XContentLikeSequence {
+        get { XContentLikeSequenceFromArray(fromArray: self) }
     }
 }
 
 public extension Array where Element == XCDATASection {
-    var asContent: XMLCollectableSequence {
-        get { XMLCollectableSequenceFromArray(fromArray: self) }
+    var asContent: XContentLikeSequence {
+        get { XContentLikeSequenceFromArray(fromArray: self) }
     }
 }
 
 public extension Array where Element == XCDATASection? {
-    var asContent: XMLCollectableSequence {
-        get { XMLCollectableSequenceFromArray(fromArray: self) }
+    var asContent: XContentLikeSequence {
+        get { XContentLikeSequenceFromArray(fromArray: self) }
     }
 }
 
 public extension Array where Element == XProcessingInstruction {
-    var asContent: XMLCollectableSequence {
-        get { XMLCollectableSequenceFromArray(fromArray: self) }
+    var asContent: XContentLikeSequence {
+        get { XContentLikeSequenceFromArray(fromArray: self) }
     }
 }
 
 public extension Array where Element == XProcessingInstruction? {
-    var asContent: XMLCollectableSequence {
-        get { XMLCollectableSequenceFromArray(fromArray: self) }
+    var asContent: XContentLikeSequence {
+        get { XContentLikeSequenceFromArray(fromArray: self) }
     }
 }
 
 public extension Array where Element == XComment {
-    var asContent: XMLCollectableSequence {
-        get { XMLCollectableSequenceFromArray(fromArray: self) }
+    var asContent: XContentLikeSequence {
+        get { XContentLikeSequenceFromArray(fromArray: self) }
     }
 }
 
 public extension Array where Element == XComment? {
-    var asContent: XMLCollectableSequence {
-        get { XMLCollectableSequenceFromArray(fromArray: self) }
+    var asContent: XContentLikeSequence {
+        get { XContentLikeSequenceFromArray(fromArray: self) }
     }
 }
 
 public extension LazyFilterSequence where Base == XElementSequence {
-    var asContent: XMLCollectableSequence {
-        get { XMLCollectableSequenceFromLazyElementFilterSequence(fromSequence: self) }
+    var asContent: XContentLikeSequence {
+        get { XContentLikeSequenceFromLazyElementFilterSequence(fromSequence: self) }
     }
 }
 
 public extension LazyFilterSequence where Base == XContentSequence {
-    var asContent: XMLCollectableSequence {
-        get { XMLCollectableSequenceFromLazyContentFilterSequence(fromSequence: self) }
+    var asContent: XContentLikeSequence {
+        get { XContentLikeSequenceFromLazyContentFilterSequence(fromSequence: self) }
     }
 }
 
 @resultBuilder
 public struct XContentBuilder {
     
-    public static func buildBlock(_ components: XMLCollectable?...) -> [XContent] {
+    public static func buildBlock(_ components: XContentLike?...) -> [XContent] {
         var xmlCollector = XMLCollector()
         for component in components{ if let component { component.collectXML(by: &xmlCollector) } }
         return xmlCollector.collected
     }
     
-    public static func buildBlock(_ sequences: any Sequence<XMLCollectable>...) -> [XContent] {
+    public static func buildBlock(_ sequences: any Sequence<XContentLike>...) -> [XContent] {
         var xmlCollector = XMLCollector()
         for sequence in sequences {
             for content in sequence {
