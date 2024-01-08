@@ -118,6 +118,22 @@ final class SwiftXMLTests: XCTestCase {
         XCTAssertEqual(x.serialized(), #"<x><a/><b/></x>"#)
     }
     
+    func testNil() throws {
+        
+        let content: String? = nil
+        let x = XElement("x") {
+            content
+        }
+        
+        XCTAssertEqual(x.serialized(), #"<x/>"#)
+        
+        let y = XElement("y") {
+            nil
+        }
+        
+        XCTAssertEqual(y.serialized(), #"<y/>"#)
+    }
+    
     func testXMLConsumable() throws {
         
         do {
