@@ -1303,12 +1303,10 @@ extension LazyDropWhileSequence: XContentLike where Base.Element == XElement {
     }
 }
 
-extension Array: XContentLike where Element == XContentLike? {
+extension Array: XContentLike where Element == XContent {
     public func collectXML(by xmlCollector: inout XMLCollector) {
         for content in self {
-            if let content {
-                content.collectXML(by: &xmlCollector)
-            }
+            content.collectXML(by: &xmlCollector)
         }
     }
 }

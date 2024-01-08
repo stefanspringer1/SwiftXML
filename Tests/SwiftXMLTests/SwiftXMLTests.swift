@@ -321,6 +321,13 @@ final class SwiftXMLTests: XCTestCase {
         XCTAssertEqual(collectedIDs.joined(separator: ", "), "b1, b2, c1, c2, d1, d2, bInserted1")
     }
     
+    func testSequencePart() {
+        
+        let a = XElement("a") { "hello"; XText(" world", isolated: true) }
+        
+        XCTAssertEqual(XElement("b") { a.content.dropLast() }.serialized(), #"<b>hello</b>"#)
+    }
+    
     func testTexts() throws {
         let document = try parseXML(fromText: """
             <paragraph>Hello <bold>World</bold>!</paragraph>
