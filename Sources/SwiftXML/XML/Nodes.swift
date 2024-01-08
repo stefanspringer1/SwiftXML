@@ -1314,6 +1314,11 @@ extension Array: XContentLike where Element == XContent {
 @resultBuilder
 public struct XContentBuilder {
     
+    // empty:
+    public static func buildBlock() -> [XContent] {
+        return [XContent]()
+    }
+    
     public static func buildBlock(_ components: XContentLike?...) -> [XContent] {
         var xmlCollector = XMLCollector()
         for component in components{ if let component { component.collectXML(by: &xmlCollector) } }

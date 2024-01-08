@@ -425,7 +425,20 @@ final class SwiftXMLTests: XCTestCase {
         """)
     }
     
-    func testContentLikeInConstruction() {
+    func testReplaceByNothing() throws {
+        let a = XElement("a") { "hello" }
+        let wrapper = XElement("wrapper") { a }
+        
+        XCTAssertEqual(wrapper.serialized(), "<wrapper><a>hello</a></wrapper>")
+        
+        a.replace {
+            // nothing
+        }
+        
+        XCTAssertEqual(wrapper.serialized(), "<wrapper/>")
+    }
+    
+    func testContentLikeInConstruction() throws {
         let element1 = XElement("element1")
         
         let _ = XElement("element") {
