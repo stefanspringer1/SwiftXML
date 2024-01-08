@@ -69,7 +69,9 @@ let transformation = XTransformation {
 
 **UPDATE 16 (December 2023):** The method `child(...)` is renamed to `firstChild(...)`.
 
-**UPDATE 17 (December 2023):** Added some tracing capabilities for complex transformations
+**UPDATE 17 (December 2023):** Added some tracing capabilities for complex transformations.
+
+**UPDATE 18 (January 2024):** An instance of any type conforming to the new `XMLConsumable` can be inseretd as XML.
 
 ---
 
@@ -1014,6 +1016,38 @@ element.replace {
 
 The content that you define inside parentheses `{...}` is constructed from the inside to the outside. From the notes above you might then think that `element` in the example is not as its original place any more when the content of the “wrapper” element has been constructed, before the replacement could actually happen. Yes, this is true, but nevertheless the `replace` method still knows where to insert this “wrapper” element. The operation does work as you would expect from a naïve perspective.
 
+An instance of any type conforming to `XMLConsumable` can be inseretd as XML:
+
+```swift
+struct MyStruct: XMLConsumable {
+    
+    let text1: String
+    let text2: String
+    
+    func beConsumedAsXML(by xmlConsumer: XMLConsumer) {
+        xmlConsumer.consume(XElement("text1") { text1 })
+        xmlConsumer.consume(XElement("text2") { text2 })
+    }
+}
+
+let myStruct = MyStruct(text1: "hello", text2: "world")
+
+let element = XElement("x") {
+    myStruct
+}
+
+element.echo(pretty: true)
+```
+
+Result:
+
+```xml
+<x>
+  <text1>hello</text1>
+  <text2>world</text2>
+</x>
+```
+
 ### Defining content
 
 When constructing an element, its contents are given in parentheses `{...}` (those parentheses are the `builder` argument of the initializer).
@@ -1050,13 +1084,13 @@ let myElement = XElement("div") {
 }
 ```
 
-You might also use `as XContentLike` to set a common appropriate type where necessary:
+You might also use `as XMLConsumable` to set a common appropriate type where necessary:
 
 ```swift
 let myElement = XElement("p") {
-    unpack ? myOtherElement.content : myOtherElement as XContentLike
-    setPredefinedText ? "my text" : anotherElement.content as XContentLike
-    wrapped ? "my other text" : XElement("wrapper") { "my other text" } as XContentLike
+    unpack ? myOtherElement.content : myOtherElement as XMLConsumable
+    setPredefinedText ? "my text" : anotherElement.content as XMLConsumable
+    wrapped ? "my other text" : XElement("wrapper") { "my other text" } as XMLConsumable
 }
 ```
 

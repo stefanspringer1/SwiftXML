@@ -109,7 +109,7 @@ final class SwiftXMLTests: XCTestCase {
         XCTAssertEqual(sequence["id"].compactMap{ $0 }.joined(separator: ", "), #"1, 2, 3, 4"#)
     }
     
-    func testXContentLike() throws {
+    func testXMLConsumable() throws {
         
         do {
             let document = try parseXML(fromText: documentSource1)
@@ -321,6 +321,34 @@ final class SwiftXMLTests: XCTestCase {
         XCTAssertEqual(collectedIDs.joined(separator: ", "), "b1, b2, c1, c2, d1, d2, bInserted1")
     }
     
+    func testConsumeForeignTypeAsXML() throws {
+        
+        struct MyStruct: XMLConsumable {
+            
+            let text1: String
+            let text2: String
+            
+            func beConsumedAsXML(by xmlConsumer: XMLConsumer) {
+                xmlConsumer.consume(XElement("text1") { text1 })
+                xmlConsumer.consume(XElement("text2") { text2 })
+            }
+        }
+        
+        let myStruct = MyStruct(text1: "hello", text2: "world")
+        
+        let element = XElement("x") {
+            myStruct
+        }
+        
+        XCTAssertEqual(element.serialized(pretty: true), #"""
+            <x>
+              <text1>hello</text1>
+              <text2>world</text2>
+            </x>
+            """#
+        )
+    }
+    
     func testTexts() throws {
         let document = try parseXML(fromText: """
             <paragraph>Hello <bold>World</bold>!</paragraph>
@@ -425,13 +453,13 @@ final class SwiftXMLTests: XCTestCase {
             element1.content
         }
         let _ = XElement("element") {
-            Array(element1.content)
+            Array(element1.content).asContent
         }
         let _ = XElement("element") {
             element1.immediateTexts
         }
         let _ = XElement("element") {
-            Array(element1.immediateTexts)
+            Array(element1.immediateTexts).asContent
         }
         
         let _ = XElement("element") {
@@ -447,7 +475,7 @@ final class SwiftXMLTests: XCTestCase {
             ["a", "b"].asContent
         }
         let _ = XElement("element") {
-            [XElement("element"), XElement("element")]
+            [XElement("element"), XElement("element")].asContent
         }
         let _ = XElement("element") {
             element1.immediateTexts.map{ $0.allTextsCollected }.asContent

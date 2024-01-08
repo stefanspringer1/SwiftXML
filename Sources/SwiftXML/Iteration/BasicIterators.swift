@@ -348,41 +348,41 @@ public class XStringSequence: LazySequenceProtocol, Sequence {
     }
 }
 
-public class XContentLikeIterator: IteratorProtocol {
-    public typealias Element = XContentLike
-    public func next() -> XContentLike? {
+public class XMLConsumableIterator: IteratorProtocol {
+    public typealias Element = XMLConsumable
+    public func next() -> XMLConsumable? {
         return nil
     }
 }
 
-public class XContentLikeSequence: LazySequenceProtocol {
-    public func makeIterator() -> XContentLikeIterator {
-        return XContentLikeIterator()
+public class XMLConsumableSequence: LazySequenceProtocol {
+    public func makeIterator() -> XMLConsumableIterator {
+        return XMLConsumableIterator()
     }
 }
 
-public class XContentLikeSequenceFromArray: XContentLikeSequence {
-    let array: Array<XContentLike?>
+public class XMLConsumableSequenceFromArray: XMLConsumableSequence {
+    let array: Array<XMLConsumable?>
     
-    public init(fromArray array: Array<XContentLike?>) {
+    public init(fromArray array: Array<XMLConsumable?>) {
         self.array = array
     }
     
-    public override func makeIterator() -> XContentLikeIterator {
-        return XContentLikeIteratorFromArray(fromArray: array)
+    public override func makeIterator() -> XMLConsumableIterator {
+        return XMLConsumableIteratorFromArray(fromArray: array)
     }
 }
 
-public class XContentLikeIteratorFromArray: XContentLikeIterator {
-    let array: Array<XContentLike?>
+public class XMLConsumableIteratorFromArray: XMLConsumableIterator {
+    let array: Array<XMLConsumable?>
     var nextIndex = -1
     
-    public init(fromArray array: Array<XContentLike?>) {
+    public init(fromArray array: Array<XMLConsumable?>) {
         self.array = array
     }
     
-    public override func next() -> XContentLike? {
-        var result: XContentLike? = nil
+    public override func next() -> XMLConsumable? {
+        var result: XMLConsumable? = nil
         repeat {
             nextIndex += 1
             if nextIndex < array.count {
@@ -396,50 +396,50 @@ public class XContentLikeIteratorFromArray: XContentLikeIterator {
     }
 }
 
-public class XContentLikeSequenceFromLazyElementFilterSequence: XContentLikeSequence {
+public class XMLConsumableSequenceFromLazyElementFilterSequence: XMLConsumableSequence {
     let sequence: LazyFilterSequence<XElementSequence>
     
     public init(fromSequence sequence: LazyFilterSequence<XElementSequence>) {
         self.sequence = sequence
     }
     
-    public override func makeIterator() -> XContentLikeIterator {
-        return XContentLikeIteratorFromLazyElementFilterSequence(fromSequence: sequence)
+    public override func makeIterator() -> XMLConsumableIterator {
+        return XMLConsumableIteratorFromLazyElementFilterSequence(fromSequence: sequence)
     }
 }
 
-public class XContentLikeIteratorFromLazyElementFilterSequence: XContentLikeIterator {
+public class XMLConsumableIteratorFromLazyElementFilterSequence: XMLConsumableIterator {
     var iterator: LazyFilterSequence<XElementSequence>.Iterator
     
     public init(fromSequence sequence: LazyFilterSequence<XElementSequence>) {
         iterator = sequence.makeIterator()
     }
     
-    public override func next() -> XContentLike? {
+    public override func next() -> XMLConsumable? {
         return iterator.next()
     }
 }
 
-public class XContentLikeSequenceFromLazyContentFilterSequence: XContentLikeSequence {
+public class XMLConsumableSequenceFromLazyContentFilterSequence: XMLConsumableSequence {
     let sequence: LazyFilterSequence<XContentSequence>
     
     public init(fromSequence sequence: LazyFilterSequence<XContentSequence>) {
         self.sequence = sequence
     }
     
-    public override func makeIterator() -> XContentLikeIterator {
-        return XContentLikeIteratorFromLazyContentFilterSequence(fromSequence: sequence)
+    public override func makeIterator() -> XMLConsumableIterator {
+        return XMLConsumableIteratorFromLazyContentFilterSequence(fromSequence: sequence)
     }
 }
 
-public class XContentLikeIteratorFromLazyContentFilterSequence: XContentLikeIterator {
+public class XMLConsumableIteratorFromLazyContentFilterSequence: XMLConsumableIterator {
     var iterator: LazyFilterSequence<XContentSequence>.Iterator
     
     public init(fromSequence sequence: LazyFilterSequence<XContentSequence>) {
         iterator = sequence.makeIterator()
     }
     
-    public override func next() -> XContentLike? {
+    public override func next() -> XMLConsumable? {
         return iterator.next()
     }
 }
