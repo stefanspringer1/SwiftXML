@@ -152,6 +152,39 @@ final class FromReadmeTests: XCTestCase {
         XCTAssertEqual(a.serialized(pretty: true), expectedOutputAfterReplace)
     }
     
+    func testConsumeForeignTypeAsXML() throws {
+        
+        struct MyStruct: XMLCollectable {
+            
+            let text1: String
+            let text2: String
+            
+            func collectXML(by xmlCollector: inout XMLCollector) {
+                xmlCollector.collect(XElement("text1") { text1 })
+                xmlCollector.collect(XElement("text2") { text2 })
+            }
+            
+        }
+        
+        let myStruct1 = MyStruct(text1: "hello", text2: "world")
+        let myStruct2 = MyStruct(text1: "greeting", text2: "you")
+        
+        let element = XElement("x") {
+            myStruct1
+            myStruct2
+        }
+        
+        XCTAssertEqual(element.serialized(pretty: true), #"""
+            <x>
+              <text1>hello</text1>
+              <text2>world</text2>
+              <text1>greeting</text1>
+              <text2>you</text2>
+            </x>
+            """#
+        )
+    }
+    
     func testAddElementToDocument() throws {
         let document = try parseXML(fromText: """
         <a><b id="1"/><b id="2"/></a>

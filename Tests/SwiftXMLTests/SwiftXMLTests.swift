@@ -321,34 +321,6 @@ final class SwiftXMLTests: XCTestCase {
         XCTAssertEqual(collectedIDs.joined(separator: ", "), "b1, b2, c1, c2, d1, d2, bInserted1")
     }
     
-    func testConsumeForeignTypeAsXML() throws {
-        
-        struct MyStruct: XMLConsumable {
-            
-            let text1: String
-            let text2: String
-            
-            func beConsumedAsXML(by xmlConsumer: XMLConsumer) {
-                xmlConsumer.consume(XElement("text1") { text1 })
-                xmlConsumer.consume(XElement("text2") { text2 })
-            }
-        }
-        
-        let myStruct = MyStruct(text1: "hello", text2: "world")
-        
-        let element = XElement("x") {
-            myStruct
-        }
-        
-        XCTAssertEqual(element.serialized(pretty: true), #"""
-            <x>
-              <text1>hello</text1>
-              <text2>world</text2>
-            </x>
-            """#
-        )
-    }
-    
     func testTexts() throws {
         let document = try parseXML(fromText: """
             <paragraph>Hello <bold>World</bold>!</paragraph>

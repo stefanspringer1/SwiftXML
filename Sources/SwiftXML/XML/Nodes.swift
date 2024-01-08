@@ -1204,240 +1204,246 @@ public protocol XTextualContentRepresentation {
     var value: String { get set }
 }
 
-public protocol XMLConsumer {
-    func consume(_ content: XContent)
-}
-
-public protocol XMLConsumable {
-    func beConsumedAsXML(by xmlConsumer: XMLConsumer)
-}
-
-extension XContent: XMLConsumable {
-    public func beConsumedAsXML(by xmlConsumer: XMLConsumer) {
-        xmlConsumer.consume(self)
+public struct XMLCollector {
+    
+    private var contents = [XContent]()
+    
+    public var collected: [XContent] { contents }
+    
+    mutating public func collect(_ content: XContent) {
+        contents.append(content)
     }
 }
 
-extension String: XMLConsumable {
-    public func beConsumedAsXML(by xmlConsumer: XMLConsumer) {
-        xmlConsumer.consume(XText(self))
+public protocol XMLCollectable {
+    func collectXML(by xmlCollector: inout XMLCollector)
+}
+
+public extension XMLCollectable {
+    func toXML() -> [XContent] {
+        var xmlCollector = XMLCollector()
+        self.collectXML(by: &xmlCollector)
+        return xmlCollector.collected
     }
 }
 
-extension XContentSequence: XMLConsumable {
-    public func beConsumedAsXML(by xmlConsumer: XMLConsumer) {
+extension XContent: XMLCollectable {
+    public func collectXML(by xmlCollector: inout XMLCollector) {
+        xmlCollector.collect(self)
+    }
+}
+
+extension String: XMLCollectable {
+    public func collectXML(by xmlCollector: inout XMLCollector) {
+        xmlCollector.collect(XText(self))
+    }
+}
+
+extension XContentSequence: XMLCollectable {
+    public func collectXML(by xmlCollector: inout XMLCollector) {
         for content in self {
-            xmlConsumer.consume(content)
+            xmlCollector.collect(content)
         }
     }
 }
 
-extension XMLConsumableSequence: XMLConsumable {
-    public func beConsumedAsXML(by xmlConsumer: XMLConsumer) {
+extension XMLCollectableSequence: XMLCollectable {
+    public func collectXML(by xmlCollector: inout XMLCollector) {
         for content in self {
-            content.beConsumedAsXML(by: xmlConsumer)
+            content.collectXML(by: &xmlCollector)
         }
     }
 }
 
-extension XElementSequence: XMLConsumable {
-    public func beConsumedAsXML(by xmlConsumer: XMLConsumer) {
+extension XElementSequence: XMLCollectable {
+    public func collectXML(by xmlCollector: inout XMLCollector) {
         for content in self {
-            xmlConsumer.consume(content)
+            xmlCollector.collect(content)
         }
     }
 }
 
-extension XTextSequence: XMLConsumable {
-    public func beConsumedAsXML(by xmlConsumer: XMLConsumer) {
+extension XTextSequence: XMLCollectable {
+    public func collectXML(by xmlCollector: inout XMLCollector) {
         for content in self {
-            xmlConsumer.consume(content)
+            xmlCollector.collect(content)
         }
     }
 }
 
-extension LazyMapSequence<XContentSequence, XMLConsumable>: XMLConsumable {
-    public func beConsumedAsXML(by xmlConsumer: XMLConsumer) {
+extension LazyMapSequence<XContentSequence, XMLCollectable>: XMLCollectable {
+    public func collectXML(by xmlCollector: inout XMLCollector) {
         for content in self {
-            content.beConsumedAsXML(by: xmlConsumer)
+            content.collectXML(by: &xmlCollector)
         }
     }
 }
 
-extension Sequence<XMLConsumable> {
-    public func beConsumedAsXML(by xmlConsumer: XMLConsumer) {
+extension Sequence<XMLCollectable> {
+    public func collectXML(by xmlCollector: inout XMLCollector) {
         for content in self {
-            content.beConsumedAsXML(by: xmlConsumer)
+            content.collectXML(by: &xmlCollector)
         }
     }
 }
 
-extension LazyFilterSequence: XMLConsumable where Base.Element == XElement {
-    public func beConsumedAsXML(by xmlConsumer: XMLConsumer) {
+extension LazyFilterSequence: XMLCollectable where Base.Element == XElement {
+    public func collectXML(by xmlCollector: inout XMLCollector) {
         for content in self {
-            content.beConsumedAsXML(by: xmlConsumer)
+            content.collectXML(by: &xmlCollector)
         }
     }
 }
 
-extension LazyDropWhileSequence: XMLConsumable where Base.Element == XElement {
-    public func beConsumedAsXML(by xmlConsumer: XMLConsumer) {
+extension LazyDropWhileSequence: XMLCollectable where Base.Element == XElement {
+    public func collectXML(by xmlCollector: inout XMLCollector) {
         for content in self {
-            content.beConsumedAsXML(by: xmlConsumer)
+            content.collectXML(by: &xmlCollector)
         }
     }
 }
 
-extension Array: XMLConsumable where Element == XMLConsumable? {
-    public func beConsumedAsXML(by xmlConsumer: consuming XMLConsumer) {
+extension Array: XMLCollectable where Element == XMLCollectable? {
+    public func collectXML(by xmlCollector: inout XMLCollector) {
         for content in self {
             if let content {
-                content.beConsumedAsXML(by: xmlConsumer)
+                content.collectXML(by: &xmlCollector)
             }
         }
     }
 }
 
-public extension Array where Element == XMLConsumable {
-    var asContent: XMLConsumableSequence {
-        get { XMLConsumableSequenceFromArray(fromArray: self) }
+public extension Array where Element == XMLCollectable {
+    var asContent: XMLCollectableSequence {
+        get { XMLCollectableSequenceFromArray(fromArray: self) }
     }
 }
 
 public extension Array where Element == XContentIterator.Element {
-    var asContent: XMLConsumableSequence {
-        get { XMLConsumableSequenceFromArray(fromArray: self) }
+    var asContent: XMLCollectableSequence {
+        get { XMLCollectableSequenceFromArray(fromArray: self) }
     }
 }
 
-public extension Array where Element == XMLConsumable? {
-    var asContent: XMLConsumableSequence {
-        get { XMLConsumableSequenceFromArray(fromArray: self) }
+public extension Array where Element == XMLCollectable? {
+    var asContent: XMLCollectableSequence {
+        get { XMLCollectableSequenceFromArray(fromArray: self) }
     }
 }
 
 public extension Array where Element == XElement {
-    var asContent: XMLConsumableSequence {
-        get { XMLConsumableSequenceFromArray(fromArray: self) }
+    var asContent: XMLCollectableSequence {
+        get { XMLCollectableSequenceFromArray(fromArray: self) }
     }
 }
 
 public extension Array where Element == XElement? {
-    var asContent: XMLConsumableSequence {
-        get { XMLConsumableSequenceFromArray(fromArray: self) }
+    var asContent: XMLCollectableSequence {
+        get { XMLCollectableSequenceFromArray(fromArray: self) }
     }
 }
 
 public extension Array where Element == XText {
-    var asContent: XMLConsumableSequence {
-        get { XMLConsumableSequenceFromArray(fromArray: self) }
+    var asContent: XMLCollectableSequence {
+        get { XMLCollectableSequenceFromArray(fromArray: self) }
     }
 }
 
 public extension Array where Element == XText? {
-    var asContent: XMLConsumableSequence {
-        get { XMLConsumableSequenceFromArray(fromArray: self) }
+    var asContent: XMLCollectableSequence {
+        get { XMLCollectableSequenceFromArray(fromArray: self) }
     }
 }
 
 public extension Array where Element == XInternalEntity {
-    var asContent: XMLConsumableSequence {
-        get { XMLConsumableSequenceFromArray(fromArray: self) }
+    var asContent: XMLCollectableSequence {
+        get { XMLCollectableSequenceFromArray(fromArray: self) }
     }
 }
 
 public extension Array where Element == XInternalEntity? {
-    var asContent: XMLConsumableSequence {
-        get { XMLConsumableSequenceFromArray(fromArray: self) }
+    var asContent: XMLCollectableSequence {
+        get { XMLCollectableSequenceFromArray(fromArray: self) }
     }
 }
 
 public extension Array where Element == XExternalEntity {
-    var asContent: XMLConsumableSequence {
-        get { XMLConsumableSequenceFromArray(fromArray: self) }
+    var asContent: XMLCollectableSequence {
+        get { XMLCollectableSequenceFromArray(fromArray: self) }
     }
 }
 
 public extension Array where Element == XExternalEntity? {
-    var asContent: XMLConsumableSequence {
-        get { XMLConsumableSequenceFromArray(fromArray: self) }
+    var asContent: XMLCollectableSequence {
+        get { XMLCollectableSequenceFromArray(fromArray: self) }
     }
 }
 
 public extension Array where Element == XCDATASection {
-    var asContent: XMLConsumableSequence {
-        get { XMLConsumableSequenceFromArray(fromArray: self) }
+    var asContent: XMLCollectableSequence {
+        get { XMLCollectableSequenceFromArray(fromArray: self) }
     }
 }
 
 public extension Array where Element == XCDATASection? {
-    var asContent: XMLConsumableSequence {
-        get { XMLConsumableSequenceFromArray(fromArray: self) }
+    var asContent: XMLCollectableSequence {
+        get { XMLCollectableSequenceFromArray(fromArray: self) }
     }
 }
 
 public extension Array where Element == XProcessingInstruction {
-    var asContent: XMLConsumableSequence {
-        get { XMLConsumableSequenceFromArray(fromArray: self) }
+    var asContent: XMLCollectableSequence {
+        get { XMLCollectableSequenceFromArray(fromArray: self) }
     }
 }
 
 public extension Array where Element == XProcessingInstruction? {
-    var asContent: XMLConsumableSequence {
-        get { XMLConsumableSequenceFromArray(fromArray: self) }
+    var asContent: XMLCollectableSequence {
+        get { XMLCollectableSequenceFromArray(fromArray: self) }
     }
 }
 
 public extension Array where Element == XComment {
-    var asContent: XMLConsumableSequence {
-        get { XMLConsumableSequenceFromArray(fromArray: self) }
+    var asContent: XMLCollectableSequence {
+        get { XMLCollectableSequenceFromArray(fromArray: self) }
     }
 }
 
 public extension Array where Element == XComment? {
-    var asContent: XMLConsumableSequence {
-        get { XMLConsumableSequenceFromArray(fromArray: self) }
+    var asContent: XMLCollectableSequence {
+        get { XMLCollectableSequenceFromArray(fromArray: self) }
     }
 }
 
 public extension LazyFilterSequence where Base == XElementSequence {
-    var asContent: XMLConsumableSequence {
-        get { XMLConsumableSequenceFromLazyElementFilterSequence(fromSequence: self) }
+    var asContent: XMLCollectableSequence {
+        get { XMLCollectableSequenceFromLazyElementFilterSequence(fromSequence: self) }
     }
 }
 
 public extension LazyFilterSequence where Base == XContentSequence {
-    var asContent: XMLConsumableSequence {
-        get { XMLConsumableSequenceFromLazyContentFilterSequence(fromSequence: self) }
-    }
-}
-
-final class XNodeSampler: XMLConsumer {
-    
-    var nodes = [XContent]()
-    
-    func consume(_ content: XContent) {
-        nodes.append(content)
+    var asContent: XMLCollectableSequence {
+        get { XMLCollectableSequenceFromLazyContentFilterSequence(fromSequence: self) }
     }
 }
 
 @resultBuilder
 public struct XContentBuilder {
     
-    public static func buildBlock(_ components: XMLConsumable?...) -> [XContent] {
-        let sampler = XNodeSampler()
-        for component in components{ if let component { component.beConsumedAsXML(by: sampler) } }
-        return sampler.nodes
+    public static func buildBlock(_ components: XMLCollectable?...) -> [XContent] {
+        var xmlCollector = XMLCollector()
+        for component in components{ if let component { component.collectXML(by: &xmlCollector) } }
+        return xmlCollector.collected
     }
     
-    public static func buildBlock(_ sequences: any Sequence<XMLConsumable>...) -> [XContent] {
-        let sampler = XNodeSampler()
+    public static func buildBlock(_ sequences: any Sequence<XMLCollectable>...) -> [XContent] {
+        var xmlCollector = XMLCollector()
         for sequence in sequences {
             for content in sequence {
-                content.beConsumedAsXML(by: sampler)
+                content.collectXML(by: &xmlCollector)
             }
         }
-        return sampler.nodes
+        return xmlCollector.collected
     }
     
     public static func buildEither(first component: [XContent]) -> [XContent] {

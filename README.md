@@ -71,7 +71,7 @@ let transformation = XTransformation {
 
 **UPDATE 17 (December 2023):** Added some tracing capabilities for complex transformations.
 
-**UPDATE 18 (January 2024):** An instance of any type conforming to the new `XMLConsumable` can be inseretd as XML.
+**UPDATE 18 (January 2024):** An instance of any type conforming to the new `XMLCollectable` can be inseretd as XML.
 
 ---
 
@@ -1016,24 +1016,27 @@ element.replace {
 
 The content that you define inside parentheses `{...}` is constructed from the inside to the outside. From the notes above you might then think that `element` in the example is not as its original place any more when the content of the “wrapper” element has been constructed, before the replacement could actually happen. Yes, this is true, but nevertheless the `replace` method still knows where to insert this “wrapper” element. The operation does work as you would expect from a naïve perspective.
 
-An instance of any type conforming to `XMLConsumable` can be inseretd as XML:
+An instance of any type conforming to `XMLCollectable` can be inseretd as XML:
 
 ```swift
-struct MyStruct: XMLConsumable {
+struct MyStruct: XMLCollectable {
     
     let text1: String
     let text2: String
     
-    func beConsumedAsXML(by xmlConsumer: XMLConsumer) {
-        xmlConsumer.consume(XElement("text1") { text1 })
-        xmlConsumer.consume(XElement("text2") { text2 })
+    func collectXML(by xmlCollector: inout XMLCollector) {
+        xmlCollector.collect(XElement("text1") { text1 })
+        xmlCollector.collect(XElement("text2") { text2 })
     }
+    
 }
 
-let myStruct = MyStruct(text1: "hello", text2: "world")
+let myStruct1 = MyStruct(text1: "hello", text2: "world")
+let myStruct2 = MyStruct(text1: "greeting", text2: "you")
 
 let element = XElement("x") {
-    myStruct
+    myStruct1
+    myStruct2
 }
 
 element.echo(pretty: true)
@@ -1045,6 +1048,8 @@ Result:
 <x>
   <text1>hello</text1>
   <text2>world</text2>
+  <text1>greeting</text1>
+  <text2>you</text2>
 </x>
 ```
 
