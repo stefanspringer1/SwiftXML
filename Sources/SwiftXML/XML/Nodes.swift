@@ -1311,120 +1311,6 @@ extension Array: XContentLike where Element == XContent {
     }
 }
 
-public extension Array where Element == XContentLike {
-    var asContent: XContentLikeSequence {
-        get { XContentLikeSequenceFromArray(fromArray: self) }
-    }
-}
-
-public extension Array where Element == XContentIterator.Element {
-    var asContent: XContentLikeSequence {
-        get { XContentLikeSequenceFromArray(fromArray: self) }
-    }
-}
-
-public extension Array where Element == XContentLike? {
-    var asContent: XContentLikeSequence {
-        get { XContentLikeSequenceFromArray(fromArray: self) }
-    }
-}
-
-public extension Array where Element == XElement {
-    var asContent: XContentLikeSequence {
-        get { XContentLikeSequenceFromArray(fromArray: self) }
-    }
-}
-
-public extension Array where Element == XElement? {
-    var asContent: XContentLikeSequence {
-        get { XContentLikeSequenceFromArray(fromArray: self) }
-    }
-}
-
-public extension Array where Element == XText {
-    var asContent: XContentLikeSequence {
-        get { XContentLikeSequenceFromArray(fromArray: self) }
-    }
-}
-
-public extension Array where Element == XText? {
-    var asContent: XContentLikeSequence {
-        get { XContentLikeSequenceFromArray(fromArray: self) }
-    }
-}
-
-public extension Array where Element == XInternalEntity {
-    var asContent: XContentLikeSequence {
-        get { XContentLikeSequenceFromArray(fromArray: self) }
-    }
-}
-
-public extension Array where Element == XInternalEntity? {
-    var asContent: XContentLikeSequence {
-        get { XContentLikeSequenceFromArray(fromArray: self) }
-    }
-}
-
-public extension Array where Element == XExternalEntity {
-    var asContent: XContentLikeSequence {
-        get { XContentLikeSequenceFromArray(fromArray: self) }
-    }
-}
-
-public extension Array where Element == XExternalEntity? {
-    var asContent: XContentLikeSequence {
-        get { XContentLikeSequenceFromArray(fromArray: self) }
-    }
-}
-
-public extension Array where Element == XCDATASection {
-    var asContent: XContentLikeSequence {
-        get { XContentLikeSequenceFromArray(fromArray: self) }
-    }
-}
-
-public extension Array where Element == XCDATASection? {
-    var asContent: XContentLikeSequence {
-        get { XContentLikeSequenceFromArray(fromArray: self) }
-    }
-}
-
-public extension Array where Element == XProcessingInstruction {
-    var asContent: XContentLikeSequence {
-        get { XContentLikeSequenceFromArray(fromArray: self) }
-    }
-}
-
-public extension Array where Element == XProcessingInstruction? {
-    var asContent: XContentLikeSequence {
-        get { XContentLikeSequenceFromArray(fromArray: self) }
-    }
-}
-
-public extension Array where Element == XComment {
-    var asContent: XContentLikeSequence {
-        get { XContentLikeSequenceFromArray(fromArray: self) }
-    }
-}
-
-public extension Array where Element == XComment? {
-    var asContent: XContentLikeSequence {
-        get { XContentLikeSequenceFromArray(fromArray: self) }
-    }
-}
-
-public extension LazyFilterSequence where Base == XElementSequence {
-    var asContent: XContentLikeSequence {
-        get { XContentLikeSequenceFromLazyElementFilterSequence(fromSequence: self) }
-    }
-}
-
-public extension LazyFilterSequence where Base == XContentSequence {
-    var asContent: XContentLikeSequence {
-        get { XContentLikeSequenceFromLazyContentFilterSequence(fromSequence: self) }
-    }
-}
-
 @resultBuilder
 public struct XContentBuilder {
     
@@ -1440,6 +1326,20 @@ public struct XContentBuilder {
             for content in sequence {
                 content.collectXML(by: &xmlCollector)
             }
+        }
+        return xmlCollector.collected
+    }
+    
+    static func buildExpression(_ expression: XContentLike) -> [XContent] {
+        var xmlCollector = XMLCollector()
+        expression.collectXML(by: &xmlCollector)
+        return xmlCollector.collected
+    }
+    
+    static func buildExpression(_ array: [XContentLike]) -> [XContent] {
+        var xmlCollector = XMLCollector()
+        for item in array {
+            item.collectXML(by: &xmlCollector)
         }
         return xmlCollector.collected
     }

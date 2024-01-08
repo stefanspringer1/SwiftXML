@@ -1079,26 +1079,6 @@ let myElement = XElement("div") {
 }
 ```
 
-For resulting arrays of more complex content, use the property `asContent` to insert them (`asContent` also flattens arrays of sequences):
-
-```swift
-let myElement = XElement("div") {
-    ["Hello ", " ", "World"].asContent
-    myDocument.children.map{ $0.children }.asContent
-    ["a","b"].map{ XElement($0) }.asContent
-}
-```
-
-You might also use `as XMLConsumable` to set a common appropriate type where necessary:
-
-```swift
-let myElement = XElement("p") {
-    unpack ? myOtherElement.content : myOtherElement as XMLConsumable
-    setPredefinedText ? "my text" : anotherElement.content as XMLConsumable
-    wrapped ? "my other text" : XElement("wrapper") { "my other text" } as XMLConsumable
-}
-```
-
 When not defining content, using `map` might be a sensible option:
 
 ```swift

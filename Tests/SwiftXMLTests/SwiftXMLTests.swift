@@ -155,7 +155,7 @@ final class SwiftXMLTests: XCTestCase {
                 XElement("title") {
                     "this is the title"
                 }
-                document.children.children.filter { $0.name == "b" }.drop(while: { Int($0["id"] ?? "1") ?? 1 < 2 }).filter { $0["drop"] != "yes" }.asContent
+                document.children.children.filter { $0.name == "b" }.drop(while: { Int($0["id"] ?? "1") ?? 1 < 2 }).filter { $0["drop"] != "yes" }
             }
             
             XCTAssertEqual(element.serialized(pretty: true), """
@@ -432,13 +432,13 @@ final class SwiftXMLTests: XCTestCase {
             element1.content
         }
         let _ = XElement("element") {
-            Array(element1.content).asContent
+            Array(element1.content)
         }
         let _ = XElement("element") {
             element1.immediateTexts
         }
         let _ = XElement("element") {
-            Array(element1.immediateTexts).asContent
+            Array(element1.immediateTexts)
         }
         
         let _ = XElement("element") {
@@ -451,17 +451,17 @@ final class SwiftXMLTests: XCTestCase {
             "u"
         }
         let _ = XElement("element") {
-            ["a", "b"].asContent
+            ["a", "b"]
         }
         let _ = XElement("element") {
-            [XElement("element"), XElement("element")].asContent
+            [XElement("element"), XElement("element")]
         }
         let _ = XElement("element") {
-            element1.immediateTexts.map{ $0.allTextsCollected }.asContent
+            element1.immediateTexts.map{ $0.allTextsCollected }
         }
         let _ = XElement("element") {
             element1.content
-            element1.immediateTexts.map{ $0.allTextsCollected }.asContent
+            element1.immediateTexts.map{ $0.allTextsCollected }
             "u"
             XElement("element")
         }
