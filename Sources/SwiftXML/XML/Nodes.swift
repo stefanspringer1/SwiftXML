@@ -1342,13 +1342,27 @@ public struct XContentBuilder {
     }
     
     public static func buildExpression(_ expression: XContentLike?) -> [XContent] {
-        return [XContent]()
+        if let expression {
+            return buildExpression(expression)
+        } else {
+            return [XContent]()
+        }
     }
     
     public static func buildExpression(_ array: [XContentLike]) -> [XContent] {
         var xmlCollector = XMLCollector()
         for item in array {
             item.collectXML(by: &xmlCollector)
+        }
+        return xmlCollector.collected
+    }
+    
+    public static func buildExpression(_ array: [XContentLike?]) -> [XContent] {
+        var xmlCollector = XMLCollector()
+        for item in array {
+            if let item {
+                item.collectXML(by: &xmlCollector)
+            }
         }
         return xmlCollector.collected
     }
