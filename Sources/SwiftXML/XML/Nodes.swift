@@ -1220,7 +1220,7 @@ public protocol XContentConvertible {
 }
 
 public extension XContentConvertible {
-    func toXML() -> [XContent] {
+    var xml: [XContent] {
         var xmlCollector = XMLCollector()
         self.collectXML(by: &xmlCollector)
         return xmlCollector.collected

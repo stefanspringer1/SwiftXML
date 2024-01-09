@@ -1053,6 +1053,8 @@ Result:
 </x>
 ```
 
+For `XContentConvertible` there is also the `xml` property that returns an according array of `XContent`.
+
 ### Defining content
 
 When constructing an element, its contents are given in parentheses `{...}` (those parentheses are the `builder` argument of the initializer).

@@ -118,6 +118,25 @@ final class SwiftXMLTests: XCTestCase {
         XCTAssertEqual(x.serialized(), #"<x><a/><b/></x>"#)
     }
     
+    func testXMLProperty() throws {
+        
+        struct MyStruct: XContentConvertible {
+            
+            let text1: String
+            let text2: String
+            
+            func collectXML(by xmlCollector: inout XMLCollector) {
+                xmlCollector.collect(XElement("text1") { text1 })
+                xmlCollector.collect(XElement("text2") { text2 })
+            }
+            
+        }
+        
+        let myStruct1 = MyStruct(text1: "hello", text2: "world")
+        
+        XCTAssertEqual(myStruct1.xml.map { $0.serialized() }.joined(), #"<text1>hello</text1><text2>world</text2>"#)
+    }
+    
     func testOptional() throws {
         
         let content: String? = "hello"
