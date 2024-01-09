@@ -71,7 +71,7 @@ let transformation = XTransformation {
 
 **UPDATE 17 (December 2023):** Added some tracing capabilities for complex transformations.
 
-**UPDATE 18 (January 2024):** When using SwiftXML, a new type can conform to `XContentConvertible` and as such then can be inseretd as XML. The `asContent` property is not necessary any mote and is removed, and `... as XContentConvertible` (previously `... as XContentLike`) should also not be necessary any more.
+**UPDATE 18 (January 2024):** `XContentLike` is renamed to `XContentConvertible`. When using SwiftXML, a new type can conform to `XContentConvertible` and as such then can be inserted as XML. The `asContent` property is not necessary any more and is removed, and `... as XContentConvertible` (previously `... as XContentLike`) should also not be necessary any more.
 
 ---
 
