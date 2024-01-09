@@ -146,7 +146,7 @@ final class SwiftXMLTests: XCTestCase {
     
     func testArrayOfOptionals() throws {
         
-        let content: [XContentLike?] = ["hello", nil]
+        let content: [XContentConvertible?] = ["hello", nil]
         let x = XElement("x") {
             content
         }

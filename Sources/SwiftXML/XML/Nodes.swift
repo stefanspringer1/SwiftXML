@@ -1215,11 +1215,11 @@ public struct XMLCollector {
     }
 }
 
-public protocol XContentLike {
+public protocol XContentConvertible {
     func collectXML(by xmlCollector: inout XMLCollector)
 }
 
-public extension XContentLike {
+public extension XContentConvertible {
     func toXML() -> [XContent] {
         var xmlCollector = XMLCollector()
         self.collectXML(by: &xmlCollector)
@@ -1227,19 +1227,19 @@ public extension XContentLike {
     }
 }
 
-extension XContent: XContentLike {
+extension XContent: XContentConvertible {
     public func collectXML(by xmlCollector: inout XMLCollector) {
         xmlCollector.collect(self)
     }
 }
 
-extension String: XContentLike {
+extension String: XContentConvertible {
     public func collectXML(by xmlCollector: inout XMLCollector) {
         xmlCollector.collect(XText(self))
     }
 }
 
-extension XContentSequence: XContentLike {
+extension XContentSequence: XContentConvertible {
     public func collectXML(by xmlCollector: inout XMLCollector) {
         for content in self {
             xmlCollector.collect(content)
@@ -1247,7 +1247,7 @@ extension XContentSequence: XContentLike {
     }
 }
 
-extension XContentLikeSequence: XContentLike {
+extension XContentConvertibleSequence: XContentConvertible {
     public func collectXML(by xmlCollector: inout XMLCollector) {
         for content in self {
             content.collectXML(by: &xmlCollector)
@@ -1255,7 +1255,7 @@ extension XContentLikeSequence: XContentLike {
     }
 }
 
-extension XElementSequence: XContentLike {
+extension XElementSequence: XContentConvertible {
     public func collectXML(by xmlCollector: inout XMLCollector) {
         for content in self {
             xmlCollector.collect(content)
@@ -1263,7 +1263,7 @@ extension XElementSequence: XContentLike {
     }
 }
 
-extension XTextSequence: XContentLike {
+extension XTextSequence: XContentConvertible {
     public func collectXML(by xmlCollector: inout XMLCollector) {
         for content in self {
             xmlCollector.collect(content)
@@ -1271,7 +1271,7 @@ extension XTextSequence: XContentLike {
     }
 }
 
-extension LazyMapSequence<XContentSequence, XContentLike>: XContentLike {
+extension LazyMapSequence<XContentSequence, XContentConvertible>: XContentConvertible {
     public func collectXML(by xmlCollector: inout XMLCollector) {
         for content in self {
             content.collectXML(by: &xmlCollector)
@@ -1279,7 +1279,7 @@ extension LazyMapSequence<XContentSequence, XContentLike>: XContentLike {
     }
 }
 
-extension Sequence<XContentLike> {
+extension Sequence<XContentConvertible> {
     public func collectXML(by xmlCollector: inout XMLCollector) {
         for content in self {
             content.collectXML(by: &xmlCollector)
@@ -1287,7 +1287,7 @@ extension Sequence<XContentLike> {
     }
 }
 
-extension LazyFilterSequence: XContentLike where Base.Element == XElement {
+extension LazyFilterSequence: XContentConvertible where Base.Element == XElement {
     public func collectXML(by xmlCollector: inout XMLCollector) {
         for content in self {
             content.collectXML(by: &xmlCollector)
@@ -1295,7 +1295,7 @@ extension LazyFilterSequence: XContentLike where Base.Element == XElement {
     }
 }
 
-extension LazyDropWhileSequence: XContentLike where Base.Element == XElement {
+extension LazyDropWhileSequence: XContentConvertible where Base.Element == XElement {
     public func collectXML(by xmlCollector: inout XMLCollector) {
         for content in self {
             content.collectXML(by: &xmlCollector)
@@ -1303,7 +1303,7 @@ extension LazyDropWhileSequence: XContentLike where Base.Element == XElement {
     }
 }
 
-extension Array: XContentLike where Element == XContent {
+extension Array: XContentConvertible where Element == XContent {
     public func collectXML(by xmlCollector: inout XMLCollector) {
         for content in self {
             content.collectXML(by: &xmlCollector)
@@ -1319,13 +1319,13 @@ public struct XContentBuilder {
         return [XContent]()
     }
     
-    public static func buildBlock(_ components: XContentLike?...) -> [XContent] {
+    public static func buildBlock(_ components: XContentConvertible?...) -> [XContent] {
         var xmlCollector = XMLCollector()
         for component in components{ if let component { component.collectXML(by: &xmlCollector) } }
         return xmlCollector.collected
     }
     
-    public static func buildBlock(_ sequences: any Sequence<XContentLike>...) -> [XContent] {
+    public static func buildBlock(_ sequences: any Sequence<XContentConvertible>...) -> [XContent] {
         var xmlCollector = XMLCollector()
         for sequence in sequences {
             for content in sequence {
@@ -1335,13 +1335,13 @@ public struct XContentBuilder {
         return xmlCollector.collected
     }
     
-    public static func buildExpression(_ expression: XContentLike) -> [XContent] {
+    public static func buildExpression(_ expression: XContentConvertible) -> [XContent] {
         var xmlCollector = XMLCollector()
         expression.collectXML(by: &xmlCollector)
         return xmlCollector.collected
     }
     
-    public static func buildExpression(_ expression: XContentLike?) -> [XContent] {
+    public static func buildExpression(_ expression: XContentConvertible?) -> [XContent] {
         if let expression {
             return buildExpression(expression)
         } else {
@@ -1349,7 +1349,7 @@ public struct XContentBuilder {
         }
     }
     
-    public static func buildExpression(_ array: [XContentLike]) -> [XContent] {
+    public static func buildExpression(_ array: [XContentConvertible]) -> [XContent] {
         var xmlCollector = XMLCollector()
         for item in array {
             item.collectXML(by: &xmlCollector)
@@ -1357,7 +1357,7 @@ public struct XContentBuilder {
         return xmlCollector.collected
     }
     
-    public static func buildExpression(_ array: [XContentLike?]) -> [XContent] {
+    public static func buildExpression(_ array: [XContentConvertible?]) -> [XContent] {
         var xmlCollector = XMLCollector()
         for item in array {
             if let item {

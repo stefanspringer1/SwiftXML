@@ -71,7 +71,7 @@ let transformation = XTransformation {
 
 **UPDATE 17 (December 2023):** Added some tracing capabilities for complex transformations.
 
-**UPDATE 18 (January 2024):** When using SwiftXML, a new type can conform to `XContentLike` and as such then can be inseretd as XML.
+**UPDATE 18 (January 2024):** When using SwiftXML, a new type can conform to `XContentConvertible` and as such then can be inseretd as XML. The `asContent` property is not necessary any mote and is removed, and `... as XContentConvertible` (previously `... as XContentLike`) should also not be necessary any more.
 
 ---
 
@@ -1016,10 +1016,10 @@ element.replace {
 
 The content that you define inside parentheses `{...}` is constructed from the inside to the outside. From the notes above you might then think that `element` in the example is not as its original place any more when the content of the “wrapper” element has been constructed, before the replacement could actually happen. Yes, this is true, but nevertheless the `replace` method still knows where to insert this “wrapper” element. The operation does work as you would expect from a naïve perspective.
 
-An instance of any type conforming to `XContentLike` (it has to implement its `collectXML(by:)` method) can be inserted as XML:
+An instance of any type conforming to `XContentConvertible` (it has to implement its `collectXML(by:)` method) can be inserted as XML:
 
 ```swift
-struct MyStruct: XContentLike {
+struct MyStruct: XContentConvertible {
     
     let text1: String
     let text2: String

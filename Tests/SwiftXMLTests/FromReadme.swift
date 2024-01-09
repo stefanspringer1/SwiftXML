@@ -154,7 +154,7 @@ final class FromReadmeTests: XCTestCase {
     
     func testConsumeForeignTypeAsXML() throws {
         
-        struct MyStruct: XContentLike {
+        struct MyStruct: XContentConvertible {
             
             let text1: String
             let text2: String

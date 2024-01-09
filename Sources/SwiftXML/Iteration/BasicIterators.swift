@@ -348,41 +348,41 @@ public class XStringSequence: LazySequenceProtocol, Sequence {
     }
 }
 
-public class XContentLikeIterator: IteratorProtocol {
-    public typealias Element = XContentLike
-    public func next() -> XContentLike? {
+public class XContentConvertibleIterator: IteratorProtocol {
+    public typealias Element = XContentConvertible
+    public func next() -> XContentConvertible? {
         return nil
     }
 }
 
-public class XContentLikeSequence: LazySequenceProtocol {
-    public func makeIterator() -> XContentLikeIterator {
-        return XContentLikeIterator()
+public class XContentConvertibleSequence: LazySequenceProtocol {
+    public func makeIterator() -> XContentConvertibleIterator {
+        return XContentConvertibleIterator()
     }
 }
 
-public class XContentLikeSequenceFromArray: XContentLikeSequence {
-    let array: Array<XContentLike?>
+public class XContentConvertibleSequenceFromArray: XContentConvertibleSequence {
+    let array: Array<XContentConvertible?>
     
-    public init(fromArray array: Array<XContentLike?>) {
+    public init(fromArray array: Array<XContentConvertible?>) {
         self.array = array
     }
     
-    public override func makeIterator() -> XContentLikeIterator {
-        return XContentLikeIteratorFromArray(fromArray: array)
+    public override func makeIterator() -> XContentConvertibleIterator {
+        return XContentConvertibleIteratorFromArray(fromArray: array)
     }
 }
 
-public class XContentLikeIteratorFromArray: XContentLikeIterator {
-    let array: Array<XContentLike?>
+public class XContentConvertibleIteratorFromArray: XContentConvertibleIterator {
+    let array: Array<XContentConvertible?>
     var nextIndex = -1
     
-    public init(fromArray array: Array<XContentLike?>) {
+    public init(fromArray array: Array<XContentConvertible?>) {
         self.array = array
     }
     
-    public override func next() -> XContentLike? {
-        var result: XContentLike? = nil
+    public override func next() -> XContentConvertible? {
+        var result: XContentConvertible? = nil
         repeat {
             nextIndex += 1
             if nextIndex < array.count {
@@ -396,50 +396,50 @@ public class XContentLikeIteratorFromArray: XContentLikeIterator {
     }
 }
 
-public class XContentLikeSequenceFromLazyElementFilterSequence: XContentLikeSequence {
+public class XContentConvertibleSequenceFromLazyElementFilterSequence: XContentConvertibleSequence {
     let sequence: LazyFilterSequence<XElementSequence>
     
     public init(fromSequence sequence: LazyFilterSequence<XElementSequence>) {
         self.sequence = sequence
     }
     
-    public override func makeIterator() -> XContentLikeIterator {
-        return XContentLikeIteratorFromLazyElementFilterSequence(fromSequence: sequence)
+    public override func makeIterator() -> XContentConvertibleIterator {
+        return XContentConvertibleIteratorFromLazyElementFilterSequence(fromSequence: sequence)
     }
 }
 
-public class XContentLikeIteratorFromLazyElementFilterSequence: XContentLikeIterator {
+public class XContentConvertibleIteratorFromLazyElementFilterSequence: XContentConvertibleIterator {
     var iterator: LazyFilterSequence<XElementSequence>.Iterator
     
     public init(fromSequence sequence: LazyFilterSequence<XElementSequence>) {
         iterator = sequence.makeIterator()
     }
     
-    public override func next() -> XContentLike? {
+    public override func next() -> XContentConvertible? {
         return iterator.next()
     }
 }
 
-public class XContentLikeSequenceFromLazyContentFilterSequence: XContentLikeSequence {
+public class XContentConvertibleSequenceFromLazyContentFilterSequence: XContentConvertibleSequence {
     let sequence: LazyFilterSequence<XContentSequence>
     
     public init(fromSequence sequence: LazyFilterSequence<XContentSequence>) {
         self.sequence = sequence
     }
     
-    public override func makeIterator() -> XContentLikeIterator {
-        return XContentLikeIteratorFromLazyContentFilterSequence(fromSequence: sequence)
+    public override func makeIterator() -> XContentConvertibleIterator {
+        return XContentConvertibleIteratorFromLazyContentFilterSequence(fromSequence: sequence)
     }
 }
 
-public class XContentLikeIteratorFromLazyContentFilterSequence: XContentLikeIterator {
+public class XContentConvertibleIteratorFromLazyContentFilterSequence: XContentConvertibleIterator {
     var iterator: LazyFilterSequence<XContentSequence>.Iterator
     
     public init(fromSequence sequence: LazyFilterSequence<XContentSequence>) {
         iterator = sequence.makeIterator()
     }
     
-    public override func next() -> XContentLike? {
+    public override func next() -> XContentConvertible? {
         return iterator.next()
     }
 }
