@@ -1634,6 +1634,8 @@ document.echo()
 <a><formula id="3"/><image id="2"/><formula id="1"/></a>
 ```
 
+As a sidenote, for such an `XTransformation` the lengths of the element names do not really matter: apart from the initialization of the transformation before the execution and from what happens inside the rules, the appliance of the rules is not less efficient if the element names are longer.
+
 Instead of using a transformation with a very large number of rules, you should use several transformations, each dedicated to a separate “topic”. E.g. for some document format you might first transform the inline elements and then the block elements. Splitting a transformation into several transformations practically does not hurt performance.
 
 Note that the order of the rules matters: If you need to look up e.g. the parent of the element in a rule, it is important to know if this parent has already been changed by another rule, i.e. if a preceding rule has transformed this element. An example is given in the following section “Transformations with inverse order”. The usage of several transformations as described in the preciding paragraph might help here. Methods to work with better contextual information are described in the sections “Transformations with attachments for context information”, “Transformations with document versions”, and “Transformations with traversals” below.
