@@ -1900,6 +1900,7 @@ public final class XText: XContent, XTextualContentRepresentation, ToBePeparedFo
         let theClone = XText(_value, whitespace: _whitespace)
         theClone._backLink = self
         theClone._sourceRange = self._sourceRange
+        theClone.isolated = isolated
         return theClone
     }
     
