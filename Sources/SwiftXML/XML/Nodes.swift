@@ -874,7 +874,7 @@ public protocol XBranch: XNode {
     func firstContent(_ condition: (XContent) -> Bool) -> XContent?
     var lastContent: XContent? { get }
     func lastContent(_ condition: (XContent) -> Bool) -> XContent?
-    var firstChild: XElement { get }
+    var firstChild: XElement? { get }
     func firstChild(_ name: String) -> XElement?
     func firstChild(_ names: [String]) -> XElement?
     func firstChild(_ names: String...) -> XElement?
@@ -1382,7 +1382,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     public var encounteredActionsAt: [(String, Int)] = []
     #endif
 
-    public var firstChild: XElement { (self as XBranchInternal).firstChild }
+    public var firstChild: XElement? { (self as XBranchInternal).firstChild }
 
     func setDocument(document newDocument: XDocument?) {
 
