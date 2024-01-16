@@ -20,7 +20,19 @@ final class XValue {
 
 public final class XDocument: XNode, XBranchInternal {
     
-    public var firstChild: XElement? { (self as XBranchInternal).firstChild }
+    public var firstChild: XElement? { _firstChild }
+    
+    public func firstChild(_ name: String) -> XElement? {
+        _firstChild(name)
+    }
+    
+    public func firstChild(_ names: [String]) -> XElement? {
+        _firstChild(names)
+    }
+    
+    public func firstChild(_ names: String...) -> XElement? {
+        _firstChild(names)
+    }
     
     public var xPath: String { "/" }
     

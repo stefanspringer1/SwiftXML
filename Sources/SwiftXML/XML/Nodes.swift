@@ -896,7 +896,7 @@ protocol XBranchInternal: XBranch {
 
 extension XBranchInternal {
     
-    public var firstChild: XElement? {
+    public var _firstChild: XElement? {
         var node = __firstContent
         while let theNode = node {
             if let child = theNode as? XElement {
@@ -907,7 +907,7 @@ extension XBranchInternal {
         return nil
     }
     
-    public func firstChild(_ name: String) -> XElement? {
+    public func _firstChild(_ name: String) -> XElement? {
         var node = __firstContent
         while let theNode = node {
             if let child = theNode as? XElement, child.name == name {
@@ -918,7 +918,7 @@ extension XBranchInternal {
         return nil
     }
     
-    public func firstChild(_ names: [String]) -> XElement? {
+    public func _firstChild(_ names: [String]) -> XElement? {
         var node = __firstContent
         while let theNode = node {
             if let child = theNode as? XElement, names.contains(child.name) {
@@ -929,7 +929,7 @@ extension XBranchInternal {
         return nil
     }
     
-    public func firstChild(_ names: String...) -> XElement? {
+    public func _firstChild(_ names: String...) -> XElement? {
         firstChild(names)
     }
     
@@ -1382,7 +1382,19 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     public var encounteredActionsAt: [(String, Int)] = []
     #endif
 
-    public var firstChild: XElement? { (self as XBranchInternal).firstChild }
+    public var firstChild: XElement? { _firstChild }
+    
+    public func firstChild(_ name: String) -> XElement? {
+        _firstChild(name)
+    }
+    
+    public func firstChild(_ names: [String]) -> XElement? {
+        _firstChild(names)
+    }
+    
+    public func firstChild(_ names: String...) -> XElement? {
+        _firstChild(names)
+    }
 
     func setDocument(document newDocument: XDocument?) {
 
