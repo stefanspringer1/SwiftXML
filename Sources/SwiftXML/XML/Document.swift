@@ -194,6 +194,7 @@ public final class XDocument: XNode, XBranchInternal {
             _elementsOfName_first[name] = element
         }
         _elementsOfName_last[name] = element
+        element._document = self
     }
     
     func unregisterElement(element: XElement) {
@@ -209,6 +210,7 @@ public final class XDocument: XNode, XBranchInternal {
         }
         element.previousWithSameName = nil
         element.nextWithSameName = nil
+        element._document = nil
     }
     
     public func elements(_ name: String) -> XElementSequence {

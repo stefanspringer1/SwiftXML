@@ -132,7 +132,7 @@ public class XNode {
     /// Return the document that the node belongs to if it exists.
     public weak var document: XDocument? {
         get {
-            return (self as? XBranchInternal)?._document ?? self.parent?._document
+            return (self as? XBranchInternal)?._document ?? self._parent?._document
         }
     }
     
@@ -634,8 +634,10 @@ public class XContent: XNode {
     public func remove() {
         _removeKeep()
         if let meAsElement = self as? XElement {
-            for descendant in Array(meAsElement.descendantsIncludingSelf) {
-                descendant.gotoPreviousOnNameIterators()
+            //meAsElement.gotoPreviousOnNameIterators()
+            meAsElement.document?.unregisterElement(element: meAsElement)
+            for descendant in meAsElement.descendants {
+                //descendant.gotoPreviousOnNameIterators()
                 descendant.document?.unregisterElement(element: descendant)
             }
         }
@@ -665,8 +667,11 @@ public class XContent: XNode {
             node.setTreeOrderWhenInserting()
             
             // set document:
-            if let theDocument = _parent?._document, let element = node as? XElement, !(element._document === theDocument) {
-                element.setDocument(document: theDocument)
+            let document = document
+            if let element = node as? XElement, !(element._document === document) {
+                for insertedElement in element.descendantsIncludingSelf {
+                    insertedElement.setDocument(document: document)
+                }
             }
         }
         
@@ -727,7 +732,7 @@ public class XContent: XNode {
         if insertionMode == .skipping {
             prefetchOnContentIterators()
         }
-        let isolator = _Isolator_()
+        let isolator = _Isolator_(inDocument: self.document)
         _insertPrevious(isolator)
         moving(content) {
             content.forEach { isolator._insertPrevious($0) }
@@ -758,8 +763,11 @@ public class XContent: XNode {
             node.setTreeOrderWhenInserting()
             
             // set document:
-            if let theDocument = _parent?._document, let element = node as? XElement, !(element._document === theDocument) {
-                element.setDocument(document: theDocument)
+            let document = document
+            if let element = node as? XElement, !(element._document === document) {
+                for insertedElement in element.descendantsIncludingSelf {
+                    insertedElement.setDocument(document: document)
+                }
             }
         }
         
@@ -816,7 +824,7 @@ public class XContent: XNode {
         if insertionMode == .skipping {
             prefetchOnContentIterators()
         }
-        let isolator = _Isolator_()
+        let isolator = _Isolator_(inDocument: self.document)
         _insertNext(isolator)
         moving(content) {
             content.forEach { isolator._insertPrevious($0) }
@@ -848,13 +856,13 @@ public class XContent: XNode {
     }
     
     public func replace(_ insertionMode: InsertionMode = .following, _ content: [XContent]) {
-        let isolator = _Isolator_()
+        let isolator = _Isolator_(inDocument: self.document)
         _insertPrevious(isolator)
         _replace(insertionMode: insertionMode, content: content, previousIsolator: isolator)
     }
     
     public func replace(_ insertionMode: InsertionMode = .following, @XContentBuilder builder: () -> [XContent]) {
-        let isolator = _Isolator_()
+        let isolator = _Isolator_(inDocument: self.document)
         _insertPrevious(isolator)
         _replace(insertionMode: insertionMode, content: builder(), previousIsolator: isolator)
     }
@@ -867,8 +875,17 @@ public extension String {
     var asSequence: XContentSequence { get { XText(self).asSequence } }
 }
 
-class _Isolator_: XContent {
-    public override init() {}
+final class _Isolator_: XContent {
+    
+    private let _document: XDocument?
+    
+    public override var document: XDocument? {
+        _document
+    }
+    
+    init(inDocument document: XDocument?) {
+        _document = document
+    }
 }
 
 public protocol XBranch: XNode {
@@ -1079,7 +1096,9 @@ extension XBranchInternal {
 
             // set document:
             if _document != nil, let element = node as? XElement, !(element._document === _document) {
-                element.setDocument(document: _document)
+                for insertedElement in element.descendantsIncludingSelf {
+                    insertedElement.setDocument(document: _document)
+                }
             }
         }
     }
@@ -1139,10 +1158,12 @@ extension XBranchInternal {
 
             // set tree order:
             node.setTreeOrderWhenInserting()
-
+            
             // set document:
             if _document != nil, let element = node as? XElement, !(element._document === _document) {
-                element.setDocument(document: _document)
+                for insertedElement in element.descendantsIncludingSelf {
+                    insertedElement.setDocument(document: _document)
+                }
             }
         }
     }
@@ -1173,7 +1194,7 @@ extension XBranchInternal {
      Set the contents of the branch.
      */
     func _setContent(_ content: [XContent]) {
-        let isolator = _Isolator_()
+        let isolator = _Isolator_(inDocument: self.document)
         _addFirst(isolator)
         moving(content) {
             content.forEach { isolator._insertPrevious($0) }
