@@ -636,7 +636,7 @@ public class XContent: XNode {
         if let meAsElement = self as? XElement {
             for descendant in Array(meAsElement.descendantsIncludingSelf) {
                 descendant.gotoPreviousOnNameIterators()
-                descendant.document?.unregisterElement(element: meAsElement)
+                descendant.document?.unregisterElement(element: descendant)
             }
         }
     }

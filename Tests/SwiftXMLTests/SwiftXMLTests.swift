@@ -14,6 +14,33 @@ import class Foundation.Bundle
 
 final class SwiftXMLTests: XCTestCase {
     
+    func testRemovalInTransformation() throws {
+        let document = try parseXML(fromText: """
+            <a>
+                <b><c/></b>
+            </a>
+            """)
+        
+        var foundC = false
+        
+        let transformation = XTransformation {
+            
+            XRule(forElements: "b") { b in
+                b.replace {
+                    XElement("d")
+                }
+            }
+            
+            XRule(forElements: "c") { b in
+                foundC = true
+            }
+        }
+        
+        transformation.execute(inDocument: document)
+        
+        XCTAssertEqual(foundC, false)
+    }
+    
     let documentSource1 = """
         <a>
             <b id="1"/>
