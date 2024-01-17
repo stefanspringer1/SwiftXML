@@ -634,8 +634,10 @@ public class XContent: XNode {
     public func remove() {
         _removeKeep()
         if let meAsElement = self as? XElement {
-            meAsElement.gotoPreviousOnNameIterators()
-            meAsElement.document?.unregisterElement(element: meAsElement)
+            for descendant in Array(meAsElement.descendantsIncludingSelf) {
+                descendant.gotoPreviousOnNameIterators()
+                descendant.document?.unregisterElement(element: meAsElement)
+            }
         }
     }
     
