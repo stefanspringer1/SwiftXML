@@ -10,7 +10,7 @@
 
 import Foundation
 
-/// Info that a correction in the call to `copyStructure` has to use.
+/// Info that a correction in the call to `copyXStructure` has to use.
 public struct StructureCopyInfo {
     public let structure: XContent
     public let start: XContent
@@ -26,7 +26,7 @@ public struct StructureCopyInfo {
 /// and b) `upTo` is an ancestor of the common ancestor or the ancestor itself.
 /// Else it is the clone of the common ancestor (but generally with a different
 /// content in both cases). The `correction` can do some corrections.
-public func copyStructure(from start: XContent, to end: XContent, upTo: XElement? = nil, correction: ((StructureCopyInfo) -> XContent)? = nil) -> XContent? {
+public func copyXStructure(from start: XContent, to end: XContent, upTo: XElement? = nil, correction: ((StructureCopyInfo) -> XContent)? = nil) -> XContent? {
     
     func addUpTo(fromCopy copy: XContent) -> XContent {
         guard let upTo else { return copy }

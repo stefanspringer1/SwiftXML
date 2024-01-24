@@ -39,7 +39,7 @@ final class ToolsTests: XCTestCase {
             Anleitung A
             """#)
         
-        let copyOfStructure = copyStructure(from: start!, to: end!, upTo: start!.ancestors({ $0.name == "sec" }).first! )?.content
+        let copyOfStructure = copyXStructure(from: start!, to: end!, upTo: start!.ancestors({ $0.name == "sec" }).first! )?.content
         XCTAssertEqual(copyOfStructure?.map{ $0.serialized() }.joined(), #"""
             <p>Das folgende ist eine Aufzählung:<def-list list-type="alpha-lower" specific-use="descriptive.list alphabetic"><def-item><term><named-content content-type="label">a</named-content>Anleitung A</term></def-item></def-list></p>
             """#)
@@ -70,7 +70,7 @@ final class ToolsTests: XCTestCase {
             Das ist zu tun.
             """#)
         
-        let copyOfStructure = copyStructure(from: start!, to: end!, upTo: start!.ancestors({ $0.name == "sec" }).first!)?.content
+        let copyOfStructure = copyXStructure(from: start!, to: end!, upTo: start!.ancestors({ $0.name == "sec" }).first!)?.content
         XCTAssertEqual(copyOfStructure?.map{ $0.serialized() }.joined(), #"""
             <p><def-list list-type="alpha-lower" specific-use="descriptive.list alphabetic"><def-item><def><p>Das ist zu tun.</p></def></def-item></def-list></p>
             """#)
@@ -103,7 +103,7 @@ final class ToolsTests: XCTestCase {
             Anleitung A
             """#)
         
-        let copyOfStructure = copyStructure(from: start!, to: end!, upTo: start!.ancestors({ $0.name == "sec" }).first!)?.content
+        let copyOfStructure = copyXStructure(from: start!, to: end!, upTo: start!.ancestors({ $0.name == "sec" }).first!)?.content
         XCTAssertEqual(copyOfStructure?.map{ $0.serialized() }.joined(), #"""
             <p>Das folgende</p>
                     <p>ist</p>
