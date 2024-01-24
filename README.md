@@ -1984,10 +1984,10 @@ Result:
 ### `copyStructure`
 
 ```swift
-public func copyStructure(from start: XContent, to end: XContent, upTo: XElement? = nil) -> XContent?
+public func copyStructure(from start: XContent, to end: XContent, upTo: XElement? = nil, correction: ((StructureCopyInfo) -> XContent)?) -> XContent?
 ```
 
-Copies the structure from `start` to `end`, optionally up to the `upTo` value. `start` and `end` must have a common ancestor. Returns `nil` if there is no common ancestor. The returned element is a clone of the `upTo` value if a) it is not `nil` and b) `upTo` is an ancestor of the common ancestor or the ancestor itself. Else it is the clone of the common ancestor (but generally with a different content in both cases).
+Copies the structure from `start` to `end`, optionally up to the `upTo` value. `start` and `end` must have a common ancestor. Returns `nil` if there is no common ancestor. The returned element is a clone of the `upTo` value if a) it is not `nil` and b) `upTo` is an ancestor of the common ancestor or the ancestor itself. Else it is the clone of the common ancestor (but generally with a different content in both cases). The `correction` can do some corrections.
 
 ## Debugging
 

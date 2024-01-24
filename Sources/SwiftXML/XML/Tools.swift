@@ -10,14 +10,23 @@
 
 import Foundation
 
+/// Info that a correction in the call to `copyStructure` has to use.
+public struct StructureCopyInfo {
+    let structure: XContent
+    let start: XContent
+    let cloneForStart: XContent
+    let end: XContent
+    let cloneForEnd: XContent
+}
+
 /// Copies the structure from `start` to `end`, optionally up to the `upTo` value.
 /// `start` and `end` must have a common ancestor.
 /// Returns `nil` if there is no common ancestor.
 /// The returned element is a clone of the `upTo` value if a) it is not `nil`
 /// and b) `upTo` is an ancestor of the common ancestor or the ancestor itself.
 /// Else it is the clone of the common ancestor (but generally with a different
-/// content in both cases).
-public func copyStructure(from start: XContent, to end: XContent, upTo: XElement? = nil) -> XContent? {
+/// content in both cases). The `correction` can do some corrections.
+public func copyStructure(from start: XContent, to end: XContent, upTo: XElement? = nil, correction: ((StructureCopyInfo) -> XContent)? = nil) -> XContent? {
     
     func addUpTo(fromCopy copy: XContent) -> XContent {
         guard let upTo else { return copy }
@@ -31,7 +40,13 @@ public func copyStructure(from start: XContent, to end: XContent, upTo: XElement
     }
     
     if start === end {
-        return addUpTo(fromCopy: start.clone())
+        let startClone = start.clone()
+        let result = addUpTo(fromCopy: startClone)
+        if let correction {
+            return correction(StructureCopyInfo(structure: result, start: start, cloneForStart: startClone, end: start, cloneForEnd: startClone))
+        } else {
+            return result
+        }
     }
     
     let allAncestorsForStart = Array(start.ancestorsIncludingSelf(untilAndIncluding: { $0 === upTo }))
@@ -43,8 +58,10 @@ public func copyStructure(from start: XContent, to end: XContent, upTo: XElement
     var ancestorsForStart = start.ancestors(until: { $0 === commonAncestor }).reversed()
     var ancestorsForEnd = end.ancestors(until: { $0 === commonAncestor }).reversed()
     
+    let startClone = start.clone()
+    
     func processAncestorsForStart() -> XContent {
-        var content: XContent = start.clone()
+        var content: XContent = startClone
         while let ancestor = ancestorsForStart.popLast() {
             let cloneOfAncestor = ancestor.shallowClone()
             cloneOfAncestor.add {
@@ -56,8 +73,10 @@ public func copyStructure(from start: XContent, to end: XContent, upTo: XElement
         return content
     }
     
+    let endClone = end.clone()
+    
     func processAncestorsForEnd() -> XContent {
-        var content: XContent = end.clone()
+        var content: XContent = endClone
         while let ancestor = ancestorsForEnd.popLast() {
             let cloneOfAncestor = ancestor.shallowClone()
             cloneOfAncestor.add {
@@ -83,5 +102,11 @@ public func copyStructure(from start: XContent, to end: XContent, upTo: XElement
         structureForEnd
     }
     
-    return addUpTo(fromCopy: combined)
+    let result = addUpTo(fromCopy: combined)
+    
+    if let correction {
+        return correction(StructureCopyInfo(structure: result, start: start, cloneForStart: startClone, end: end, cloneForEnd: endClone))
+    } else {
+        return result
+    }
 }
