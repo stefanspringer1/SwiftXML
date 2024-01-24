@@ -12,11 +12,11 @@ import Foundation
 
 /// Info that a correction in the call to `copyStructure` has to use.
 public struct StructureCopyInfo {
-    let structure: XContent
-    let start: XContent
-    let cloneForStart: XContent
-    let end: XContent
-    let cloneForEnd: XContent
+    public let structure: XContent
+    public let start: XContent
+    public let cloneForStart: XContent
+    public let end: XContent
+    public let cloneForEnd: XContent
 }
 
 /// Copies the structure from `start` to `end`, optionally up to the `upTo` value.
