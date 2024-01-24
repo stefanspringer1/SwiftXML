@@ -512,6 +512,9 @@ public class XNode {
 
 public class XContent: XNode {
     
+    public override var backLink: XContent? { super.backLink as? XContent }
+    public override var finalBackLink: XContent? { super.finalBackLink as? XContent }
+    
     public override func clone() -> XContent {
         _ = super.clone()
         return self
@@ -1492,8 +1495,8 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
 
     var _attributes = [String:String]()
 
-    public override var backLink: XElement? { get { super.backLink as? XElement } }
-    public override var finalBackLink: XElement? { get { super.finalBackLink as? XElement } }
+    public override var backLink: XElement? { super.backLink as? XElement }
+    public override var finalBackLink: XElement? { super.finalBackLink as? XElement }
 
     public override var description: String {
         get {
@@ -1817,8 +1820,8 @@ public final class XText: XContent, XTextualContentRepresentation, ToBePeparedFo
         super.replace(insertionMode, builder: builder)
     }
     
-    public override var backLink: XText? { get { super.backLink as? XText } }
-    public override var finalBackLink: XText? { get { super.finalBackLink as? XText } }
+    public override var backLink: XText? { super.backLink as? XText }
+    public override var finalBackLink: XText? { super.finalBackLink as? XText }
     
     var _value: String
     
@@ -1942,8 +1945,8 @@ public final class XText: XContent, XTextualContentRepresentation, ToBePeparedFo
  */
 public final class XLiteral: XContent, XTextualContentRepresentation, ToBePeparedForMoving, CustomStringConvertible {
     
-    public override var backLink: XLiteral? { get { super.backLink as? XLiteral } }
-    public override var finalBackLink: XLiteral? { get { super.finalBackLink as? XLiteral } }
+    public override var backLink: XLiteral? { super.backLink as? XLiteral }
+    public override var finalBackLink: XLiteral? { super.finalBackLink as? XLiteral }
     
     var _value: String
     
@@ -2029,8 +2032,8 @@ public final class XLiteral: XContent, XTextualContentRepresentation, ToBePepare
 
 public final class XInternalEntity: XContent {
     
-    public override var backLink: XInternalEntity? { get { super.backLink as? XInternalEntity } }
-    public override var finalBackLink: XInternalEntity? { get { super.finalBackLink as? XInternalEntity } }
+    public override var backLink: XInternalEntity? { super.backLink as? XInternalEntity }
+    public override var finalBackLink: XInternalEntity? { super.finalBackLink as? XInternalEntity }
     
     var _name: String
     
@@ -2070,8 +2073,8 @@ public final class XInternalEntity: XContent {
 
 public final class XExternalEntity: XContent {
     
-    public override var backLink: XExternalEntity? { get { super.backLink as? XExternalEntity } }
-    public override var finalBackLink: XExternalEntity? { get { super.finalBackLink as? XExternalEntity } }
+    public override var backLink: XExternalEntity? { super.backLink as? XExternalEntity }
+    public override var finalBackLink: XExternalEntity? { super.finalBackLink as? XExternalEntity }
     
     var _name: String
     
@@ -2111,8 +2114,8 @@ public final class XExternalEntity: XContent {
 
 public final class XProcessingInstruction: XContent, CustomStringConvertible {
     
-    public override var backLink: XProcessingInstruction? { get { super.backLink as? XProcessingInstruction } }
-    public override var finalBackLink: XProcessingInstruction? { get { super.finalBackLink as? XProcessingInstruction } }
+    public override var backLink: XProcessingInstruction? { super.backLink as? XProcessingInstruction }
+    public override var finalBackLink: XProcessingInstruction? { super.finalBackLink as? XProcessingInstruction }
     
     var _target: String
     var _data: String?
@@ -2175,8 +2178,8 @@ public final class XComment: XContent {
         if let text { return XComment(text, withAdditionalSpace: withAdditionalSpace) } else { return nil }
     }
     
-    public override var backLink: XComment? { get { super.backLink as? XComment } }
-    public override var finalBackLink: XComment? { get { super.finalBackLink as? XComment } }
+    public override var backLink: XComment? { super.backLink as? XComment }
+    public override var finalBackLink: XComment? { super.finalBackLink as? XComment }
     
     var _value: String
     
@@ -2216,8 +2219,8 @@ public final class XComment: XContent {
 
 public final class XCDATASection: XContent, XTextualContentRepresentation {
     
-    public override var backLink: XCDATASection? { get { super.backLink as? XCDATASection } }
-    public override var finalBackLink: XCDATASection? { get { super.finalBackLink as? XCDATASection } }
+    public override var backLink: XCDATASection? { super.backLink as? XCDATASection }
+    public override var finalBackLink: XCDATASection? { super.finalBackLink as? XCDATASection }
     
     var _value: String
     
