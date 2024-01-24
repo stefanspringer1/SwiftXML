@@ -1979,6 +1979,16 @@ Result:
 [<b inserted="yes">, <c inserted="yes">]
 ```
 
+## Tools
+
+### `copyStructure`
+
+```swift
+public func copyStructure(from start: XContent, to end: XContent, upTo: XElement? = nil) -> XContent?
+```
+
+Copies the structure from `start` to `end`, optionally up to the `upTo` value. `start` and `end` must have a common ancestor. Returns `nil` if there is no common ancestor. The returned element is a clone of the `upTo` value if a) it is not `nil` and b) `upTo` is an ancestor of the common ancestor or the ancestor itself. Else it is the clone of the common ancestor (but generally with a different content in both cases).
+
 ## Debugging
 
 If one uses multiple instances of `XRule` bundled into a `XTRansformation` to transform a whole document, in can be useful to know which actions belonging to which rules "touched" an element. In debug builds all filenames and line numbers that are executed by a transformation during execution are recorded in the `encounteredActionsAt` property.
