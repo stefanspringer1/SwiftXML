@@ -1481,6 +1481,14 @@ extension Sequence<XElement> {
         XElementSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { content in content.children(name) })
     }
     
+    public func children(_ names: [String]) -> XElementSequence {
+        XElementSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { content in content.children(names) })
+    }
+    
+    public func children(_ names: String...) -> XElementSequence {
+        XElementSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { content in content.children(names) })
+    }
+    
     public func children(while condition: @escaping (XElement) -> Bool) -> XElementSequence {
         XElementSequenceDependingOnElementSequence(sequence: self, nextSequenceGetter: { content in content.children(while: condition) })
     }
