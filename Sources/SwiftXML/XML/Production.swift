@@ -10,6 +10,9 @@
 
 import Foundation
 
+public let X_DEFAULT_INDENTATION = "  "
+public let X_DEFAULT_LINEBREAK = "\n"
+
 /**
  The formatter has two changes over the XFormatter:
  - It writes to the file directly, no need to build complicated strings.
@@ -122,7 +125,7 @@ public class DefaultProductionTemplate: XProductionTemplate {
     public let writeEmptyTags: Bool
     public let linebreak: String
     
-    public init(writeEmptyTags: Bool = true, linebreak: String = "\n") {
+    public init(writeEmptyTags: Bool = true, linebreak: String = X_DEFAULT_LINEBREAK) {
         self.writeEmptyTags = writeEmptyTags
         self.linebreak = linebreak
     }
@@ -149,7 +152,7 @@ open class ActiveDefaultProduction: XActiveProduction {
         get { _linebreak }
     }
     
-    public init(writer: Writer, writeEmptyTags: Bool = true, linebreak: String = "\n") {
+    public init(writer: Writer, writeEmptyTags: Bool = true, linebreak: String = X_DEFAULT_LINEBREAK) {
         self.writer = writer
         self.writeEmptyTags = writeEmptyTags
         self._linebreak = linebreak
@@ -320,7 +323,7 @@ public class PrettyPrintProductionTemplate: XProductionTemplate {
     public let indentation: String
     public let linebreak: String
     
-    public init(writeEmptyTags: Bool = true, indentation: String = "  ", linebreak: String = "\n") {
+    public init(writeEmptyTags: Bool = true, indentation: String = X_DEFAULT_INDENTATION, linebreak: String = X_DEFAULT_LINEBREAK) {
         self.writeEmptyTags = writeEmptyTags
         self.indentation = indentation
         self.linebreak = linebreak
@@ -336,7 +339,7 @@ open class ActivePrettyPrintProduction: ActiveDefaultProduction {
     
     private var indentation: String
     
-    public init(writer: Writer, writeEmptyTags: Bool = true, indentation: String = "  ", linebreak: String = "\n") {
+    public init(writer: Writer, writeEmptyTags: Bool = true, indentation: String = X_DEFAULT_INDENTATION, linebreak: String = X_DEFAULT_LINEBREAK) {
         self.indentation = indentation
         super.init(writer: writer, writeEmptyTags: writeEmptyTags, linebreak: linebreak)
     }
@@ -394,8 +397,8 @@ open class HTMLProductionTemplate: XProductionTemplate {
     public let suppressDocumentTypeDeclaration: Bool
     
     public init(
-        indentation: String = "  ",
-        linebreak: String = "\n",
+        indentation: String = X_DEFAULT_INDENTATION,
+        linebreak: String = X_DEFAULT_LINEBREAK,
         withHTMLNamespaceReference htmlNamespaceReference: NamespaceReference = .fullPrefix(""),
         suppressDocumentTypeDeclaration: Bool = false
     ) {
@@ -426,8 +429,8 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
     
     public init(
         writer: Writer,
-        indentation: String = "  ",
-        linebreak: String = "\n",
+        indentation: String = X_DEFAULT_INDENTATION,
+        linebreak: String = X_DEFAULT_LINEBREAK,
         atNode node: XNode,
         withHTMLNamespaceReference htmlNamespaceReference: NamespaceReference,
         suppressDocumentTypeDeclaration: Bool

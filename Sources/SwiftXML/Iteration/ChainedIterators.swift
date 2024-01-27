@@ -1283,7 +1283,7 @@ extension Sequence<XContent> {
         self.forEach { content in content.remove() }
     }
     
-    public func echo(pretty: Bool = false, indentation: String = "  ", terminator: String = "\n") {
+    public func echo(pretty: Bool = false, indentation: String = X_DEFAULT_INDENTATION, terminator: String = "\n") {
         self.forEach { content in content.echo(pretty: pretty, indentation: indentation, terminator: terminator) }
     }
     
@@ -1817,7 +1817,7 @@ extension Sequence<XElement> {
         self.forEach { element in element.remove() }
     }
     
-    public func echo(pretty: Bool = false, indentation: String = "  ", terminator: String = "\n") {
+    public func echo(pretty: Bool = false, indentation: String = X_DEFAULT_INDENTATION, terminator: String = "\n") {
         self.forEach { element in element.echo(pretty: pretty, indentation: indentation, terminator: terminator) }
     }
     

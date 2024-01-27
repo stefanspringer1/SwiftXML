@@ -468,7 +468,7 @@ public class XNode {
         }
     }
     
-    public func echo(pretty: Bool = false, indentation: String = "  ", terminator: String = "\n") {
+    public func echo(pretty: Bool = false, indentation: String = X_DEFAULT_INDENTATION, terminator: String = "\n") {
         echo(usingProductionTemplate: pretty ? PrettyPrintProductionTemplate(indentation: indentation) : DefaultProductionTemplate(), terminator: terminator)
     }
     
@@ -483,7 +483,7 @@ public class XNode {
         return writer.description
     }
     
-    public func serialized(pretty: Bool = false, indentation: String = "  ") -> String {
+    public func serialized(pretty: Bool = false, indentation: String = X_DEFAULT_INDENTATION) -> String {
         serialized(usingProductionTemplate: pretty ? PrettyPrintProductionTemplate(indentation: indentation) : DefaultProductionTemplate())
     }
     
