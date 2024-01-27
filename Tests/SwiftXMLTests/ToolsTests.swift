@@ -104,12 +104,12 @@ final class ToolsTests: XCTestCase {
             """#)
         
         let copyOfStructure = copyXStructure(from: start!, to: end!, upTo: start!.ancestors({ $0.name == "sec" }).first!)?.content
+        copyOfStructure?.echo(pretty: true)
         XCTAssertEqual(copyOfStructure?.map{ $0.serialized() }.joined(), #"""
             <p>Das folgende</p>
                     <p>ist</p>
                     <p>eine Aufzählung:<def-list list-type="alpha-lower" specific-use="descriptive.list alphabetic"><def-item><term><named-content content-type="label">a</named-content>Anleitung A</term></def-item></def-list></p>
             """#)
-        
     }
     
     func testCopyXStructure4() throws {
@@ -133,6 +133,32 @@ final class ToolsTests: XCTestCase {
             """#)
     }
     
+    func testCopyXStructure5() throws {
+        let document = try parseXML(fromText: """
+            <section>
+                <p id="par-5.10-2"><begin/>Ja, </p>
+                <p id="par-5.10-3">das ist so <span>1 %</span>, echt.<end/></p>
+            </section>
+            """, textAllowedInElementWithName: { ["p", "span"].contains($0) })
+        
+        let start = document.firstChild?.children.first?.allTexts.first
+        let end = document.firstChild?.children.dropFirst().first?.allTexts.dropFirst(2).first
+        
+        XCTAssertEqual(start?.serialized().replacing(regex: #"\s+"#, with: " ").trimming(), #"""
+            Ja,
+            """#)
+        XCTAssertEqual(end?.serialized().replacing(regex: #"\s+"#, with: " ").trimming(), #"""
+            , echt.
+            """#)
+        
+        let copyOfStructure = copyXStructure(from: start!, to: end!, upTo: document.firstChild!)
+        XCTAssertEqual(copyOfStructure?.serialized(pretty: true, indentation: "    "), #"""
+            <section>
+                <p id="par-5.10-2">Ja, </p>
+                <p id="par-5.10-3">das ist so <span>1 %</span>, echt.</p>
+            </section>
+            """#)
+    }
 }
 
 extension String: Error {}

@@ -327,7 +327,7 @@ public class PrettyPrintProductionTemplate: XProductionTemplate {
     }
     
     public func activeProduction(for writer: Writer, atNode node: XNode) -> XActiveProduction {
-        ActivePrettyPrintProduction(writer: writer, writeEmptyTags: writeEmptyTags, linebreak: linebreak)
+        ActivePrettyPrintProduction(writer: writer, writeEmptyTags: writeEmptyTags, indentation: indentation, linebreak: linebreak)
     }
     
 }

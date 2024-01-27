@@ -77,13 +77,15 @@ public func copyXStructure(from start: XContent, to end: XContent, upTo: XElemen
     
     func processAncestorsForEnd() -> XContent {
         var content: XContent = endClone
+        var orginalContent = end
         while let ancestor = ancestorsForEnd.popLast() {
             let cloneOfAncestor = ancestor.shallowClone()
             cloneOfAncestor.add {
-                content.backLink!.previous.map { $0.clone() }
+                ancestor.content(until: { $0 === orginalContent }).map { $0.clone() }
                 content
             }
             content = cloneOfAncestor
+            orginalContent = ancestor
         }
         return content
     }
