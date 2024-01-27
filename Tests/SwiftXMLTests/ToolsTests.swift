@@ -112,6 +112,27 @@ final class ToolsTests: XCTestCase {
         
     }
     
+    func testCopyXStructure4() throws {
+        let document = try parseXML(fromText: """
+            <p id="par-7.1-1">In <ref>Abschnitt 1</ref> und <ref>Abschnitt 2</ref> muss man schauen.</p>
+            """)
+        
+        let start = document.allTexts.first
+        let end = document.allTexts.dropFirst(4).first
+        
+        XCTAssertEqual(start?.serialized().replacing(regex: #"\s+"#, with: " ").trimming(), #"""
+            In
+            """#)
+        XCTAssertEqual(end?.serialized().replacing(regex: #"\s+"#, with: " ").trimming(), #"""
+            muss man schauen.
+            """#)
+        
+        let copyOfStructure = copyXStructure(from: start!, to: end!, upTo: document.firstChild!)
+        XCTAssertEqual(copyOfStructure?.serialized(), #"""
+            <p id="par-7.1-1">In <ref>Abschnitt 1</ref> und <ref>Abschnitt 2</ref> muss man schauen.</p>
+            """#)
+    }
+    
 }
 
 extension String: Error {}

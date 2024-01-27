@@ -96,7 +96,7 @@ public func copyXStructure(from start: XContent, to end: XContent, upTo: XElemen
     }
     let stopForMiddle = structureForEnd.backLink!
     for middle in structureForStart.backLink!.next(until: { $0 === stopForMiddle }) {
-        combined.add { middle }
+        combined.add { middle.clone() }
     }
     combined.add {
         structureForEnd
