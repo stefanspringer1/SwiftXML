@@ -10,6 +10,7 @@
 
 import XCTest
 import class Foundation.Bundle
+import AutoreleasepoolShim
 @testable import SwiftXML
 
 final class ToolsTests: XCTestCase {
