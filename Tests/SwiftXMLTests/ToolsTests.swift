@@ -11,9 +11,10 @@
 import XCTest
 import class Foundation.Bundle
 @testable import SwiftXML
+import AutoreleasepoolShim
 
 final class ToolsTests: XCTestCase {
-    
+
     func testCopyXStructure1() throws {
         let document = try parseXML(fromText: """
             <standard><sec id="sub-9.4.1.1" sec-type="clause">
@@ -28,23 +29,23 @@ final class ToolsTests: XCTestCase {
                                         <marker/>...usw. ...<marker/></p></def></def-item></def-list></p>
                 </sec></standard>
             """)
-        
+
         let start = document.descendants("sec").first?.firstChild("p")?.allTexts.first
         let end = document.descendants("sec").first?.firstChild("p")?.descendants("term").first?.allTexts.dropFirst().first!
-        
+
         XCTAssertEqual(start?.serialized(), #"""
             Das folgende ist eine Aufzählung:
             """#)
         XCTAssertEqual(end?.serialized(), #"""
             Anleitung A
             """#)
-        
+
         let copyOfStructure = copyXStructure(from: start!, to: end!, upTo: start!.ancestors({ $0.name == "sec" }).first! )?.content
         XCTAssertEqual(copyOfStructure?.map{ $0.serialized() }.joined(), #"""
             <p>Das folgende ist eine Aufzählung:<def-list list-type="alpha-lower" specific-use="descriptive.list alphabetic"><def-item><term><named-content content-type="label">a</named-content>Anleitung A</term></def-item></def-list></p>
             """#)
     }
-    
+
     func testCopyXStructure2() throws {
         let document = try parseXML(fromText: """
             <standard><sec id="sub-9.4.1.1" sec-type="clause">
@@ -59,23 +60,23 @@ final class ToolsTests: XCTestCase {
                                         <marker/>... usw. ...<marker/></p></def></def-item></def-list></p>
                 </sec></standard>
             """)
-        
+
         let start = document.descendants("sec").first?.children("p").first?.descendants("p").first?.allTexts.first
         let end = start
-        
+
         XCTAssertEqual(start?.serialized().replacing(regex: #"\s+"#, with: " ").trimming(), #"""
             Das ist zu tun.
             """#)
         XCTAssertEqual(end?.serialized().replacing(regex: #"\s+"#, with: " ").trimming(), #"""
             Das ist zu tun.
             """#)
-        
+
         let copyOfStructure = copyXStructure(from: start!, to: end!, upTo: start!.ancestors({ $0.name == "sec" }).first!)?.content
         XCTAssertEqual(copyOfStructure?.map{ $0.serialized() }.joined(), #"""
             <p><def-list list-type="alpha-lower" specific-use="descriptive.list alphabetic"><def-item><def><p>Das ist zu tun.</p></def></def-item></def-list></p>
             """#)
     }
-    
+
     func testCopyXStructure3() throws {
         let document = try parseXML(fromText: """
             <standard><sec id="sub-9.4.1.1" sec-type="clause">
@@ -92,17 +93,17 @@ final class ToolsTests: XCTestCase {
                                         <marker/>... usw. ....<marker/></p></def></def-item></def-list></p>
                 </sec></standard>
             """)
-        
+
         let start = document.descendants("sec").first?.firstChild("p")?.allTexts.first
         let end = document.descendants("sec").first?.children("p").dropFirst(2).first?.descendants("term").first?.allTexts.dropFirst().first!
-        
+
         XCTAssertEqual(start?.serialized(), #"""
             Das folgende
             """#)
         XCTAssertEqual(end?.serialized(), #"""
             Anleitung A
             """#)
-        
+
         let copyOfStructure = copyXStructure(from: start!, to: end!, upTo: start!.ancestors({ $0.name == "sec" }).first!)?.content
         copyOfStructure?.echo(pretty: true)
         XCTAssertEqual(copyOfStructure?.map{ $0.serialized() }.joined(), #"""
@@ -111,28 +112,28 @@ final class ToolsTests: XCTestCase {
                     <p>eine Aufzählung:<def-list list-type="alpha-lower" specific-use="descriptive.list alphabetic"><def-item><term><named-content content-type="label">a</named-content>Anleitung A</term></def-item></def-list></p>
             """#)
     }
-    
+
     func testCopyXStructure4() throws {
         let document = try parseXML(fromText: """
             <p id="par-7.1-1">In <ref>Abschnitt 1</ref> und <ref>Abschnitt 2</ref> muss man schauen.</p>
             """)
-        
+
         let start = document.allTexts.first
         let end = document.allTexts.dropFirst(4).first
-        
+
         XCTAssertEqual(start?.serialized().replacing(regex: #"\s+"#, with: " ").trimming(), #"""
             In
             """#)
         XCTAssertEqual(end?.serialized().replacing(regex: #"\s+"#, with: " ").trimming(), #"""
             muss man schauen.
             """#)
-        
+
         let copyOfStructure = copyXStructure(from: start!, to: end!, upTo: document.firstChild!)
         XCTAssertEqual(copyOfStructure?.serialized(), #"""
             <p id="par-7.1-1">In <ref>Abschnitt 1</ref> und <ref>Abschnitt 2</ref> muss man schauen.</p>
             """#)
     }
-    
+
     func testCopyXStructure5() throws {
         let document = try parseXML(fromText: """
             <section>
@@ -140,17 +141,17 @@ final class ToolsTests: XCTestCase {
                 <p id="par-5.10-3">das ist so <span>1 %</span>, echt.<end/></p>
             </section>
             """, textAllowedInElementWithName: { ["p", "span"].contains($0) })
-        
+
         let start = document.firstChild?.children.first?.allTexts.first
         let end = document.firstChild?.children.dropFirst().first?.allTexts.dropFirst(2).first
-        
+
         XCTAssertEqual(start?.serialized().replacing(regex: #"\s+"#, with: " ").trimming(), #"""
             Ja,
             """#)
         XCTAssertEqual(end?.serialized().replacing(regex: #"\s+"#, with: " ").trimming(), #"""
             , echt.
             """#)
-        
+
         let copyOfStructure = copyXStructure(from: start!, to: end!, upTo: document.firstChild!)
         XCTAssertEqual(copyOfStructure?.serialized(pretty: true, indentation: "    "), #"""
             <section>
@@ -164,7 +165,7 @@ final class ToolsTests: XCTestCase {
 extension String: Error {}
 
 extension String {
-    
+
     /// Replace all text matching a certain certain regular expression.
     ///
     /// Use lookarounds (e.g. lookaheads) to avoid having to apply your regular expression several times.
@@ -175,12 +176,12 @@ extension String {
         }
         return result
     }
-    
+
     /// Trimming all whitespace.
     func trimming() -> String {
         return self.self.trimmingLeft().trimmingRight()
     }
-    
+
     /// Trimming left whitespace.
     func trimmingLeft() -> String {
         guard let index = firstIndex(where: { !CharacterSet(charactersIn: String($0)).isSubset(of: .whitespacesAndNewlines) }) else {
@@ -188,7 +189,7 @@ extension String {
         }
         return String(self[index...])
     }
-    
+
     /// Trimming right whitespace.
     func trimmingRight() -> String {
         guard let index = lastIndex(where: { !CharacterSet(charactersIn: String($0)).isSubset(of: .whitespacesAndNewlines) }) else {
@@ -196,5 +197,5 @@ extension String {
         }
         return String(self[...index])
     }
-    
+
 }
