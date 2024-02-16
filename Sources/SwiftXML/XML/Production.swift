@@ -481,7 +481,7 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
         super.init(writer: writer, writeEmptyTags: false, indentation: indentation, linebreak: linebreak)
     }
     
-    open override func writeXMLDeclaration(version: String, encoding: String?, standalone: String?) {
+    open override func writeXMLDeclaration(version: String, encoding: String?, standalone: String?) throws {
         // do not write the XML declaration for HTML
     }
     
