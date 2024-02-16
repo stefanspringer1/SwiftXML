@@ -190,9 +190,17 @@ open class ActiveDefaultProduction: XActiveProduction {
     open func writeDocumentStart(document: XDocument) throws {
     }
     
-    open func writeXMLDeclaration(version: String, encoding: String?, standalone: String?) throws {
+    static func defaultXMLDeclaration(version: String, encoding: String?, standalone: String?, linebreak: String) -> String? {
         if version != "1.0" || encoding != nil || standalone != nil {
-            try write("<?xml version=\"\(version)\"\(encoding != nil ? " encoding=\"\(encoding ?? "?")\"" : "")\(standalone != nil ? " standalone=\"\(standalone ?? "?")\"" : "")?>\(linebreak)")
+            "<?xml version=\"\(version)\"\(encoding != nil ? " encoding=\"\(encoding ?? "?")\"" : "")\(standalone != nil ? " standalone=\"\(standalone ?? "?")\"" : "")?>\(linebreak)"
+        } else {
+            nil
+        }
+    }
+    
+    open func writeXMLDeclaration(version: String, encoding: String?, standalone: String?) throws {
+        if let defaultXMLDeclaration = Self.defaultXMLDeclaration(version: version, encoding: encoding, standalone: standalone, linebreak: linebreak) {
+            try write(defaultXMLDeclaration)
         }
     }
     
