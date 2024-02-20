@@ -55,8 +55,8 @@ public func copyXStructure(from start: XContent, to end: XContent, upTo: XElemen
         return nil
     }
     
-    var ancestorsForStart = start.ancestors(until: { $0 === commonAncestor }).reversed()
-    var ancestorsForEnd = end.ancestors(until: { $0 === commonAncestor }).reversed()
+    var ancestorsForStart = start.ancestorsIncludingSelf(until: { $0 === commonAncestor }).reversed()
+    var ancestorsForEnd = end.ancestorsIncludingSelf(until: { $0 === commonAncestor }).reversed()
     
     let startClone = start.clone()
     
