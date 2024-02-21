@@ -56,14 +56,21 @@ public func copyXStructure(from start: XContent, to end: XContent, upTo: XElemen
     }
     
     var ancestorsForStart = start.ancestorsIncludingSelf(until: { $0 === commonAncestor }).reversed()
+    if ancestorsForStart.last === start {
+        ancestorsForStart.removeLast()
+    }
+    
     var ancestorsForEnd = end.ancestorsIncludingSelf(until: { $0 === commonAncestor }).reversed()
+    if ancestorsForEnd.last === end {
+        ancestorsForEnd.removeLast()
+    }
     
     let startClone = start.clone()
     
     func processAncestorsForStart() -> XContent {
         var content: XContent = startClone
         var orginalContent = start
-        while let ancestor = ancestorsForStart.popLast(), ancestor !== start {
+        while let ancestor = ancestorsForStart.popLast() {
             let cloneOfAncestor = ancestor.shallowClone()
             cloneOfAncestor.add {
                 content
@@ -80,7 +87,7 @@ public func copyXStructure(from start: XContent, to end: XContent, upTo: XElemen
     func processAncestorsForEnd() -> XContent {
         var content: XContent = endClone
         var orginalContent = end
-        while let ancestor = ancestorsForEnd.popLast(), ancestor !== end {
+        while let ancestor = ancestorsForEnd.popLast() {
             let cloneOfAncestor = ancestor.shallowClone()
             cloneOfAncestor.add {
                 ancestor.content(until: { $0 === orginalContent }).map { $0.clone() }
