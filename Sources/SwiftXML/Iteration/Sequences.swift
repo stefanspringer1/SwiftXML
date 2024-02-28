@@ -275,7 +275,7 @@ public final class XTraversalSequence: XContentSequence {
     }
     
     public override func makeIterator() -> XContentIterator {
-        return XBidirectionalContentIterator(nodeIterator: XTreeIterator(startNode: node, directionIndicator: directionIndicator))
+        return XBidirectionalContentIterator(contentIterator: XTreeIterator(startNode: node, directionIndicator: directionIndicator))
     }
 }
 
@@ -288,7 +288,7 @@ public final class XNextSequence: XContentSequence {
     }
     
     public override func makeIterator() -> XContentIterator {
-        return XBidirectionalContentIterator(nodeIterator: XNextIterator(content: theContent))
+        return XBidirectionalContentIterator(contentIterator: XNextIterator(content: theContent))
     }
 }
 
@@ -301,7 +301,7 @@ public final class XPreviousSequence: XContentSequence {
     }
     
     public override func makeIterator() -> XBidirectionalContentIterator {
-        return XBidirectionalContentIterator(nodeIterator: XPreviousIterator(content: theContent))
+        return XBidirectionalContentIterator(contentIterator: XPreviousIterator(content: theContent))
     }
 }
 
@@ -366,7 +366,7 @@ public final class XSequenceOfContent: XContentSequence {
     }
     
     public override func makeIterator() -> XContentIterator {
-        return XBidirectionalContentIterator(nodeIterator: XContentsIterator(node: node))
+        return XBidirectionalContentIterator(contentIterator: XContentsIterator(node: node))
     }
 }
 
@@ -379,7 +379,7 @@ public final class XReversedSequenceOfContent: XContentSequence {
     }
     
     public override func makeIterator() -> XContentIterator {
-        return XBidirectionalContentIterator(nodeIterator: XReversedContentsIterator(node: node))
+        return XBidirectionalContentIterator(contentIterator: XReversedContentsIterator(node: node))
     }
 }
 
@@ -406,6 +406,19 @@ public final class XSequenceOfAllTexts: XTextSequence {
     
     public override func makeIterator() -> XTextIterator {
         return XBidirectionalTextIterator(textIterator: XAllTextsIterator(node: node))
+    }
+}
+
+public final class XReversedSequenceOfAllContent: XContentSequence {
+    
+    let node: XNode
+    
+    public init(node: XNode) {
+        self.node = node
+    }
+    
+    public override func makeIterator() -> XContentIterator {
+        return XBidirectionalContentIterator(contentIterator: XReversedAllContentIterator(node: node))
     }
 }
 
@@ -496,7 +509,7 @@ public final class XAllContentSequence: XContentSequence {
     }
     
     public override func makeIterator() -> XBidirectionalContentIterator {
-        return XBidirectionalContentIterator(nodeIterator: XAllContentsIterator(node: node))
+        return XBidirectionalContentIterator(contentIterator: XAllContentsIterator(node: node))
     }
 }
 
@@ -509,7 +522,7 @@ public final class XAllContentIncludingSelfSequence: XContentSequence {
     }
     
     public override func makeIterator() -> XBidirectionalContentIterator {
-        return XBidirectionalContentIterator(nodeIterator: XAllContentsIncludingSelfIterator(node: node))
+        return XBidirectionalContentIterator(contentIterator: XAllContentsIncludingSelfIterator(node: node))
     }
 }
 
@@ -605,7 +618,7 @@ public final class XContentSelfSequence: XContentSequence {
     
     public override func makeIterator() -> XBidirectionalContentIterator {
         return XBidirectionalContentIterator(
-            nodeIterator: XContentSelfIterator(
+            contentIterator: XContentSelfIterator(
                 content: theContent
             )
         )

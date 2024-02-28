@@ -300,6 +300,26 @@ public extension XNode {
         return XContentSequenceIncludingCondition(sequence: XAllContentIncludingSelfSequence(node: self), untilAndIncluding: condition)
     }
     
+    var allContentReversed: XContentSequence {
+        get { XReversedSequenceOfAllContent(node: self) }
+    }
+    
+    func allContentReversed(_ condition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentSequenceWithCondition(sequence: XReversedSequenceOfAllContent(node: self), condition: condition)
+    }
+    
+    func allContentReversed(while condition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentSequenceWhileCondition(sequence: XReversedSequenceOfAllContent(node: self), while: condition)
+    }
+    
+    func allContentReversed(until condition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentSequenceUntilCondition(sequence: XReversedSequenceOfAllContent(node: self), until: condition)
+    }
+    
+    func allTContentReversed(untilAndIncluding condition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentSequenceIncludingCondition(sequence: XReversedSequenceOfAllContent(node: self), untilAndIncluding: condition)
+    }
+    
     var descendants: XElementSequence {
         get { XDescendantsSequence(node: self) }
     }

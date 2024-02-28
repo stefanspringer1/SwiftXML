@@ -23,10 +23,10 @@ public final class XBidirectionalContentIterator: XContentIterator {
     
     public typealias Element = XContent
     
-    var nodeIterator: XContentIteratorProtocol
+    var contentIterator: XContentIteratorProtocol
     
-    public init(nodeIterator: XContentIteratorProtocol) {
-        self.nodeIterator = nodeIterator    }
+    public init(contentIterator: XContentIteratorProtocol) {
+        self.contentIterator = contentIterator    }
     
     weak var current: Element? = nil
     var prefetched = false
@@ -37,7 +37,7 @@ public final class XBidirectionalContentIterator: XContentIterator {
             return current
         }
         current?.removeContentIterator(self)
-        current = nodeIterator.next()
+        current = contentIterator.next()
         current?.addContentIterator(self)
         return current
     }
@@ -45,14 +45,14 @@ public final class XBidirectionalContentIterator: XContentIterator {
     public override func previous() -> XContent? {
         prefetched = false
         current?.removeContentIterator(self)
-        current = nodeIterator.previous()
+        current = contentIterator.previous()
         current?.addContentIterator(self)
         return current
     }
     
     public func prefetch() {
         current?.removeContentIterator(self)
-        current = nodeIterator.next()
+        current = contentIterator.next()
         current?.addContentIterator(self)
         prefetched = true
     }

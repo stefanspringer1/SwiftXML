@@ -769,6 +769,53 @@ public final class XTextsIterator: XTextIterator {
 /**
  Iterates though the texts of a branch, reversely.
  */
+public final class XReversedAllContentIterator: XContentIteratorProtocol {
+    
+    private var started = false
+    weak var node: XNode?
+    weak var currentContent: XContent? = nil
+    
+    public init(
+        node: XNode
+    ) {
+        self.node = node
+    }
+    
+    public func next() -> XContent? {
+        let nextNode: XNode?
+        if started {
+            nextNode = currentContent?._previousInTree
+        } else {
+            nextNode = (node as? XBranchInternal)?.lastInTree
+            started = true
+        }
+        if nextNode === node {
+            currentContent = nil
+        } else {
+            currentContent = nextNode as? XContent
+        }
+        return currentContent
+    }
+    
+    public func previous() -> XContent? {
+        if started {
+            let nextNode = currentContent?._nextInTree
+            if nextNode === node {
+                currentContent = nil
+            } else {
+                currentContent = nextNode as? XContent
+            }
+            if currentContent == nil {
+                started = false
+            }
+        }
+        return currentContent
+    }
+}
+
+/**
+ Iterates though the texts of a branch, reversely.
+ */
 public final class XReversedAllTextsIterator: XTextIteratorProtocol {
     
     private var started = false
@@ -784,10 +831,15 @@ public final class XReversedAllTextsIterator: XTextIteratorProtocol {
     public func next() -> XText? {
         repeat {
             if started {
-                currentNode = currentNode?._previous
+                let nextNode = currentNode?._previousInTree
+                if nextNode === node {
+                    currentNode = nil
+                } else {
+                    currentNode = nextNode as? XContent
+                }
             }
             else {
-                currentNode = (node as? XBranchInternal)?.__lastContent
+                currentNode = (node as? XBranchInternal)?.lastInTree
                 started = true
             }
         } while currentNode != nil && !(currentNode! is XText)
@@ -797,12 +849,17 @@ public final class XReversedAllTextsIterator: XTextIteratorProtocol {
     public func previous() -> XText? {
         repeat {
             if started {
-                currentNode = currentNode?._next
+                let nextNode = currentNode?._nextInTree
+                if nextNode === node {
+                    currentNode = nil
+                } else {
+                    currentNode = nextNode as? XContent
+                }
                 if currentNode == nil {
                     started = false
                 }
             }
-        } while currentNode != nil && !(currentNode! is XText)
+        } while currentNode != nil
         return currentNode as? XText
     }
 }
