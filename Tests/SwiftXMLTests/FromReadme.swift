@@ -46,19 +46,15 @@ final class FromReadmeTests: XCTestCase {
             <b>Hello</b>
         </a>
         """, textAllowedInElementWithName: { $0 == "b" })
-
-        var output = ""
-        document.allContent.forEach { content in
-            if let sourceRange = content.sourceRange {
-                output += "\(sourceRange): \(content)"
-                print("\(sourceRange): \(content)")
-            }
-            else {
-                content.echo()
-            }
-        }
         
-        XCTAssertEqual(output, "1:1 - 3:4: <a>2:5 - 2:16: <b>2:8 - 2:12: Hello")
+        XCTAssertEqual(
+            document.allContent.map{ "\($0.sourceRange!): \($0)" }.joined(separator: "\n"),
+            """
+            1:1 - 3:4: <a>
+            2:5 - 2:16: <b>
+            2:8 - 2:12: "Hello"
+            """
+        )
     }
     
     func testExistingItems() throws{

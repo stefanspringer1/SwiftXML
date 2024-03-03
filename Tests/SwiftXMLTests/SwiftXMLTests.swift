@@ -457,7 +457,7 @@ final class SwiftXMLTests: XCTestCase {
         down: <c>
         up: <c>
         up: <b>
-        down: TEXT
+        down: "TEXT"
         up: <a>
         """)
     }
@@ -610,7 +610,7 @@ final class SwiftXMLTests: XCTestCase {
         
         let start = document.firstChild!.firstChild!
         
-        let allContent = ["<word>", "Hello", ", ", "<word>", "World"]
+        let allContent = ["<word>", "\"Hello\"", "\", \"", "<word>", "\"World\""]
         
         XCTAssertEqual(Array(start.allContent.map{ $0.description }), allContent)
         XCTAssertEqual(Array(start.allContentReversed.map{ $0.description }), allContent.reversed())

@@ -1840,7 +1840,7 @@ public final class XText: XContent, XTextualContentRepresentation, ToBePeparedFo
     
     public override var description: String {
         get {
-            _value
+            "\"\(_value)\""
         }
     }
     

@@ -73,6 +73,8 @@ let transformation = XTransformation {
 
 **UPDATE 18 (January 2024):** `XContentLike` is renamed to `XContentConvertible`. When using SwiftXML, a new type can conform to `XContentConvertible` and as such then can be inserted as XML. The `asContent` property is not necessary any more and is removed, and `... as XContentConvertible` (previously `... as XContentLike`) should also not be necessary any more.
 
+**UPDATE 19 (March 2024):** `description` add quotation marks for `XText`.
+
 ---
 
 ## Related packages
