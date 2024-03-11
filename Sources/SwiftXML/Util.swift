@@ -251,9 +251,9 @@ extension Array where Element == String? {
 
 extension StringProtocol {
     
-/// Test if a text contains a part matching a certain regular expression.
-///
-/// Use a regular expression of the form "^...$" to test if the whole text matches the expression.
+    /// Test if a text contains a part matching a certain regular expression.
+    ///
+    /// Use a regular expression of the form "^...$" to test if the whole text matches the expression.
     func contains(regex: String) -> Bool {
         var match: Range<String.Index>?
         autoreleasepool {
@@ -261,4 +261,28 @@ extension StringProtocol {
         }
         return match != nil
     }
+    
+}
+
+extension String {
+    
+    var avoidingDoubleHyphens: String {
+        
+        var result  = if self.contains("--") {
+            self.replacingOccurrences(of: "--", with: "(HYPHEN)(HYPHEN)")
+        } else {
+            self
+        }
+        
+        if result.hasPrefix("-") {
+            result = "(HYPHEN)\(result.dropFirst())"
+        }
+        
+        if result.hasSuffix("-") {
+            result = "\(result.dropLast())(HYPHEN)"
+        }
+        
+        return result
+    }
+    
 }

@@ -631,4 +631,18 @@ final class SwiftXMLTests: XCTestCase {
         XCTAssertEqual(Array(start.allTexts.map{ $0.value }), allTexts)
         XCTAssertEqual(Array(start.allTextsReversed.map{ $0.value }), allTexts.reversed())
     }
+    
+    func testDoubleHyphensInComment() throws {
+        
+        do {
+            let comment = XComment("-----", withAdditionalSpace: false)
+            XCTAssertEqual(comment.serialized(), "<!--(HYPHEN)(HYPHEN)(HYPHEN)(HYPHEN)(HYPHEN)-->")
+        }
+        
+        do {
+            let comment = XComment("-AAA", withAdditionalSpace: false)
+            XCTAssertEqual(comment.serialized(), "<!--(HYPHEN)AAA-->")
+        }
+        
+    }
 }

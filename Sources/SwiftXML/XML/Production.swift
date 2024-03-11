@@ -281,7 +281,7 @@ open class ActiveDefaultProduction: XActiveProduction {
     }
     
     open func writeComment(comment: XComment) throws {
-        try write("<!--\(comment._value)-->")
+        try write("<!--\(comment._value.avoidingDoubleHyphens)-->")
     }
     
     open func writeInternalEntityDeclaration(internalEntityDeclaration: XInternalEntityDeclaration) throws {
