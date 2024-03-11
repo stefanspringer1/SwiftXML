@@ -75,8 +75,6 @@ let transformation = XTransformation {
 
 **UPDATE 19 (March 2024):** `description` add quotation marks for `XText`.
 
-**UPDATE 20 (March 2024):** Removed confusing extensions of sequences like `add`.
-
 ---
 
 ## Related packages
