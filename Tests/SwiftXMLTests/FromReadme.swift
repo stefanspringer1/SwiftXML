@@ -245,8 +245,8 @@ final class FromReadmeTests: XCTestCase {
             XElement("c")
         }
 
-        e.descendants({ $0.name != "added" }).add {
-            XElement("added")
+        for descendant in e.descendants({ $0.name != "added" }) {
+            descendant.add { XElement("added") }
         }
 
         XCTAssertEqual(e.serialized(), "<a><b><added/></b><c><added/></c></a>")
@@ -259,8 +259,10 @@ final class FromReadmeTests: XCTestCase {
             XElement("c")
         }
 
-        myElement.descendants({ $0.name != "to-add" }).add {
-            myElement.descendants("to-add")
+        for descendant in myElement.descendants({ $0.name != "to-add" }) {
+            descendant.add {
+                myElement.descendants("to-add")
+            }
         }
 
         XCTAssertEqual(myElement.serialized(), "<a><b/><c><to-add/></c></a>")

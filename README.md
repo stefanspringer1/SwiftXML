@@ -75,6 +75,8 @@ let transformation = XTransformation {
 
 **UPDATE 19 (March 2024):** `description` add quotation marks for `XText`.
 
+**UPDATE 20 (March 2024):** Removed confusing extensions of sequences like `add`.
+
 ---
 
 ## Related packages
@@ -1384,8 +1386,8 @@ let e = XElement("a") {
     XElement("c")
 }
 
-e.descendants({ $0.name != "added" }).add {
-    XElement("added")
+for descendant in e.descendants({ $0.name != "added" }) {
+    descendant.add { XElement("added") }
 }
 
 e.echo(pretty: true)
@@ -1413,8 +1415,10 @@ let myElement = XElement("a") {
     XElement("c")
 }
 
-myElement.descendants({ $0.name != "to-add" }).add {
-    myElement.descendants("to-add")
+for descendant in myElement.descendants({ $0.name != "to-add" }) {
+    descendant.add {
+        myElement.descendants("to-add")
+    }
 }
 
 myElement.echo(pretty: true)
