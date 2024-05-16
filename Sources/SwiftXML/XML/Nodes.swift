@@ -679,6 +679,7 @@ public class XContent: XNode {
         }
         
         if let newAsText = node as? XText {
+            guard !newAsText.value.isEmpty else { return }
             if !newAsText.isolated {
                 if let selfAsText = self as? XText, !selfAsText.isolated {
                     selfAsText._value = newAsText._value + selfAsText._value
@@ -693,13 +694,12 @@ public class XContent: XNode {
                     return
                 }
             }
-            _insertPreviousBase(node)
-            return
         }
         
         if let newAsLiteral = node as? XLiteral {
+            guard !newAsLiteral.value.isEmpty else { return }
             if !newAsLiteral.isolated {
-                if let selfAsLiteral = self as? XText, !selfAsLiteral.isolated {
+                if let selfAsLiteral = self as? XLiteral, !selfAsLiteral.isolated {
                     selfAsLiteral._value = newAsLiteral._value + selfAsLiteral._value
                     newAsLiteral.value = ""
                     return
@@ -710,8 +710,6 @@ public class XContent: XNode {
                     return
                 }
             }
-            _insertPreviousBase(node)
-            return
         }
         
         _insertPreviousBase(node)
@@ -774,36 +772,38 @@ public class XContent: XNode {
             }
         }
         
-        if let newAsText = node as? XText, !newAsText.isolated {
-            if let selfAsText = self as? XText, !selfAsText.isolated {
-                selfAsText._value = selfAsText._value + newAsText._value
-                selfAsText._whitespace = selfAsText._whitespace + newAsText._whitespace
-                newAsText.value = ""
-                return
+        if let newAsText = node as? XText {
+            guard !newAsText.value.isEmpty else { return }
+            if !newAsText.isolated {
+                if let selfAsText = self as? XText, !selfAsText.isolated {
+                    selfAsText._value = selfAsText._value + newAsText._value
+                    selfAsText._whitespace = selfAsText._whitespace + newAsText._whitespace
+                    newAsText.value = ""
+                    return
+                }
+                if let nextAsText = _next as? XText, !nextAsText.isolated {
+                    nextAsText._value = newAsText._value + nextAsText._value
+                    nextAsText._whitespace = newAsText._whitespace + nextAsText._whitespace
+                    newAsText.value = ""
+                    return
+                }
             }
-            if let nextAsText = _next as? XText, !nextAsText.isolated {
-                nextAsText._value = newAsText._value + nextAsText._value
-                nextAsText._whitespace = newAsText._whitespace + nextAsText._whitespace
-                newAsText.value = ""
-                return
-            }
-            _insertNextBase(node)
-            return
         }
         
-        if let newAsLiteral = node as? XText, !newAsLiteral.isolated {
-            if let selfAsLiteral = self as? XText, !selfAsLiteral.isolated {
-                selfAsLiteral._value = selfAsLiteral._value + newAsLiteral._value
-                newAsLiteral.value = ""
-                return
+        if let newAsLiteral = node as? XLiteral {
+            guard !newAsLiteral.value.isEmpty else { return }
+            if !newAsLiteral.isolated {
+                if let selfAsLiteral = self as? XLiteral, !selfAsLiteral.isolated {
+                    selfAsLiteral._value = selfAsLiteral._value + newAsLiteral._value
+                    newAsLiteral.value = ""
+                    return
+                }
+                if let nextAsLiteral = _next as? XLiteral, !nextAsLiteral.isolated {
+                    nextAsLiteral._value = newAsLiteral._value + nextAsLiteral._value
+                    newAsLiteral.value = ""
+                    return
+                }
             }
-            if let nextAsLiteral = _next as? XText, !nextAsLiteral.isolated {
-                nextAsLiteral._value = newAsLiteral._value + nextAsLiteral._value
-                newAsLiteral.value = ""
-                return
-            }
-            _insertNextBase(node)
-            return
         }
         
         _insertNextBase(node)
@@ -1067,41 +1067,50 @@ extension XBranchInternal {
      Add content as last content.
      */
     func _add(_ node: XContent) {
-        if let lastAsText = lastContent as? XText, let newAsText = node as? XText, !(lastAsText.isolated || newAsText.isolated) {
-            lastAsText._value = lastAsText._value + newAsText._value
-            lastAsText._whitespace = lastAsText._whitespace + newAsText._whitespace
-            newAsText.value = ""
+        
+        if let newAsText = node as? XText {
+            guard !newAsText.value.isEmpty else { return }
+            if let lastAsText = lastContent as? XText, !(lastAsText.isolated || newAsText.isolated) {
+                lastAsText._value = lastAsText._value + newAsText._value
+                lastAsText._whitespace = lastAsText._whitespace + newAsText._whitespace
+                newAsText.value = ""
+                return
+            }
         }
-        else if let lastAsLiteral = lastContent as? XLiteral, let newAsLiteral = node as? XLiteral, !(lastAsLiteral.isolated || newAsLiteral.isolated) {
-            lastAsLiteral._value = lastAsLiteral._value + newAsLiteral._value
-            newAsLiteral.value = ""
+        
+        if let newAsLiteral = node as? XLiteral {
+            guard !newAsLiteral.value.isEmpty else { return }
+            if let lastAsLiteral = lastContent as? XLiteral, !(lastAsLiteral.isolated || newAsLiteral.isolated) {
+                lastAsLiteral._value = lastAsLiteral._value + newAsLiteral._value
+                newAsLiteral.value = ""
+                return
+            }
+        }
+        
+        node._removeKeep()
+
+        // insert into new chain:
+        if let theLastChild = __lastContent {
+            theLastChild._next = node
+            node._previous = theLastChild
         }
         else {
-            node._removeKeep()
+            __firstContent = node
+            node._previous = nil
+        }
+        __lastContent = node
+        node._next = nil
 
-            // insert into new chain:
-            if let theLastChild = __lastContent {
-                theLastChild._next = node
-                node._previous = theLastChild
-            }
-            else {
-                __firstContent = node
-                node._previous = nil
-            }
-            __lastContent = node
-            node._next = nil
+        // set parent:
+        node._parent = self
 
-            // set parent:
-            node._parent = self
+        // set tree order:
+        node.setTreeOrderWhenInserting()
 
-            // set tree order:
-            node.setTreeOrderWhenInserting()
-
-            // set document:
-            if _document != nil, let element = node as? XElement, !(element._document === _document) {
-                for insertedElement in element.descendantsIncludingSelf {
-                    insertedElement.setDocument(document: _document)
-                }
+        // set document:
+        if _document != nil, let element = node as? XElement, !(element._document === _document) {
+            for insertedElement in element.descendantsIncludingSelf {
+                insertedElement.setDocument(document: _document)
             }
         }
     }
@@ -1132,41 +1141,50 @@ extension XBranchInternal {
      Add content as first content.
      */
     func _addFirst(_ node: XContent) {
-        if let firstAsText = firstContent as? XText, let newAsText = node as? XText, !(firstAsText.isolated || newAsText.isolated) {
-            firstAsText._value = newAsText._value + firstAsText._value
-            firstAsText._whitespace = newAsText._whitespace + firstAsText._whitespace
-            newAsText.value = ""
+        
+        if let newAsText = node as? XText {
+            guard !newAsText.value.isEmpty else { return }
+            if let firstAsText = firstContent as? XText, !(firstAsText.isolated || newAsText.isolated) {
+                firstAsText._value = newAsText._value + firstAsText._value
+                firstAsText._whitespace = newAsText._whitespace + firstAsText._whitespace
+                newAsText.value = ""
+                return
+            }
         }
-        else if let firstAsLiteral = firstContent as? XLiteral, let newAsLiteral = node as? XLiteral, !(firstAsLiteral.isolated || newAsLiteral.isolated) {
-            firstAsLiteral._value = newAsLiteral._value + firstAsLiteral._value
-            newAsLiteral.value = ""
+        
+        if let newAsLiteral = node as? XLiteral {
+            guard !newAsLiteral.value.isEmpty else { return }
+            if let firstAsLiteral = firstContent as? XLiteral, !(firstAsLiteral.isolated || newAsLiteral.isolated) {
+                firstAsLiteral._value = newAsLiteral._value + firstAsLiteral._value
+                newAsLiteral.value = ""
+                return
+            }
+        }
+        
+        node._removeKeep()
+
+        // insert into new chain:
+        if let theFirstChild = __firstContent {
+            theFirstChild._previous = node
+            node._next = theFirstChild
         }
         else {
-            node._removeKeep()
+            __lastContent = node
+            node._next = nil
+        }
+        __firstContent = node
+        node._previous = nil
 
-            // insert into new chain:
-            if let theFirstChild = __firstContent {
-                theFirstChild._previous = node
-                node._next = theFirstChild
-            }
-            else {
-                __lastContent = node
-                node._next = nil
-            }
-            __firstContent = node
-            node._previous = nil
+        // set parent:
+        node._parent = self
 
-            // set parent:
-            node._parent = self
-
-            // set tree order:
-            node.setTreeOrderWhenInserting()
-            
-            // set document:
-            if _document != nil, let element = node as? XElement, !(element._document === _document) {
-                for insertedElement in element.descendantsIncludingSelf {
-                    insertedElement.setDocument(document: _document)
-                }
+        // set tree order:
+        node.setTreeOrderWhenInserting()
+        
+        // set document:
+        if _document != nil, let element = node as? XElement, !(element._document === _document) {
+            for insertedElement in element.descendantsIncludingSelf {
+                insertedElement.setDocument(document: _document)
             }
         }
     }

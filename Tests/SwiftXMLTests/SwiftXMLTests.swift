@@ -645,4 +645,11 @@ final class SwiftXMLTests: XCTestCase {
         }
         
     }
+    
+    func testXXX() throws {
+        let source = """
+            <tr><paragraph><formula>α</formula> Hallo <formula>β</formula> Welt <formula>γ</formula></paragraph><paragraph><emphasis style="bold"><formula><bold>α</bold></formula> Hallo <formula><bold>β</bold></formula> Welt <formula><bold>γ</bold></formula></emphasis></paragraph><paragraph><emphasis style="italic"><formula><italic>α</italic></formula> Hallo <formula><italic>β</italic></formula> Welt <formula><italic>γ</italic></formula></emphasis></paragraph><paragraph><emphasis style="italic"><emphasis style="bold"><formula><bold><italic>α</italic></bold></formula> Hallo <formula><bold><italic>β</italic></bold></formula> Welt <formula><bold><italic>γ</italic></bold></formula></emphasis></emphasis></paragraph><paragraph><formula>φ</formula></paragraph></tr>
+            """
+        try parseXML(fromText: source).echo(pretty: true)
+    }
 }
