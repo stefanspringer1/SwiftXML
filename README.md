@@ -75,6 +75,8 @@ let transformation = XTransformation {
 
 **UPDATE 19 (March 2024):** `description` add quotation marks for `XText`.
 
+**UPDATE 20 (may 2024):** Renamed `allTextsCollected` to `allTextsCombined`.
+
 ---
 
 ## Related packages
@@ -826,10 +828,10 @@ var previousInTreeTouching: XContent?
 Find all text contained the tree of a node and compose them into a single `String`:
 
 ```swift
-var allTextsCollected: String
+var allTextsCombined: String
 ```
 
-You may use these text collecting properties even when you know that there is only one text to be “collected”, this case is efficiently implemented.
+You may use these text collecting properties even when you know that there is only one text to be “combined”, this case is efficiently implemented.
 
 You might also turn a single content item or, more specifically, an element into an appropriate sequence using the following methods:
 

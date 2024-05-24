@@ -561,11 +561,11 @@ final class SwiftXMLTests: XCTestCase {
             [XElement("element"), XElement("element")]
         }
         let _ = XElement("element") {
-            element1.immediateTexts.map{ $0.allTextsCollected }
+            element1.immediateTexts.map{ $0.allTextsCombined }
         }
         let _ = XElement("element") {
             element1.content
-            element1.immediateTexts.map{ $0.allTextsCollected }
+            element1.immediateTexts.map{ $0.allTextsCombined }
             "u"
             XElement("element")
         }
@@ -597,7 +597,7 @@ final class SwiftXMLTests: XCTestCase {
         </sentences>
         """)
         
-        XCTAssertEqual(document.elements("sentence").map{ "\"\($0.allTextsCollected)\"" }.joined(separator: ", "), #""Hello World", "Feel good""#)
+        XCTAssertEqual(document.elements("sentence").map{ "\"\($0.allTextsCombined)\"" }.joined(separator: ", "), #""Hello World", "Feel good""#)
     }
     
     func testReversedAllContent() throws {
