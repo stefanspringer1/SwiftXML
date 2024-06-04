@@ -53,4 +53,4 @@ public extension Fullfill {
   }
 }
 
-extension XContent: Applying, Fullfilling, Fullfill, Pulling {}
+extension XContent: Applying, Pulling, Fullfilling, Fullfill {}

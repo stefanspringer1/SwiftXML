@@ -1933,6 +1933,7 @@ Currently the SwiftXML packages defined a `forEachAsync` method for closure argu
 `XContent` has the following extensions that are very convenient when working with XML in a complex manner:
 
 - `applying`: apply some changes to an instance and return the instance
+- `pulling`: take the content and give something else back, e.g. “pulling” something out of it
 - `fullfilling`: test a condition for an instance and return it the condition is true, else return `nil`
 - `fullfills`: test a condition on an instance return its result
 
