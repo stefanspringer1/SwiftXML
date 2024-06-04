@@ -319,17 +319,17 @@ final class FromReadmeTests: XCTestCase {
         XCTAssertEqual(document.serialized(), "<text>Hello</text>")
     }
     
-    func testTransforming() {
+    func testPulling() {
         
         do {
             let firstFence1 = XElement("fence") { "u" }
-            let t: String = firstFence1.applying{ $0.remove() }.transforming{ ($0.content({ $0 is XText }).first as? XText)?.value ?? "" }
+            let t: String = firstFence1.applying{ $0.remove() }.pulling{ ($0.content({ $0 is XText }).first as? XText)?.value ?? "" }
             XCTAssertEqual(t, "u")
         }
         
         do {
             let firstFence2 = XElement("fence") { "" }
-            let t: String = firstFence2.applying{ $0.remove() }.transforming{ ($0.content({ $0 is XText }).first as? XText)?.value ?? "" }
+            let t: String = firstFence2.applying{ $0.remove() }.pulling{ ($0.content({ $0 is XText }).first as? XText)?.value ?? "" }
             XCTAssertEqual(t, "")
         }
         
