@@ -20,6 +20,18 @@ public extension Applying {
     
 }
 
+public protocol Transforming {}
+
+public extension Transforming {
+  
+  /// Apply an operation on the instance and return the changed instance.
+  func transforming<T>(_ operation: (inout Self) throws -> T) rethrows -> T {
+    var copy = self
+    return try operation(&copy)
+  }
+    
+}
+
 public protocol Fullfilling {}
 
 public extension Fullfilling {
@@ -41,4 +53,4 @@ public extension Fullfill {
   }
 }
 
-extension XContent: Applying, Fullfilling, Fullfill {}
+extension XContent: Applying, Fullfilling, Fullfill, Transforming {}
