@@ -1283,6 +1283,12 @@ extension String: XContentConvertible {
     }
 }
 
+extension String.SubSequence: XContentConvertible {
+    public func collectXML(by xmlCollector: inout XMLCollector) {
+        xmlCollector.collect(XText(String(self)))
+    }
+}
+
 extension XContentSequence: XContentConvertible {
     public func collectXML(by xmlCollector: inout XMLCollector) {
         for content in self {
