@@ -17,12 +17,9 @@ let transformation = XTransformation {
     }
 
     XRule(forElements: "tbody", "tfoot") { tablePart in
-        tablePart
-            .children("tr")
-            .children("th")
-            .forEach { cell in
-                cell.name = "td"
-            }
+        for cell in tablePart.children("tr").children("th") {
+            cell.name = "td"
+       }
     }
 
 }
@@ -81,6 +78,40 @@ let transformation = XTransformation {
 
 ## Related packages
 
+### The `LoopsOnOptionals` package
+
+For-in loops do not work on optionals e.g. optional chains in Swift. But when working with this XML libary being able to do so might be convenient at times. In order to be able to loop on optionals, include the very small `LoopsOnOptionals` package from https://github.com/stefanspringer1/LoopsOnOptionals.
+
+With the `LoopsOnOptionals` package you can write:
+
+```swift
+extension XDocument {
+   var metaDataSection: XElement? { ... }
+}
+
+for metaDataItem in myDocument.metaDataSection?.children("item") {
+    ...
+}
+```
+
+Of course, especially in this simple case you can express the same as follows, without using the `LoopsOnOptionals` package:
+
+```swift
+extension XDocument {
+   var metaDataSection: XElement? { ... }
+}
+
+if let metaDataSection = myDocument.metaDataSection {
+    for metaDataItem in metaDataSection.children("item") {
+        ...
+    }
+}
+```
+
+But even more so in more complex situations, the introduction of such a `if let` (or `case let`) expression makes the code harder to understand.
+
+### The `Workflow` package
+
 When using SwiftXML in the context of the [SwiftWorkflow](https://github.com/stefanspringer1/SwiftWorkflow) framework, you might include the [WorkflowUtilitiesForSwiftXML](https://github.com/stefanspringer1/WorkflowUtilitiesForSwiftXML).
 
 ## Properties of the library
@@ -111,7 +142,7 @@ let document = try parseXML(fromText: """
 <a><item multiply="3"/></a>
 """)
 
-document.elements("item").forEach { item in
+for item in document.elements("item") { in
     if let multiply = item["multiply"], let n = Int(multiply), n > 1 {
         item.insertPrevious {
             XElement("item", ["multiply": n > 2 ? String(n-1) : nil])
@@ -437,7 +468,7 @@ let document = try parseXML(fromText: """
 </a>
 """, textAllowedInElementWithName: { $0 == "b" })
 
-document.allContent.forEach { content in
+for content in document.allContent {
     if let sourceRange = content.sourceRange {
         print("\(sourceRange): \(content)")
     }
@@ -574,7 +605,7 @@ func elements(_: String) -> XElementsOfSameNameSequence
 Example:
 
 ```swift
-myDocument.elements("paragraph").forEach { paragraph in
+for paragraph in myDocument.elements("paragraph") {
     if let id = paragraph["id"] {
         print("found paragraph with ID \"\(ID)\"")
     }
@@ -739,7 +770,7 @@ var nextElements: XElementSequence
 Example:
 
 ```swift
-myElement.descendants.forEach { descendant in
+for descendant in myElement.descendants {
     print("the name of the descendant is \(descendant.name)")
 }
 ```
@@ -871,11 +902,9 @@ let document = try parseXML(fromText: """
 <a><b/><c take="true"/><d/><e take="true"/></a>
 """)
 
-document
-    .descendants({ element in element["take"] == "true" })
-    .forEach { descendant in
-        print(descendant)
-    }
+for descendant in document.descendants({ element in element["take"] == "true" }) {
+    print(descendant)
+}
 ```
 
 Output:
@@ -889,11 +918,9 @@ Note that the round parentheses “(...)” around the condition in the example 
 There also exist a shortcut for the common of filtering elements according to a name:
 
 ```swift
-document
-    .descendants("paragraph")
-    .forEach { _ in
-        print("found a paragraph!")"
-    }
+for _ in document.descendants("paragraph") {
+    print("found a paragraph!")"
+}
 ```
 
 You can also use multiple names (e.g. `descendants("paragraph", "table")`). If no name is given, all elements are given in the result regardless the name, e.g. `children()` means the same as `children`.
@@ -934,7 +961,7 @@ let document = try parseXML(fromText: """
 </a>
 """)
 
-document.descendants.descendants.forEach { print($0) }
+for element in document.descendants.descendants { print(element) }
 ```
 
 Output:
@@ -1099,7 +1126,7 @@ let element = XElement("z") {
     }
 }
 
-element.children.map{ $0.children.first }.forEach { print($0?.name ?? "-") }
+for content in element.children.map({ $0.children.first }) { print(content?.name ?? "-") }
 ```
 
 Output:
@@ -1169,7 +1196,7 @@ let document = try parseXML(fromText: """
 <a><b id="1"/><b id="2"/></a>
 """)
 
-document.elements("b").forEach { element in
+for element in document.elements("b") {
     print("applying the rule to \(element)")
     if element["id"] == "2" {
         element.insertNext {
@@ -1267,7 +1294,7 @@ func setContent(builder: () -> [XContent])
 Example:
 
 ```swift
-myDocument.elements("table").forEach { table in
+for table in myDocument.elements("table") {
     table.insertNext {
         XElement("legend") {
             "this is the table legend"
@@ -1298,7 +1325,7 @@ element.echo(pretty: true)
 
 print("\n---- 1 ----\n")
 
-element.content.forEach { content in
+for content in element.content {
     content.replace(.skipping) {
         content.content
     }
@@ -1308,7 +1335,7 @@ element.echo(pretty: true)
 
 print("\n---- 2 ----\n")
 
-element.contentReversed.forEach { content in
+for content in element.contentReversed {
     content.insertPrevious(.skipping) {
         XElement("I" + ((content as? XElement)?.name ?? "?"))
     }
@@ -1459,7 +1486,7 @@ let myElement = XElement("top") {
     XElement("a")
 }
 
-myElement.descendants.forEach { element in
+for element in myElement.descendants {
     if element.name == "a" {
         element.insertNext() {
             XElement("b")
@@ -1510,7 +1537,7 @@ Similarly, if you replace a node, the content that gets inserted in place of the
 let document = try parseXML(fromText: """
     <text><bold><bold>Hello</bold></bold></text>
     """)
-document.descendants("bold").forEach { b in b.replace { b.content } }
+for bold in document.descendants("bold") { bold.replace { bold.content } }
 document.echo()
 ```
 
@@ -1536,7 +1563,7 @@ document.traverse { node in
         if text.value.contains(searchText) {
             text.isolated = true
             var addSearchText = false
-            text.value.components(separatedBy: searchText).forEach { part in
+            for part in text.value.components(separatedBy: searchText) {
                 text.insertPrevious {
                     addSearchText ? XElement("span", ["style": "background:LightGreen"]) {
                         searchText

@@ -25,9 +25,9 @@ public enum WriteTarget {
 /// Actually, only for content conforming to protocol `ToBePeparedForMoving` such a preparation
 /// and the according repeal will be done by calling the according members of the protocol.
 func moving(_ content: [XContent], action: () -> ()) {
-    content.forEach { ($0 as? ToBePeparedForMoving)?.prepareForMove() }
+    for node in content { (node as? ToBePeparedForMoving)?.prepareForMove() }
     action()
-    content.forEach { ($0 as? ToBePeparedForMoving)?.resetAfterMove() }
+    for node in content { (node as? ToBePeparedForMoving)?.resetAfterMove() }
 }
 
 /// The insertion mode determines if when insertion content into the tree,
@@ -167,11 +167,11 @@ public class XNode {
     
     /// Go to previous on all registered content operators, because this node will not be at same position after some operation.
     func gotoPreviousOnContentIterators() {
-        contentIterators.forEach { _ = $0.previous() }
+        for content in contentIterators { _ = content.previous() }
     }
     
     func prefetchOnContentIterators() {
-        contentIterators.forEach { $0.prefetch() }
+        for content in contentIterators { content.prefetch() }
     }
     
     weak var _parent: XBranchInternal? = nil
@@ -374,7 +374,7 @@ public class XNode {
     
     public func traverse(down: (XNode) throws -> (), up: ((XNode) throws -> ())? = nil) rethrows {
         let directionIndicator = XDirectionIndicator()
-        try XTraversalSequence(node: self, directionIndicator: directionIndicator).forEach { node in
+        for  node in XTraversalSequence(node: self, directionIndicator: directionIndicator) {
             switch directionIndicator.direction {
             case .down:
                 try down(node)
@@ -388,7 +388,7 @@ public class XNode {
     
     public func traverse(down: (XNode) async throws -> (), up: ((XNode) async throws -> ())? = nil) async rethrows {
         let directionIndicator = XDirectionIndicator()
-        try await XTraversalSequence(node: self, directionIndicator: directionIndicator).forEachAsync { node in
+        for node in XTraversalSequence(node: self, directionIndicator: directionIndicator) {
             switch directionIndicator.direction {
             case .down:
                 try await down(node)
@@ -736,7 +736,7 @@ public class XContent: XNode {
         let isolator = _Isolator_(inDocument: self.document)
         _insertPrevious(isolator)
         moving(content) {
-            content.forEach { isolator._insertPrevious($0) }
+            for node in content { isolator._insertPrevious(node) }
         }
         isolator.remove()
     }
@@ -830,7 +830,7 @@ public class XContent: XNode {
         let isolator = _Isolator_(inDocument: self.document)
         _insertNext(isolator)
         moving(content) {
-            content.forEach { isolator._insertPrevious($0) }
+            for node in content { isolator._insertPrevious(node) }
         }
         isolator.remove()
     }
@@ -850,7 +850,7 @@ public class XContent: XNode {
             prefetchOnContentIterators()
         }
         moving(content) {
-            content.forEach { previousIsolator._insertPrevious($0) }
+            for node in content { previousIsolator._insertPrevious(node) }
         }
         if previousIsolator._next === self {
             remove()
@@ -959,15 +959,17 @@ extension XBranchInternal {
      I am the clone, add the content!
      */
     func _addClones(from source: XBranchInternal, pointingToClone: Bool = false) {
-        source.content.forEach { node in
+        for node in source.content {
             // we need a reference from the clone to the origin first:
             _add(node.shallowClone())
         }
-        allContent.forEach { node in
+        for node in allContent {
             if let element = node as? XElement {
                 // using the reference to the origin here:
-                (element._backLink as? XElement)?.content.forEach { node in
-                    element._add(node.shallowClone())
+                if let backLink = element._backLink as? XElement {
+                    for node in backLink.content {
+                        element._add(node.shallowClone())
+                    }
                 }
             }
             // change the reference if desired differently:
@@ -1129,7 +1131,7 @@ extension XBranchInternal {
     
     func _add(_ content: [XContent]) {
         moving(content) {
-            content.forEach { _add($0) }
+            for node in content { _add(node) }
         }
     }
     
@@ -1203,7 +1205,7 @@ extension XBranchInternal {
     
     func _addFirst(_ content: [XContent]) {
         moving(content) {
-            content.reversed().forEach { _addFirst($0) }
+            for node in content.reversed() { _addFirst(node) }
         }
     }
     
@@ -1218,9 +1220,9 @@ extension XBranchInternal {
         let isolator = _Isolator_(inDocument: self.document)
         _addFirst(isolator)
         moving(content) {
-            content.forEach { isolator._insertPrevious($0) }
+            for node in content { isolator._insertPrevious(node) }
         }
-        isolator.next.forEach { $0.remove() }
+        for node in isolator.next { node.remove() }
         isolator.remove()
     }
     
@@ -1498,11 +1500,11 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     }
 
     func gotoPreviousOnElementIterators() {
-        elementIterators.forEach { _ = $0.previous() }
+        for node in elementIterators { _ = node.previous() }
     }
 
     func prefetchOnElementIterators() {
-        elementIterators.forEach { $0.prefetch() }
+        for node in elementIterators { node.prefetch() }
     }
 
     private var nameIterators = WeakList<XXBidirectionalElementNameIterator>()
@@ -1516,11 +1518,11 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     }
 
     func gotoPreviousOnNameIterators() {
-        nameIterators.forEach { _ = $0.previous() }
+        for node in nameIterators { _ = node.previous() }
     }
 
     func prefetchOnNameIterators() {
-        nameIterators.forEach { $0.prefetch() }
+        for node in nameIterators { node.prefetch() }
     }
 
     var _attributes = [String:String]()
@@ -1569,7 +1571,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
             if newName != _name {
                 if let theDocument = _document {
                     gotoPreviousOnNameIterators()
-                    nameIterators.forEach { _ = $0.previous() }
+                    for nameIterator in nameIterators { _ = nameIterator.previous() }
                     theDocument.unregisterElement(element: self)
                     _name = newName
                     theDocument.registerElement(element: self)
@@ -1718,9 +1720,11 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         if let theAttributes = attributes {
             setAttributes(attributes: theAttributes)
         }
-        attached?.forEach { (key,value) in
-            if let value {
-                self.attached[key] =  value
+        if let attached {
+            for (key,value) in attached {
+                if let value {
+                    self.attached[key] =  value
+                }
             }
         }
         if let backLinkSource {
@@ -1758,8 +1762,10 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     }
     
     func setAttributes(attributes newAtttributeValues: [String:String?]? = nil) {
-        newAtttributeValues?.forEach { name, value in
-            self[name] = value
+        if let newAtttributeValues {
+            for (name, value) in newAtttributeValues {
+                self[name] = value
+            }
         }
     }
     
@@ -1769,7 +1775,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     
     override func produceEntering(activeProduction: XActiveProduction) throws {
         try activeProduction.writeElementStartBeforeAttributes(element: self)
-        try activeProduction.sortAttributeNames(attributeNames: attributeNames, element: self).forEach { attributeName in
+        for attributeName in activeProduction.sortAttributeNames(attributeNames: attributeNames, element: self) {
             try activeProduction.writeAttribute(name: attributeName, value: self[attributeName]!, element: self)
         }
         try activeProduction.writeElementStartAfterAttributes(element: self)
@@ -1803,11 +1809,11 @@ public final class XText: XContent, XTextualContentRepresentation, ToBePeparedFo
     var _textIterators = WeakList<XBidirectionalTextIterator>()
     
     func gotoPreviousOnTextIterators() {
-        _textIterators.forEach { _ = $0.previous() }
+        for textIterator in _textIterators { _ = textIterator.previous() }
     }
     
     func prefetchOnTextIterators() {
-        _textIterators.forEach { $0.prefetch() }
+        for textIterator in _textIterators { textIterator.prefetch() }
     }
     
     func addTextIterator(_ textIterator: XBidirectionalTextIterator) {
@@ -1821,7 +1827,7 @@ public final class XText: XContent, XTextualContentRepresentation, ToBePeparedFo
     public override func _removeKeep() {
         
         // correction in iterators:
-        _textIterators.forEach { _ = $0.previous() }
+        for textIterator in _textIterators { _ = textIterator.previous() }
         
         super._removeKeep()
     }

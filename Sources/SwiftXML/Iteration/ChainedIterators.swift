@@ -1250,45 +1250,57 @@ extension Sequence<XContent> {
     }
     
     public func insertPrevious(_ insertionMode: InsertionMode = .following, @XContentBuilder builder: () -> [XContent]) {
-        self.forEach { content in
+        for content in self {
             content._insertPrevious(insertionMode, builder())
         }
     }
     
     public func insertPrevious(_ insertionMode: InsertionMode = .following, _ contentGetter: @escaping (XContent) -> [XContent]) {
-        self.forEach { content in
+        for content in self {
             content._insertPrevious(insertionMode, contentGetter(content))
         }
     }
     
     public func insertNext(_ insertionMode: InsertionMode = .following, @XContentBuilder builder: () -> [XContent]) {
-        self.forEach { content in
+        for content in self {
             content._insertNext(insertionMode, builder())
         }
     }
     
     public func insertNext(_ insertionMode: InsertionMode = .following, _ contentGetter: @escaping (XContent) -> [XContent]) {
-        self.forEach { content in content._insertNext(insertionMode, contentGetter(content)) }
+        for content in self {
+            content._insertNext(insertionMode, contentGetter(content))
+        }
     }
     
     public func replace(_ insertionMode: InsertionMode = .following, @XContentBuilder builder: () -> [XContent]) {
-        self.forEach { content in content.replace(insertionMode, builder: builder) }
+        for content in self {
+            content.replace(insertionMode, builder: builder)
+        }
     }
     
     public func replace(_ insertionMode: InsertionMode = .following, _ contentGetter: (XContent) -> (() -> [XContent])) {
-        self.forEach { content in content.replace(insertionMode, builder: contentGetter(content) ) }
+        for content in self {
+            content.replace(insertionMode, builder: contentGetter(content) )
+        }
     }
     
     public func remove() {
-        self.forEach { content in content.remove() }
+        for content in self {
+            content.remove()
+        }
     }
     
     public func echo(pretty: Bool = false, indentation: String = X_DEFAULT_INDENTATION, terminator: String = "\n") {
-        self.forEach { content in content.echo(pretty: pretty, indentation: indentation, terminator: terminator) }
+        for content in self {
+            content.echo(pretty: pretty, indentation: indentation, terminator: terminator)
+        }
     }
     
     public func echo(usingProductionTemplate productionTemplate: XProductionTemplate, terminator: String = "\n") {
-        self.forEach { element in element.echo(usingProductionTemplate: productionTemplate, terminator: terminator) }
+        for content in self {
+            content.echo(usingProductionTemplate: productionTemplate, terminator: terminator)
+        }
     }
     
     // Get the nth item, counting starts at 1.
@@ -1766,63 +1778,93 @@ extension Sequence<XElement> {
     }
     
     public func add(@XContentBuilder builder: () -> [XContent]) {
-        self.forEach { element in element._add(builder()) }
+        for element in self {
+            element._add(builder())
+        }
     }
     
     public func add(_ contentGetter: @escaping (XElement) -> [XContent]) {
-        self.forEach { element in element._add(contentGetter(element)) }
+        for element in self {
+            element._add(contentGetter(element))
+        }
     }
     
     public func addFirst(@XContentBuilder builder: () -> [XContent]) {
-        self.forEach { element in element._addFirst(builder()) }
+        for element in self {
+            element._addFirst(builder())
+        }
     }
     
     public func addFirst(_ contentGetter: @escaping (XElement) -> [XContent]) {
-        self.forEach { element in element._addFirst(contentGetter(element)) }
+        for element in self {
+            element._addFirst(contentGetter(element))
+        }
     }
     
     public func setContent(_ contentGetter: @escaping (XElement) -> [XContent]) {
-        self.forEach { element in element._setContent(contentGetter(element)) }
+        for element in self {
+            element._setContent(contentGetter(element))
+        }
     }
     
     public func insertPrevious(_ insertionMode: InsertionMode = .following, @XContentBuilder builder: () -> [XContent]) {
-        self.forEach { element in element._insertPrevious(insertionMode, builder()) }
+        for element in self {
+            element._insertPrevious(insertionMode, builder())
+        }
     }
     
     public func insertPrevious(_ insertionMode: InsertionMode = .following, _ contentGetter: @escaping (XElement) -> [XContent]) {
-        self.forEach { element in element._insertPrevious(insertionMode, contentGetter(element)) }
+        for element in self {
+            element._insertPrevious(insertionMode, contentGetter(element))
+        }
     }
     
     public func insertNext(_ insertionMode: InsertionMode = .following, @XContentBuilder builder: () -> [XContent]) {
-        self.forEach { element in element._insertNext(insertionMode, builder()) }
+        for element in self {
+            element._insertNext(insertionMode, builder())
+        }
     }
     
     public func insertNext(_ insertionMode: InsertionMode = .following, _ contentGetter: @escaping (XElement) -> [XContent]) {
-        self.forEach { element in element._insertNext(insertionMode, contentGetter(element)) }
+        for element in self {
+            element._insertNext(insertionMode, contentGetter(element))
+        }
     }
     
     public func replace(_ insertionMode: InsertionMode = .following, @XContentBuilder builder: () -> [XContent]) {
-        self.forEach { element in element.replace(insertionMode, builder: builder) }
+        for element in self {
+            element.replace(insertionMode, builder: builder)
+        }
     }
     
     public func replace(_ insertionMode: InsertionMode = .following, _ contentGetter: (XElement) -> (() -> [XContent])) {
-        self.forEach { element in element.replace(insertionMode, builder: contentGetter(element) ) }
+        for element in self {
+            element.replace(insertionMode, builder: contentGetter(element) )
+        }
     }
     
     public func clear() {
-        self.forEach { element in element.clear() }
+        for element in self {
+            element.clear()
+        }
     }
     
     public func remove() {
-        self.forEach { element in element.remove() }
+        for element in self {
+            element.remove()
+        }
     }
     
     public func echo(pretty: Bool = false, indentation: String = X_DEFAULT_INDENTATION, terminator: String = "\n") {
-        self.forEach { element in element.echo(pretty: pretty, indentation: indentation, terminator: terminator) }
+        for element in self {
+            element.echo(pretty: pretty, indentation: indentation, terminator: terminator)
+        }
     }
     
     public func echo(usingProductionTemplate productionTemplate: XProductionTemplate, terminator: String = "\n") {
-        self.forEach { element in element.echo(usingProductionTemplate: productionTemplate, terminator: terminator) }
+        for element in self {
+            element.echo(usingProductionTemplate: productionTemplate, terminator: terminator)
+        }
     }
     
 }

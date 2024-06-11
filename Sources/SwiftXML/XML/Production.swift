@@ -171,7 +171,7 @@ open class ActiveDefaultProduction: XActiveProduction {
     
     open func sortDeclarationsInInternalSubset(document: XDocument) -> [XDeclarationInInternalSubset] {
         var sorted = [XDeclarationInInternalSubset]()
-        ([
+        for declarations in [
             sortByName(document.internalEntityDeclarations),
             sortByName(document.externalEntityDeclarations),
             sortByName(document.notationDeclarations),
@@ -179,8 +179,8 @@ open class ActiveDefaultProduction: XActiveProduction {
             sortByName(document.elementDeclarations),
             sortByName(document.attributeListDeclarations),
             sortByName(document.parameterEntityDeclarations)
-        ]).forEach { declarations in
-            declarations.forEach { declaration in
+        ] {
+            for declaration in declarations {
                 sorted.append(declaration)
             }
         }

@@ -371,6 +371,10 @@ final class SwiftXMLTests: XCTestCase {
         document.children.forEach { child in
             print(child)
         }
+        // alternative:
+        for child in document.children {
+            print(child)
+        }
         await document.children.forEachAsync { child in
             await a.f()
         }
@@ -400,7 +404,7 @@ final class SwiftXMLTests: XCTestCase {
         
         var collectedIDs = [String]()
         
-        document.elements("b", "c", "d").forEach { element in
+        for element in document.elements("b", "c", "d") {
             if let id = element["id"] {
                 collectedIDs.append(id)
                 if id == "c1" {
@@ -468,7 +472,7 @@ final class SwiftXMLTests: XCTestCase {
             """)
         
         var elementFoundInfos = [String]()
-        document.elements("b").forEach { element in
+        for element in document.elements("b") {
             elementFoundInfos.append(element.description)
             element.remove()
         }
@@ -485,7 +489,7 @@ final class SwiftXMLTests: XCTestCase {
             """)
         
         var elementFoundInfos = [String]()
-        document.elements("a", "b").forEach { element in
+        for element in document.elements("a", "b") {
             elementFoundInfos.append(element.description)
             if element.name == "b" {
                 element.remove()

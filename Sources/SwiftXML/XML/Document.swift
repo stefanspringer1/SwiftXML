@@ -94,7 +94,7 @@ public final class XDocument: XNode, XBranchInternal {
             }
             let lastVersion = versions.first ?? self
             lastVersion._backLink = nil
-            lastVersion.allContent.forEach { $0._backLink = nil }
+            for content in lastVersion.allContent { content._backLink = nil }
         }
     }
     
@@ -153,13 +153,13 @@ public final class XDocument: XNode, XBranchInternal {
         theClone.publicID = publicID
         theClone.systemID = systemID
         theClone._sourcePath = _sourcePath
-        internalEntityDeclarations.forEach { name, declaration in theClone.internalEntityDeclarations[name] = declaration.clone() }
-        parameterEntityDeclarations.forEach { name, declaration in theClone.parameterEntityDeclarations[name] = declaration.clone() }
-        externalEntityDeclarations.forEach { name, declaration in theClone.externalEntityDeclarations[name] = declaration.clone() }
-        unparsedEntityDeclarations.forEach { name, declaration in theClone.unparsedEntityDeclarations[name] = declaration.clone() }
-        notationDeclarations.forEach { name, declaration in theClone.notationDeclarations[name] = declaration.clone() }
-        elementDeclarations.forEach { name, declaration in theClone.elementDeclarations[name] = declaration.clone() }
-        attributeListDeclarations.forEach { name, declaration in theClone.attributeListDeclarations[name] = declaration.clone() }
+        for (name, declaration) in internalEntityDeclarations { theClone.internalEntityDeclarations[name] = declaration.clone() }
+        for (name, declaration) in parameterEntityDeclarations { theClone.parameterEntityDeclarations[name] = declaration.clone() }
+        for (name, declaration) in externalEntityDeclarations { theClone.externalEntityDeclarations[name] = declaration.clone() }
+        for (name, declaration) in unparsedEntityDeclarations { theClone.unparsedEntityDeclarations[name] = declaration.clone() }
+        for (name, declaration) in notationDeclarations { theClone.notationDeclarations[name] = declaration.clone() }
+        for (name, declaration) in elementDeclarations { theClone.elementDeclarations[name] = declaration.clone() }
+        for (name, declaration) in attributeListDeclarations { theClone.attributeListDeclarations[name] = declaration.clone() }
         return theClone
     }
     
@@ -227,7 +227,7 @@ public final class XDocument: XNode, XBranchInternal {
     
     deinit {
         // destroy lists of elements with same name:
-        _elementsOfName_first.values.forEach { element in element.removeFollowingWithSameName() }
+        for element in _elementsOfName_first.values { element.removeFollowingWithSameName() }
     }
     
     // -------------------------------------------------------------------------
@@ -238,9 +238,11 @@ public final class XDocument: XNode, XBranchInternal {
         super.init()
         _document = self
         self._lastInTree = self
-        attached?.forEach { (key,value) in
-            if let value {
-                self.attached[key] =  value
+        if let attached {
+            for (key,value) in attached {
+                if let value {
+                    self.attached[key] =  value
+                }
             }
         }
     }
@@ -252,7 +254,7 @@ public final class XDocument: XNode, XBranchInternal {
         @XContentBuilder builder: () -> [XContent]
     ) {
         self.init(attached: attached)
-        builder().forEach { node in
+        for node in builder() {
             _add(node)
         }
     }
@@ -285,7 +287,7 @@ public final class XDocument: XNode, XBranchInternal {
         try activeProduction.writeDocumentTypeDeclarationBeforeInternalSubset(type: getType() ?? "?", publicID: publicID, systemID: systemID, hasInternalSubset: _hasInternalSubset)
         if _hasInternalSubset {
             try activeProduction.writeDocumentTypeDeclarationInternalSubsetStart()
-            try activeProduction.sortDeclarationsInInternalSubset(document: self).forEach { declaration in
+            for declaration in activeProduction.sortDeclarationsInInternalSubset(document: self) {
                 switch declaration {
                 case let internalEntityDeclaration as XInternalEntityDeclaration: try activeProduction.writeInternalEntityDeclaration(internalEntityDeclaration: internalEntityDeclaration)
                 case let parameterEntityDeclaration as XParameterEntityDeclaration: try activeProduction.writeParameterEntityDeclaration(parameterEntityDeclaration: parameterEntityDeclaration)

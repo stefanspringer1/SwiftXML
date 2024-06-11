@@ -72,11 +72,9 @@ final class FromReadmeTests: XCTestCase {
         <a><b/><c take="true"/><d/><e take="true"/></a>
         """)
 
-        document
-            .descendants({ element in element["take"] == "true" })
-            .forEach { descendant in
-                XCTAssertEqual(descendant["take"]!, "true")
-            }
+        for descendant in document.descendants({ element in element["take"] == "true" }) {
+            XCTAssertEqual(descendant["take"]!, "true")
+        }
     }
     
     func testChainedIterators() throws{
@@ -91,8 +89,8 @@ final class FromReadmeTests: XCTestCase {
         """)
         
         var output = ""
-        document.descendants.descendants.forEach{
-            output += $0.serialized(pretty: true)
+        for element in document.descendants.descendants {
+            output += element.serialized(pretty: true)
         }
         output = output.replacingOccurrences(of: " ", with: "").replacingOccurrences(of: "\n", with: "")
         XCTAssertEqual(output, "<b><c><d/></c></b><c><d/></c><d/><c><d/></c><d/><d/>")
@@ -111,7 +109,7 @@ final class FromReadmeTests: XCTestCase {
         }
         
         var output = ""
-        element.children.map{ $0.children.first }.forEach { output += $0?.name ?? "-" }
+        for element in element.children.map({ $0.children.first }) { output += element?.name ?? "-" }
         XCTAssertEqual(output, "a1b1")
     }
     
@@ -186,7 +184,7 @@ final class FromReadmeTests: XCTestCase {
         <a><b id="1"/><b id="2"/></a>
         """)
 
-        document.elements("b").forEach { element in
+        for  element in document.elements("b") {
             if element["id"] == "2" {
                 element.insertNext {
                     XElement("c") {
@@ -220,7 +218,7 @@ final class FromReadmeTests: XCTestCase {
         
         print("\n---- 1 ----\n")
 
-        element.content.forEach { content in
+        for content in element.content {
             content.replace(.skipping) {
                 content.content
             }
@@ -230,7 +228,7 @@ final class FromReadmeTests: XCTestCase {
         
         print("\n---- 2 ----\n")
 
-        element.contentReversed.forEach { content in
+        for content in element.contentReversed {
             content.insertPrevious(.skipping) {
                 XElement("I" + ((content as? XElement)?.name ?? "?"))
             }
@@ -273,7 +271,7 @@ final class FromReadmeTests: XCTestCase {
             XElement("a")
         }
 
-        myElement.descendants.forEach { element in
+        for element in myElement.descendants {
             if element.name == "a" {
                 element.insertNext() {
                     XElement("b")
@@ -294,7 +292,7 @@ final class FromReadmeTests: XCTestCase {
             XElement("a")
         }
 
-        myElement.descendants.forEach { element in
+        for element in myElement.descendants {
             if element.name == "a" {
                 element.insertNext(.skipping) {
                     XElement("b")
@@ -314,7 +312,7 @@ final class FromReadmeTests: XCTestCase {
         let document = try parseXML(fromText: """
             <text><bold><bold>Hello</bold></bold></text>
             """)
-        document.descendants("bold").forEach { b in b.replace { b.content } }
+        for bold in document.descendants("bold") { bold.replace { bold.content } }
         
         XCTAssertEqual(document.serialized(), "<text>Hello</text>")
     }

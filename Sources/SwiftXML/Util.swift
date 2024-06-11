@@ -42,7 +42,7 @@ public func escapeSimpleQuotedValue(_ text: String) -> String {
 
 public func sortByName(_ declarations: [String:XDeclarationInInternalSubset]) -> [XDeclarationInInternalSubset] {
     var sorted = [XDeclarationInInternalSubset]()
-    declarations.keys.sorted().forEach { name in
+    for name in declarations.keys.sorted() {
         if let theDeclaration = declarations[name] {
             sorted.append(theDeclaration)
         }
@@ -230,7 +230,7 @@ extension Array where Element == String? {
     
     func joined(separator: String) -> String? {
         var nonNils = [String]()
-        self.forEach { s in
+        for s in self {
             if let s = s {
                 nonNils.append(s)
             }
@@ -240,7 +240,7 @@ extension Array where Element == String? {
     
     func joinedNonEmpties(separator: String) -> String? {
         var nonEmpties = [String]()
-        self.forEach { s in
+        for s in self {
             if let s = s, !s.isEmpty {
                 nonEmpties.append(s)
             }
