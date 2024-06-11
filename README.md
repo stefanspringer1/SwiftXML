@@ -82,13 +82,17 @@ let transformation = XTransformation {
 
 For-in loops do not work on optionals e.g. optional chains in Swift. But when working with this XML libary being able to do so might be convenient at times. In order to be able to loop on optionals, include the very small `LoopsOnOptionals` package from https://github.com/stefanspringer1/LoopsOnOptionals.
 
-With the `LoopsOnOptionals` package you can write:
+When having the following extension to `XDocument`:
 
 ```swift
 extension XDocument {
    var metaDataSection: XElement? { ... }
 }
+```
 
+then with the `LoopsOnOptionals` package you can write:
+
+```swift
 for metaDataItem in myDocument.metaDataSection?.children("item") {
     ...
 }
@@ -97,10 +101,6 @@ for metaDataItem in myDocument.metaDataSection?.children("item") {
 Of course, especially in this simple case you can express the same as follows, without using the `LoopsOnOptionals` package:
 
 ```swift
-extension XDocument {
-   var metaDataSection: XElement? { ... }
-}
-
 if let metaDataSection = myDocument.metaDataSection {
     for metaDataItem in metaDataSection.children("item") {
         ...
@@ -109,6 +109,7 @@ if let metaDataSection = myDocument.metaDataSection {
 ```
 
 But even more so in more complex situations, the introduction of such a `if let` (or `case let`) expression makes the code harder to understand.
+
 
 ### The `Workflow` package
 
