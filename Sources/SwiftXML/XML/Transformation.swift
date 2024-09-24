@@ -38,14 +38,14 @@ public struct XRule {
         self.actionLine = line
     }
     
-    public init(forAttributes names: [String], file: String = #file, line: Int = #line, action: @escaping XAttributeAction) {
+    public init(forRegisteredAttributes names: [String], file: String = #file, line: Int = #line, action: @escaping XAttributeAction) {
         self.names = names
         self.action = action
         self.actionFile = file
         self.actionLine = line
     }
     
-    public init(forAttributes names: String..., file: String = #file, line: Int = #line, action: @escaping XAttributeAction) {
+    public init(forRegisteredAttributes names: String..., file: String = #file, line: Int = #line, action: @escaping XAttributeAction) {
         self.names = names
         self.action = action
         self.actionFile = file
@@ -64,12 +64,12 @@ public struct XRule {
         self.action = action
     }
     
-    public init(forAttributes names: [String], action: @escaping XAttributeAction) {
+    public init(forRegisteredAttributes names: [String], action: @escaping XAttributeAction) {
         self.names = names
         self.action = action
     }
     
-    public init(forAttributes names: String..., action: @escaping XAttributeAction) {
+    public init(forRegisteredAttributes names: String..., action: @escaping XAttributeAction) {
         self.names = names
         self.action = action
     }

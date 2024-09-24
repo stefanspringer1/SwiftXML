@@ -275,15 +275,15 @@ public final class XDocument: XNode, XBranchInternal {
         attributeProperties.nextWithSameName = nil
     }
     
-    public func attributes(_ name: String) -> XAttributeSequence {
+    public func registeredAttributes(_ name: String) -> XAttributeSequence {
         return XAttributesOfSameNameSequence(document: self, attributeName: name)
     }
     
-    public func attributes(_ names: String...) -> XAttributeSequence {
-        return attributes(names)
+    public func registeredAttributes(_ names: String...) -> XAttributeSequence {
+        return registeredAttributes(names)
     }
     
-    public func attributes(_ names: [String]) -> XAttributeSequence {
+    public func registeredAttributes(_ names: [String]) -> XAttributeSequence {
         return XAttributesOfNamesSequence(forNames: names, forDocument: self)
     }
     

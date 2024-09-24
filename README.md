@@ -22,7 +22,7 @@ let transformation = XTransformation {
        }
     }
     
-    XRule(forAttributes: "label") { label in
+    XRule(forRegisteredAttributes: "label") { label in
         label.element["label"] = label.value + ")"
     }
 
@@ -638,7 +638,7 @@ let document = try parseXML(fromText: """
     </test>
     """, registeringAttributes: ["a", "c"])
 
-let registeredValuesInfo = document.attributes("a", "b", "c", "d").map{ $0.value }.joined(separator: ", ")
+let registeredValuesInfo = document.registeredAttributes("a", "b", "c", "d").map{ $0.value }.joined(separator: ", ")
 print(registeredValuesInfo) // "1, 3"
 
 let allValuesInfo = document.elements("x").compactMap{

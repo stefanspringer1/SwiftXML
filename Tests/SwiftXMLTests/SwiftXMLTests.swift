@@ -70,7 +70,7 @@ final class SwiftXMLTests: XCTestCase {
             """, registeringAttributes: ["id"])
         let element = document.children.first!
         XCTAssertEqual(element["id"], "1")
-        XCTAssertEqual(document.attributes("id").map { attributeSpot in attributeSpot.value }.joined(separator: ", "), "1, 2, 3")
+        XCTAssertEqual(document.registeredAttributes("id").map { attributeSpot in attributeSpot.value }.joined(separator: ", "), "1, 2, 3")
     }
     
     func testClone() throws {
@@ -309,7 +309,7 @@ final class SwiftXMLTests: XCTestCase {
             </test>
             """, registeringAttributes: ["a", "c"])
         
-        let registeredValuesInfo = document.attributes("a", "b", "c", "d").map{ $0.value }.joined(separator: ", ")
+        let registeredValuesInfo = document.registeredAttributes("a", "b", "c", "d").map{ $0.value }.joined(separator: ", ")
         XCTAssertEqual(registeredValuesInfo, #"1, 3"#)
         
         let allValuesInfo = document.elements("x").compactMap{
@@ -462,9 +462,9 @@ final class SwiftXMLTests: XCTestCase {
 
         var collectedAttributeValues = [String]()
 
-        document.attributes("b").forEach { attribute in print(attribute) }
+        document.registeredAttributes("b").forEach { attribute in print(attribute) }
 
-        document.attributes("b", "c", "d").forEach { attribute in
+        document.registeredAttributes("b", "c", "d").forEach { attribute in
            collectedAttributeValues.append(attribute.value)
            if attribute.value == "c1" {
                attribute.element.insertPrevious { XElement("x", ["b": "bInserted1"]) }
@@ -491,7 +491,7 @@ final class SwiftXMLTests: XCTestCase {
                    }
            }
            
-           XRule(forAttributes: "id") { id in
+           XRule(forRegisteredAttributes: "id") { id in
                print("\n----- Rule for attribute \"id\" -----\n")
                print("  \(id.element) --> ", terminator: "")
                id.element["id"] = "done-" + id.value
@@ -576,7 +576,7 @@ final class SwiftXMLTests: XCTestCase {
             """, registeringAttributes: ["id"])
         
         var elementFoundInfos = [String]()
-        document.attributes("id").forEach { attributeSpot in
+        document.registeredAttributes("id").forEach { attributeSpot in
             elementFoundInfos.append(attributeSpot.element.description)
             attributeSpot.element.remove()
         }
@@ -593,7 +593,7 @@ final class SwiftXMLTests: XCTestCase {
             """, registeringAttributes: ["type", "id"])
         
         var elementFoundInfos = [String]()
-        document.attributes("type", "id").forEach { attributeSpot in
+        document.registeredAttributes("type", "id").forEach { attributeSpot in
             elementFoundInfos.append(attributeSpot.element.description)
             if attributeSpot.name == "id" {
                 attributeSpot.element.remove()
