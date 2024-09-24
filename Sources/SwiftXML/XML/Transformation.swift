@@ -12,6 +12,8 @@ import Foundation
 
 public typealias XElementAction = (XElement)->()
 
+public typealias XAttributeAction = (XAttributeSpot)->()
+
 public struct XRule {
 
     public let names: [String]
@@ -23,6 +25,16 @@ public struct XRule {
     }
 
     public init(forElements names: String..., action: @escaping XElementAction) {
+        self.names = names
+        self.action = action
+    }
+    
+    public init(forAttributes names: [String], action: @escaping XAttributeAction) {
+            self.names = names
+            self.action = action
+    }
+    
+    public init(forAttributes names: String..., action: @escaping XAttributeAction) {
         self.names = names
         self.action = action
     }
@@ -96,18 +108,30 @@ public class XTransformation {
                         elementAction
                     ))
                 }
+            } else if let attributeAction = rule.action as? XAttributeAction {
+                rule.names.forEach { name in
+                    iteratorsWithActions.append((
+                        XBidirectionalAttributeIterator(forAttributeName: name, attributeIterator: XAttributesOfSameNameIterator(document: document, attributeName: name, keepLast: true), keepLast: true),
+                        attributeAction
+                    ))
+                }
             }
-
         }
 
         var working = true; stopped = false
         while !stopped && working {
             working = false
-            for (_iterator,_action) in iteratorsWithActions {
-                if !stopped, let iterator = _iterator as? XXBidirectionalElementNameIterator, let action = _action as? XElementAction {
+            actions: for (_iterator,_action) in iteratorsWithActions {
+                if stopped { break actions }
+                if let iterator = _iterator as? XXBidirectionalElementNameIterator, let action = _action as? XElementAction {
                     while !stopped, let next = iterator.next() {
                         working = true
                         action(next)
+                    }
+                } else if let iterator = _iterator as? XBidirectionalAttributeIterator, let action = _action as? XAttributeAction {
+                    while !stopped, let attribute = iterator.next() {
+                        working = true
+                        action(attribute)
                     }
                 }
             }

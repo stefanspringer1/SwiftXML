@@ -61,6 +61,18 @@ final class SwiftXMLTests: XCTestCase {
         }
     }
     
+    func testAttributeFromDocument() throws {
+        let document = try parseXML(fromText: """
+            <a id="1">
+                <b id="2"/>
+                <b id="3"/>
+            </a>
+            """, registeringAttributes: ["id"])
+        let element = document.children.first!
+        XCTAssertEqual(element["id"], "1")
+        XCTAssertEqual(document.attributes("id").map { attributeSpot in attributeSpot.value }.joined(separator: ", "), "1, 2, 3")
+    }
+    
     func testClone() throws {
         let source = """
             <a id="1">
@@ -287,6 +299,23 @@ final class SwiftXMLTests: XCTestCase {
         }
     }
     
+    func testSomeAttributesRegistered() throws {
+        let document = try parseXML(fromText: """
+            <test>
+              <x a="1"/>
+              <x b="2"/>
+              <x c="3"/>
+              <x d="4"/>
+            </test>
+            """, registeringAttributes: ["a", "c"])
+        
+        let registeredValuesInfo = document.attributes("a", "b", "c", "d").map{ attributeProperties in attributeProperties.value }.joined(separator: ", ")
+        XCTAssertEqual(registeredValuesInfo, #"1, 3"#)
+        
+        let allValuesInfo = document.elements("x").compactMap{ element in element[element.attributeNames.first ?? "?"] }.joined(separator: ", ")
+        XCTAssertEqual(allValuesInfo, #"1, 2, 3, 4"#)
+    }
+    
     func testAttributeValueSequence() throws {
         let document = try parseXML(fromText: """
             <test>
@@ -416,6 +445,62 @@ final class SwiftXMLTests: XCTestCase {
         XCTAssertEqual(collectedIDs.joined(separator: ", "), "b1, b2, c1, c2, d1, d2, bInserted1")
     }
     
+    func testAttributesWithNames() async throws {
+           
+        let document = try parseXML(fromText: """
+           <a>
+               <x b="b1"/>
+               <x c="c1"/>
+               <x d="d1"/>
+               <x b="b2"/>
+               <x c="c2"/>
+               <x d="d2"/>
+           </a>
+           """, registeringAttributes: ["b", "c", "d"])
+
+        var collectedAttributeValues = [String]()
+
+        document.attributes("b").forEach { attribute in print(attribute) }
+
+        document.attributes("b", "c", "d").forEach { attribute in
+           collectedAttributeValues.append(attribute.value)
+           if attribute.value == "c1" {
+               attribute.element.insertPrevious { XElement("x", ["b": "bInserted1"]) }
+           }
+        }
+
+        let _ = XTransformation {
+           
+           XRule(forElements: "table") { table in
+               table.insertNext {
+                   XElement("caption") {
+                       "Table: "
+                       table.children({ $0.name.contains("title") }).content
+                   }
+               }
+           }
+           
+           XRule(forElements: "tbody", "tfoot") { tablePart in
+               tablePart
+                   .children("tr")
+                   .children("th")
+                   .forEach { cell in
+                       cell.name = "td"
+                   }
+           }
+           
+           XRule(forAttributes: "id") { id in
+               print("\n----- Rule for attribute \"id\" -----\n")
+               print("  \(id.element) --> ", terminator: "")
+               id.element["id"] = "done-" + id.value
+               print(id.element)
+           }
+           
+        }
+
+        XCTAssertEqual(collectedAttributeValues.joined(separator: ", "), "b1, b2, c1, c2, d1, d2, bInserted1")
+    }
+    
     func testSequencePart() {
         
         let a = XElement("a") { "hello"; XText(" world", isolated: true) }
@@ -478,6 +563,43 @@ final class SwiftXMLTests: XCTestCase {
         }
         
         XCTAssertEqual(elementFoundInfos.joined(separator: "\n"), """
+        <b id="1">
+        <b id="2">
+        """)
+    }
+    
+    func testSingleAttributeNameIteratorWithRemoval() throws {
+        let document = try parseXML(fromText: """
+            <a><b id="1"/><b id="2"/></a>
+            """, registeringAttributes: ["id"])
+        
+        var elementFoundInfos = [String]()
+        document.attributes("id").forEach { attributeSpot in
+            elementFoundInfos.append(attributeSpot.element.description)
+            attributeSpot.element.remove()
+        }
+        
+        XCTAssertEqual(elementFoundInfos.joined(separator: "\n"), """
+        <b id="1">
+        <b id="2">
+        """)
+    }
+    
+    func testMultipleAttributeNamesIteratorWithRemoval() throws {
+        let document = try parseXML(fromText: """
+            <a type="type1"><b id="1"/><b id="2"/></a>
+            """, registeringAttributes: ["type", "id"])
+        
+        var elementFoundInfos = [String]()
+        document.attributes("type", "id").forEach { attributeSpot in
+            elementFoundInfos.append(attributeSpot.element.description)
+            if attributeSpot.name == "id" {
+                attributeSpot.element.remove()
+            }
+        }
+        
+        XCTAssertEqual(elementFoundInfos.joined(separator: "\n"), """
+        <a type="type1">
         <b id="1">
         <b id="2">
         """)

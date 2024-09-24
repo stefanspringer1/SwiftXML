@@ -21,6 +21,10 @@ let transformation = XTransformation {
             cell.name = "td"
        }
     }
+    
+    XRule(forAttributes: "label") { label in
+        label.element["label"] = label.value + ")"
+    }
 
 }
 ```

@@ -185,6 +185,8 @@ public final class XDocument: XNode, XBranchInternal {
     var _elementsOfName_last = [String:XElement]()
     
     func registerElement(element: XElement) {
+        
+        // register via name:
         let name = element.name
         if let theLast = _elementsOfName_last[name] {
             theLast.nextWithSameName = element
@@ -194,6 +196,14 @@ public final class XDocument: XNode, XBranchInternal {
             _elementsOfName_first[name] = element
         }
         _elementsOfName_last[name] = element
+        
+        // register according attributes:
+        for (attributeName,attributeValue) in element._attributes {
+            if _document?.namesOfRegisteredAttributes?.contains(attributeName) == true {
+                registerAttribute(attributeProperties: AttributeProperties(value: attributeValue, element: element), withName: attributeName)
+            }
+        }
+        
         element._document = self
     }
     
@@ -210,6 +220,13 @@ public final class XDocument: XNode, XBranchInternal {
         }
         element.previousWithSameName = nil
         element.nextWithSameName = nil
+        
+        // unregister registered attributes:
+        for (attributeName,attributeProperties) in element._registeredAttributes {
+            element._attributes[attributeName] = attributeProperties.value
+            unregisterAttribute(attributeProperties: attributeProperties, withName: attributeName)
+        }
+        
         element._document = nil
     }
     
@@ -225,16 +242,70 @@ public final class XDocument: XNode, XBranchInternal {
         return XElementsOfNamesSequence(forNames: names, forDocument: self)
     }
     
+    // -------------------------------------------------------------------------
+    // attributes of same name:
+    // -------------------------------------------------------------------------
+    
+    var _attributesOfName_first = [String:AttributeProperties]()
+    var _attributesOfName_last = [String:AttributeProperties]()
+    
+    func registerAttribute(attributeProperties: AttributeProperties, withName name: String) {
+        if let theLast = _attributesOfName_last[name] {
+            theLast.nextWithSameName = attributeProperties
+            attributeProperties.previousWithSameName = theLast
+        }
+        else {
+            _attributesOfName_first[name] = attributeProperties
+        }
+        _attributesOfName_last[name] = attributeProperties
+        attributeProperties.nextWithSameName = nil
+    }
+    
+    func unregisterAttribute(attributeProperties: AttributeProperties, withName name: String) {
+        attributeProperties.gotoPreviousOnAttributeIterators()
+        attributeProperties.previousWithSameName?.nextWithSameName = attributeProperties.nextWithSameName
+        attributeProperties.nextWithSameName?.previousWithSameName = attributeProperties.previousWithSameName
+        if _attributesOfName_first[name] === attributeProperties {
+            _attributesOfName_first[name] = attributeProperties.nextWithSameName
+        }
+        if _attributesOfName_last[name] === attributeProperties {
+            _attributesOfName_last[name] = attributeProperties.previousWithSameName
+        }
+        attributeProperties.previousWithSameName = nil
+        attributeProperties.nextWithSameName = nil
+    }
+    
+    public func attributes(_ name: String) -> XAttributeSequence {
+        return XAttributesOfSameNameSequence(document: self, attributeName: name)
+    }
+    
+    public func attributes(_ names: String...) -> XAttributeSequence {
+        return attributes(names)
+    }
+    
+    public func attributes(_ names: [String]) -> XAttributeSequence {
+        return XAttributesOfNamesSequence(forNames: names, forDocument: self)
+    }
+    
     deinit {
+        
         // destroy lists of elements with same name:
         for element in _elementsOfName_first.values { element.removeFollowingWithSameName() }
+        
+        // destroy lists of attributes with same name:
+        _attributesOfName_first.values.forEach { attribute in attribute.removeFollowingWithSameName() }
+        
     }
     
     // -------------------------------------------------------------------------
     
+    let namesOfRegisteredAttributes: [String]?
+    
     public init(
-        attached: [String:Any?]? = nil
+        attached: [String:Any?]? = nil,
+        registeringAttributes namesOfRegisteredAttributes: [String]? = nil
     ) {
+        self.namesOfRegisteredAttributes = namesOfRegisteredAttributes
         super.init()
         _document = self
         self._lastInTree = self
@@ -249,11 +320,10 @@ public final class XDocument: XNode, XBranchInternal {
     
     public convenience init(
         attached: [String:Any?]? = nil,
-        elementNamesToRegister: Set<String>? = nil,
-        attributeNamesToRegister: Set<String>? = nil,
+        registeringAttributes namesOfRegisteredAttributes: [String]? = nil,
         @XContentBuilder builder: () -> [XContent]
     ) {
-        self.init(attached: attached)
+        self.init(attached: attached, registeringAttributes: namesOfRegisteredAttributes)
         for node in builder() {
             _add(node)
         }

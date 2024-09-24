@@ -36,3 +36,12 @@ public protocol XElementIteratorProtocol {
     mutating func next() -> XElement?
     mutating func previous() -> XElement?
 }
+
+/**
+ XAttributeIteratorProtocol is the version of XNodeIteratorProtocol for
+ attributes.
+ */
+protocol XAttributeIteratorProtocol {
+    mutating func next() -> AttributeProperties?
+    mutating func previous() -> AttributeProperties?
+}

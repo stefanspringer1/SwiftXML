@@ -1250,6 +1250,49 @@ public protocol XTextualContentRepresentation {
     var value: String { get set }
 }
 
+final class AttributeProperties {
+    
+    private var attributeIterators = WeakList<XBidirectionalAttributeIterator>()
+    
+    func addAttributeIterator(_ attributeIterator: XBidirectionalAttributeIterator) {
+        attributeIterators.append(attributeIterator)
+    }
+    
+    func removeAttributeIterator(_ attributeIterator: XBidirectionalAttributeIterator) {
+        attributeIterators.remove(attributeIterator)
+    }
+    
+    func gotoPreviousOnAttributeIterators() {
+        attributeIterators.forEach { _ = $0.previous() }
+    }
+    
+    func prefetchOnAttributeIterators() {
+        attributeIterators.forEach { $0.prefetch() }
+    }
+    
+    var value: String
+    weak var element: XElement?
+    
+    weak var previousWithSameName: AttributeProperties? = nil
+    var nextWithSameName: AttributeProperties? = nil
+    
+    init(value: String, element: XElement) {
+        self.value = value
+        self.element = element
+    }
+    
+    // prevent stack overflow when destroying the list of elements with same name,
+    // to be applied on the first element in that list,
+    // cf. https://forums.swift.org/t/deep-recursion-in-deinit-should-not-happen/54987
+    // !!! This should not be necessary anymore with Swift 5.7 or on masOS 13. !!!
+    func removeFollowingWithSameName() {
+        var node = self
+        while isKnownUniquelyReferenced(&node.nextWithSameName) {
+            (node, node.nextWithSameName) = (node.nextWithSameName!, nil)
+        }
+    }
+}
+
 public struct XMLCollector {
     
     private var contents = [XContent]()
@@ -1503,27 +1546,28 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     func prefetchOnElementIterators() {
         for node in elementIterators { node.prefetch() }
     }
-
+    
     private var nameIterators = WeakList<XXBidirectionalElementNameIterator>()
-
+    
     func addNameIterator(_ elementIterator: XXBidirectionalElementNameIterator) {
         nameIterators.append(elementIterator)
     }
-
+    
     func removeNameIterator(_ elementIterator: XXBidirectionalElementNameIterator) {
         nameIterators.remove(elementIterator)
     }
-
+    
     func gotoPreviousOnNameIterators() {
         for node in nameIterators { _ = node.previous() }
     }
-
+    
     func prefetchOnNameIterators() {
         for node in nameIterators { node.prefetch() }
     }
-
-    var _attributes = [String:String]()
-
+    
+    var _attributes = [String:String]() // contains all attributes, including the registered ones
+    var _registeredAttributes = [String:AttributeProperties]() // the registered attributes
+    
     public override var backLink: XElement? { super.backLink as? XElement }
     public override var finalBackLink: XElement? { super.finalBackLink as? XElement }
 
@@ -1601,7 +1645,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
 
     public var attributeNames: [String] {
         get {
-            return Array(_attributes.keys).sorted{ $0.caseInsensitiveCompare($1) == .orderedAscending }
+            return _attributes.keys.sorted{ $0.caseInsensitiveCompare($1) == .orderedAscending }
         }
     }
 
@@ -1684,18 +1728,32 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
             (node, node.nextWithSameName) = (node.nextWithSameName!, nil)
         }
     }
-
+    
     public subscript(attributeName: String) -> String? {
         get {
-            return _attributes[attributeName]
+            _attributes[attributeName]
         }
         set {
-            if newValue != _attributes[attributeName] {
-                _attributes[attributeName] = newValue
+            _attributes[attributeName] = newValue
+            if let theDocument = _document, theDocument.namesOfRegisteredAttributes?.contains(attributeName) == true {
+                if let newValue {
+                    if let existingAttribute = _registeredAttributes[attributeName] {
+                        existingAttribute.value = newValue
+                    }
+                    else {
+                        let newAttribute = AttributeProperties(value: newValue, element: self)
+                        _registeredAttributes[attributeName] = newAttribute
+                        theDocument.registerAttribute(attributeProperties: newAttribute, withName: attributeName)
+                    }
+                }
+                else if let existingAttribute = _registeredAttributes.removeValue(forKey: attributeName) {
+                    _registeredAttributes[attributeName] = nil
+                    theDocument.unregisterAttribute(attributeProperties: existingAttribute, withName: attributeName)
+                }
             }
         }
     }
-
+    
     public func pullAttribute(_ name: String) -> String? {
         if let value = self[name] {
             self[name] = nil
@@ -1747,7 +1805,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     init(_ name: String, document: XDocument) {
         self._name = name
         super.init()
-        self._document = document
+        setDocument(document: _document)
     }
     
     public override func _removeKeep() {
