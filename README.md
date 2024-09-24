@@ -229,7 +229,7 @@ Reading from a URL which references a local file:
 ```swift
 func parseXML(
     fromURL: URL,
-    registeringAttributes namesOfRegisteredAttributes: [String]? = nil,
+    registeringAttributes attributeRegisterMode: AttributeRegisterMode = .none,
     sourceInfo: String?,
     textAllowedInElementWithName: ((String) -> Bool)?,
     internalEntityAutoResolve: Bool,
@@ -624,7 +624,7 @@ Find the elements of several name alternatives by using several names in `elemen
 
 ## Direct access to attributes
 
-To directly find where an attribut with a certain name is set, you can use an analogue to the direct access to elements, but for efficiency reason you have to specify the attribute names which can be used for such a direct access. You specify these attribute names when creating a document (e.g. `XDocument(registeringAttributes: ["id", "label"])`) or indirecting when using the parse functions (e.g. `try parseXML(fromText: "...", registeringAttributes: ["id", "label"])`).
+To directly find where an attribut with a certain name is set, you can use an analogue to the direct access to elements, but for efficiency reason you have to specify the attribute names which can be used for such a direct access. You specify these attribute names when creating a document (e.g. `XDocument(registeringAttributes: .selected(["id", "label"]))`) or indirecting when using the parse functions (e.g. `try parseXML(fromText: "...", registeringAttributes: .selected(["id", "label"]))`).
 
 Example:
 
@@ -636,7 +636,7 @@ let document = try parseXML(fromText: """
       <x c="3"/>
       <x d="4"/>
     </test>
-    """, registeringAttributes: ["a", "c"])
+    """, registeringAttributes: .selected(["a", "c"]))
 
 let registeredValuesInfo = document.registeredAttributes("a", "b", "c", "d").map{ "\($0.name)=\"\($0.value)\" in \($0.element)" }.joined(separator: ", ")
 print(registeredValuesInfo) // "a="1" in <x a="1">, c="3" in <x c="3">"

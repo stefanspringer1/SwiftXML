@@ -1735,7 +1735,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         }
         set {
             _attributes[attributeName] = newValue
-            if let theDocument = _document, theDocument.namesOfRegisteredAttributes?.contains(attributeName) == true {
+            if let theDocument = _document, theDocument.attributeToBeRegistered(withName: attributeName) {
                 if let newValue {
                     if let existingAttribute = _registeredAttributes[attributeName] {
                         existingAttribute.value = newValue

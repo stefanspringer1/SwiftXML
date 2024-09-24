@@ -14,7 +14,7 @@ import SwiftXMLParser
 
 public func parseXML(
     from documentSource: XDocumentSource,
-    registeringAttributes namesOfRegisteredAttributes: [String]? = nil,
+    registeringAttributes attributeRegisterMode: AttributeRegisterMode = .none,
     sourceInfo: String? = nil,
     textAllowedInElementWithName: ((String) -> Bool)? = nil,
     internalEntityAutoResolve: Bool = false,
@@ -28,7 +28,7 @@ public func parseXML(
     eventHandlers: [XEventHandler]? = nil
 ) throws -> XDocument {
     
-    let document = XDocument(registeringAttributes: namesOfRegisteredAttributes)
+    let document = XDocument(registeringAttributes: attributeRegisterMode)
     
     switch documentSource {
     case .url(url: let url):
@@ -63,7 +63,7 @@ public func parseXML(
 
 public func parseXML(
     fromPath path: String,
-    registeringAttributes namesOfRegisteredAttributes: [String]? = nil,
+    registeringAttributes attributeRegisterMode: AttributeRegisterMode = .none,
     sourceInfo: String? = nil,
     textAllowedInElementWithName: ((String) -> Bool)? = nil,
     internalEntityAutoResolve: Bool = false,
@@ -78,7 +78,7 @@ public func parseXML(
 ) throws -> XDocument {
     try parseXML(
         from: .path(path),
-        registeringAttributes: namesOfRegisteredAttributes,
+        registeringAttributes: attributeRegisterMode,
         sourceInfo: sourceInfo,
         textAllowedInElementWithName: textAllowedInElementWithName,
         internalEntityAutoResolve: internalEntityAutoResolve,
@@ -95,7 +95,7 @@ public func parseXML(
 
 public func parseXML(
     fromURL url: URL,
-    registeringAttributes namesOfRegisteredAttributes: [String]? = nil,
+    registeringAttributes attributeRegisterMode: AttributeRegisterMode = .none,
     sourceInfo: String? = nil,
     textAllowedInElementWithName: ((String) -> Bool)? = nil,
     internalEntityAutoResolve: Bool = false,
@@ -110,7 +110,7 @@ public func parseXML(
 ) throws -> XDocument {
     try parseXML(
         from: .url(url),
-        registeringAttributes: namesOfRegisteredAttributes,
+        registeringAttributes: attributeRegisterMode,
         sourceInfo: sourceInfo,
         textAllowedInElementWithName: textAllowedInElementWithName,
         internalEntityAutoResolve: internalEntityAutoResolve,
@@ -127,7 +127,7 @@ public func parseXML(
 
 public func parseXML(
     fromText text: String,
-    registeringAttributes namesOfRegisteredAttributes: [String]? = nil,
+    registeringAttributes attributeRegisterMode: AttributeRegisterMode = .none,
     sourceInfo: String? = nil,
     textAllowedInElementWithName: ((String) -> Bool)? = nil,
     internalEntityAutoResolve: Bool = false,
@@ -142,7 +142,7 @@ public func parseXML(
 ) throws -> XDocument {
     try parseXML(
         from: .text(text),
-        registeringAttributes: namesOfRegisteredAttributes,
+        registeringAttributes: attributeRegisterMode,
         sourceInfo: sourceInfo,
         textAllowedInElementWithName: textAllowedInElementWithName,
         internalEntityAutoResolve: internalEntityAutoResolve,
@@ -159,7 +159,7 @@ public func parseXML(
 
 public func parseXML(
     fromData data: Data,
-    registeringAttributes namesOfRegisteredAttributes: [String]? = nil,
+    registeringAttributes attributeRegisterMode: AttributeRegisterMode = .none,
     sourceInfo: String? = nil,
     internalEntityAutoResolve: Bool = false,
     internalEntityResolver: InternalEntityResolver? = nil,
@@ -176,7 +176,7 @@ public func parseXML(
 ) throws -> XDocument {
     try parseXML(
         from: .data(data),
-        registeringAttributes: namesOfRegisteredAttributes,
+        registeringAttributes: attributeRegisterMode,
         sourceInfo: sourceInfo,
         textAllowedInElementWithName: textAllowedInElementWithName,
         internalEntityAutoResolve: internalEntityAutoResolve,

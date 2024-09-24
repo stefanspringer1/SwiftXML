@@ -67,7 +67,7 @@ final class SwiftXMLTests: XCTestCase {
                 <b id="2"/>
                 <b id="3"/>
             </a>
-            """, registeringAttributes: ["id"])
+            """, registeringAttributes: .selected(["id"]))
         let element = document.children.first!
         XCTAssertEqual(element["id"], "1")
         XCTAssertEqual(document.registeredAttributes("id").map { attributeSpot in attributeSpot.value }.joined(separator: ", "), "1, 2, 3")
@@ -307,7 +307,7 @@ final class SwiftXMLTests: XCTestCase {
               <x c="3"/>
               <x d="4"/>
             </test>
-            """, registeringAttributes: ["a", "c"])
+            """, registeringAttributes: .selected(["a", "c"]))
         
         let registeredValuesInfo = document.registeredAttributes("a", "b", "c", "d").map{ "\($0.name)=\"\($0.value)\" in \($0.element)" }.joined(separator: ", ")
         XCTAssertEqual(registeredValuesInfo, #"a="1" in <x a="1">, c="3" in <x c="3">"#)
@@ -326,9 +326,9 @@ final class SwiftXMLTests: XCTestCase {
               <x c="3"/>
               <x d="4"/>
             </test>
-            """, registeringAttributes: ["a", "c"])
+            """, registeringAttributes: .selected(["a", "c"]))
         
-        let document = XDocument(registeringAttributes: ["a", "c"]) {
+        let document = XDocument(registeringAttributes: .selected(["a", "c"])) {
             oldDocument.children
         }
         
@@ -481,7 +481,7 @@ final class SwiftXMLTests: XCTestCase {
                <x c="c2"/>
                <x d="d2"/>
            </a>
-           """, registeringAttributes: ["b", "c", "d"])
+           """, registeringAttributes: .selected(["b", "c", "d"]))
 
         var collectedAttributeValues = [String]()
 
@@ -596,7 +596,7 @@ final class SwiftXMLTests: XCTestCase {
     func testSingleAttributeNameIteratorWithRemoval() throws {
         let document = try parseXML(fromText: """
             <a><b id="1"/><b id="2"/></a>
-            """, registeringAttributes: ["id"])
+            """, registeringAttributes: .selected(["id"]))
         
         var elementFoundInfos = [String]()
         document.registeredAttributes("id").forEach { attributeSpot in
@@ -613,7 +613,7 @@ final class SwiftXMLTests: XCTestCase {
     func testMultipleAttributeNamesIteratorWithRemoval() throws {
         let document = try parseXML(fromText: """
             <a type="type1"><b id="1"/><b id="2"/></a>
-            """, registeringAttributes: ["type", "id"])
+            """, registeringAttributes: .selected(["type", "id"]))
         
         var elementFoundInfos = [String]()
         document.registeredAttributes("type", "id").forEach { attributeSpot in

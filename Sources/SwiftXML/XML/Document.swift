@@ -18,6 +18,10 @@ final class XValue {
     }
 }
 
+public enum AttributeRegisterMode {
+    case none; case selected(_ attributeNames: [String]); case all
+}
+
 public final class XDocument: XNode, XBranchInternal {
     
     public var firstChild: XElement? { _firstChild }
@@ -199,7 +203,7 @@ public final class XDocument: XNode, XBranchInternal {
         
         // register according attributes:
         for (attributeName,attributeValue) in element._attributes {
-            if _document?.namesOfRegisteredAttributes?.contains(attributeName) == true {
+            if _document?.attributeToBeRegistered(withName: attributeName) == true {
                 let attributeProperties = AttributeProperties(value: attributeValue, element: element)
                 element._registeredAttributes[attributeName] = attributeProperties
                 registerAttribute(attributeProperties: attributeProperties, withName: attributeName)
@@ -301,13 +305,24 @@ public final class XDocument: XNode, XBranchInternal {
     
     // -------------------------------------------------------------------------
     
-    let namesOfRegisteredAttributes: [String]?
+    private let _attributeRegisterMode: AttributeRegisterMode
+    
+    func attributeToBeRegistered(withName name: String) -> Bool {
+        switch _attributeRegisterMode {
+        case .none:
+            false
+        case .selected(let attributeNames):
+            attributeNames.contains(name)
+        case .all:
+            true
+        }
+    }
     
     public init(
         attached: [String:Any?]? = nil,
-        registeringAttributes namesOfRegisteredAttributes: [String]? = nil
+        registeringAttributes attributeRegisterMode: AttributeRegisterMode = .none
     ) {
-        self.namesOfRegisteredAttributes = namesOfRegisteredAttributes
+        self._attributeRegisterMode = attributeRegisterMode
         super.init()
         _document = self
         self._lastInTree = self
@@ -322,10 +337,10 @@ public final class XDocument: XNode, XBranchInternal {
     
     public convenience init(
         attached: [String:Any?]? = nil,
-        registeringAttributes namesOfRegisteredAttributes: [String]? = nil,
+        registeringAttributes attributeRegisterMode: AttributeRegisterMode = .none,
         @XContentBuilder builder: () -> [XContent]
     ) {
-        self.init(attached: attached, registeringAttributes: namesOfRegisteredAttributes)
+        self.init(attached: attached, registeringAttributes: attributeRegisterMode)
         for node in builder() {
             _add(node)
         }
