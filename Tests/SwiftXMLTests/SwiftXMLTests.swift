@@ -309,10 +309,10 @@ final class SwiftXMLTests: XCTestCase {
             </test>
             """, registeringAttributes: ["a", "c"])
         
-        let registeredValuesInfo = document.attributes("a", "b", "c", "d").map{ attributeProperties in attributeProperties.value }.joined(separator: ", ")
+        let registeredValuesInfo = document.attributes("a", "b", "c", "d").map{ $0.value }.joined(separator: ", ")
         XCTAssertEqual(registeredValuesInfo, #"1, 3"#)
         
-        let allValuesInfo = document.elements("x").compactMap{ element in element[element.attributeNames.first ?? "?"] }.joined(separator: ", ")
+        let allValuesInfo = document.elements("x").compactMap{ $0[$0.attributeNames.first ?? "?"] }.joined(separator: ", ")
         XCTAssertEqual(allValuesInfo, #"1, 2, 3, 4"#)
     }
     
