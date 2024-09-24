@@ -19,6 +19,41 @@ public struct XRule {
     public let names: [String]
     public let action: Any
     
+#if DEBUG
+    
+    public let actionFile: String
+    public let actionLine: Int
+
+    public init(forElements names: [String], file: String = #file, line: Int = #line, action: @escaping XElementAction) {
+        self.names = names
+        self.action = action
+        self.actionFile = file
+        self.actionLine = line
+    }
+
+    public init(forElements names: String..., file: String = #file, line: Int = #line, action: @escaping XElementAction) {
+        self.names = names
+        self.action = action
+        self.actionFile = file
+        self.actionLine = line
+    }
+    
+    public init(forAttributes names: [String], file: String = #file, line: Int = #line, action: @escaping XAttributeAction) {
+        self.names = names
+        self.action = action
+        self.actionFile = file
+        self.actionLine = line
+    }
+    
+    public init(forAttributes names: String..., file: String = #file, line: Int = #line, action: @escaping XAttributeAction) {
+        self.names = names
+        self.action = action
+        self.actionFile = file
+        self.actionLine = line
+    }
+    
+#else
+    
     public init(forElements names: [String], action: @escaping XElementAction) {
         self.names = names
         self.action = action
@@ -30,8 +65,8 @@ public struct XRule {
     }
     
     public init(forAttributes names: [String], action: @escaping XAttributeAction) {
-            self.names = names
-            self.action = action
+        self.names = names
+        self.action = action
     }
     
     public init(forAttributes names: String..., action: @escaping XAttributeAction) {
@@ -39,6 +74,7 @@ public struct XRule {
         self.action = action
     }
     
+#endif
 }
 
 public protocol XRulesConvertible {
@@ -98,38 +134,64 @@ public class XTransformation {
 
     public func execute(inDocument document: XDocument) {
 
-        var iteratorsWithActions = [(Any,Any)]()
+        #if DEBUG
+        struct AppliedAction { let iterator: any IteratorProtocol; let action: Any; let actionFile: String; let actionLine: Int }
+        #else
+        struct AppliedAction { let iterator: any IteratorProtocol; let action: Any }
+        #endif
+        
+        var iteratorsWithAppliedActions = [AppliedAction]()
 
         for rule in rules {
             if let elementAction = rule.action as? XElementAction {
                 for name in rule.names {
-                    iteratorsWithActions.append((
-                        XXBidirectionalElementNameIterator(elementIterator: XElementsOfSameNameIterator(document: document, name: name, keepLast: true), keepLast: true),
-                        elementAction
+                    #if DEBUG
+                    iteratorsWithAppliedActions.append(AppliedAction(
+                        iterator: XXBidirectionalElementNameIterator(elementIterator: XElementsOfSameNameIterator(document: document, name: name, keepLast: true), keepLast: true),
+                        action: elementAction,
+                        actionFile: rule.actionFile,
+                        actionLine: rule.actionLine
                     ))
+                    #else
+                    iteratorsWithAppliedActions.append(AppliedAction(
+                        iterator: XXBidirectionalElementNameIterator(elementIterator: XElementsOfSameNameIterator(document: document, name: name, keepLast: true), keepLast: true),
+                        action: elementAction
+                    ))
+                    #endif
                 }
             } else if let attributeAction = rule.action as? XAttributeAction {
                 rule.names.forEach { name in
-                    iteratorsWithActions.append((
-                        XBidirectionalAttributeIterator(forAttributeName: name, attributeIterator: XAttributesOfSameNameIterator(document: document, attributeName: name, keepLast: true), keepLast: true),
-                        attributeAction
+                    #if DEBUG
+                    iteratorsWithAppliedActions.append(AppliedAction(
+                        iterator: XBidirectionalAttributeIterator(forAttributeName: name, attributeIterator: XAttributesOfSameNameIterator(document: document, attributeName: name, keepLast: true), keepLast: true),
+                        action: attributeAction,
+                        actionFile: rule.actionFile,
+                        actionLine: rule.actionLine
                     ))
+                    #else
+                    iteratorsWithAppliedActions.append(AppliedAction(
+                        iterator: XBidirectionalAttributeIterator(forAttributeName: name, attributeIterator: XAttributesOfSameNameIterator(document: document, attributeName: name, keepLast: true), keepLast: true),
+                        action: attributeAction
+                    ))
+                    #endif
                 }
             }
         }
-
+        
         var working = true; stopped = false
         while !stopped && working {
             working = false
-            actions: for (_iterator,_action) in iteratorsWithActions {
+            actions: for appliedAction in iteratorsWithAppliedActions {
                 if stopped { break actions }
-                if let iterator = _iterator as? XXBidirectionalElementNameIterator, let action = _action as? XElementAction {
-                    while !stopped, let next = iterator.next() {
+                if let iterator = appliedAction.iterator as? XXBidirectionalElementNameIterator, let action = appliedAction.action as? XElementAction {
+                    action: while let next = iterator.next() {
+                        if stopped { break action }
                         working = true
                         action(next)
                     }
-                } else if let iterator = _iterator as? XBidirectionalAttributeIterator, let action = _action as? XAttributeAction {
-                    while !stopped, let attribute = iterator.next() {
+                } else if let iterator = appliedAction.iterator as? XBidirectionalAttributeIterator, let action = appliedAction.action as? XAttributeAction {
+                    action: while let attribute = iterator.next() {
+                        if stopped { break action }
                         working = true
                         action(attribute)
                     }
