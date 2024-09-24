@@ -76,7 +76,9 @@ let transformation = XTransformation {
 
 **UPDATE 19 (March 2024):** `description` add quotation marks for `XText`.
 
-**UPDATE 20 (may 2024):** Renamed `allTextsCollected` to `allTextsCombined`.
+**UPDATE 20 (May 2024):** Renamed `allTextsCollected` to `allTextsCombined`.
+
+**UPDATE 21 (September 2024):** When creating a document, you may specify attribute names to be registered (again). Removed `extension FileHandle: TextOutputStream`.
 
 ---
 
@@ -227,6 +229,7 @@ Reading from a URL which references a local file:
 ```swift
 func parseXML(
     fromURL: URL,
+    registeringAttributes namesOfRegisteredAttributes: [String]? = nil,
     sourceInfo: String?,
     textAllowedInElementWithName: ((String) -> Bool)?,
     internalEntityAutoResolve: Bool,
@@ -618,6 +621,29 @@ for paragraph in myDocument.elements("paragraph") {
 ```
 
 Find the elements of several name alternatives by using several names in `elements(_:)`. Note that just like the methods for single names, what you add during the iteration will then also be considered.
+
+## Direct access to attributes
+
+To directly find where an attribut with a certain name is set, you can use an analogue to the direct access to elements, but for efficiency reason you have to specify the attribute names which can be used for such a direct access. You specify these attribute names when creating a document (e.g. `XDocument(registeringAttributes: ["id", "label"])`) or indirecting when using the parse functions (e.g. `try parseXML(fromText: "...", registeringAttributes: ["id", "label"])`).
+
+Example:
+
+```swift
+let document = try parseXML(fromText: """
+    <test>
+      <x a="1"/>
+      <x b="2"/>
+      <x c="3"/>
+      <x d="4"/>
+    </test>
+    """, registeringAttributes: ["a", "c"])
+
+let registeredValuesInfo = document.attributes("a", "b", "c", "d").map{ attributeProperties in attributeProperties.value }.joined(separator: ", ")
+print(registeredValuesInfo) // "1, 3"
+
+let allValuesInfo = document.elements("x").compactMap{ element in element[element.attributeNames.first ?? "?"] }.joined(separator: ", ")
+print(allValuesInfo) // "1, 2, 3, 4"
+```
 
 ## Finding related content
 
@@ -1186,7 +1212,7 @@ First, the element “wrapper2” is built, and at that moment the sequence `b.n
 
 ### Document membership in constructed elements
 
-Elements that are part of a document (`XDocument`) are registered in the document. The reason is that this allows fast access to elements and attributes of a certain name via `elements(_:)` and the exact functioning of rules (see the section below on rules).
+Elements that are part of a document (`XDocument`) are registered in the document. The reason is that this allows fast access to elements respectively attributes of a certain name via `elements(_:)` respectively `attributes(_:)`, and the rules (see the section about rules) use these registers (note that for efficiency reasons, the attribute names to be used in such a way have to be configured when a document is created).
 
 In the moment of constructing a new element with its content defined in `{...}` brackets during construction, the element is not part any document. The nodes inserted to it leave the document tree, but they are not (!) unregistered from the document. I.e. the iteration `elements(_:)` will still find them, and according rules will apply to them. The reason for this behaviour is the common case of the new element getting inserted into the same document. If the content of the new element would first get unregistered from the document and then get reinserted into the same document again, they would then count as new elements, and the mentioned iterations might iterate over them again.
 
