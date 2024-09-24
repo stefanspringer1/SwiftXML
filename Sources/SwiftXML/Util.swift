@@ -208,13 +208,6 @@ func unescapeInSimplePropertiesList(_ text: String) -> String {
     }.joined(separator: "\\")
 }
 
-extension FileHandle: TextOutputStream {
-  public func write(_ string: String) {
-    let data = Data(string.utf8)
-    self.write(data)
-  }
-}
-
 extension Sequence {
     
     func forEachAsync (
