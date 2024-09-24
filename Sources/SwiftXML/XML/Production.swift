@@ -120,7 +120,7 @@ public protocol XActiveProduction {
     func writeDocumentEnd(document: XDocument) throws
 }
 
-public class DefaultProductionTemplate: XProductionTemplate {
+open class DefaultProductionTemplate: XProductionTemplate {
     
     public let writeEmptyTags: Bool
     public let linebreak: String
@@ -325,7 +325,7 @@ open class ActiveDefaultProduction: XActiveProduction {
     }
 }
 
-public class PrettyPrintProductionTemplate: XProductionTemplate {
+open class PrettyPrintProductionTemplate: XProductionTemplate {
     
     public let writeEmptyTags: Bool
     public let indentation: String
