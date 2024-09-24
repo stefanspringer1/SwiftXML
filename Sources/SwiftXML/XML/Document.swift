@@ -37,6 +37,10 @@ public final class XDocument: XNode, XBranchInternal {
     public func firstChild(_ names: String...) -> XElement? {
         _firstChild(names)
     }
+        
+    public func firstChild(_ condition: (XElement) -> Bool) -> XElement? {
+        _firstChild(condition)
+    }
     
     public var xPath: String { "/" }
     

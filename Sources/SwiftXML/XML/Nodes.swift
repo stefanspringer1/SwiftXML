@@ -900,6 +900,7 @@ public protocol XBranch: XNode {
     func firstChild(_ name: String) -> XElement?
     func firstChild(_ names: [String]) -> XElement?
     func firstChild(_ names: String...) -> XElement?
+    func firstChild(_ condition: (XElement) -> Bool) -> XElement?
     var isEmpty: Bool { get }
     func add(@XContentBuilder builder: () -> [XContent])
     func addFirst(@XContentBuilder builder: () -> [XContent])
@@ -953,6 +954,17 @@ extension XBranchInternal {
     
     public func _firstChild(_ names: String...) -> XElement? {
         firstChild(names)
+    }
+    
+    public func _firstChild(_ condition: (XElement) -> Bool) -> XElement? {
+        var node = __firstContent
+        while let theNode = node {
+            if let child = theNode as? XElement, condition(child) {
+                return child
+            }
+            node = theNode._next
+        }
+        return nil
     }
     
     /**
@@ -1492,6 +1504,10 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     
     public func firstChild(_ names: String...) -> XElement? {
         _firstChild(names)
+    }
+    
+    public func firstChild(_ condition: (XElement) -> Bool) -> XElement? {
+        _firstChild(condition)
     }
 
     func setDocument(document newDocument: XDocument?) {
