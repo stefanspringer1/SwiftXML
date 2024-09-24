@@ -318,6 +318,29 @@ final class SwiftXMLTests: XCTestCase {
         XCTAssertEqual(allValuesInfo, #"a="1" in <x a="1">, b="2" in <x b="2">, c="3" in <x c="3">, d="4" in <x d="4">"#)
     }
     
+    func testSomeAttributesRegisteredAfterMovingToNewDocument() throws {
+        let oldDocument = try parseXML(fromText: """
+            <test>
+              <x a="1"/>
+              <x b="2"/>
+              <x c="3"/>
+              <x d="4"/>
+            </test>
+            """, registeringAttributes: ["a", "c"])
+        
+        let document = XDocument(registeringAttributes: ["a", "c"]) {
+            oldDocument.children
+        }
+        
+        let registeredValuesInfo = document.registeredAttributes("a", "b", "c", "d").map{ "\($0.name)=\"\($0.value)\" in \($0.element)" }.joined(separator: ", ")
+        XCTAssertEqual(registeredValuesInfo, #"a="1" in <x a="1">, c="3" in <x c="3">"#)
+        
+        let allValuesInfo = document.elements("x").compactMap{
+            if let name = $0.attributeNames.first, let value = $0[name] { "\(name)=\"\(value)\" in \($0)" } else { nil }
+        }.joined(separator: ", ")
+        XCTAssertEqual(allValuesInfo, #"a="1" in <x a="1">, b="2" in <x b="2">, c="3" in <x c="3">, d="4" in <x d="4">"#)
+    }
+    
     func testAttributeValueSequence() throws {
         let document = try parseXML(fromText: """
             <test>

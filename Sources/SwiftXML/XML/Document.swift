@@ -200,7 +200,9 @@ public final class XDocument: XNode, XBranchInternal {
         // register according attributes:
         for (attributeName,attributeValue) in element._attributes {
             if _document?.namesOfRegisteredAttributes?.contains(attributeName) == true {
-                registerAttribute(attributeProperties: AttributeProperties(value: attributeValue, element: element), withName: attributeName)
+                let attributeProperties = AttributeProperties(value: attributeValue, element: element)
+                element._registeredAttributes[attributeName] = attributeProperties
+                registerAttribute(attributeProperties: attributeProperties, withName: attributeName)
             }
         }
         
@@ -223,9 +225,9 @@ public final class XDocument: XNode, XBranchInternal {
         
         // unregister registered attributes:
         for (attributeName,attributeProperties) in element._registeredAttributes {
-            element._attributes[attributeName] = attributeProperties.value
             unregisterAttribute(attributeProperties: attributeProperties, withName: attributeName)
         }
+        element._registeredAttributes.removeAll()
         
         element._document = nil
     }
