@@ -1436,9 +1436,6 @@ public struct XContentBuilder {
 }
 
 public final class XElement: XContent, XBranchInternal, CustomStringConvertible {
-    #if DEBUG
-    public var encounteredActionsAt: [(String, Int)] = []
-    #endif
 
     public var firstChild: XElement? { _firstChild }
     

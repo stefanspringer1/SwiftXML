@@ -16,25 +16,7 @@ public struct XRule {
 
     public let names: [String]
     public let action: Any
-
-    #if DEBUG
-    public let actionFile: String
-    public let actionLine: Int
-
-    public init(forElements names: [String], file: String = #file, line: Int = #line, action: @escaping XElementAction) {
-        self.names = names
-        self.action = action
-        self.actionFile = file
-        self.actionLine = line
-    }
-
-    public init(forElements names: String...,  file: String = #file, line: Int = #line, action: @escaping XElementAction) {
-        self.names = names
-        self.action = action
-        self.actionFile = file
-        self.actionLine = line
-    }
-    #else
+    
     public init(forElements names: [String], action: @escaping XElementAction) {
         self.names = names
         self.action = action
@@ -44,7 +26,7 @@ public struct XRule {
         self.names = names
         self.action = action
     }
-    #endif
+    
 }
 
 public protocol XRulesConvertible {
@@ -104,28 +86,15 @@ public class XTransformation {
 
     public func execute(inDocument document: XDocument) {
 
-        #if DEBUG
-        var iteratorsWithActions = [(Any,Any, String, Int)]()
-        #else
         var iteratorsWithActions = [(Any,Any)]()
-        #endif
 
         for rule in rules {
             if let elementAction = rule.action as? XElementAction {
                 for name in rule.names {
-                    #if DEBUG
-                    iteratorsWithActions.append((
-                        XXBidirectionalElementNameIterator(elementIterator: XElementsOfSameNameIterator(document: document, name: name, keepLast: true), keepLast: true),
-                        elementAction,
-                        rule.actionFile,
-                        rule.actionLine
-                    ))
-                    #else
                     iteratorsWithActions.append((
                         XXBidirectionalElementNameIterator(elementIterator: XElementsOfSameNameIterator(document: document, name: name, keepLast: true), keepLast: true),
                         elementAction
                     ))
-                    #endif
                 }
             }
 
@@ -134,17 +103,6 @@ public class XTransformation {
         var working = true; stopped = false
         while !stopped && working {
             working = false
-            #if DEBUG
-            for (_iterator, _action, actionFile, actionLine) in iteratorsWithActions {
-                if !stopped, let iterator = _iterator as? XXBidirectionalElementNameIterator, let action = _action as? XElementAction {
-                    while !stopped, let next = iterator.next() {
-                        working = true
-                        next.encounteredActionsAt.append((actionFile, actionLine))
-                        action(next)
-                    }
-                }
-            }
-            #else
             for (_iterator,_action) in iteratorsWithActions {
                 if !stopped, let iterator = _iterator as? XXBidirectionalElementNameIterator, let action = _action as? XElementAction {
                     while !stopped, let next = iterator.next() {
@@ -153,7 +111,6 @@ public class XTransformation {
                     }
                 }
             }
-            #endif
         }
     }
 }
