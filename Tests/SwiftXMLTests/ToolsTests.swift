@@ -160,6 +160,25 @@ final class ToolsTests: XCTestCase {
             </section>
             """#)
     }
+    
+    func testHTMLOutput0() throws {
+        let source = """
+            <div><h1>The title</h1><p>1st paragraph</p><a name="anchor1"/><p>2nd paragraph</p></div>
+            """
+        XCTAssertEqual(
+            try parseXML(fromText: source).serialized(usingProductionTemplate: HTMLProductionTemplate()),
+            """
+            <!DOCTYPE html>
+            <div>
+              <h1>The title</h1>
+              <p>1st paragraph</p>
+              <a name="anchor1"></a>
+              <p>2nd paragraph</p>
+            </div>
+            """
+        )
+    }
+    
 }
 
 extension String: Error {}
