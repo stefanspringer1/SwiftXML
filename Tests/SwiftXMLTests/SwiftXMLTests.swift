@@ -814,6 +814,11 @@ final class SwiftXMLTests: XCTestCase {
             <a>&ent1;&ent2;</a>
             """
         
+        // parse without an internal entity resolver, all internal entities are kept with any notice:
+        XCTAssertEqual(try parseXML(
+            fromText: source
+        ).serialized(), "<a>&ent1;&ent2;</a>")
+        
         // leave unresolved internal entities:
         XCTAssertEqual(try parseXML(
             fromText: source,
