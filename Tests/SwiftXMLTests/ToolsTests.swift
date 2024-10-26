@@ -181,7 +181,21 @@ final class ToolsTests: XCTestCase {
     
 }
 
-extension String: Error {}
+/// An error with a description.
+///
+/// When printing such an error, its descrition is printed.
+public struct ErrorWithDescription: LocalizedError, CustomStringConvertible {
+
+    private let message: String
+
+    public init(_ message: String?) {
+        self.message = message ?? "(unkown error))"
+    }
+    
+    public var description: String { message }
+    
+    public var errorDescription: String? { message }
+}
 
 extension String {
     

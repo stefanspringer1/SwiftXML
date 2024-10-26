@@ -438,7 +438,7 @@ final class SwiftXMLTests: XCTestCase {
         
         _ = [1, 2, 3].map { String($0) }  // okay: map does not throw because the closure does not throw
         _ = try ["1", "2", "3"].map { (string: String) -> Int in
-            guard let result = Int(string) else { throw "nanana" }
+            guard let result = Int(string) else { throw ErrorWithDescription("nanana") }
             return result
         } // okay: map can throw because the closure can throw
     }

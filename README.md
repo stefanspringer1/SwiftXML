@@ -232,17 +232,18 @@ Reading from a URL which references a local file:
 func parseXML(
     fromURL: URL,
     registeringAttributes attributeRegisterMode: AttributeRegisterMode = .none,
-    sourceInfo: String?,
-    textAllowedInElementWithName: ((String) -> Bool)?,
-    internalEntityAutoResolve: Bool,
-    internalEntityResolver: InternalEntityResolver?,
-    insertExternalParsedEntities: Bool,
-    externalParsedEntitySystemResolver: ((String) -> URL?)?,
-    externalParsedEntityGetter: ((String) -> Data?)?,
-    externalWrapperElement: String?,
-    keepComments: Bool,
-    keepCDATASections: Bool,
-    eventHandlers: [XEventHandler]?
+    sourceInfo: String? = nil,
+    textAllowedInElementWithName: ((String) -> Bool)? = nil,
+    internalEntityAutoResolve: Bool = false,
+    internalEntityResolver: InternalEntityResolver? = nil,
+    internalEntityResolverHasToResolve: Bool = true,
+    insertExternalParsedEntities: Bool = false,
+    externalParsedEntitySystemResolver: ((String) -> URL?)? = nil,
+    externalParsedEntityGetter: ((String) -> Data?)? = nil,
+    externalWrapperElement: String? = nil,
+    keepComments: Bool = false,
+    keepCDATASections: Bool = false,
+    eventHandlers: [XEventHandler]? = nil
 ) throws -> XDocument
 ```
 
