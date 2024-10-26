@@ -376,6 +376,26 @@ public extension XContent {
         return XContentSequenceIncludingCondition(sequence: XNextSequence(content: self), untilAndIncluding: condition)
     }
     
+    var nextIncludingSelf: XContentSequence {
+        get { XNextSequence(content: self) }
+    }
+    
+    func nextIncludingSelf(_ condition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentSequenceWithCondition(sequence: XNextIncludingSelfSequence(content: self), condition: condition)
+    }
+    
+    func nextIncludingSelf(while condition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentSequenceWhileCondition(sequence: XNextIncludingSelfSequence(content: self), while: condition)
+    }
+    
+    func nextIncludingSelf(until condition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentSequenceUntilCondition(sequence: XNextIncludingSelfSequence(content: self), until: condition)
+    }
+    
+    func nextIncludingSelf(untilAndIncluding condition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentSequenceIncludingCondition(sequence: XNextIncludingSelfSequence(content: self), untilAndIncluding: condition)
+    }
+    
     var previous: XContentSequence {
         get { XPreviousSequence(content: self) }
     }
@@ -394,6 +414,26 @@ public extension XContent {
     
     func previous(untilAndIncluding condition: @escaping (XContent) -> Bool) -> XContentSequence {
         return XContentSequenceIncludingCondition(sequence: XPreviousSequence(content: self), untilAndIncluding: condition)
+    }
+    
+    var previousIncludingSelf: XContentSequence {
+        get { XPreviousIncludingSelfSequence(content: self) }
+    }
+    
+    func previousIncludingSelf(_ condition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentSequenceWithCondition(sequence: XPreviousIncludingSelfSequence(content: self), condition: condition)
+    }
+    
+    func previousIncludingSelf(while condition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentSequenceWhileCondition(sequence: XPreviousIncludingSelfSequence(content: self), while: condition)
+    }
+    
+    func previousIncludingSelf(until condition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentSequenceUntilCondition(sequence: XPreviousIncludingSelfSequence(content: self), until: condition)
+    }
+    
+    func previousIncludingSelf(untilAndIncluding condition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentSequenceIncludingCondition(sequence: XPreviousIncludingSelfSequence(content: self), untilAndIncluding: condition)
     }
     
     var nextTexts: XTextSequence {
@@ -502,7 +542,117 @@ public extension XContent {
     
 }
 
+public extension XText {
+    
+    
+    var nextTextsIncludingSelf: XTextSequence {
+        get { XNextTextsIncludingSelfSequence(text: self) }
+    }
+    
+    func nextTextsIncludingSelf(_ condition: @escaping (XText) -> Bool) -> XTextSequence {
+        return XTextSequenceWithCondition(sequence: XNextTextsIncludingSelfSequence(text: self), condition: condition)
+    }
+    
+    func nextTextsIncludingSelf(while condition: @escaping (XText) -> Bool) -> XTextSequence {
+        return XTextSequenceWhileCondition(sequence: XNextTextsIncludingSelfSequence(text: self), while: condition)
+    }
+    
+    func nextTextsIncludingSelf(until condition: @escaping (XText) -> Bool) -> XTextSequence {
+        return XTextSequenceUntilCondition(sequence: XNextTextsIncludingSelfSequence(text: self), until: condition)
+    }
+    
+    func nextTextsIncludingSelf(untilAndIncluding condition: @escaping (XText) -> Bool) -> XTextSequence {
+        return XTextSequenceIncludingCondition(sequence: XNextTextsIncludingSelfSequence(text: self), untilAndIncluding: condition)
+    }
+    
+    var previousTextsIncludingSelf: XTextSequence {
+        get { XPreviousTextsIncludingSelfSequence(text: self) }
+    }
+    
+    func previousTextsIncludingSelf(_ condition: @escaping (XText) -> Bool) -> XTextSequence {
+        return XTextSequenceWithCondition(sequence: XPreviousTextsIncludingSelfSequence(text: self), condition: condition)
+    }
+    
+    func previousTextsIncludingSelf(while condition: @escaping (XText) -> Bool) -> XTextSequence {
+        return XTextSequenceWhileCondition(sequence: XPreviousTextsIncludingSelfSequence(text: self), while: condition)
+    }
+    
+    func previousTextsIncludingSelf(until condition: @escaping (XText) -> Bool) -> XTextSequence {
+        return XTextSequenceUntilCondition(sequence: XPreviousTextsIncludingSelfSequence(text: self), until: condition)
+    }
+    
+    func previousTextsIncludingSelf(untilAndIncluding condition: @escaping (XText) -> Bool) -> XTextSequence {
+        return XTextSequenceIncludingCondition(sequence: XPreviousTextsIncludingSelfSequence(text: self), untilAndIncluding: condition)
+    }
+    
+}
+
 public extension XElement {
+    
+    
+    var nextElementsIncludingSelf: XElementSequence {
+        get { XNextElementsIncludingSelfSequence(element: self) }
+    }
+    
+    func nextElementsIncludingSelf(_ condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XNextElementsIncludingSelfSequence(element: self), condition: condition)
+    }
+    
+    func nextElementsIncludingSelf(_ name: String) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XNextElementsIncludingSelfSequence(element: self), elementName: name)
+    }
+    
+    func nextElementsIncludingSelf(_ names: String...) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XNextElementsIncludingSelfSequence(element: self), condition: { names.isEmpty || names.contains($0.name) })
+    }
+    
+    func nextElementsIncludingSelf(_ names: [String]) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XNextElementsIncludingSelfSequence(element: self), condition: { names.isEmpty || names.contains($0.name) })
+    }
+    
+    func nextElementsIncludingSelf(while condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWhileCondition(sequence: XNextElementsIncludingSelfSequence(element: self), while: condition)
+    }
+    
+    func nextElementsIncludingSelf(until condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceUntilCondition(sequence: XNextElementsIncludingSelfSequence(element: self), until: condition)
+    }
+    
+    func nextElementsIncludingSelf(untilAndIncluding condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceIncludingCondition(sequence: XNextElementsIncludingSelfSequence(element: self), untilAndIncluding: condition)
+    }
+    
+    var previousElementsIncludingSelf: XElementSequence {
+        get { XPreviousElementsIncludingSelfSequence(element: self) }
+    }
+    
+    func previousElementsIncludingSelf(_ condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XPreviousElementsIncludingSelfSequence(element: self), condition: condition)
+    }
+    
+    func previousElementsIncludingSelf(_ name: String) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XPreviousElementsIncludingSelfSequence(element: self), elementName: name)
+    }
+    
+    func previousElementsIncludingSelf(_ names: String...) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XPreviousElementsIncludingSelfSequence(element: self), condition: { names.isEmpty || names.contains($0.name) })
+    }
+    
+    func previousElementsIncludingSelf(_ names: [String]) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XPreviousElementsIncludingSelfSequence(element: self), condition: { names.isEmpty || names.contains($0.name) })
+    }
+    
+    func previousElementsIncludingSelf(while condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWhileCondition(sequence: XPreviousElementsIncludingSelfSequence(element: self), while: condition)
+    }
+    
+    func previousElementsIncludingSelf(until condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceUntilCondition(sequence: XPreviousElementsIncludingSelfSequence(element: self), until: condition)
+    }
+    
+    func previousElementsIncludingSelf(untilAndIncluding condition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceIncludingCondition(sequence: XPreviousElementsIncludingSelfSequence(element: self), untilAndIncluding: condition)
+    }
     
     var descendantsIncludingSelf: XElementSequence { get { XDescendantsIncludingSelfSequence(element: self) } }
     

@@ -353,79 +353,157 @@ public final class XTraversalSequence: XContentSequence {
 
 public final class XNextSequence: XContentSequence {
     
-    let theContent: XContent
+    let content: XContent
     
     public init(content: XContent) {
-        self.theContent = content
+        self.content = content
     }
     
     public override func makeIterator() -> XContentIterator {
-        return XBidirectionalContentIterator(contentIterator: XNextIterator(content: theContent))
+        return XBidirectionalContentIterator(contentIterator: XNextIterator(content: content))
+    }
+}
+
+public final class XNextIncludingSelfSequence: XContentSequence {
+    
+    let content: XContent
+    
+    public init(content: XContent) {
+        self.content = content
+    }
+    
+    public override func makeIterator() -> XContentIterator {
+        return XBidirectionalContentIterator(contentIterator: XNextIncludingSelfIterator(content: content))
     }
 }
 
 public final class XPreviousSequence: XContentSequence {
     
-    let theContent: XContent
+    let content: XContent
     
     public init(content: XContent) {
-        self.theContent = content
+        self.content = content
     }
     
     public override func makeIterator() -> XBidirectionalContentIterator {
-        return XBidirectionalContentIterator(contentIterator: XPreviousIterator(content: theContent))
+        return XBidirectionalContentIterator(contentIterator: XPreviousIterator(content: content))
+    }
+}
+
+public final class XPreviousIncludingSelfSequence: XContentSequence {
+    
+    let content: XContent
+    
+    public init(content: XContent) {
+        self.content = content
+    }
+    
+    public override func makeIterator() -> XBidirectionalContentIterator {
+        return XBidirectionalContentIterator(contentIterator: XPreviousIncludingSelfIterator(content: content))
     }
 }
 
 public final class XNextTextsSequence: XTextSequence {
     
-    let theContent: XContent
+    let content: XContent
     
     public init(content: XContent) {
-        self.theContent = content
+        self.content = content
     }
     
     public override func makeIterator() -> XBidirectionalTextIterator {
-        return XBidirectionalTextIterator(textIterator: XNextTextsIterator(content: theContent))
+        return XBidirectionalTextIterator(textIterator: XNextTextsIterator(content: content))
+    }
+}
+
+public final class XNextTextsIncludingSelfSequence: XTextSequence {
+    
+    let text: XText
+    
+    public init(text: XText) {
+        self.text = text
+    }
+    
+    public override func makeIterator() -> XBidirectionalTextIterator {
+        return XBidirectionalTextIterator(textIterator: XNextTextsIncludingSelfIterator(text: text))
     }
 }
 
 public final class XPreviousTextsSequence: XTextSequence {
     
-    let theContent: XContent
+    let content: XContent
     
     public init(content: XContent) {
-        self.theContent = content
+        self.content = content
     }
     
     public override func makeIterator() -> XBidirectionalTextIterator {
-        return XBidirectionalTextIterator(textIterator: XPreviousTextsIterator(content: theContent))
+        return XBidirectionalTextIterator(textIterator: XPreviousTextsIterator(content: content))
+    }
+}
+
+public final class XPreviousTextsIncludingSelfSequence: XTextSequence {
+    
+    let text: XText
+    
+    public init(text: XText) {
+        self.text = text
+    }
+    
+    public override func makeIterator() -> XBidirectionalTextIterator {
+        return XBidirectionalTextIterator(textIterator: XPreviousTextsIncludingSelfIterator(text: text))
     }
 }
 
 public final class XNextElementsSequence: XElementSequence {
     
-    let theContent: XContent
+    let content: XContent
     
     public init(content: XContent) {
-        self.theContent = content
+        self.content = content
     }
     
     public override func makeIterator() -> XBidirectionalElementIterator {
-        return XBidirectionalElementIterator(elementIterator: XNextElementsIterator(content: theContent))
+        return XBidirectionalElementIterator(elementIterator: XNextElementsIterator(content: content))
+    }
+}
+
+public final class XNextElementsIncludingSelfSequence: XElementSequence {
+    
+    let element: XElement
+    
+    public init(element: XElement) {
+        self.element = element
+    }
+    
+    public override func makeIterator() -> XBidirectionalElementIterator {
+        return XBidirectionalElementIterator(elementIterator: XNextElementsIncludingSelfIterator(element: element))
     }
 }
 
 public final class XPreviousElementsSequence: XElementSequence {
     
-    let theContent: XContent
+    let content: XContent
     
     public init(content: XContent) {
-        self.theContent = content
+        self.content = content
     }
     
     public override func makeIterator() -> XBidirectionalElementIterator {
-        return XBidirectionalElementIterator(elementIterator: XPreviousElementsIterator(content: theContent))
+        return XBidirectionalElementIterator(elementIterator: XPreviousElementsIterator(content: content))
+    }
+}
+
+public final class XPreviousElementsIncludingSelfSequence: XElementSequence {
+    
+    let element: XElement
+    
+    public init(element: XElement) {
+        self.element = element
+    }
+    
+    public override func makeIterator() -> XBidirectionalElementIterator {
+        return XBidirectionalElementIterator(elementIterator: XPreviousElementsIncludingSelfIterator(element: element))
     }
 }
 
@@ -702,16 +780,16 @@ public final class XElementSelfSequence: XElementSequence {
  */
 public final class XContentSelfSequence: XContentSequence {
     
-    let theContent: XContent
+    let content: XContent
     
     public init(content: XContent) {
-        self.theContent = content
+        self.content = content
     }
     
     public override func makeIterator() -> XBidirectionalContentIterator {
         return XBidirectionalContentIterator(
             contentIterator: XContentSelfIterator(
-                content: theContent
+                content: content
             )
         )
     }

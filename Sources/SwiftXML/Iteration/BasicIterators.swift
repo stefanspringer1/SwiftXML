@@ -758,6 +758,52 @@ public final class XNextIterator: XContentIteratorProtocol {
 }
 
 /**
+ Iterates though the content after a content, including the content itself.
+ */
+public final class XNextIncludingSelfIterator: XContentIteratorProtocol {
+    
+    weak var content: XContent?
+    weak var currentContent: XContent? = nil
+    var started = false
+    
+    public init(
+        content: XContent
+    ) {
+        self.content = content
+        currentContent = nil
+    }
+    
+    public func next() -> XContent? {
+        if !started {
+            currentContent = content
+            started = true
+            return content
+        }
+        repeat {
+            currentContent = currentContent?._next
+        } while currentContent != nil && currentContent! is _Isolator_
+        return currentContent
+    }
+    
+    public func previous() -> XContent? {
+        repeat {
+            if currentContent === content {
+                started = false
+                return nil
+            }
+            else {
+                currentContent = currentContent?._previous
+                if currentContent === content {
+                    started = false
+                    return nil
+                }
+            }
+        } while currentContent != nil && currentContent! is _Isolator_
+        return currentContent
+    }
+}
+
+/**
  Iterates though the content before a content.
  */
 public final class XPreviousIterator: XContentIteratorProtocol {
@@ -787,6 +833,52 @@ public final class XPreviousIterator: XContentIteratorProtocol {
             else {
                 currentContent = currentContent?._next
                 if currentContent === content {
+                    return nil
+                }
+            }
+        } while currentContent != nil && currentContent! is _Isolator_
+        return currentContent
+    }
+}
+
+/**
+ Iterates though the content before a content, including the content itself.
+ */
+public final class XPreviousIncludingSelfIterator: XContentIteratorProtocol {
+    
+    weak var content: XContent?
+    weak var currentContent: XContent? = nil
+    var started = false
+    
+    public init(
+        content: XContent
+    ) {
+        self.content = content
+        currentContent = nil
+    }
+    
+    public func next() -> XContent? {
+        if !started {
+            currentContent = content
+            started = true
+            return content
+        }
+        repeat {
+            currentContent = currentContent?._previous
+        } while currentContent != nil && currentContent! is _Isolator_
+        return currentContent
+    }
+    
+    public func previous() -> XContent? {
+        repeat {
+            if currentContent === content {
+                started = false
+                return nil
+            }
+            else {
+                currentContent = currentContent?._next
+                if currentContent === content {
+                    started = false
                     return nil
                 }
             }
@@ -834,6 +926,51 @@ public final class XPreviousElementsIterator: XElementIteratorProtocol {
 }
 
 /**
+ Iterates though the elements before an element, including the element itself.
+ */
+public final class XPreviousElementsIncludingSelfIterator: XElementIteratorProtocol {
+    
+    weak var element: XElement?
+    weak var currentContent: XContent? = nil
+    var started = false
+    
+    public init(
+        element: XElement
+    ) {
+        self.element = element
+        currentContent = nil
+    }
+    
+    public func next() -> XElement? {
+        if !started {
+            currentContent = element
+            started = true
+            return element
+        }
+        repeat {
+            currentContent = currentContent?._previous
+        } while currentContent != nil && !(currentContent! is XElement)
+        return currentContent as? XElement
+    }
+    
+    public func previous() -> XElement? {
+        repeat {
+            if currentContent === element {
+                started = false
+                return nil
+            }
+            else {
+                currentContent = currentContent?._next
+                if currentContent === element {
+                    return nil
+                }
+            }
+        } while currentContent != nil && !(currentContent! is XElement)
+        return currentContent as? XElement
+    }
+}
+
+/**
  Iterates though the elements after a content.
  */
 public final class XNextElementsIterator: XElementIteratorProtocol {
@@ -864,6 +1001,52 @@ public final class XNextElementsIterator: XElementIteratorProtocol {
                 currentContent = currentContent?._previous
                 if currentContent === content {
                     return nil
+                }
+            }
+        } while currentContent != nil && !(currentContent! is XElement)
+        return currentContent as? XElement
+    }
+}
+
+/**
+ Iterates though the elements after an element, including the element itself.
+ */
+public final class XNextElementsIncludingSelfIterator: XElementIteratorProtocol {
+    
+    weak var element: XElement?
+    weak var currentContent: XContent? = nil
+    var started = false
+    
+    public init(
+        element: XElement
+    ) {
+        self.element = element
+        currentContent = nil
+    }
+    
+    public func next() -> XElement? {
+        if !started {
+            currentContent = element
+            started = true
+            return element
+        }
+        repeat {
+            currentContent = currentContent?._next
+        } while currentContent != nil && !(currentContent! is XElement)
+        return currentContent as? XElement
+    }
+    
+    public func previous() -> XElement? {
+        repeat {
+            if currentContent === element {
+                started = false
+                return nil
+            }
+            else {
+                currentContent = currentContent?._previous
+                if currentContent === element {
+                    started = false
+                    return element
                 }
             }
         } while currentContent != nil && !(currentContent! is XElement)
@@ -1049,6 +1232,52 @@ public final class XPreviousTextsIterator: XTextIteratorProtocol {
 }
 
 /**
+ Iterates though the texts before a text, inlcuding the text itself.
+ */
+public final class XPreviousTextsIncludingSelfIterator: XTextIteratorProtocol {
+    
+    weak var text: XText?
+    weak var currentContent: XContent? = nil
+    var started = false
+    
+    public init(
+        text: XText
+    ) {
+        self.text = text
+        currentContent = nil
+    }
+    
+    public func next() -> XText? {
+        if !started {
+            currentContent = text
+            started = true
+            return text
+        }
+        repeat {
+            currentContent = currentContent?._previous
+        } while currentContent != nil && !(currentContent! is XText)
+        return currentContent as? XText
+    }
+    
+    public func previous() -> XText? {
+        repeat {
+            if currentContent === text {
+                started = false
+                return nil
+            }
+            else {
+                currentContent = currentContent?._next
+                if currentContent === text {
+                    started = false
+                    return nil
+                }
+            }
+        } while currentContent != nil && !(currentContent! is XText)
+        return currentContent as? XText
+    }
+}
+
+/**
  Iterates though the texts after a content.
  */
 public final class XNextTextsIterator: XTextIteratorProtocol {
@@ -1078,6 +1307,52 @@ public final class XNextTextsIterator: XTextIteratorProtocol {
             else {
                 currentContent = currentContent?._previous
                 if currentContent === content {
+                    return nil
+                }
+            }
+        } while currentContent != nil && !(currentContent! is XText)
+        return currentContent as? XText
+    }
+}
+
+/**
+ Iterates though the texts after a text. including the text itself.
+ */
+public final class XNextTextsIncludingSelfIterator: XTextIteratorProtocol {
+    
+    weak var text: XText?
+    weak var currentContent: XContent? = nil
+    var started = false
+    
+    public init(
+        text: XText
+    ) {
+        self.text = text
+        currentContent = nil
+    }
+    
+    public func next() -> XText? {
+        if !started {
+            currentContent = text
+            started = true
+            return text
+        }
+        repeat {
+            currentContent = currentContent?._next
+        } while currentContent != nil && !(currentContent! is XText)
+        return currentContent as? XText
+    }
+    
+    public func previous() -> XText? {
+        repeat {
+            if currentContent === text {
+                started = false
+                return nil
+            }
+            else {
+                currentContent = currentContent?._previous
+                if currentContent === text {
+                    started = false
                     return nil
                 }
             }
