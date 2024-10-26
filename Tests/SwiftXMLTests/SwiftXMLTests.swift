@@ -11,6 +11,7 @@
 import XCTest
 import class Foundation.Bundle
 @testable import SwiftXML
+import SwiftXMLInterfaces
 
 final class SwiftXMLTests: XCTestCase {
     
@@ -797,10 +798,41 @@ final class SwiftXMLTests: XCTestCase {
         
     }
     
-    func testXXX() throws {
+    func testResolver() throws {
+        
+        struct MyInternalEntityResolver: InternalEntityResolver {
+            func resolve(entityWithName entityName: String, forAttributeWithName attributeName: String?, atElementWithName elementName: String?) -> String? {
+                if entityName == "ent1" {
+                    "!"
+                } else {
+                    nil
+                }
+            }
+        }
+        
         let source = """
-            <tr><paragraph><formula>α</formula> Hallo <formula>β</formula> Welt <formula>γ</formula></paragraph><paragraph><emphasis style="bold"><formula><bold>α</bold></formula> Hallo <formula><bold>β</bold></formula> Welt <formula><bold>γ</bold></formula></emphasis></paragraph><paragraph><emphasis style="italic"><formula><italic>α</italic></formula> Hallo <formula><italic>β</italic></formula> Welt <formula><italic>γ</italic></formula></emphasis></paragraph><paragraph><emphasis style="italic"><emphasis style="bold"><formula><bold><italic>α</italic></bold></formula> Hallo <formula><bold><italic>β</italic></bold></formula> Welt <formula><bold><italic>γ</italic></bold></formula></emphasis></emphasis></paragraph><paragraph><formula>φ</formula></paragraph></tr>
+            <a>&ent1;&ent2;</a>
             """
-        try parseXML(fromText: source).echo(pretty: true)
+        
+        // leave unresolved internal entities:
+        XCTAssertEqual(try parseXML(
+            fromText: source,
+            internalEntityResolver: MyInternalEntityResolver(),
+            internalEntityResolverHasToResolve: false
+        ).serialized(), "<a>!&ent2;</a>")
+        
+        // error unresolved internal entities:
+        var errorMessage: String? = nil
+        do {
+            _ = try parseXML(
+                fromText: source,
+                internalEntityResolver: MyInternalEntityResolver(),
+                internalEntityResolverHasToResolve: true
+            )
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+        
+        XCTAssertEqual(errorMessage, "1:15:E: internal entity resolver cannot resolve entity \"ent2\"")
     }
 }

@@ -82,6 +82,8 @@ let transformation = XTransformation {
 
 **UPDATE 22 (October 2024):** More `...IncludingSelf` versions for iterations, e.g. `nextElementsIncludingSelf`.
 
+**UPDATE 22 (October 2024):** By default, an internal entity resolver now has to resolve all entities presented to him.
+
 ---
 
 ## Related packages
@@ -291,7 +293,7 @@ func resolve(
 ) -> String?
 ```
 
-This method is always called when a named entity reference is encountered (either in text or attribute) which is scored as an internal entity. It returns the textual replacement for the entity or `nil`. If the method returns `nil`, then the entity reference is not replaced by a text, but is kept. In the case of a named entity in an attribute value, an error is thrown when no replacement is given. The function arguments `forAttributeWithName` (name of the attribute) and `atElementWithName` (name of the element) have according values if and only if the entity is encountered inside an attribute value.
+This method is always called when a named entity reference is encountered (either in text or attribute) which is scored as an internal entity. It either returns the textual replacement for the entity or it does not resolve the entity by returning `nil`. By default, the resolver has to resolve all entities presented to it, else an according error is thrown. You can remove this enforcement by setting `internalEntityResolverHasToResolve: false` in the call of the parse function; then, when the resolver returns `nil`, the entity reference is not replaced by a text, but is kept withput any further notice. In the case of a named entity in an attribute value, an error is always thrown when no replacement is given. The function arguments `forAttributeWithName` (name of the attribute) and `atElementWithName` (name of the element) have according values if and only if the entity is encountered inside an attribute value.
 
 If `internalEntityAutoResolve` is set to `true`, the parser first tries to replace the internal entities by using the declarations in the internal subset of the document before calling an `InternalEntityResolver`.
 
