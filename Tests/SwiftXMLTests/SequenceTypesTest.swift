@@ -16,6 +16,7 @@ import class Foundation.Bundle
 final class SequenceTypesTestTests: XCTestCase {
     
     func testSequenceTypes() throws {
+        
         let document = try parseXML(fromText: """
             <test><a/>text<b/><c/><d/><e/><f/>text<g/></test>
             """)
