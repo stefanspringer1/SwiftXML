@@ -978,6 +978,13 @@ for _ in document.descendants("paragraph") {
 
 You can also use multiple names (e.g. `descendants("paragraph", "table")`). If no name is given, all elements are given in the result regardless the name, e.g. `children()` means the same as `children`.
 
+---
+**NODE**
+
+Note that `nextElements("paragraph")` (filtering the next elements by name) is different from `nextElements(while: { $0.name == "paragraph" })`.
+
+---
+
 If you know that there at most one child element with a certain name, use the following method (it returns the first child with this name if it exist):
 
 ```swift
