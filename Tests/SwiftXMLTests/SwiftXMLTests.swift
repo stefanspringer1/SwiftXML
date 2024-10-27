@@ -840,4 +840,19 @@ final class SwiftXMLTests: XCTestCase {
         
         XCTAssertEqual(errorMessage, "1:15:E: internal entity resolver cannot resolve entity \"ent2\"")
     }
+    
+    func testReplaceByLazySequence() throws {
+        let document = try parseXML(fromText: """
+        <document><index.item>z</index.item><index.item>x</index.item><index.item>a</index.item><index.item>m</index.item></document>
+        """)
+        
+        for indexItem in document.elements("index.item").filter({ ($0.nextTouching as? XElement)?.name != "index.item" }) {
+            indexItem.replace {
+                indexItem.previousCloseElementsIncludingSelf(while: { $0.name == "index.item" })
+                  .sorted(by: { (first,second) in first.allTextsCombined < second.allTextsCombined })
+            }
+        }
+        
+        XCTAssertEqual(document.serialized(), "<document><index.item>a</index.item><index.item>m</index.item><index.item>x</index.item><index.item>z</index.item></document>")
+    }
 }

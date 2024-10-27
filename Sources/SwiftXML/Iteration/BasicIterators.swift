@@ -941,7 +941,10 @@ public final class XPreviousCloseElementsIterator: XElementIteratorProtocol {
     }
     
     public func next() -> XElement? {
-        let element = currentContent?._previous as? XElement
+        repeat {
+            currentContent = currentContent?._previous
+        } while currentContent is _Isolator_
+        let element = currentContent as? XElement
         currentContent = element
         return element
     }
@@ -950,13 +953,12 @@ public final class XPreviousCloseElementsIterator: XElementIteratorProtocol {
         if currentContent === content {
             return nil
         }
-        else {
+        repeat {
             currentContent = currentContent?._next
-            if currentContent === content {
-                return nil
-            }
-        }
-        return currentContent as? XElement
+        } while currentContent is _Isolator_
+        let element = currentContent as? XElement
+        currentContent = element
+        return element
     }
 }
 
@@ -1027,25 +1029,25 @@ public final class XPreviousCloseElementsIncludingSelfIterator: XElementIterator
             started = true
             return element
         }
-        let element = currentContent?._previous as? XElement
+        repeat {
+            currentContent = currentContent?._previous
+        } while currentContent is _Isolator_
+        let element = currentContent as? XElement
         currentContent = element
         return element
     }
     
     public func previous() -> XElement? {
+        if currentContent === element {
+            started = false
+            return nil
+        }
         repeat {
-            if currentContent === element {
-                started = false
-                return nil
-            }
-            else {
-                currentContent = currentContent?._next
-                if currentContent === element {
-                    return nil
-                }
-            }
-        } while currentContent != nil && !(currentContent! is XElement)
-        return currentContent as? XElement
+            currentContent = currentContent?._next
+        } while currentContent is _Isolator_
+        let element = currentContent as? XElement
+        currentContent = element
+        return element
     }
 }
 
@@ -1103,7 +1105,10 @@ public final class XNextCloseElementsIterator: XElementIteratorProtocol {
     }
     
     public func next() -> XElement? {
-        let element = currentContent?._next as? XElement
+        repeat {
+            currentContent = currentContent?._next
+        } while currentContent is _Isolator_
+        let element = currentContent as? XElement
         currentContent = element
         return element
     }
@@ -1112,13 +1117,12 @@ public final class XNextCloseElementsIterator: XElementIteratorProtocol {
         if currentContent === content {
             return nil
         }
-        else {
+        repeat {
             currentContent = currentContent?._previous
-            if currentContent === content {
-                return nil
-            }
-        }
-        return currentContent as? XElement
+        } while currentContent is _Isolator_
+        let element = currentContent as? XElement
+        currentContent = element
+        return element
     }
 }
 
@@ -1190,7 +1194,10 @@ public final class XNextCloseElementsIncludingSelfIterator: XElementIteratorProt
             started = true
             return element
         }
-        let element = currentContent?._next as? XElement
+        repeat {
+            currentContent = currentContent?._next
+        } while currentContent is _Isolator_
+        let element = currentContent as? XElement
         currentContent = element
         return element
     }
@@ -1200,14 +1207,12 @@ public final class XNextCloseElementsIncludingSelfIterator: XElementIteratorProt
             started = false
             return nil
         }
-        else {
+        repeat {
             currentContent = currentContent?._previous
-            if currentContent === element {
-                started = false
-                return element
-            }
-        }
-        return currentContent as? XElement
+        } while currentContent is _Isolator_
+        let element = currentContent as? XElement
+        currentContent = element
+        return element
     }
 }
 
