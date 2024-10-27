@@ -233,10 +233,6 @@ public class XNode {
         }
     }
     
-    public var hasPreviousTouching: Bool {
-        previousTouching != nil
-    }
-    
     public var nextTouching: XContent? {
         get {
             var content = _next
@@ -245,10 +241,6 @@ public class XNode {
             }
             return content
         }
-    }
-    
-    public var hasNextTouching: Bool {
-        nextTouching != nil
     }
     
     public var previousElement: XElement? {

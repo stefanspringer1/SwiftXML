@@ -86,6 +86,8 @@ let transformation = XTransformation {
 
 **UPDATE 23 (October 2024):** Added `...Close...` versions e.g. `nextCloseElements`.
 
+**UPDATE 23 (October 2024):** Removed `hasPreviousTouching` and `hasNextTouching (use `hasPrevious` and `hasNext`).
+
 ---
 
 ## Related packages
