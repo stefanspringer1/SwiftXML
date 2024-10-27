@@ -926,6 +926,41 @@ public final class XPreviousElementsIterator: XElementIteratorProtocol {
 }
 
 /**
+ Iterates though the elements before a node, stopping at any non-element.
+ */
+public final class XPreviousCloseElementsIterator: XElementIteratorProtocol {
+    
+    weak var content: XContent?
+    weak var currentContent: XContent? = nil
+    
+    public init(
+        content: XContent
+    ) {
+        self.content = content
+        currentContent = content
+    }
+    
+    public func next() -> XElement? {
+        let element = currentContent?._previous as? XElement
+        currentContent = element
+        return element
+    }
+    
+    public func previous() -> XElement? {
+        if currentContent === content {
+            return nil
+        }
+        else {
+            currentContent = currentContent?._next
+            if currentContent === content {
+                return nil
+            }
+        }
+        return currentContent as? XElement
+    }
+}
+
+/**
  Iterates though the elements before an element, including the element itself.
  */
 public final class XPreviousElementsIncludingSelfIterator: XElementIteratorProtocol {
@@ -951,6 +986,50 @@ public final class XPreviousElementsIncludingSelfIterator: XElementIteratorProto
             currentContent = currentContent?._previous
         } while currentContent != nil && !(currentContent! is XElement)
         return currentContent as? XElement
+    }
+    
+    public func previous() -> XElement? {
+        repeat {
+            if currentContent === element {
+                started = false
+                return nil
+            }
+            else {
+                currentContent = currentContent?._next
+                if currentContent === element {
+                    return nil
+                }
+            }
+        } while currentContent != nil && !(currentContent! is XElement)
+        return currentContent as? XElement
+    }
+}
+
+/**
+ Iterates though the elements before an element, including the element itself and stopping at any non-element.
+ */
+public final class XPreviousCloseElementsIncludingSelfIterator: XElementIteratorProtocol {
+    
+    weak var element: XElement?
+    weak var currentContent: XContent? = nil
+    var started = false
+    
+    public init(
+        element: XElement
+    ) {
+        self.element = element
+        currentContent = nil
+    }
+    
+    public func next() -> XElement? {
+        if !started {
+            currentContent = element
+            started = true
+            return element
+        }
+        let element = currentContent?._previous as? XElement
+        currentContent = element
+        return element
     }
     
     public func previous() -> XElement? {
@@ -1009,6 +1088,41 @@ public final class XNextElementsIterator: XElementIteratorProtocol {
 }
 
 /**
+ Iterates though the elements after a content, stopping at any non-element.
+ */
+public final class XNextCloseElementsIterator: XElementIteratorProtocol {
+    
+    weak var content: XContent?
+    weak var currentContent: XContent?
+    
+    public init(
+        content: XContent
+    ) {
+        self.content = content
+        currentContent = content
+    }
+    
+    public func next() -> XElement? {
+        let element = currentContent?._next as? XElement
+        currentContent = element
+        return element
+    }
+    
+    public func previous() -> XElement? {
+        if currentContent === content {
+            return nil
+        }
+        else {
+            currentContent = currentContent?._previous
+            if currentContent === content {
+                return nil
+            }
+        }
+        return currentContent as? XElement
+    }
+}
+
+/**
  Iterates though the elements after an element, including the element itself.
  */
 public final class XNextElementsIncludingSelfIterator: XElementIteratorProtocol {
@@ -1055,9 +1169,52 @@ public final class XNextElementsIncludingSelfIterator: XElementIteratorProtocol 
 }
 
 /**
+ Iterates though the elements after an element, including the element itself and stopping at any non-element.
+ */
+public final class XNextCloseElementsIncludingSelfIterator: XElementIteratorProtocol {
+    
+    weak var element: XElement?
+    weak var currentContent: XContent? = nil
+    var started = false
+    
+    public init(
+        element: XElement
+    ) {
+        self.element = element
+        currentContent = nil
+    }
+    
+    public func next() -> XElement? {
+        if !started {
+            currentContent = element
+            started = true
+            return element
+        }
+        let element = currentContent?._next as? XElement
+        currentContent = element
+        return element
+    }
+    
+    public func previous() -> XElement? {
+        if currentContent === element {
+            started = false
+            return nil
+        }
+        else {
+            currentContent = currentContent?._previous
+            if currentContent === element {
+                started = false
+                return element
+            }
+        }
+        return currentContent as? XElement
+    }
+}
+
+/**
  Iterates though the texts of a branch.
  */
-public final class XTextsIterator: XTextIterator {
+public final class XNextTextsIterator: XTextIterator {
     
     private var started = false
     weak var node: XNode?
@@ -1269,44 +1426,6 @@ public final class XPreviousTextsIncludingSelfIterator: XTextIteratorProtocol {
                 currentContent = currentContent?._next
                 if currentContent === text {
                     started = false
-                    return nil
-                }
-            }
-        } while currentContent != nil && !(currentContent! is XText)
-        return currentContent as? XText
-    }
-}
-
-/**
- Iterates though the texts after a content.
- */
-public final class XNextTextsIterator: XTextIteratorProtocol {
-    
-    weak var content: XContent?
-    weak var currentContent: XContent? = nil
-    
-    public init(
-        content: XContent
-    ) {
-        self.content = content
-        currentContent = content
-    }
-    
-    public func next() -> XText? {
-        repeat {
-            currentContent = currentContent?._next
-        } while currentContent != nil && !(currentContent! is XText)
-        return currentContent as? XText
-    }
-    
-    public func previous() -> XText? {
-        repeat {
-            if currentContent === content {
-                return nil
-            }
-            else {
-                currentContent = currentContent?._previous
-                if currentContent === content {
                     return nil
                 }
             }

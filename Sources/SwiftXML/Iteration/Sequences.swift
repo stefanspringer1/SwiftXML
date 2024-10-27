@@ -412,7 +412,7 @@ public final class XNextTextsSequence: XTextSequence {
     }
     
     public override func makeIterator() -> XBidirectionalTextIterator {
-        return XBidirectionalTextIterator(textIterator: XNextTextsIterator(content: content))
+        return XBidirectionalTextIterator(textIterator: XNextTextsIterator(node: content))
     }
 }
 
@@ -468,6 +468,19 @@ public final class XNextElementsSequence: XElementSequence {
     }
 }
 
+public final class XNextCloseElementsSequence: XElementSequence {
+    
+    let content: XContent
+    
+    public init(content: XContent) {
+        self.content = content
+    }
+    
+    public override func makeIterator() -> XBidirectionalElementIterator {
+        return XBidirectionalElementIterator(elementIterator: XNextCloseElementsIterator(content: content))
+    }
+}
+
 public final class XNextElementsIncludingSelfSequence: XElementSequence {
     
     let element: XElement
@@ -478,6 +491,19 @@ public final class XNextElementsIncludingSelfSequence: XElementSequence {
     
     public override func makeIterator() -> XBidirectionalElementIterator {
         return XBidirectionalElementIterator(elementIterator: XNextElementsIncludingSelfIterator(element: element))
+    }
+}
+
+public final class XNextCloseElementsIncludingSelfSequence: XElementSequence {
+    
+    let element: XElement
+    
+    public init(element: XElement) {
+        self.element = element
+    }
+    
+    public override func makeIterator() -> XBidirectionalElementIterator {
+        return XBidirectionalElementIterator(elementIterator: XNextCloseElementsIncludingSelfIterator(element: element))
     }
 }
 
@@ -494,6 +520,19 @@ public final class XPreviousElementsSequence: XElementSequence {
     }
 }
 
+public final class XPreviousCloseElementsSequence: XElementSequence {
+    
+    let content: XContent
+    
+    public init(content: XContent) {
+        self.content = content
+    }
+    
+    public override func makeIterator() -> XBidirectionalElementIterator {
+        return XBidirectionalElementIterator(elementIterator: XPreviousCloseElementsIterator(content: content))
+    }
+}
+
 public final class XPreviousElementsIncludingSelfSequence: XElementSequence {
     
     let element: XElement
@@ -504,6 +543,19 @@ public final class XPreviousElementsIncludingSelfSequence: XElementSequence {
     
     public override func makeIterator() -> XBidirectionalElementIterator {
         return XBidirectionalElementIterator(elementIterator: XPreviousElementsIncludingSelfIterator(element: element))
+    }
+}
+
+public final class XPreviousCloseElementsIncludingSelfSequence: XElementSequence {
+    
+    let element: XElement
+    
+    public init(element: XElement) {
+        self.element = element
+    }
+    
+    public override func makeIterator() -> XBidirectionalElementIterator {
+        return XBidirectionalElementIterator(elementIterator: XPreviousCloseElementsIncludingSelfIterator(element: element))
     }
 }
 
@@ -542,7 +594,7 @@ public final class XSequenceOfImmediateTexts: XTextSequence {
     }
     
     public override func makeIterator() -> XTextIterator {
-        return XBidirectionalTextIterator(textIterator: XTextsIterator(node: node))
+        return XBidirectionalTextIterator(textIterator: XNextTextsIterator(node: node))
     }
 }
 

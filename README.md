@@ -84,6 +84,8 @@ let transformation = XTransformation {
 
 **UPDATE 22 (October 2024):** By default, an internal entity resolver now has to resolve all entities presented to him.
 
+**UPDATE 23 (October 2024):** Added `...Close...` versions e.g. `nextCloseElements`.
+
 ---
 
 ## Related packages
@@ -804,6 +806,17 @@ Of those, the ones that are elements:
 ```swift
 var nextElements: XElementSequence
 ```
+
+`nextElements` and `previousElements` skip any non-elements. If you want to find elements with no non-elements in-between, use `nextCloseElements` and `previousCloseElements`.
+
+---
+**NOTE**
+
+Remember that the versions without `...Close...` simply ignore all other node types in between.
+
+---
+
+There are also `...IncludingSelf` versions where the subject is included, e.g. `nextElementsIncludingSelf`.
 
 Example:
 
