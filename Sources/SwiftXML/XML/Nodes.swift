@@ -281,7 +281,11 @@ public class XNode {
         }
     }
     
-    public func hasPreviousTouching(with condition: (XContent) -> Bool) -> Bool {
+    public var hasPreviousTouching: Bool {
+        previousTouching != nil
+    }
+    
+    public func hasPreviousTouching(_ condition: (XContent) -> Bool) -> Bool {
         previousTouching(condition) != nil
     }
     
@@ -295,7 +299,11 @@ public class XNode {
         }
     }
     
-    public func hasNextTouching(with condition: (XContent) -> Bool) -> Bool {
+    public var hasNextTouching: Bool {
+        nextTouching != nil
+    }
+    
+    public func hasNextTouching(_ condition: (XContent) -> Bool) -> Bool {
         nextTouching(condition) != nil
     }
     
