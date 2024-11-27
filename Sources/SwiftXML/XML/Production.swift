@@ -484,6 +484,7 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
             "\(fullHTMLPrefix)dfn",
             "\(fullHTMLPrefix)em",
             "\(fullHTMLPrefix)i",
+            "\(fullHTMLPrefix)input",
             "\(fullHTMLPrefix)kbd",
             "\(fullHTMLPrefix)output",
             "\(fullHTMLPrefix)q",
