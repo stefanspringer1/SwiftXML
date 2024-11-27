@@ -404,19 +404,22 @@ public class HTMLProductionTemplate: XProductionTemplate {
     public let htmlNamespaceReference: NamespaceReference
     public let suppressDocumentTypeDeclaration: Bool
     public let writeAsASCII: Bool
+    public let escapeGreaterThan: Bool
     
     public init(
         indentation: String = X_DEFAULT_INDENTATION,
         linebreak: String = X_DEFAULT_LINEBREAK,
         withHTMLNamespaceReference htmlNamespaceReference: NamespaceReference = .fullPrefix(""),
         suppressDocumentTypeDeclaration: Bool = false,
-        writeAsASCII: Bool = false
+        writeAsASCII: Bool = false,
+        escapeGreaterThan: Bool = false
     ) {
         self.indentation = indentation
         self.linebreak = linebreak
         self.htmlNamespaceReference = htmlNamespaceReference
         self.suppressDocumentTypeDeclaration = suppressDocumentTypeDeclaration
         self.writeAsASCII = writeAsASCII
+        self.escapeGreaterThan = escapeGreaterThan
     }
     
     open func activeProduction(for writer: Writer, atNode node: XNode) -> XActiveProduction {
@@ -426,7 +429,8 @@ public class HTMLProductionTemplate: XProductionTemplate {
             atNode: node,
             withHTMLNamespaceReference: htmlNamespaceReference,
             suppressDocumentTypeDeclaration: suppressDocumentTypeDeclaration,
-            writeAsASCII: writeAsASCII
+            writeAsASCII: writeAsASCII,
+            escapeGreaterThan: escapeGreaterThan
         )
     }
     
@@ -439,6 +443,7 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
     public var suppressDocumentTypeDeclaration: Bool
     public let fullHTMLPrefix: String
     public let writeAsASCII: Bool
+    public let escapeGreaterThan: Bool
     
     public init(
         writer: Writer,
@@ -447,7 +452,8 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
         atNode node: XNode,
         withHTMLNamespaceReference htmlNamespaceReference: NamespaceReference,
         suppressDocumentTypeDeclaration: Bool,
-        writeAsASCII: Bool
+        writeAsASCII: Bool,
+        escapeGreaterThan: Bool
     ) {
         fullHTMLPrefix = ((node as? XDocument ?? node.top) as XBranch?)?.fullPrefix(forNamespaceReference: htmlNamespaceReference) ?? ""
         htmlEmptyTags = [
@@ -492,6 +498,7 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
         ]
         self.suppressDocumentTypeDeclaration = suppressDocumentTypeDeclaration
         self.writeAsASCII = writeAsASCII
+        self.escapeGreaterThan = escapeGreaterThan
         super.init(writer: writer, writeEmptyTags: false, indentation: indentation, linebreak: linebreak)
     }
     
@@ -554,21 +561,27 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
     }
     
     open override func writeText(text: XText) throws {
-        if writeAsASCII {
-            try write(escapeText(text._value).asciiWithXMLCharacterReferences)
-        } else {
-            try write(escapeText(text._value))
+        var result = escapeText(text._value).replacingOccurrences(of: "\n", with: "&#x0A;").replacingOccurrences(of: "\r", with: "&#x0D;")
+        if escapeGreaterThan {
+            result = result.replacingOccurrences(of: ">", with: "&gt;")
         }
+        if writeAsASCII {
+            result = result.asciiWithXMLCharacterReferences
+        }
+        try write(result)
     }
     
     open override func writeAttributeValue(name: String, value: String, element: XElement) throws {
-        if writeAsASCII {
-            try write(escapeDoubleQuotedValue(value).replacingOccurrences(of: "\n", with: "&#x0A;").replacingOccurrences(of: "\r", with: "&#x0D;").asciiWithXMLCharacterReferences)
-        } else {
-            try write(escapeDoubleQuotedValue(value).replacingOccurrences(of: "\n", with: "&#x0A;").replacingOccurrences(of: "\r", with: "&#x0D;"))
+        var result = escapeDoubleQuotedValue(value).replacingOccurrences(of: "\n", with: "&#x0A;").replacingOccurrences(of: "\r", with: "&#x0D;")
+        if escapeGreaterThan {
+            result = result.replacingOccurrences(of: ">", with: "&gt;")
         }
-            
+        if writeAsASCII {
+            result = result.asciiWithXMLCharacterReferences
+        }
+        try write(result)
     }
+    
 }
 
 fileprivate extension String {
