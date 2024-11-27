@@ -473,7 +473,6 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
             "\(fullHTMLPrefix)wbr"
         ]
         htmlStrictInlines = [
-            "\(fullHTMLPrefix)a",
             "\(fullHTMLPrefix)abbr",
             "\(fullHTMLPrefix)acronym",
             "\(fullHTMLPrefix)b",
