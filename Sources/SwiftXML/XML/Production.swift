@@ -440,6 +440,7 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
 
     public var htmlEmptyTags: [String]
     public var htmlStrictInlines: [String]
+    public var blockOrInline: [String]
     public var suppressDocumentTypeDeclaration: Bool
     public let fullHTMLPrefix: String
     public let writeAsASCII: Bool
@@ -497,6 +498,10 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
             "\(fullHTMLPrefix)time",
             "\(fullHTMLPrefix)var"
         ]
+        blockOrInline = [
+            "\(fullHTMLPrefix)a",
+            "\(fullHTMLPrefix)img",
+        ]
         self.suppressDocumentTypeDeclaration = suppressDocumentTypeDeclaration
         self.writeAsASCII = writeAsASCII
         self.escapeGreaterThan = escapeGreaterThan
@@ -523,7 +528,7 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
         return htmlEmptyTags.contains(element.name)
     }
     
-    private func isInline(_ node: XNode) -> Bool {
+    private func isStrictlyInline(_ node: XNode) -> Bool {
         return node is XText || {
             if let element = node as? XElement {
                 return htmlStrictInlines.contains(element.name)
@@ -535,7 +540,7 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
     }
     
     open override func mightHaveMixedContent(element: XElement) -> Bool {
-        return element.content.contains(where: { isInline($0) })
+        return element.children({ !self.blockOrInline.contains($0.name) }).absent || element.content.contains(where: { isStrictlyInline($0) })
     }
     
     open func sort(texts: [String], preferring preferred: String) -> [String] {
