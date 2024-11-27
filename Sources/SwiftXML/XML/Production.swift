@@ -555,10 +555,19 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
     
     open override func writeText(text: XText) throws {
         if writeAsASCII {
-            try super.write(escapeText(text._value).asciiWithXMLCharacterReferences)
+            try write(escapeText(text._value).asciiWithXMLCharacterReferences)
         } else {
-            try super.write(escapeText(text._value))
+            try write(escapeText(text._value))
         }
+    }
+    
+    open override func writeAttributeValue(name: String, value: String, element: XElement) throws {
+        if writeAsASCII {
+            try write(escapeDoubleQuotedValue(value).replacingOccurrences(of: "\n", with: "&#x0A;").replacingOccurrences(of: "\r", with: "&#x0D;").asciiWithXMLCharacterReferences)
+        } else {
+            try write(escapeDoubleQuotedValue(value).replacingOccurrences(of: "\n", with: "&#x0A;").replacingOccurrences(of: "\r", with: "&#x0D;"))
+        }
+            
     }
 }
 
