@@ -561,7 +561,7 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
     }
     
     open override func writeText(text: XText) throws {
-        var result = escapeText(text._value).replacingOccurrences(of: "\n", with: "&#x0A;").replacingOccurrences(of: "\r", with: "&#x0D;")
+        var result = escapeText(text._value)
         if escapeGreaterThan {
             result = result.replacingOccurrences(of: ">", with: "&gt;")
         }
