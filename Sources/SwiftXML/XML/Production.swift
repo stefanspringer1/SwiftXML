@@ -403,17 +403,20 @@ public class HTMLProductionTemplate: XProductionTemplate {
     public let linebreak: String
     public let htmlNamespaceReference: NamespaceReference
     public let suppressDocumentTypeDeclaration: Bool
+    public let writeAsASCII: Bool
     
     public init(
         indentation: String = X_DEFAULT_INDENTATION,
         linebreak: String = X_DEFAULT_LINEBREAK,
         withHTMLNamespaceReference htmlNamespaceReference: NamespaceReference = .fullPrefix(""),
-        suppressDocumentTypeDeclaration: Bool = false
+        suppressDocumentTypeDeclaration: Bool = false,
+        writeAsASCII: Bool = false
     ) {
         self.indentation = indentation
         self.linebreak = linebreak
         self.htmlNamespaceReference = htmlNamespaceReference
         self.suppressDocumentTypeDeclaration = suppressDocumentTypeDeclaration
+        self.writeAsASCII = writeAsASCII
     }
     
     open func activeProduction(for writer: Writer, atNode node: XNode) -> XActiveProduction {
@@ -422,7 +425,8 @@ public class HTMLProductionTemplate: XProductionTemplate {
             linebreak: linebreak,
             atNode: node,
             withHTMLNamespaceReference: htmlNamespaceReference,
-            suppressDocumentTypeDeclaration: suppressDocumentTypeDeclaration
+            suppressDocumentTypeDeclaration: suppressDocumentTypeDeclaration,
+            writeAsASCII: writeAsASCII
         )
     }
     
@@ -434,6 +438,7 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
     public var htmlStrictInlines: [String]
     public var suppressDocumentTypeDeclaration: Bool
     public let fullHTMLPrefix: String
+    public let writeAsASCII: Bool
     
     public init(
         writer: Writer,
@@ -441,7 +446,8 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
         linebreak: String = X_DEFAULT_LINEBREAK,
         atNode node: XNode,
         withHTMLNamespaceReference htmlNamespaceReference: NamespaceReference,
-        suppressDocumentTypeDeclaration: Bool
+        suppressDocumentTypeDeclaration: Bool,
+        writeAsASCII: Bool
     ) {
         fullHTMLPrefix = ((node as? XDocument ?? node.top) as XBranch?)?.fullPrefix(forNamespaceReference: htmlNamespaceReference) ?? ""
         htmlEmptyTags = [
@@ -485,6 +491,7 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
             "\(fullHTMLPrefix)var"
         ]
         self.suppressDocumentTypeDeclaration = suppressDocumentTypeDeclaration
+        self.writeAsASCII = writeAsASCII
         super.init(writer: writer, writeEmptyTags: false, indentation: indentation, linebreak: linebreak)
     }
     
@@ -545,4 +552,28 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
             return super.sortAttributeNames(attributeNames: attributeNames, element: element)
         }
     }
+    
+    open override func writeText(text: XText) throws {
+        if writeAsASCII {
+            try super.write(escapeText(text._value).asciiWithXMLCharacterReferences)
+        } else {
+            try super.write(escapeText(text._value))
+        }
+    }
+}
+
+fileprivate extension String {
+    
+    var asciiWithXMLCharacterReferences: String {
+        var texts = [String]()
+        for scalar in self.unicodeScalars {
+            if scalar.value < 127 {
+                texts.append(String(scalar))
+            } else {
+                texts.append("&#x\(String(format: "%04x", scalar.value));")
+            }
+        }
+        return texts.joined()
+    }
+    
 }
