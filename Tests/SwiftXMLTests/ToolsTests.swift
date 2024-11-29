@@ -228,7 +228,7 @@ final class ToolsTests: XCTestCase {
         XCTAssertEqual(
             try parseXML(fromText: source).serialized(
                 usingProductionTemplate: HTMLProductionTemplate(
-                    suppressPrettyPrintBeforeFirstAnchor: true
+                    suppressPrettyPrintBeforeLeadingAnchor: true
                 )
             ),
             """

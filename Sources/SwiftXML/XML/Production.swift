@@ -408,7 +408,7 @@ public class HTMLProductionTemplate: XProductionTemplate {
     public let suppressDocumentTypeDeclaration: Bool
     public let writeAsASCII: Bool
     public let escapeGreaterThan: Bool
-    public let suppressPrettyPrintBeforeFirstAnchor: Bool
+    public let suppressPrettyPrintBeforeLeadingAnchor: Bool
     
     public init(
         indentation: String = X_DEFAULT_INDENTATION,
@@ -417,7 +417,7 @@ public class HTMLProductionTemplate: XProductionTemplate {
         suppressDocumentTypeDeclaration: Bool = false,
         writeAsASCII: Bool = false,
         escapeGreaterThan: Bool = false,
-        suppressPrettyPrintBeforeFirstAnchor: Bool = false
+        suppressPrettyPrintBeforeLeadingAnchor: Bool = false
     ) {
         self.indentation = indentation
         self.linebreak = linebreak
@@ -425,7 +425,7 @@ public class HTMLProductionTemplate: XProductionTemplate {
         self.suppressDocumentTypeDeclaration = suppressDocumentTypeDeclaration
         self.writeAsASCII = writeAsASCII
         self.escapeGreaterThan = escapeGreaterThan
-        self.suppressPrettyPrintBeforeFirstAnchor = suppressPrettyPrintBeforeFirstAnchor
+        self.suppressPrettyPrintBeforeLeadingAnchor = suppressPrettyPrintBeforeLeadingAnchor
     }
     
     open func activeProduction(for writer: Writer, atNode node: XNode) -> XActiveProduction {
@@ -437,7 +437,7 @@ public class HTMLProductionTemplate: XProductionTemplate {
             suppressDocumentTypeDeclaration: suppressDocumentTypeDeclaration,
             writeAsASCII: writeAsASCII,
             escapeGreaterThan: escapeGreaterThan,
-            suppressPrettyPrintBeforeFirstAnchor: suppressPrettyPrintBeforeFirstAnchor
+            suppressPrettyPrintBeforeLeadingAnchor: suppressPrettyPrintBeforeLeadingAnchor
         )
     }
     
@@ -452,7 +452,7 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
     public let fullHTMLPrefix: String
     public let writeAsASCII: Bool
     public let escapeGreaterThan: Bool
-    public let suppressPrettyPrintBeforeFirstAnchor: Bool
+    public let suppressPrettyPrintBeforeLeadingAnchor: Bool
     
     public init(
         writer: Writer,
@@ -463,7 +463,7 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
         suppressDocumentTypeDeclaration: Bool,
         writeAsASCII: Bool,
         escapeGreaterThan: Bool,
-        suppressPrettyPrintBeforeFirstAnchor: Bool
+        suppressPrettyPrintBeforeLeadingAnchor: Bool
     ) {
         fullHTMLPrefix = ((node as? XDocument ?? node.top) as XBranch?)?.fullPrefix(forNamespaceReference: htmlNamespaceReference) ?? ""
         htmlEmptyTags = [
@@ -514,7 +514,7 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
         self.suppressDocumentTypeDeclaration = suppressDocumentTypeDeclaration
         self.writeAsASCII = writeAsASCII
         self.escapeGreaterThan = escapeGreaterThan
-        self.suppressPrettyPrintBeforeFirstAnchor = suppressPrettyPrintBeforeFirstAnchor
+        self.suppressPrettyPrintBeforeLeadingAnchor = suppressPrettyPrintBeforeLeadingAnchor
         super.init(writer: writer, writeEmptyTags: false, indentation: indentation, linebreak: linebreak)
     }
     
