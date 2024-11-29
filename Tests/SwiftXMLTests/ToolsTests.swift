@@ -221,6 +221,25 @@ final class ToolsTests: XCTestCase {
         )
     }
     
+    func testHTMLOutput4() throws {
+        let source = """
+            <div><a name="anchor1"/><p></p></div>
+            """
+        XCTAssertEqual(
+            try parseXML(fromText: source).serialized(
+                usingProductionTemplate: HTMLProductionTemplate(
+                    suppressPrettyPrintBeforeFirstAnchor: true
+                )
+            ),
+            """
+            <!DOCTYPE html>
+            <div><a name="anchor1"></a>
+              <p></p>
+            </div>
+            """
+        )
+    }
+    
 }
 
 /// An error with a description.

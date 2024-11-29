@@ -360,8 +360,11 @@ open class ActivePrettyPrintProduction: ActiveDefaultProduction {
         return element.content.contains(where: { $0 is XText || $0 is XInternalEntity || $0 is XInternalEntity })
     }
     
+    /// This can be used to suppress the "pretty print" before an element.
+    public var suppressPrettyPrintBeforeElement = false
+    
     open override func writeElementStartBeforeAttributes(element: XElement) throws {
-        if mixed.last != true {
+        if suppressPrettyPrintBeforeElement == false, mixed.last != true {
             if indentationLevel > 0 {
                 try write(linebreak)
                 for _ in 1...indentationLevel {
@@ -405,6 +408,7 @@ public class HTMLProductionTemplate: XProductionTemplate {
     public let suppressDocumentTypeDeclaration: Bool
     public let writeAsASCII: Bool
     public let escapeGreaterThan: Bool
+    public let suppressPrettyPrintBeforeFirstAnchor: Bool
     
     public init(
         indentation: String = X_DEFAULT_INDENTATION,
@@ -412,7 +416,8 @@ public class HTMLProductionTemplate: XProductionTemplate {
         withHTMLNamespaceReference htmlNamespaceReference: NamespaceReference = .fullPrefix(""),
         suppressDocumentTypeDeclaration: Bool = false,
         writeAsASCII: Bool = false,
-        escapeGreaterThan: Bool = false
+        escapeGreaterThan: Bool = false,
+        suppressPrettyPrintBeforeFirstAnchor: Bool = false
     ) {
         self.indentation = indentation
         self.linebreak = linebreak
@@ -420,6 +425,7 @@ public class HTMLProductionTemplate: XProductionTemplate {
         self.suppressDocumentTypeDeclaration = suppressDocumentTypeDeclaration
         self.writeAsASCII = writeAsASCII
         self.escapeGreaterThan = escapeGreaterThan
+        self.suppressPrettyPrintBeforeFirstAnchor = suppressPrettyPrintBeforeFirstAnchor
     }
     
     open func activeProduction(for writer: Writer, atNode node: XNode) -> XActiveProduction {
@@ -430,7 +436,8 @@ public class HTMLProductionTemplate: XProductionTemplate {
             withHTMLNamespaceReference: htmlNamespaceReference,
             suppressDocumentTypeDeclaration: suppressDocumentTypeDeclaration,
             writeAsASCII: writeAsASCII,
-            escapeGreaterThan: escapeGreaterThan
+            escapeGreaterThan: escapeGreaterThan,
+            suppressPrettyPrintBeforeFirstAnchor: suppressPrettyPrintBeforeFirstAnchor
         )
     }
     
@@ -445,6 +452,7 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
     public let fullHTMLPrefix: String
     public let writeAsASCII: Bool
     public let escapeGreaterThan: Bool
+    public let suppressPrettyPrintBeforeFirstAnchor: Bool
     
     public init(
         writer: Writer,
@@ -454,7 +462,8 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
         withHTMLNamespaceReference htmlNamespaceReference: NamespaceReference,
         suppressDocumentTypeDeclaration: Bool,
         writeAsASCII: Bool,
-        escapeGreaterThan: Bool
+        escapeGreaterThan: Bool,
+        suppressPrettyPrintBeforeFirstAnchor: Bool
     ) {
         fullHTMLPrefix = ((node as? XDocument ?? node.top) as XBranch?)?.fullPrefix(forNamespaceReference: htmlNamespaceReference) ?? ""
         htmlEmptyTags = [
@@ -505,6 +514,7 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
         self.suppressDocumentTypeDeclaration = suppressDocumentTypeDeclaration
         self.writeAsASCII = writeAsASCII
         self.escapeGreaterThan = escapeGreaterThan
+        self.suppressPrettyPrintBeforeFirstAnchor = suppressPrettyPrintBeforeFirstAnchor
         super.init(writer: writer, writeEmptyTags: false, indentation: indentation, linebreak: linebreak)
     }
     
@@ -552,6 +562,13 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
                 return name1 == preferred || name1 < name2
             }
         }
+    }
+    
+    open override func writeElementStartBeforeAttributes(element: XElement) throws {
+        let oldSuppressPrettyPrintBeforeElement = suppressPrettyPrintBeforeElement
+        suppressPrettyPrintBeforeElement = element.name == "a" && !element.hasPrevious && element["name"] != nil
+        try super.writeElementStartBeforeAttributes(element: element)
+        suppressPrettyPrintBeforeElement = oldSuppressPrettyPrintBeforeElement
     }
     
     open override func sortAttributeNames(attributeNames: [String], element: XElement) -> [String] {
