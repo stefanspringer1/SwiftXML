@@ -220,8 +220,8 @@ public class XNode {
     weak var _previous: XContent? = nil
     var _next: XContent? = nil
     
-    var hasPrevious: Bool { _previous != nil }
-    var hasNext: Bool { _previous != nil }
+    public var hasPrevious: Bool { _previous != nil }
+    public var hasNext: Bool { _previous != nil }
     
     public var previousTouching: XContent? {
         get {
