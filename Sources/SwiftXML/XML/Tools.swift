@@ -32,7 +32,7 @@ public func copyXStructure(from start: XContent, to end: XContent, upTo: XElemen
         guard let upTo else { return copy }
         var result = copy
         while let backLink = result.backLink, backLink !== upTo, let parent = backLink.parent {
-            let parentClone = parent.shallowClone()
+            let parentClone = parent.shallowClone
             parentClone.add { result }
             result = parentClone
         }
@@ -40,7 +40,7 @@ public func copyXStructure(from start: XContent, to end: XContent, upTo: XElemen
     }
     
     if start === end {
-        let startClone = start.clone()
+        let startClone = start.clone
         let result = addUpTo(fromCopy: startClone)
         if let correction {
             return correction(StructureCopyInfo(structure: result, start: start, cloneForStart: startClone, end: start, cloneForEnd: startClone))
@@ -65,16 +65,16 @@ public func copyXStructure(from start: XContent, to end: XContent, upTo: XElemen
         ancestorsForEnd.removeLast()
     }
     
-    let startClone = start.clone()
+    let startClone = start.clone
     
     func processAncestorsForStart() -> XContent {
         var content: XContent = startClone
         var orginalContent = start
         while let ancestor = ancestorsForStart.popLast() {
-            let cloneOfAncestor = ancestor.shallowClone()
+            let cloneOfAncestor = ancestor.shallowClone
             cloneOfAncestor.add {
                 content
-                orginalContent.next.map { $0.clone() }
+                orginalContent.next.map { $0.clone }
             }
             content = cloneOfAncestor
             orginalContent = ancestor
@@ -82,15 +82,15 @@ public func copyXStructure(from start: XContent, to end: XContent, upTo: XElemen
         return content
     }
     
-    let endClone = end.clone()
+    let endClone = end.clone
     
     func processAncestorsForEnd() -> XContent {
         var content: XContent = endClone
         var orginalContent = end
         while let ancestor = ancestorsForEnd.popLast() {
-            let cloneOfAncestor = ancestor.shallowClone()
+            let cloneOfAncestor = ancestor.shallowClone
             cloneOfAncestor.add {
-                ancestor.content(until: { $0 === orginalContent }).map { $0.clone() }
+                ancestor.content(until: { $0 === orginalContent }).map { $0.clone }
                 content
             }
             content = cloneOfAncestor
@@ -99,7 +99,7 @@ public func copyXStructure(from start: XContent, to end: XContent, upTo: XElemen
         return content
     }
     
-    let combined = commonAncestor.shallowClone()
+    let combined = commonAncestor.shallowClone
     let structureForStart = processAncestorsForStart()
     let structureForEnd = processAncestorsForEnd()
     combined.add {
@@ -107,7 +107,7 @@ public func copyXStructure(from start: XContent, to end: XContent, upTo: XElemen
     }
     let stopForMiddle = structureForEnd.backLink!
     for middle in structureForStart.backLink!.next(until: { $0 === stopForMiddle }) {
-        combined.add { middle.clone() }
+        combined.add { middle.clone }
     }
     combined.add {
         structureForEnd

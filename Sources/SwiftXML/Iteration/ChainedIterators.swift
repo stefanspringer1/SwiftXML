@@ -749,12 +749,12 @@ public func collect(@XContentBuilder builder: @escaping () -> [XContent]) -> (()
 
 extension Sequence<XContent> {
     
-    public func clone() -> XContentSequence {
-        XContentDependingOnContentSequence(sequence: self, contentGetter: { content in content.clone() })
+    public var clone: XContentSequence {
+        XContentDependingOnContentSequence(sequence: self, contentGetter: { content in content.clone })
     }
     
-    public func shallowClone() -> XContentSequence {
-        XContentDependingOnContentSequence(sequence: self, contentGetter: { content in content.shallowClone() })
+    public var shallowClone: XContentSequence {
+        XContentDependingOnContentSequence(sequence: self, contentGetter: { content in content.shallowClone })
     }
     
     public var ancestors: XElementSequence {
@@ -1325,12 +1325,12 @@ extension Sequence<XElement> {
         self.dropFirst(index-1).first
     }
     
-    public func clone() -> XElementSequence {
-        XElementDependingOnElementSequence(sequence: self, elementGetter: { element in element.clone() })
+    public var clone: XElementSequence {
+        XElementDependingOnElementSequence(sequence: self, elementGetter: { element in element.clone })
     }
     
-    public func shallowClone() -> XElementSequence {
-        XElementDependingOnElementSequence(sequence: self, elementGetter: { element in element.shallowClone() })
+    public var shallowClone: XElementSequence {
+        XElementDependingOnElementSequence(sequence: self, elementGetter: { element in element.shallowClone })
     }
     
     public var ancestors: XElementSequence {

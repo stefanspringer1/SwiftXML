@@ -74,7 +74,7 @@ public final class XDocument: XNode, XBranchInternal {
     private var versions = [XDocument]()
     
     public func makeVersion() {
-        let clone = shallowClone()
+        let clone = shallowClone
         versions.append(clone)
         clone._addClones(from: self, pointingToClone: true)
     }
@@ -151,7 +151,7 @@ public final class XDocument: XNode, XBranchInternal {
     
     // ------------------------------------------------------------------------
     
-    public override func shallowClone() -> XDocument {
+    public override var shallowClone: XDocument {
         let theClone = XDocument()
         theClone._backLink = self
         theClone.xmlVersion = xmlVersion
@@ -161,18 +161,18 @@ public final class XDocument: XNode, XBranchInternal {
         theClone.publicID = publicID
         theClone.systemID = systemID
         theClone._sourcePath = _sourcePath
-        for (name, declaration) in internalEntityDeclarations { theClone.internalEntityDeclarations[name] = declaration.clone() }
-        for (name, declaration) in parameterEntityDeclarations { theClone.parameterEntityDeclarations[name] = declaration.clone() }
-        for (name, declaration) in externalEntityDeclarations { theClone.externalEntityDeclarations[name] = declaration.clone() }
-        for (name, declaration) in unparsedEntityDeclarations { theClone.unparsedEntityDeclarations[name] = declaration.clone() }
-        for (name, declaration) in notationDeclarations { theClone.notationDeclarations[name] = declaration.clone() }
-        for (name, declaration) in elementDeclarations { theClone.elementDeclarations[name] = declaration.clone() }
-        for (name, declaration) in attributeListDeclarations { theClone.attributeListDeclarations[name] = declaration.clone() }
+        for (name, declaration) in internalEntityDeclarations { theClone.internalEntityDeclarations[name] = declaration.clone }
+        for (name, declaration) in parameterEntityDeclarations { theClone.parameterEntityDeclarations[name] = declaration.clone }
+        for (name, declaration) in externalEntityDeclarations { theClone.externalEntityDeclarations[name] = declaration.clone }
+        for (name, declaration) in unparsedEntityDeclarations { theClone.unparsedEntityDeclarations[name] = declaration.clone }
+        for (name, declaration) in notationDeclarations { theClone.notationDeclarations[name] = declaration.clone }
+        for (name, declaration) in elementDeclarations { theClone.elementDeclarations[name] = declaration.clone }
+        for (name, declaration) in attributeListDeclarations { theClone.attributeListDeclarations[name] = declaration.clone }
         return theClone
     }
     
-    public override func clone() -> XDocument {
-        let theClone = shallowClone()
+    public override var clone: XDocument {
+        let theClone = shallowClone
         theClone._addClones(from: self)
         return theClone
     }

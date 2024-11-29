@@ -82,7 +82,7 @@ final class SwiftXMLTests: XCTestCase {
             </a>
             """
         let document = try parseXML(fromText: source)
-        let clone = document.clone()
+        let clone = document.clone
         XCTAssertEqual(clone.serialized(), source)
     }
     

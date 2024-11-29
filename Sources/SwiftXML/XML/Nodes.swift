@@ -137,7 +137,7 @@ public class XNode {
     }
     
     /// Make a shallow clone (without content).
-    public func shallowClone() -> XNode {
+    public var shallowClone: XNode {
         let theClone = XNode()
         theClone._backLink = self
         theClone._sourceRange = self._sourceRange
@@ -145,8 +145,8 @@ public class XNode {
     }
     
     /// Make a full clone, i.e. including clones of the content (in the same tree order), recursively.
-    public func clone() -> XNode {
-        return shallowClone()
+    public var clone: XNode {
+        return shallowClone
     }
     
     private var contentIterators = WeakList<XBidirectionalContentIterator>()
@@ -507,13 +507,13 @@ public class XContent: XNode {
     public override var backLink: XContent? { super.backLink as? XContent }
     public override var finalBackLink: XContent? { super.finalBackLink as? XContent }
     
-    public override func clone() -> XContent {
-        _ = super.clone()
+    public override var clone: XContent {
+        _ = super.clone
         return self
     }
     
-    public override func shallowClone() -> XContent {
-        _ = super.shallowClone()
+    public override var shallowClone: XContent {
+        _ = super.shallowClone
         return self
     }
     
@@ -965,14 +965,14 @@ extension XBranchInternal {
     func _addClones(from source: XBranchInternal, pointingToClone: Bool = false) {
         for node in source.content {
             // we need a reference from the clone to the origin first:
-            _add(node.shallowClone())
+            _add(node.shallowClone)
         }
         for node in allContent {
             if let element = node as? XElement {
                 // using the reference to the origin here:
                 if let backLink = element._backLink as? XElement {
                     for node in backLink.content {
-                        element._add(node.shallowClone())
+                        element._add(node.shallowClone)
                     }
                 }
             }
@@ -1593,7 +1593,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         }
     }
 
-    public override func shallowClone() -> XElement {
+    public override var shallowClone: XElement {
         let theClone = XElement(name)
         theClone._backLink = self
         theClone._sourceRange = self._sourceRange
@@ -1601,8 +1601,8 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         return theClone
     }
 
-    public override func clone() -> XElement {
-        let theClone = shallowClone()
+    public override var clone: XElement {
+        let theClone = shallowClone
         theClone._addClones(from: self)
         return theClone
     }
@@ -2021,7 +2021,7 @@ public final class XText: XContent, XTextualContentRepresentation, ToBePeparedFo
         try activeProduction.writeText(text: self)
     }
     
-    public override func shallowClone() -> XText {
+    public override var shallowClone: XText {
         let theClone = XText(_value, whitespace: _whitespace)
         theClone._backLink = self
         theClone._sourceRange = self._sourceRange
@@ -2029,8 +2029,8 @@ public final class XText: XContent, XTextualContentRepresentation, ToBePeparedFo
         return theClone
     }
     
-    public override func clone() -> XText {
-        return shallowClone()
+    public override var clone: XText {
+        return shallowClone
     }
     
     public override func removed() -> XText {
@@ -2112,15 +2112,15 @@ public final class XLiteral: XContent, XTextualContentRepresentation, ToBePepare
         try activeProduction.writeLiteral(literal: self)
     }
     
-    public override func shallowClone() -> XLiteral {
+    public override var shallowClone: XLiteral {
         let theClone = XLiteral(_value)
         theClone._backLink = self
         theClone._sourceRange = self._sourceRange
         return theClone
     }
     
-    public override func clone() -> XLiteral {
-        return shallowClone()
+    public override var clone: XLiteral {
+        return shallowClone
     }
     
     public override func removed() -> XLiteral {
@@ -2153,15 +2153,15 @@ public final class XInternalEntity: XContent {
         try activeProduction.writeInternalEntity(internalEntity: self)
     }
     
-    public override func shallowClone() -> XInternalEntity {
+    public override var shallowClone: XInternalEntity {
         let theClone = XInternalEntity(_name)
         theClone._backLink = self
         theClone._sourceRange = self._sourceRange
         return theClone
     }
     
-    public override func clone() -> XInternalEntity {
-        return shallowClone()
+    public override var clone: XInternalEntity {
+        return shallowClone
     }
     
     public override func removed() -> XInternalEntity {
@@ -2194,15 +2194,15 @@ public final class XExternalEntity: XContent {
         try activeProduction.writeExternalEntity(externalEntity: self)
     }
     
-    public override func shallowClone() -> XExternalEntity {
+    public override var shallowClone: XExternalEntity {
         let theClone = XExternalEntity(_name)
         theClone._backLink = self
         theClone._sourceRange = self._sourceRange
         return theClone
     }
     
-    public override func clone() -> XExternalEntity {
-        return shallowClone()
+    public override var clone: XExternalEntity {
+        return shallowClone
     }
     
     public override func removed() -> XExternalEntity {
@@ -2254,15 +2254,15 @@ public final class XProcessingInstruction: XContent, CustomStringConvertible {
         try activeProduction.writeProcessingInstruction(processingInstruction: self)
     }
     
-    public override func shallowClone() -> XProcessingInstruction {
+    public override var shallowClone: XProcessingInstruction {
         let theClone = XProcessingInstruction(target: _target, data: _data)
         theClone._backLink = self
         theClone._sourceRange = self._sourceRange
         return theClone
     }
     
-    public override func clone() -> XProcessingInstruction {
-        return shallowClone()
+    public override var clone: XProcessingInstruction {
+        return shallowClone
     }
     
     public override func removed() -> XProcessingInstruction {
@@ -2299,15 +2299,15 @@ public final class XComment: XContent {
         try activeProduction.writeComment(comment: self)
     }
     
-    public override func shallowClone() -> XComment {
+    public override var shallowClone: XComment {
         let theClone = XComment(_value)
         theClone._backLink = self
         theClone._sourceRange = self._sourceRange
         return theClone
     }
     
-    public override func clone() -> XComment {
-        return shallowClone()
+    public override var clone: XComment {
+        return shallowClone
     }
     
     public override func removed() -> XComment {
@@ -2340,15 +2340,15 @@ public final class XCDATASection: XContent, XTextualContentRepresentation {
         try activeProduction.writeCDATASection(cdataSection: self)
     }
     
-    public override func shallowClone() -> XCDATASection {
+    public override var shallowClone: XCDATASection {
         let theClone = XCDATASection(_value)
         theClone._backLink = self
         theClone._sourceRange = self._sourceRange
         return theClone
     }
     
-    public override func clone() -> XCDATASection {
-        return shallowClone()
+    public override var clone: XCDATASection {
+        return shallowClone
     }
     
     public override func removed() -> XCDATASection {
@@ -2380,7 +2380,7 @@ public class XDeclarationInInternalSubset {
     
     func produceEntering(activeProduction: XActiveProduction) throws {}
     
-    func clone() -> XDeclarationInInternalSubset {
+    var clone: XDeclarationInInternalSubset {
         let theClone = XDeclarationInInternalSubset(name: _name)
         theClone._sourceRange = self._sourceRange
         return theClone
@@ -2412,7 +2412,7 @@ public final class XInternalEntityDeclaration: XDeclarationInInternalSubset {
         try activeProduction.writeInternalEntityDeclaration(internalEntityDeclaration: self)
     }
     
-    public override func clone() -> XInternalEntityDeclaration {
+    public override var clone: XInternalEntityDeclaration {
         let theClone = XInternalEntityDeclaration(name: _name, value: _value)
         theClone._sourceRange = self._sourceRange
         return theClone
@@ -2455,7 +2455,7 @@ public final class XExternalEntityDeclaration: XDeclarationInInternalSubset {
         try activeProduction.writeExternalEntityDeclaration(externalEntityDeclaration: self)
     }
     
-    public override func clone() -> XExternalEntityDeclaration {
+    public override var clone: XExternalEntityDeclaration {
         let theClone = XExternalEntityDeclaration(name: _name, publicID: _publicID, systemID: _systemID)
         theClone._sourceRange = self._sourceRange
         return theClone
@@ -2509,7 +2509,7 @@ public final class XUnparsedEntityDeclaration: XDeclarationInInternalSubset {
         try activeProduction.writeUnparsedEntityDeclaration(unparsedEntityDeclaration: self)
     }
     
-    public override func clone() -> XUnparsedEntityDeclaration {
+    public override var clone: XUnparsedEntityDeclaration {
         let theClone = XUnparsedEntityDeclaration(name: _name, publicID: _publicID, systemID: _systemID, notationName: _notationName)
         theClone._sourceRange = self._sourceRange
         return theClone
@@ -2552,7 +2552,7 @@ public final class XNotationDeclaration: XDeclarationInInternalSubset {
         try activeProduction.writeNotationDeclaration(notationDeclaration: self)
     }
     
-    public override func clone() -> XNotationDeclaration {
+    public override var clone: XNotationDeclaration {
         let theClone = XNotationDeclaration(name: _name, publicID: _publicID, systemID: _systemID)
         theClone._sourceRange = self._sourceRange
         return theClone
@@ -2584,7 +2584,7 @@ public final class XElementDeclaration: XDeclarationInInternalSubset {
         try activeProduction.writeElementDeclaration(elementDeclaration: self)
     }
     
-    public override func clone() -> XElementDeclaration {
+    public override var clone: XElementDeclaration {
         let theClone = XElementDeclaration(name: _name, literal: _literal)
         theClone._sourceRange = self._sourceRange
         return theClone
@@ -2616,7 +2616,7 @@ public final class XAttributeListDeclaration: XDeclarationInInternalSubset {
         try activeProduction.writeAttributeListDeclaration(attributeListDeclaration: self)
     }
     
-    public override func clone() -> XAttributeListDeclaration {
+    public override var clone: XAttributeListDeclaration {
         let theClone = XAttributeListDeclaration(name: _name, literal: _literal)
         theClone._sourceRange = self._sourceRange
         return theClone
@@ -2648,7 +2648,7 @@ public final class XParameterEntityDeclaration: XDeclarationInInternalSubset {
         try activeProduction.writeParameterEntityDeclaration(parameterEntityDeclaration: self)
     }
     
-    public override func clone() -> XParameterEntityDeclaration {
+    public override var clone: XParameterEntityDeclaration {
         let theClone = XParameterEntityDeclaration(name: _name, value: _value)
         theClone._sourceRange = self._sourceRange
         return theClone

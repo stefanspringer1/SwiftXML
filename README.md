@@ -86,7 +86,9 @@ let transformation = XTransformation {
 
 **UPDATE 23 (October 2024):** Added `...Close...` versions e.g. `nextCloseElements`.
 
-**UPDATE 24 (November 2024):** Use `hasNext` ans `hasPrevious` instead of `hasNextTouching` ans `hasPreviousTouching`.
+**UPDATE 24 (November 2024):** Use `hasNext` and `hasPrevious` instead of `hasNextTouching` ans `hasPreviousTouching`.
+
+**UPDATE 25 (November 2024):** Use properties `clone` and `shallowCLone` instead of methods `clone()` and `shallowCLone()`.
 
 ---
 
@@ -443,12 +445,12 @@ func applyProduction(activeProduction: XActiveProduction) throws
 Any node (including an XML document) can be cloned, including the tree of nodes that is started by it, using the following method:
 
 ```swift
-func clone() -> XNode
+var clone: XNode
 ```
 
 (The result will be more specific if the subject is known to be more specific.)
 
-Any content and the document itself possesses the property `backLink` that can be used as a relation between a clone and the original node. If you create a clone by using the `clone()` method, the `backLink` value of a node in the clone points to the original node. So when working with a clone, you can easily look at the original nodes.
+Any content and the document itself possesses the property `backLink` that can be used as a relation between a clone and the original node. If you create a clone by using the `clone` property, the `backLink` value of a node in the clone points to the original node. So when working with a clone, you can easily look at the original nodes.
 
 Note that the `backLink` reference references the original node weakly, i.e. if you do not save a reference to the original node or tree then the original node disapears and the `backLink` property will be `nil`.
 
@@ -458,7 +460,7 @@ If you would like to use cloning to just save a version of your document to a co
 func makeVersion()
 ```
 
-In that case a clone of the document will be created, but with the `backLink` property of an original node pointing to the clone, and the `backLink` property of the clone will point to the old `backLink` value of the original node. I.e. if you apply `saveVersion()` several times, when following the `backLink` values starting from a node in your original document, you will go through all versions of this node, from the newer ones to the older ones. The `backLinks` property gives you exactly that chain of backlinks. Other than when using `clone()`, a strong reference to such a document version will be remembered by the document, so the nodes of the clone will be kept. Use `forgetVersions(keeping:Int)` on the document in order to stop this remembering, just keeping the last number of versions defined by the argument `keeping` (`keeping` defaults to 0). In the oldest version then still remembered or, if no remembered version if left, in the document itself all `backLink` values will then be set to `nil`.
+In that case a clone of the document will be created, but with the `backLink` property of an original node pointing to the clone, and the `backLink` property of the clone will point to the old `backLink` value of the original node. I.e. if you apply `saveVersion()` several times, when following the `backLink` values starting from a node in your original document, you will go through all versions of this node, from the newer ones to the older ones. The `backLinks` property gives you exactly that chain of backlinks. Other than when using `clone`, a strong reference to such a document version will be remembered by the document, so the nodes of the clone will be kept. Use `forgetVersions(keeping:Int)` on the document in order to stop this remembering, just keeping the last number of versions defined by the argument `keeping` (`keeping` defaults to 0). In the oldest version then still remembered or, if no remembered version if left, in the document itself all `backLink` values will then be set to `nil`.
 
 The `finalBackLink` property follows the whole chain of `backLink` values and gives you the last value in this chain.
 
@@ -468,7 +470,7 @@ Sometimes, only a “shallow” clone is needed, i.e. the node itself without th
 func shallowClone(forwardref: Bool) -> XNode
 ```
 
-The `backLink` is then set just like when using `clone()`.
+The `backLink` is then set just like when using `clone`.
 
 ## Content properties
 
@@ -1078,7 +1080,7 @@ let myElement = XElement("paragraph", ["id": "1", "style": "note"])
 
 We would first like to give some important hints before we explain the corresponding functionalities in detail.
 
-Note that when inserting content into an element or document and that content already exists somewhere else, the inserted content is _moved_ from its orginal place, and not copied. If you would like to insert a copy, insert the result of the `clone()` method of the content.
+Note that when inserting content into an element or document and that content already exists somewhere else, the inserted content is _moved_ from its orginal place, and not copied. If you would like to insert a copy, insert the result of using the `clone` property of the content.
 
 Be “courageous” when formulating your code, more might function than you might have thought. Anticipating the explanations in the following sections, e.g. the following code examples _do_ work:
 
@@ -1493,7 +1495,7 @@ Output:
 </a>
 ```
 
-Note that a new `<added/>` is created each time. From what has already bee said, it should be clear that this “duplication” does not work with existing content (unless you use `clone()` or `shallowClone()`):
+Note that a new `<added/>` is created each time. From what has already bee said, it should be clear that this “duplication” does not work with existing content (unless you use `clone` or `shallowClone`):
 
 ```swift
 let myElement = XElement("a") {
@@ -1524,7 +1526,7 @@ Output:
 
 As a general rule, when inserting a content, and that content is already part of another element or document, that content does not get duplicated, but removed from its original position.
 
-Use `clone()` (or `shallowClone()`) when you actually want content to get duplicated, e.g. using `myElement.descendants("to-add").clone()` in the last example would then output:
+Use `clone` (or `shallowClone`) when you actually want content to get duplicated, e.g. using `myElement.descendants("to-add").clone` in the last example would then output:
 
 ```text
 <a>
