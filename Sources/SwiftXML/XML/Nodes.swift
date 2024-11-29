@@ -220,8 +220,8 @@ public class XNode {
     weak var _previous: XContent? = nil
     var _next: XContent? = nil
     
-    public var hasPrevious: Bool { _previous != nil }
-    public var hasNext: Bool { _previous != nil }
+    public var hasPrevious: Bool { previousTouching != nil }
+    public var hasNext: Bool { nextTouching != nil }
     
     public var previousTouching: XContent? {
         get {
@@ -281,10 +281,6 @@ public class XNode {
         }
     }
     
-    public var hasPreviousTouching: Bool {
-        previousTouching != nil
-    }
-    
     public func hasPreviousTouching(_ condition: (XContent) -> Bool) -> Bool {
         previousTouching(condition) != nil
     }
@@ -297,10 +293,6 @@ public class XNode {
         else {
             return nil
         }
-    }
-    
-    public var hasNextTouching: Bool {
-        nextTouching != nil
     }
     
     public func hasNextTouching(_ condition: (XContent) -> Bool) -> Bool {
