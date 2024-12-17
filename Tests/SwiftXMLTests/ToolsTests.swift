@@ -227,8 +227,27 @@ final class ToolsTests: XCTestCase {
             """
         XCTAssertEqual(
             try parseXML(fromText: source).serialized(
+                usingProductionTemplate: HTMLProductionTemplate()
+            ),
+            """
+            <!DOCTYPE html>
+            <div>
+              <a name="anchor1"></a>
+              <a name="anchor2"></a>
+              <p></p>
+            </div>
+            """
+        )
+    }
+    
+    func testHTMLOutput5() throws {
+        let source = """
+            <div><a name="anchor1"/><a name="anchor2"/><p></p></div>
+            """
+        XCTAssertEqual(
+            try parseXML(fromText: source).serialized(
                 usingProductionTemplate: HTMLProductionTemplate(
-                    suppressPrettyPrintBeforeLeadingAnchor: true
+                    suppressUncessaryPrettyPrintAtAnchors: true
                 )
             ),
             """
@@ -240,15 +259,14 @@ final class ToolsTests: XCTestCase {
         )
     }
     
-    
-    func testHTMLOutput5() throws {
+    func testHTMLOutput6() throws {
         let source = """
             <div></div>
             """
         XCTAssertEqual(
             try parseXML(fromText: source).serialized(
                 usingProductionTemplate: HTMLProductionTemplate(
-                    suppressPrettyPrintBeforeLeadingAnchor: true
+                    suppressUncessaryPrettyPrintAtAnchors: true
                 )
             ),
             """

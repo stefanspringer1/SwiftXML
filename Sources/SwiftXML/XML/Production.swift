@@ -408,7 +408,7 @@ public class HTMLProductionTemplate: XProductionTemplate {
     public let suppressDocumentTypeDeclaration: Bool
     public let writeAsASCII: Bool
     public let escapeGreaterThan: Bool
-    public let suppressPrettyPrintBeforeLeadingAnchor: Bool
+    public let suppressUncessaryPrettyPrintAtAnchors: Bool
     
     public init(
         indentation: String = X_DEFAULT_INDENTATION,
@@ -417,7 +417,7 @@ public class HTMLProductionTemplate: XProductionTemplate {
         suppressDocumentTypeDeclaration: Bool = false,
         writeAsASCII: Bool = false,
         escapeGreaterThan: Bool = false,
-        suppressPrettyPrintBeforeLeadingAnchor: Bool = false
+        suppressUncessaryPrettyPrintAtAnchors: Bool = false
     ) {
         self.indentation = indentation
         self.linebreak = linebreak
@@ -425,7 +425,7 @@ public class HTMLProductionTemplate: XProductionTemplate {
         self.suppressDocumentTypeDeclaration = suppressDocumentTypeDeclaration
         self.writeAsASCII = writeAsASCII
         self.escapeGreaterThan = escapeGreaterThan
-        self.suppressPrettyPrintBeforeLeadingAnchor = suppressPrettyPrintBeforeLeadingAnchor
+        self.suppressUncessaryPrettyPrintAtAnchors = suppressUncessaryPrettyPrintAtAnchors
     }
     
     open func activeProduction(for writer: Writer, atNode node: XNode) -> XActiveProduction {
@@ -438,7 +438,7 @@ public class HTMLProductionTemplate: XProductionTemplate {
             suppressDocumentTypeDeclaration: suppressDocumentTypeDeclaration,
             writeAsASCII: writeAsASCII,
             escapeGreaterThan: escapeGreaterThan,
-            suppressPrettyPrintBeforeLeadingAnchor: suppressPrettyPrintBeforeLeadingAnchor
+            suppressUncessaryPrettyPrintAtAnchors: suppressUncessaryPrettyPrintAtAnchors
         )
     }
     
@@ -453,7 +453,7 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
     public let fullHTMLPrefix: String
     public let writeAsASCII: Bool
     public let escapeGreaterThan: Bool
-    public let suppressPrettyPrintBeforeLeadingAnchor: Bool
+    public let suppressUncessaryPrettyPrintAtAnchors: Bool
     
     public init(
         writer: Writer,
@@ -464,7 +464,7 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
         suppressDocumentTypeDeclaration: Bool,
         writeAsASCII: Bool,
         escapeGreaterThan: Bool,
-        suppressPrettyPrintBeforeLeadingAnchor: Bool
+        suppressUncessaryPrettyPrintAtAnchors: Bool
     ) {
         fullHTMLPrefix = ((node as? XDocument ?? node.top) as XBranch?)?.fullPrefix(forNamespaceReference: htmlNamespaceReference) ?? ""
         htmlEmptyTags = [
@@ -515,7 +515,7 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
         self.suppressDocumentTypeDeclaration = suppressDocumentTypeDeclaration
         self.writeAsASCII = writeAsASCII
         self.escapeGreaterThan = escapeGreaterThan
-        self.suppressPrettyPrintBeforeLeadingAnchor = suppressPrettyPrintBeforeLeadingAnchor
+        self.suppressUncessaryPrettyPrintAtAnchors = suppressUncessaryPrettyPrintAtAnchors
         super.init(writer: writer, writeEmptyTags: false, indentation: indentation, linebreak: linebreak)
     }
     
@@ -567,7 +567,7 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
     
     open override func writeElementStartBeforeAttributes(element: XElement) throws {
         let oldSuppressPrettyPrintBeforeElement = suppressPrettyPrintBeforeElement
-        suppressPrettyPrintBeforeElement = element.name == "a" && (!element.hasPrevious || (element.previousTouching as? XElement)?.fullfills({ $0.name == "a" && $0["name"] != nil}) == true) && element["name"] != nil
+        suppressPrettyPrintBeforeElement = suppressUncessaryPrettyPrintAtAnchors && element.name == "a" && (!element.hasPrevious || (element.previousTouching as? XElement)?.fullfills({ $0.name == "a" && $0["name"] != nil}) == true) && element["name"] != nil
         try super.writeElementStartBeforeAttributes(element: element)
         suppressPrettyPrintBeforeElement = oldSuppressPrettyPrintBeforeElement
     }

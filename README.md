@@ -90,6 +90,8 @@ let transformation = XTransformation {
 
 **UPDATE 25 (November 2024):** Use properties `clone` and `shallowCLone` instead of methods `clone()` and `shallowCLone()`.
 
+**UPDATE 26 (November 2024):** HTML production: Renamed `suppressPrettyPrintBeforeLeadingAnchor` to `suppressUncessaryPrettyPrintAtAnchors`.
+
 ---
 
 ## Related packages
