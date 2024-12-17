@@ -223,7 +223,7 @@ final class ToolsTests: XCTestCase {
     
     func testHTMLOutput4() throws {
         let source = """
-            <div><a name="anchor1"/><p></p></div>
+            <div><a name="anchor1"/><a name="anchor2"/><p></p></div>
             """
         XCTAssertEqual(
             try parseXML(fromText: source).serialized(
@@ -233,7 +233,7 @@ final class ToolsTests: XCTestCase {
             ),
             """
             <!DOCTYPE html>
-            <div><a name="anchor1"></a>
+            <div><a name="anchor1"></a><a name="anchor2"></a>
               <p></p>
             </div>
             """

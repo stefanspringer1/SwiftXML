@@ -566,7 +566,7 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
     
     open override func writeElementStartBeforeAttributes(element: XElement) throws {
         let oldSuppressPrettyPrintBeforeElement = suppressPrettyPrintBeforeElement
-        suppressPrettyPrintBeforeElement = element.name == "a" && !element.hasPrevious && element["name"] != nil
+        suppressPrettyPrintBeforeElement = element.name == "a" && (!element.hasPrevious || (element.previousTouching as? XElement)?.fullfills({ $0.name == "a" && $0["name"] != nil}) == true) && element["name"] != nil
         try super.writeElementStartBeforeAttributes(element: element)
         suppressPrettyPrintBeforeElement = oldSuppressPrettyPrintBeforeElement
     }
