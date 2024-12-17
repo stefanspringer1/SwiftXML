@@ -431,6 +431,7 @@ public class HTMLProductionTemplate: XProductionTemplate {
     open func activeProduction(for writer: Writer, atNode node: XNode) -> XActiveProduction {
         ActiveHTMLProduction(
             writer: writer,
+            indentation: indentation,
             linebreak: linebreak,
             atNode: node,
             withHTMLNamespaceReference: htmlNamespaceReference,

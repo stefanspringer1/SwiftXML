@@ -240,6 +240,24 @@ final class ToolsTests: XCTestCase {
         )
     }
     
+    
+    func testHTMLOutput5() throws {
+        let source = """
+            <div></div>
+            """
+        XCTAssertEqual(
+            try parseXML(fromText: source).serialized(
+                usingProductionTemplate: HTMLProductionTemplate(
+                    suppressPrettyPrintBeforeLeadingAnchor: true
+                )
+            ),
+            """
+            <!DOCTYPE html>
+            <div></div>
+            """
+        )
+    }
+    
 }
 
 /// An error with a description.
