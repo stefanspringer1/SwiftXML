@@ -70,13 +70,13 @@ public final class XDocument: XNode, XBranchInternal {
         get { super.backlink as? XDocument }
     }
     
-    /// Setting the backlink manually.
+    /// Setting the backlink manually. The identical node is returned.
     public func setting(backlink: XDocument) -> XDocument {
         _backlink = backlink
         return self
     }
     
-    /// Copying the backlink from another node.
+    /// Copying the backlink from another node. The identical node is returned.
     public func copyingBacklink(from node: XDocument) -> XDocument {
         _backlink = node._backlink
         return self
