@@ -537,7 +537,7 @@ final class FromReadmeTests: XCTestCase {
             }
             
             XRule(forElements: "paragraph") { element in
-                let style: String? = if element.parent?.backLink?.name == "warning" {
+                let style: String? = if element.parent?.backlink?.name == "warning" {
                     "color:Red"
                 } else {
                     nil

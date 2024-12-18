@@ -31,7 +31,7 @@ public func copyXStructure(from start: XContent, to end: XContent, upTo: XElemen
     func addUpTo(fromCopy copy: XContent) -> XContent {
         guard let upTo else { return copy }
         var result = copy
-        while let backLink = result.backLink, backLink !== upTo, let parent = backLink.parent {
+        while let backlink = result.backlink, backlink !== upTo, let parent = backlink.parent {
             let parentClone = parent.shallowClone
             parentClone.add { result }
             result = parentClone
@@ -105,8 +105,8 @@ public func copyXStructure(from start: XContent, to end: XContent, upTo: XElemen
     combined.add {
         structureForStart
     }
-    let stopForMiddle = structureForEnd.backLink!
-    for middle in structureForStart.backLink!.next(until: { $0 === stopForMiddle }) {
+    let stopForMiddle = structureForEnd.backlink!
+    for middle in structureForStart.backlink!.next(until: { $0 === stopForMiddle }) {
         combined.add { middle.clone }
     }
     combined.add {

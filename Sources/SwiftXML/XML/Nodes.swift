@@ -85,16 +85,28 @@ public class XNode {
     /// For every node its range in the source text can be noted.
     public var sourceRange: XTextRange? { _sourceRange }
     
-    weak var _backLink: XNode? = nil
+    weak var _backlink: XNode? = nil
     
     /// After cloning, this is the reference to the original node or to the cloned node respectively,
     /// acoording to the parameter used when cloning.
     ///
     /// Note that this is a weak reference, the clone must be contained by other means to exist.
-    public var backLink: XNode? {
+    public var backlink: XNode? {
         get {
-            return _backLink
+            return _backlink
         }
+    }
+    
+    /// Setting the backlink manually.
+    public func setting(backlink: XNode) -> XNode {
+        _backlink = backlink
+        return self
+    }
+    
+    /// Copying the backlink from another node.
+    public func copyingBacklink(from node: XNode) -> XNode {
+        _backlink = node._backlink
+        return self
     }
     
     /// Here, the `backlink` reference are followed while they are non-nil.
@@ -102,8 +114,8 @@ public class XNode {
     /// It is thhe oldest source or furthest target of cloning respectively, so to speak.
     public var finalBackLink: XNode? {
         get {
-            var ref = _backLink
-            while let further = ref?._backLink {
+            var ref = _backlink
+            while let further = ref?._backlink {
                 ref = further
             }
             return ref
@@ -111,13 +123,13 @@ public class XNode {
     }
     
     /// Follows the ´backlink´ property and finally returns an array of the according nodes.
-    public var backLinkPath: [XNode]? {
+    public var backlinkPath: [XNode]? {
         get {
-            var ref = _backLink
+            var ref = _backlink
             if let theRef = ref {
                 var path = [XNode]()
                 path.append(theRef)
-                while let further = ref?._backLink {
+                while let further = ref?._backlink {
                     ref = further
                     path.append(further)
                 }
@@ -139,7 +151,7 @@ public class XNode {
     /// Make a shallow clone (without content).
     public var shallowClone: XNode {
         let theClone = XNode()
-        theClone._backLink = self
+        theClone._backlink = self
         theClone._sourceRange = self._sourceRange
         return theClone
     }
@@ -504,7 +516,27 @@ public class XNode {
 
 public class XContent: XNode {
     
-    public override var backLink: XContent? { super.backLink as? XContent }
+    /// After cloning, this is the reference to the original node or to the cloned node respectively,
+    /// acoording to the parameter used when cloning.
+    ///
+    /// Note that this is a weak reference, the clone must be contained by other means to exist.
+    public override var backlink: XContent? { super.backlink as? XContent }
+    
+    /// Setting the backlink manually.
+    public func setting(backlink: XContent) -> XContent {
+        _backlink = backlink
+        return self
+    }
+    
+    /// Copying the backlink from another node.
+    public func copyingBacklink(from node: XContent) -> XContent {
+        _backlink = node._backlink
+        return self
+    }
+    
+    /// Here, the `backlink` reference are followed while they are non-nil.
+    ///
+    /// It is thhe oldest source or furthest target of cloning respectively, so to speak.
     public override var finalBackLink: XContent? { super.finalBackLink as? XContent }
     
     public override var clone: XContent {
@@ -970,17 +1002,17 @@ extension XBranchInternal {
         for node in allContent {
             if let element = node as? XElement {
                 // using the reference to the origin here:
-                if let backLink = element._backLink as? XElement {
-                    for node in backLink.content {
+                if let backlink = element._backlink as? XElement {
+                    for node in backlink.content {
                         element._add(node.shallowClone)
                     }
                 }
             }
             // change the reference if desired differently:
             if pointingToClone {
-                let source = node._backLink
-                node._backLink = source?._backLink
-                source?._backLink = node
+                let source = node._backlink
+                node._backlink = source?._backlink
+                source?._backlink = node
             }
         }
     }
@@ -1576,7 +1608,27 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     var _attributes = [String:String]() // contains all attributes, including the registered ones
     var _registeredAttributes = [String:AttributeProperties]() // the registered attributes
     
-    public override var backLink: XElement? { super.backLink as? XElement }
+    /// After cloning, this is the reference to the original node or to the cloned node respectively,
+    /// acoording to the parameter used when cloning.
+    ///
+    /// Note that this is a weak reference, the clone must be contained by other means to exist.
+    public override var backlink: XElement? { super.backlink as? XElement }
+    
+    /// Setting the backlink manually.
+    public func setting(backlink: XElement) -> XElement {
+        _backlink = backlink
+        return self
+    }
+    
+    /// Copying the backlink from another node.
+    public func copyingBacklink(from node: XElement) -> XElement {
+        _backlink = node._backlink
+        return self
+    }
+    
+    /// Here, the `backlink` reference are followed while they are non-nil.
+    ///
+    /// It is thhe oldest source or furthest target of cloning respectively, so to speak.
     public override var finalBackLink: XElement? { super.finalBackLink as? XElement }
 
     public override var description: String {
@@ -1595,7 +1647,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
 
     public override var shallowClone: XElement {
         let theClone = XElement(name)
-        theClone._backLink = self
+        theClone._backlink = self
         theClone._sourceRange = self._sourceRange
         theClone.copyAttributes(from: self)
         return theClone
@@ -1774,7 +1826,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     public init(
         _ name: String,
         _ attributes: [String:String?]? = nil,
-        withBackLinkFrom backLinkSource: XElement? = nil,
+        withBackLinkFrom backlinkSource: XElement? = nil,
         attached: [String:Any?]? = nil
     ) {
         self._name = name
@@ -1790,20 +1842,20 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
                 }
             }
         }
-        if let backLinkSource {
-            self._backLink = backLinkSource._backLink
+        if let backlinkSource {
+            self._backlink = backlinkSource._backlink
         }
     }
     
     public convenience init(
         _ name: String,
         _ attributes: [String:String?]? = nil,
-        withBackLinkFrom backLinkSource: XElement? = nil,
+        withBackLinkFrom backlinkSource: XElement? = nil,
         attached: [String:Any?]? = nil,
         adjustDocument _adjustDocument: Bool = false,
         @XContentBuilder builder: () -> [XContent]
     ) {
-        self.init(name, attributes, withBackLinkFrom: backLinkSource, attached: attached)
+        self.init(name, attributes, withBackLinkFrom: backlinkSource, attached: attached)
         self.add(builder: builder)
         if _adjustDocument {
             adjustDocument()
@@ -1919,7 +1971,27 @@ public final class XText: XContent, XTextualContentRepresentation, ToBePeparedFo
         super.replace(insertionMode, builder: builder)
     }
     
-    public override var backLink: XText? { super.backLink as? XText }
+    /// After cloning, this is the reference to the original node or to the cloned node respectively,
+    /// acoording to the parameter used when cloning.
+    ///
+    /// Note that this is a weak reference, the clone must be contained by other means to exist.
+    public override var backlink: XText? { super.backlink as? XText }
+    
+    /// Setting the backlink manually.
+    public func setting(backlink: XText) -> XText {
+        _backlink = backlink
+        return self
+    }
+    
+    /// Copying the backlink from another node.
+    public func copyingBacklink(from node: XText) -> XText {
+        _backlink = node._backlink
+        return self
+    }
+    
+    /// Here, the `backlink` reference are followed while they are non-nil.
+    ///
+    /// It is thhe oldest source or furthest target of cloning respectively, so to speak.
     public override var finalBackLink: XText? { super.finalBackLink as? XText }
     
     var _value: String
@@ -2023,7 +2095,7 @@ public final class XText: XContent, XTextualContentRepresentation, ToBePeparedFo
     
     public override var shallowClone: XText {
         let theClone = XText(_value, whitespace: _whitespace)
-        theClone._backLink = self
+        theClone._backlink = self
         theClone._sourceRange = self._sourceRange
         theClone.isolated = isolated
         return theClone
@@ -2044,7 +2116,27 @@ public final class XText: XContent, XTextualContentRepresentation, ToBePeparedFo
  */
 public final class XLiteral: XContent, XTextualContentRepresentation, ToBePeparedForMoving, CustomStringConvertible {
     
-    public override var backLink: XLiteral? { super.backLink as? XLiteral }
+    /// After cloning, this is the reference to the original node or to the cloned node respectively,
+    /// acoording to the parameter used when cloning.
+    ///
+    /// Note that this is a weak reference, the clone must be contained by other means to exist.
+    public override var backlink: XLiteral? { super.backlink as? XLiteral }
+    
+    /// Setting the backlink manually.
+    public func setting(backlink: XLiteral) -> XLiteral {
+        _backlink = backlink
+        return self
+    }
+    
+    /// Copying the backlink from another node.
+    public func copyingBacklink(from node: XLiteral) -> XLiteral {
+        _backlink = node._backlink
+        return self
+    }
+    
+    /// Here, the `backlink` reference are followed while they are non-nil.
+    ///
+    /// It is thhe oldest source or furthest target of cloning respectively, so to speak.
     public override var finalBackLink: XLiteral? { super.finalBackLink as? XLiteral }
     
     var _value: String
@@ -2114,7 +2206,7 @@ public final class XLiteral: XContent, XTextualContentRepresentation, ToBePepare
     
     public override var shallowClone: XLiteral {
         let theClone = XLiteral(_value)
-        theClone._backLink = self
+        theClone._backlink = self
         theClone._sourceRange = self._sourceRange
         return theClone
     }
@@ -2131,7 +2223,27 @@ public final class XLiteral: XContent, XTextualContentRepresentation, ToBePepare
 
 public final class XInternalEntity: XContent {
     
-    public override var backLink: XInternalEntity? { super.backLink as? XInternalEntity }
+    /// After cloning, this is the reference to the original node or to the cloned node respectively,
+    /// acoording to the parameter used when cloning.
+    ///
+    /// Note that this is a weak reference, the clone must be contained by other means to exist.
+    public override var backlink: XInternalEntity? { super.backlink as? XInternalEntity }
+    
+    /// Setting the backlink manually.
+    public func setting(backlink: XInternalEntity) -> XInternalEntity {
+        _backlink = backlink
+        return self
+    }
+    
+    /// Copying the backlink from another node.
+    public func copyingBacklink(from node: XInternalEntity) -> XInternalEntity {
+        _backlink = node._backlink
+        return self
+    }
+    
+    /// Here, the `backlink` reference are followed while they are non-nil.
+    ///
+    /// It is thhe oldest source or furthest target of cloning respectively, so to speak.
     public override var finalBackLink: XInternalEntity? { super.finalBackLink as? XInternalEntity }
     
     var _name: String
@@ -2155,7 +2267,7 @@ public final class XInternalEntity: XContent {
     
     public override var shallowClone: XInternalEntity {
         let theClone = XInternalEntity(_name)
-        theClone._backLink = self
+        theClone._backlink = self
         theClone._sourceRange = self._sourceRange
         return theClone
     }
@@ -2172,7 +2284,27 @@ public final class XInternalEntity: XContent {
 
 public final class XExternalEntity: XContent {
     
-    public override var backLink: XExternalEntity? { super.backLink as? XExternalEntity }
+    /// After cloning, this is the reference to the original node or to the cloned node respectively,
+    /// acoording to the parameter used when cloning.
+    ///
+    /// Note that this is a weak reference, the clone must be contained by other means to exist.
+    public override var backlink: XExternalEntity? { super.backlink as? XExternalEntity }
+    
+    /// Setting the backlink manually.
+    public func setting(backlink: XExternalEntity) -> XExternalEntity {
+        _backlink = backlink
+        return self
+    }
+    
+    /// Copying the backlink from another node.
+    public func copyingBacklink(from node: XExternalEntity) -> XExternalEntity {
+        _backlink = node._backlink
+        return self
+    }
+    
+    /// Here, the `backlink` reference are followed while they are non-nil.
+    ///
+    /// It is thhe oldest source or furthest target of cloning respectively, so to speak.
     public override var finalBackLink: XExternalEntity? { super.finalBackLink as? XExternalEntity }
     
     var _name: String
@@ -2196,7 +2328,7 @@ public final class XExternalEntity: XContent {
     
     public override var shallowClone: XExternalEntity {
         let theClone = XExternalEntity(_name)
-        theClone._backLink = self
+        theClone._backlink = self
         theClone._sourceRange = self._sourceRange
         return theClone
     }
@@ -2213,7 +2345,27 @@ public final class XExternalEntity: XContent {
 
 public final class XProcessingInstruction: XContent, CustomStringConvertible {
     
-    public override var backLink: XProcessingInstruction? { super.backLink as? XProcessingInstruction }
+    /// After cloning, this is the reference to the original node or to the cloned node respectively,
+    /// acoording to the parameter used when cloning.
+    ///
+    /// Note that this is a weak reference, the clone must be contained by other means to exist.
+    public override var backlink: XProcessingInstruction? { super.backlink as? XProcessingInstruction }
+    
+    /// Setting the backlink manually.
+    public func setting(backlink: XProcessingInstruction) -> XProcessingInstruction {
+        _backlink = backlink
+        return self
+    }
+    
+    /// Copying the backlink from another node.
+    public func copyingBacklink(from node: XProcessingInstruction) -> XProcessingInstruction {
+        _backlink = node._backlink
+        return self
+    }
+    
+    /// Here, the `backlink` reference are followed while they are non-nil.
+    ///
+    /// It is thhe oldest source or furthest target of cloning respectively, so to speak.
     public override var finalBackLink: XProcessingInstruction? { super.finalBackLink as? XProcessingInstruction }
     
     var _target: String
@@ -2256,7 +2408,7 @@ public final class XProcessingInstruction: XContent, CustomStringConvertible {
     
     public override var shallowClone: XProcessingInstruction {
         let theClone = XProcessingInstruction(target: _target, data: _data)
-        theClone._backLink = self
+        theClone._backlink = self
         theClone._sourceRange = self._sourceRange
         return theClone
     }
@@ -2277,7 +2429,27 @@ public final class XComment: XContent {
         if let text { return XComment(text, withAdditionalSpace: withAdditionalSpace) } else { return nil }
     }
     
-    public override var backLink: XComment? { super.backLink as? XComment }
+    /// After cloning, this is the reference to the original node or to the cloned node respectively,
+    /// acoording to the parameter used when cloning.
+    ///
+    /// Note that this is a weak reference, the clone must be contained by other means to exist.
+    public override var backlink: XComment? { super.backlink as? XComment }
+    
+    /// Setting the backlink manually.
+    public func setting(backlink: XComment) -> XComment {
+        _backlink = backlink
+        return self
+    }
+    
+    /// Copying the backlink from another node.
+    public func copyingBacklink(from node: XComment) -> XComment {
+        _backlink = node._backlink
+        return self
+    }
+    
+    /// Here, the `backlink` reference are followed while they are non-nil.
+    ///
+    /// It is thhe oldest source or furthest target of cloning respectively, so to speak.
     public override var finalBackLink: XComment? { super.finalBackLink as? XComment }
     
     var _value: String
@@ -2301,7 +2473,7 @@ public final class XComment: XContent {
     
     public override var shallowClone: XComment {
         let theClone = XComment(_value)
-        theClone._backLink = self
+        theClone._backlink = self
         theClone._sourceRange = self._sourceRange
         return theClone
     }
@@ -2318,7 +2490,27 @@ public final class XComment: XContent {
 
 public final class XCDATASection: XContent, XTextualContentRepresentation {
     
-    public override var backLink: XCDATASection? { super.backLink as? XCDATASection }
+    /// After cloning, this is the reference to the original node or to the cloned node respectively,
+    /// acoording to the parameter used when cloning.
+    ///
+    /// Note that this is a weak reference, the clone must be contained by other means to exist.
+    public override var backlink: XCDATASection? { super.backlink as? XCDATASection }
+    
+    /// Setting the backlink manually.
+    public func setting(backlink: XCDATASection) -> XCDATASection {
+        _backlink = backlink
+        return self
+    }
+    
+    /// Copying the backlink from another node.
+    public func copyingBacklink(from node: XCDATASection) -> XCDATASection {
+        _backlink = node._backlink
+        return self
+    }
+    
+    /// Here, the `backlink` reference are followed while they are non-nil.
+    ///
+    /// It is thhe oldest source or furthest target of cloning respectively, so to speak.
     public override var finalBackLink: XCDATASection? { super.finalBackLink as? XCDATASection }
     
     var _value: String
@@ -2342,7 +2534,7 @@ public final class XCDATASection: XContent, XTextualContentRepresentation {
     
     public override var shallowClone: XCDATASection {
         let theClone = XCDATASection(_value)
-        theClone._backLink = self
+        theClone._backlink = self
         theClone._sourceRange = self._sourceRange
         return theClone
     }

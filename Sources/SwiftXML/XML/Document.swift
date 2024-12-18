@@ -62,7 +62,29 @@ public final class XDocument: XNode, XBranchInternal {
     
     var _sourcePath: String? = nil
     
-    public override var backLink: XDocument? { get { super.backLink as? XDocument } }
+    /// After cloning, this is the reference to the original node or to the cloned node respectively,
+    /// acoording to the parameter used when cloning.
+    ///
+    /// Note that this is a weak reference, the clone must be contained by other means to exist.
+    public override var backlink: XDocument? {
+        get { super.backlink as? XDocument }
+    }
+    
+    /// Setting the backlink manually.
+    public func setting(backlink: XDocument) -> XDocument {
+        _backlink = backlink
+        return self
+    }
+    
+    /// Copying the backlink from another node.
+    public func copyingBacklink(from node: XDocument) -> XDocument {
+        _backlink = node._backlink
+        return self
+    }
+    
+    /// Here, the `backlink` reference are followed while they are non-nil.
+    ///
+    /// It is thhe oldest source or furthest target of cloning respectively, so to speak.
     public override var finalBackLink: XDocument? { get { super.finalBackLink as? XDocument } }
         
     public var sourcePath: String? {
@@ -101,8 +123,8 @@ public final class XDocument: XNode, XBranchInternal {
                 }
             }
             let lastVersion = versions.first ?? self
-            lastVersion._backLink = nil
-            for content in lastVersion.allContent { content._backLink = nil }
+            lastVersion._backlink = nil
+            for content in lastVersion.allContent { content._backlink = nil }
         }
     }
     
@@ -153,7 +175,7 @@ public final class XDocument: XNode, XBranchInternal {
     
     public override var shallowClone: XDocument {
         let theClone = XDocument()
-        theClone._backLink = self
+        theClone._backlink = self
         theClone.xmlVersion = xmlVersion
         theClone.encoding = encoding
         theClone.standalone = standalone
