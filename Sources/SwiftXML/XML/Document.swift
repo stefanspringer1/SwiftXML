@@ -85,7 +85,7 @@ public final class XDocument: XNode, XBranchInternal {
     /// Here, the `backlink` reference are followed while they are non-nil.
     ///
     /// It is thhe oldest source or furthest target of cloning respectively, so to speak.
-    public override var finalBackLink: XDocument? { get { super.finalBackLink as? XDocument } }
+    public override var finalBacklink: XDocument? { get { super.finalBacklink as? XDocument } }
         
     public var sourcePath: String? {
         get {

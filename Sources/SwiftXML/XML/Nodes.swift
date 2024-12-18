@@ -112,7 +112,7 @@ public class XNode {
     /// Here, the `backlink` reference are followed while they are non-nil.
     ///
     /// It is thhe oldest source or furthest target of cloning respectively, so to speak.
-    public var finalBackLink: XNode? {
+    public var finalBacklink: XNode? {
         get {
             var ref = _backlink
             while let further = ref?._backlink {
@@ -537,7 +537,7 @@ public class XContent: XNode {
     /// Here, the `backlink` reference are followed while they are non-nil.
     ///
     /// It is thhe oldest source or furthest target of cloning respectively, so to speak.
-    public override var finalBackLink: XContent? { super.finalBackLink as? XContent }
+    public override var finalBacklink: XContent? { super.finalBacklink as? XContent }
     
     public override var clone: XContent {
         _ = super.clone
@@ -1629,7 +1629,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     /// Here, the `backlink` reference are followed while they are non-nil.
     ///
     /// It is thhe oldest source or furthest target of cloning respectively, so to speak.
-    public override var finalBackLink: XElement? { super.finalBackLink as? XElement }
+    public override var finalBacklink: XElement? { super.finalBacklink as? XElement }
 
     public override var description: String {
         get {
@@ -1992,7 +1992,7 @@ public final class XText: XContent, XTextualContentRepresentation, ToBePeparedFo
     /// Here, the `backlink` reference are followed while they are non-nil.
     ///
     /// It is thhe oldest source or furthest target of cloning respectively, so to speak.
-    public override var finalBackLink: XText? { super.finalBackLink as? XText }
+    public override var finalBacklink: XText? { super.finalBacklink as? XText }
     
     var _value: String
     
@@ -2137,7 +2137,7 @@ public final class XLiteral: XContent, XTextualContentRepresentation, ToBePepare
     /// Here, the `backlink` reference are followed while they are non-nil.
     ///
     /// It is thhe oldest source or furthest target of cloning respectively, so to speak.
-    public override var finalBackLink: XLiteral? { super.finalBackLink as? XLiteral }
+    public override var finalBacklink: XLiteral? { super.finalBacklink as? XLiteral }
     
     var _value: String
     
@@ -2244,7 +2244,7 @@ public final class XInternalEntity: XContent {
     /// Here, the `backlink` reference are followed while they are non-nil.
     ///
     /// It is thhe oldest source or furthest target of cloning respectively, so to speak.
-    public override var finalBackLink: XInternalEntity? { super.finalBackLink as? XInternalEntity }
+    public override var finalBacklink: XInternalEntity? { super.finalBacklink as? XInternalEntity }
     
     var _name: String
     
@@ -2305,7 +2305,7 @@ public final class XExternalEntity: XContent {
     /// Here, the `backlink` reference are followed while they are non-nil.
     ///
     /// It is thhe oldest source or furthest target of cloning respectively, so to speak.
-    public override var finalBackLink: XExternalEntity? { super.finalBackLink as? XExternalEntity }
+    public override var finalBacklink: XExternalEntity? { super.finalBacklink as? XExternalEntity }
     
     var _name: String
     
@@ -2366,7 +2366,7 @@ public final class XProcessingInstruction: XContent, CustomStringConvertible {
     /// Here, the `backlink` reference are followed while they are non-nil.
     ///
     /// It is thhe oldest source or furthest target of cloning respectively, so to speak.
-    public override var finalBackLink: XProcessingInstruction? { super.finalBackLink as? XProcessingInstruction }
+    public override var finalBacklink: XProcessingInstruction? { super.finalBacklink as? XProcessingInstruction }
     
     var _target: String
     var _data: String?
@@ -2450,7 +2450,7 @@ public final class XComment: XContent {
     /// Here, the `backlink` reference are followed while they are non-nil.
     ///
     /// It is thhe oldest source or furthest target of cloning respectively, so to speak.
-    public override var finalBackLink: XComment? { super.finalBackLink as? XComment }
+    public override var finalBacklink: XComment? { super.finalBacklink as? XComment }
     
     var _value: String
     
@@ -2511,7 +2511,7 @@ public final class XCDATASection: XContent, XTextualContentRepresentation {
     /// Here, the `backlink` reference are followed while they are non-nil.
     ///
     /// It is thhe oldest source or furthest target of cloning respectively, so to speak.
-    public override var finalBackLink: XCDATASection? { super.finalBackLink as? XCDATASection }
+    public override var finalBacklink: XCDATASection? { super.finalBacklink as? XCDATASection }
     
     var _value: String
     

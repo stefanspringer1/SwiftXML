@@ -92,7 +92,7 @@ let transformation = XTransformation {
 
 **UPDATE 26 (November 2024):** HTML production: Renamed `suppressPrettyPrintBeforeLeadingAnchor` to `suppressUncessaryPrettyPrintAtAnchors`.
 
-**UPDATE 27 (November 2024):** New methods `setting(backlink:)` and `copyingBacklink(from:)`.
+**UPDATE 27 (November 2024):** Remamed `backLink` to `backlink` and `finalBackLink` to `finalBacklink`. New methods `setting(backlink:)` and `copyingBacklink(from:)`.
 
 ---
 
@@ -468,7 +468,7 @@ func makeVersion()
 
 In that case a clone of the document will be created, but with the `backlink` property of an original node pointing to the clone, and the `backlink` property of the clone will point to the old `backlink` value of the original node. I.e. if you apply `saveVersion()` several times, when following the `backlink` values starting from a node in your original document, you will go through all versions of this node, from the newer ones to the older ones. The `backlinks` property gives you exactly that chain of backlinks. Other than when using `clone`, a strong reference to such a document version will be remembered by the document, so the nodes of the clone will be kept. Use `forgetVersions(keeping:Int)` on the document in order to stop this remembering, just keeping the last number of versions defined by the argument `keeping` (`keeping` defaults to 0). In the oldest version then still remembered or, if no remembered version if left, in the document itself all `backlink` values will then be set to `nil`.
 
-The `finalBackLink` property follows the whole chain of `backlink` values and gives you the last value in this chain.
+The `finalBacklink` property follows the whole chain of `backlink` values and gives you the last value in this chain.
 
 Sometimes, only a “shallow” clone is needed, i.e. the node itself without the whole tree of nodes with the node as root. In this case, just use:
 
