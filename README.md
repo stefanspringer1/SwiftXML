@@ -94,6 +94,8 @@ let transformation = XTransformation {
 
 **UPDATE 27 (November 2024):** Remamed `backLink` to `backlink` and `finalBackLink` to `finalBacklink`. New methods `setting(backlink:)` and `copyingBacklink(from:)`.
 
+**UPDATE 28 (December 2024):** New: `immediateTextsCombined`.
+
 ---
 
 ## Related packages

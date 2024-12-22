@@ -491,6 +491,10 @@ public class XNode {
         serialized(usingProductionTemplate: pretty ? PrettyPrintProductionTemplate(indentation: indentation) : DefaultProductionTemplate())
     }
     
+    public var immediateTextsCombined: String {
+        immediateTexts.map{ $0.value }.joined()
+    }
+    
     public var allTextsCombined: String {
         if let meAsText = self as? XText {
             return meAsText.value
