@@ -26,7 +26,8 @@ public func parseXML(
     externalWrapperElement: String? = nil,
     keepComments: Bool = false,
     keepCDATASections: Bool = false,
-    eventHandlers: [XEventHandler]? = nil
+    eventHandlers: [XEventHandler]? = nil,
+    immediateTextHandlingNearEntities: ImmediateTextHandlingNearEntities = .atExternalEntities
 ) throws -> XDocument {
     
     let document = XDocument(registeringAttributes: attributeRegisterMode)
@@ -58,7 +59,7 @@ public func parseXML(
         )
     )
     
-    try parser.parse(from: documentSource, sourceInfo: sourceInfo, eventHandlers: eventHandlers)
+    try parser.parse(from: documentSource, sourceInfo: sourceInfo, eventHandlers: eventHandlers, immediateTextHandlingNearEntities: immediateTextHandlingNearEntities)
     
     return document
 }
@@ -77,7 +78,8 @@ public func parseXML(
     externalWrapperElement: String? = nil,
     keepComments: Bool = false,
     keepCDATASections: Bool = false,
-    eventHandlers: [XEventHandler]? = nil
+    eventHandlers: [XEventHandler]? = nil,
+    immediateTextHandlingNearEntities: ImmediateTextHandlingNearEntities = .atExternalEntities
 ) throws -> XDocument {
     try parseXML(
         from: .path(path),
@@ -93,7 +95,8 @@ public func parseXML(
         externalWrapperElement: externalWrapperElement,
         keepComments: keepComments,
         keepCDATASections: keepCDATASections,
-        eventHandlers: eventHandlers
+        eventHandlers: eventHandlers,
+        immediateTextHandlingNearEntities: immediateTextHandlingNearEntities
     )
 }
 
@@ -111,7 +114,8 @@ public func parseXML(
     externalWrapperElement: String? = nil,
     keepComments: Bool = false,
     keepCDATASections: Bool = false,
-    eventHandlers: [XEventHandler]? = nil
+    eventHandlers: [XEventHandler]? = nil,
+    immediateTextHandlingNearEntities: ImmediateTextHandlingNearEntities = .atExternalEntities
 ) throws -> XDocument {
     try parseXML(
         from: .url(url),
@@ -127,7 +131,8 @@ public func parseXML(
         externalWrapperElement: externalWrapperElement,
         keepComments: keepComments,
         keepCDATASections: keepCDATASections,
-        eventHandlers: eventHandlers
+        eventHandlers: eventHandlers,
+        immediateTextHandlingNearEntities: immediateTextHandlingNearEntities
     )
 }
 
@@ -145,7 +150,8 @@ public func parseXML(
     externalWrapperElement: String? = nil,
     keepComments: Bool = false,
     keepCDATASections: Bool = false,
-    eventHandlers: [XEventHandler]? = nil
+    eventHandlers: [XEventHandler]? = nil,
+    immediateTextHandlingNearEntities: ImmediateTextHandlingNearEntities = .atExternalEntities
 ) throws -> XDocument {
     try parseXML(
         from: .text(text),
@@ -161,7 +167,8 @@ public func parseXML(
         externalWrapperElement: externalWrapperElement,
         keepComments: keepComments,
         keepCDATASections: keepCDATASections,
-        eventHandlers: eventHandlers
+        eventHandlers: eventHandlers,
+        immediateTextHandlingNearEntities: immediateTextHandlingNearEntities
     )
 }
 
@@ -173,6 +180,7 @@ public func parseXML(
     internalEntityResolver: InternalEntityResolver? = nil,
     internalEntityResolverHasToResolve: Bool = true,
     eventHandlers: [XEventHandler]? = nil,
+    immediateTextHandlingNearEntities: ImmediateTextHandlingNearEntities = .atExternalEntities,
     textAllowedInElementWithName: ((String) -> Bool)? = nil,
     keepComments: Bool = false,
     keepCDATASections: Bool = false,
@@ -197,6 +205,7 @@ public func parseXML(
         externalWrapperElement: externalWrapperElement,
         keepComments: keepComments,
         keepCDATASections: keepCDATASections,
-        eventHandlers: eventHandlers
+        eventHandlers: eventHandlers,
+        immediateTextHandlingNearEntities: immediateTextHandlingNearEntities
     )
 }
