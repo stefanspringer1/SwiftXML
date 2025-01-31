@@ -261,7 +261,13 @@ open class ActiveDefaultProduction: XActiveProduction {
     }
     
     open func writeAttributeValue(name: String, value: String, element: XElement) throws {
-        try write(value.escapingDoubleQuotedValueForXML.replacingOccurrences(of: "\n", with: "&#x0A;").replacingOccurrences(of: "\r", with: "&#x0D;"))
+        try write(
+            (
+                escapeAll ? value.escapingAllForXML :
+                (escapeGreaterThan ? value.escapingDoubleQuotedValueForXML.replacingOccurrences(of: ">", with: "&gt;") : value.escapingDoubleQuotedValueForXML)
+            )
+                .replacingOccurrences(of: "\n", with: "&#x0A;").replacingOccurrences(of: "\r", with: "&#x0D;")
+        )
     }
     
     open func writeAttribute(name: String, value: String, element: XElement) throws {
@@ -663,10 +669,11 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
     }
     
     open override func writeAttributeValue(name: String, value: String, element: XElement) throws {
-        var result = (escapeAll ? value.escapingAllForXML : value.escapingDoubleQuotedValueForXML).replacingOccurrences(of: "\n", with: "&#x0A;").replacingOccurrences(of: "\r", with: "&#x0D;")
-        if escapeGreaterThan {
-            result = result.replacingOccurrences(of: ">", with: "&gt;")
-        }
+        var result = (
+                escapeAll ? value.escapingAllForXML :
+                (escapeGreaterThan ? value.escapingDoubleQuotedValueForXML.replacingOccurrences(of: ">", with: "&gt;") : value.escapingDoubleQuotedValueForXML)
+            )
+                .replacingOccurrences(of: "\n", with: "&#x0A;").replacingOccurrences(of: "\r", with: "&#x0D;")
         if writeAsASCII {
             result = result.asciiWithXMLCharacterReferences
         }
