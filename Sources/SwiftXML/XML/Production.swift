@@ -124,14 +124,25 @@ public class DefaultProductionTemplate: XProductionTemplate {
     
     public let writeEmptyTags: Bool
     public let linebreak: String
+    public let escapeAll: Bool
     
-    public init(writeEmptyTags: Bool = true, linebreak: String = X_DEFAULT_LINEBREAK) {
+    public init(
+        writeEmptyTags: Bool = true,
+        escapeAll: Bool = false,
+        linebreak: String = X_DEFAULT_LINEBREAK
+    ) {
         self.writeEmptyTags = writeEmptyTags
         self.linebreak = linebreak
+        self.escapeAll = escapeAll
     }
     
     public func activeProduction(for writer: Writer, atNode node: XNode) -> XActiveProduction {
-        ActiveDefaultProduction(writer: writer, writeEmptyTags: writeEmptyTags, linebreak: linebreak)
+        ActiveDefaultProduction(
+            writer: writer,
+            writeEmptyTags: writeEmptyTags,
+            escapeAll: escapeAll,
+            linebreak: linebreak
+        )
     }
     
 }
@@ -144,6 +155,7 @@ open class ActiveDefaultProduction: XActiveProduction {
         try writer.write(text)
     }
     
+    let escapeAll: Bool
     private let writeEmptyTags: Bool
     
     private let _linebreak: String
@@ -152,9 +164,15 @@ open class ActiveDefaultProduction: XActiveProduction {
         get { _linebreak }
     }
     
-    public init(writer: Writer, writeEmptyTags: Bool = true, linebreak: String = X_DEFAULT_LINEBREAK) {
+    public init(
+        writer: Writer,
+        writeEmptyTags: Bool = true,
+        escapeAll: Bool = false,
+        linebreak: String = X_DEFAULT_LINEBREAK
+    ) {
         self.writer = writer
         self.writeEmptyTags = writeEmptyTags
+        self.escapeAll = escapeAll
         self._linebreak = linebreak
     }
     
@@ -236,7 +254,7 @@ open class ActiveDefaultProduction: XActiveProduction {
     }
     
     open func writeAttributeValue(name: String, value: String, element: XElement) throws {
-        try write(escapeDoubleQuotedValue(value).replacingOccurrences(of: "\n", with: "&#x0A;").replacingOccurrences(of: "\r", with: "&#x0D;"))
+        try write(value.escapingDoubleQuotedValue.replacingOccurrences(of: "\n", with: "&#x0A;").replacingOccurrences(of: "\r", with: "&#x0D;"))
     }
     
     open func writeAttribute(name: String, value: String, element: XElement) throws {
@@ -265,7 +283,7 @@ open class ActiveDefaultProduction: XActiveProduction {
     }
     
     open func writeText(text: XText) throws {
-        try write(escapeText(text._value))
+        try write(escapeAll ? text.value.escapingAll : text.value.escapingText)
     }
     
     open func writeLiteral(literal: XLiteral) throws {
@@ -285,7 +303,7 @@ open class ActiveDefaultProduction: XActiveProduction {
     }
     
     open func writeInternalEntityDeclaration(internalEntityDeclaration: XInternalEntityDeclaration) throws {
-        try write("\(declarationInInternalSubsetIndentation)<!ENTITY \(internalEntityDeclaration._name) \"\(escapeDoubleQuotedValue(internalEntityDeclaration._value))\">\(linebreak)")
+        try write("\(declarationInInternalSubsetIndentation)<!ENTITY \(internalEntityDeclaration._name) \"\(internalEntityDeclaration._value.escapingDoubleQuotedValue)\">\(linebreak)")
     }
     
     open func writeExternalEntityDeclaration(externalEntityDeclaration: XExternalEntityDeclaration) throws {
@@ -301,7 +319,7 @@ open class ActiveDefaultProduction: XActiveProduction {
     }
     
     open func writeParameterEntityDeclaration(parameterEntityDeclaration: XParameterEntityDeclaration) throws {
-        try write("\(declarationInInternalSubsetIndentation)<!ENTITY % \(parameterEntityDeclaration._name) \"\(escapeDoubleQuotedValue(parameterEntityDeclaration._value))\"\(linebreak)>")
+        try write("\(declarationInInternalSubsetIndentation)<!ENTITY % \(parameterEntityDeclaration._name) \"\(parameterEntityDeclaration._value.escapingDoubleQuotedValue)\"\(linebreak)>")
     }
     
     open func writeInternalEntity(internalEntity: XInternalEntity) throws {
@@ -601,7 +619,7 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
     }
     
     open override func writeText(text: XText) throws {
-        var result = escapeText(text._value)
+        var result = escapeAll ? text._value.escapingAll : text._value.escapingText
         if escapeGreaterThan {
             result = result.replacingOccurrences(of: ">", with: "&gt;")
         }
@@ -612,7 +630,7 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
     }
     
     open override func writeAttributeValue(name: String, value: String, element: XElement) throws {
-        var result = escapeDoubleQuotedValue(value).replacingOccurrences(of: "\n", with: "&#x0A;").replacingOccurrences(of: "\r", with: "&#x0D;")
+        var result = (escapeAll ? value.escapingAll : value.escapingDoubleQuotedValue).replacingOccurrences(of: "\n", with: "&#x0A;").replacingOccurrences(of: "\r", with: "&#x0D;")
         if escapeGreaterThan {
             result = result.replacingOccurrences(of: ">", with: "&gt;")
         }
