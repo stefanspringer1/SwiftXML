@@ -254,7 +254,7 @@ open class ActiveDefaultProduction: XActiveProduction {
     }
     
     open func writeAttributeValue(name: String, value: String, element: XElement) throws {
-        try write(value.escapingDoubleQuotedValue.replacingOccurrences(of: "\n", with: "&#x0A;").replacingOccurrences(of: "\r", with: "&#x0D;"))
+        try write(value.escapingDoubleQuotedValueForXML.replacingOccurrences(of: "\n", with: "&#x0A;").replacingOccurrences(of: "\r", with: "&#x0D;"))
     }
     
     open func writeAttribute(name: String, value: String, element: XElement) throws {
@@ -283,7 +283,7 @@ open class ActiveDefaultProduction: XActiveProduction {
     }
     
     open func writeText(text: XText) throws {
-        try write(escapeAll ? text.value.escapingAll : text.value.escapingText)
+        try write(escapeAll ? text.value.escapingAllForXML : text.value.escapingForXML)
     }
     
     open func writeLiteral(literal: XLiteral) throws {
@@ -303,7 +303,7 @@ open class ActiveDefaultProduction: XActiveProduction {
     }
     
     open func writeInternalEntityDeclaration(internalEntityDeclaration: XInternalEntityDeclaration) throws {
-        try write("\(declarationInInternalSubsetIndentation)<!ENTITY \(internalEntityDeclaration._name) \"\(internalEntityDeclaration._value.escapingDoubleQuotedValue)\">\(linebreak)")
+        try write("\(declarationInInternalSubsetIndentation)<!ENTITY \(internalEntityDeclaration._name) \"\(internalEntityDeclaration._value.escapingDoubleQuotedValueForXML)\">\(linebreak)")
     }
     
     open func writeExternalEntityDeclaration(externalEntityDeclaration: XExternalEntityDeclaration) throws {
@@ -319,7 +319,7 @@ open class ActiveDefaultProduction: XActiveProduction {
     }
     
     open func writeParameterEntityDeclaration(parameterEntityDeclaration: XParameterEntityDeclaration) throws {
-        try write("\(declarationInInternalSubsetIndentation)<!ENTITY % \(parameterEntityDeclaration._name) \"\(parameterEntityDeclaration._value.escapingDoubleQuotedValue)\"\(linebreak)>")
+        try write("\(declarationInInternalSubsetIndentation)<!ENTITY % \(parameterEntityDeclaration._name) \"\(parameterEntityDeclaration._value.escapingDoubleQuotedValueForXML)\"\(linebreak)>")
     }
     
     open func writeInternalEntity(internalEntity: XInternalEntity) throws {
@@ -619,7 +619,7 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
     }
     
     open override func writeText(text: XText) throws {
-        var result = escapeAll ? text._value.escapingAll : text._value.escapingText
+        var result = escapeAll ? text._value.escapingAllForXML : text._value.escapingForXML
         if escapeGreaterThan {
             result = result.replacingOccurrences(of: ">", with: "&gt;")
         }
@@ -630,7 +630,7 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
     }
     
     open override func writeAttributeValue(name: String, value: String, element: XElement) throws {
-        var result = (escapeAll ? value.escapingAll : value.escapingDoubleQuotedValue).replacingOccurrences(of: "\n", with: "&#x0A;").replacingOccurrences(of: "\r", with: "&#x0D;")
+        var result = (escapeAll ? value.escapingAllForXML : value.escapingDoubleQuotedValueForXML).replacingOccurrences(of: "\n", with: "&#x0A;").replacingOccurrences(of: "\r", with: "&#x0D;")
         if escapeGreaterThan {
             result = result.replacingOccurrences(of: ">", with: "&gt;")
         }

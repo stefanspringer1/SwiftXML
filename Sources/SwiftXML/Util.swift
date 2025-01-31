@@ -13,7 +13,7 @@ import AutoreleasepoolShim
 
 public extension String {
     
-    var escapingAll: String {
+    var escapingAllForXML: String {
         self
             .replacingOccurrences(of: "&", with: "&amp;")
             .replacingOccurrences(of: "<", with: "&lt;")
@@ -22,20 +22,20 @@ public extension String {
             .replacingOccurrences(of: "'", with: "&apos;")
     }
     
-    var escapingText: String {
+    var escapingForXML: String {
         self
             .replacingOccurrences(of: "&", with: "&amp;")
             .replacingOccurrences(of: "<", with: "&lt;")
     }
     
-    var escapingDoubleQuotedValue: String {
+    var escapingDoubleQuotedValueForXML: String {
         self
             .replacingOccurrences(of: "&", with: "&amp;")
             .replacingOccurrences(of: "<", with: "&lt;")
             .replacingOccurrences(of: "\"", with: "&quot;")
     }
     
-    var escapingSimpleQuotedValue: String {
+    var escapingSimpleQuotedValueForXML: String {
         self
             .replacingOccurrences(of: "&", with: "&amp;")
             .replacingOccurrences(of: "<", with: "&lt;")
