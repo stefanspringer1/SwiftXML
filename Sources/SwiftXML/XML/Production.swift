@@ -362,9 +362,10 @@ open class ActivePrettyPrintProduction: ActiveDefaultProduction {
     
     /// This can be used to suppress the "pretty print" before an element.
     public var suppressPrettyPrintBeforeElement = false
+    public var forcePrettyPrintAtElement = false
     
     open override func writeElementStartBeforeAttributes(element: XElement) throws {
-        if suppressPrettyPrintBeforeElement == false, mixed.last != true {
+        if forcePrettyPrintAtElement || (suppressPrettyPrintBeforeElement == false && mixed.last != true) {
             if indentationLevel > 0 {
                 try write(linebreak)
                 for _ in 1...indentationLevel {
@@ -386,7 +387,7 @@ open class ActivePrettyPrintProduction: ActiveDefaultProduction {
     open override func writeElementEnd(element: XElement) throws {
         if !element.isEmpty {
             indentationLevel -= 1
-            if mixed.last != true {
+            if forcePrettyPrintAtElement || mixed.last != true {
                 try write(linebreak)
                 if indentationLevel > 0 {
                     for _ in 1...indentationLevel {
@@ -447,6 +448,7 @@ public class HTMLProductionTemplate: XProductionTemplate {
 open class ActiveHTMLProduction: ActivePrettyPrintProduction {
 
     public var htmlEmptyTags: [String]
+    public var htmlStrictBlocks: [String]
     public var htmlStrictInlines: [String]
     public var blockOrInline: [String]
     public var suppressDocumentTypeDeclaration: Bool
@@ -481,7 +483,11 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
             "\(fullHTMLPrefix)param",
             "\(fullHTMLPrefix)source",
             "\(fullHTMLPrefix)track",
-            "\(fullHTMLPrefix)wbr"
+            "\(fullHTMLPrefix)wbr",
+        ]
+        htmlStrictBlocks = [
+            "\(fullHTMLPrefix)div",
+            "\(fullHTMLPrefix)p",
         ]
         htmlStrictInlines = [
             "\(fullHTMLPrefix)abbr",
@@ -506,7 +512,7 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
             "\(fullHTMLPrefix)sub",
             "\(fullHTMLPrefix)sup",
             "\(fullHTMLPrefix)time",
-            "\(fullHTMLPrefix)var"
+            "\(fullHTMLPrefix)var",
         ]
         blockOrInline = [
             "\(fullHTMLPrefix)a",
@@ -567,9 +573,19 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
     
     open override func writeElementStartBeforeAttributes(element: XElement) throws {
         let oldSuppressPrettyPrintBeforeElement = suppressPrettyPrintBeforeElement
+        let oldForcePrettyPrintAtElement = forcePrettyPrintAtElement
         suppressPrettyPrintBeforeElement = suppressUncessaryPrettyPrintAtAnchors && element.name == "a" && (!element.hasPrevious || (element.previousTouching as? XElement)?.fullfills({ $0.name == "a" && $0["name"] != nil}) == true) && element["name"] != nil
+        forcePrettyPrintAtElement = htmlStrictBlocks.contains(element.name)
         try super.writeElementStartBeforeAttributes(element: element)
         suppressPrettyPrintBeforeElement = oldSuppressPrettyPrintBeforeElement
+        forcePrettyPrintAtElement = oldForcePrettyPrintAtElement
+    }
+    
+    open override func writeElementEnd(element: XElement) throws {
+        let oldForcePrettyPrintAtElement = forcePrettyPrintAtElement
+        forcePrettyPrintAtElement = (element.lastContent as? XElement)?.fullfills{ htmlStrictBlocks.contains($0.name) } == true
+        try super.writeElementEnd(element: element)
+        forcePrettyPrintAtElement = oldForcePrettyPrintAtElement
     }
     
     open override func sortAttributeNames(attributeNames: [String], element: XElement) -> [String] {

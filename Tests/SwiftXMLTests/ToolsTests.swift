@@ -276,6 +276,26 @@ final class ToolsTests: XCTestCase {
         )
     }
     
+    func testHTMLOutput7() throws {
+        let source = """
+            <div>Hello<div>world</div><div>!</div></div>
+            """
+        XCTAssertEqual(
+            try parseXML(fromText: source).serialized(
+                usingProductionTemplate: HTMLProductionTemplate(
+                    suppressUncessaryPrettyPrintAtAnchors: true
+                )
+            ),
+            """
+            <!DOCTYPE html>
+            <div>Hello
+              <div>world</div>
+              <div>!</div>
+            </div>
+            """
+        )
+    }
+    
 }
 
 /// An error with a description.
