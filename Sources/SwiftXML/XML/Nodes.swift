@@ -1556,29 +1556,29 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
             node = node?._nextInTree
         } while node != nil
     }
-
+    
     var __firstContent: XContent?
-
+    
     var __lastContent: XContent?
-
+    
     weak var _lastInTree: XNode!
-
+    
     override func getLastInTree() -> XNode {
         return _lastInTree
     }
-
+    
     public override var top: XElement {
         super.top ?? self
     }
-
+    
     weak var _document: XDocument? = nil
-
+    
     private var elementIterators = WeakList<XBidirectionalElementIterator>()
-
+    
     func addElementIterator(_ elementIterator: XBidirectionalElementIterator) {
         elementIterators.append(elementIterator)
     }
-
+    
     func removeElementIterator(_ elementIterator: XBidirectionalElementIterator) {
         elementIterators.remove(elementIterator)
     }
@@ -1638,17 +1638,17 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     public override var description: String {
         get {
             """
-            <\(name)\(_attributes.isEmpty == false ? " " : "")\(_attributes.sorted{ $0.0.caseInsensitiveCompare($1.0) == .orderedAscending }.map { (attributeName,attributeValue) in "\(attributeName)=\"\(escapeDoubleQuotedValue(attributeValue))\"" }.joined(separator: " ") ?? "")>
+            <\(name)\(_attributes.isEmpty == false ? " " : "")\(_attributes.sorted{ $0.0.caseInsensitiveCompare($1.0) == .orderedAscending }.map { (attributeName,attributeValue) in "\(attributeName)=\"\(attributeValue.escapingDoubleQuotedValue)\"" }.joined(separator: " ") ?? "")>
             """
         }
     }
-
+    
     public func copyAttributes(from other: XElement) {
         for (attributeName,attributeValue) in other._attributes {
             self[attributeName] = attributeValue
         }
     }
-
+    
     public override var shallowClone: XElement {
         let theClone = XElement(name)
         theClone._backlink = self
@@ -1656,20 +1656,20 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         theClone.copyAttributes(from: self)
         return theClone
     }
-
+    
     public override var clone: XElement {
         let theClone = shallowClone
         theClone._addClones(from: self)
         return theClone
     }
-
+    
     public override func removed() -> XElement {
         remove()
         return self
     }
-
+    
     var _name: String
-
+    
     public var name: String {
         get { _name }
         set(newName) {
@@ -1687,13 +1687,13 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
             }
         }
     }
-
+    
     public func hasEqualValues(as other: XElement) -> Bool {
         return self.name == other.name
         && self._attributes.keys.allSatisfy { self[$0] == other[$0] }
             && other._attributes.keys.allSatisfy { self[$0] != nil }
     }
-
+    
     public var xPath: String {
         get {
             let myName = name
@@ -1706,32 +1706,32 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
             ].joinedNonEmpties(separator: "/") ?? "")
         }
     }
-
+    
     public var attributeNames: [String] {
         get {
             return _attributes.keys.sorted{ $0.caseInsensitiveCompare($1) == .orderedAscending }
         }
     }
-
+    
     weak var previousWithSameName: XElement? = nil
     var nextWithSameName: XElement? = nil
-
+    
     public var asElementSequence: XElementSequence { get { XElementSelfSequence(element: self) } }
-
+    
     override func _insertPrevious(_ insertionMode: InsertionMode, _ content: [XContent]) {
         if insertionMode == .skipping {
             prefetchOnElementIterators()
         }
         super._insertPrevious(insertionMode, content)
     }
-
+    
     override func _insertNext(_ insertionMode: InsertionMode, _ content: [XContent]) {
         if insertionMode == .skipping {
             prefetchOnElementIterators()
         }
         super._insertNext(insertionMode, content)
     }
-
+    
     /**
      Replace the node by other nodes.
      */
@@ -1744,44 +1744,44 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         }
         super.replace(insertionMode, builder: builder)
     }
-
+    
     // ------------------------------------------------------------------------
     // repeat methods from XBranchInternal:
-
+    
     public var firstContent: XContent? { _firstContent }
-
+    
     public func firstContent(_ condition: (XContent) -> Bool) -> XContent? {
         return _firstContent(condition)
     }
-
+    
     public var lastContent: XContent? { _lastContent }
-
+    
     public func lastContent(_ condition: (XContent) -> Bool) -> XContent? {
         return _lastContent(condition)
     }
-
+    
     public var singleContent: XContent? { _singleContent }
-
+    
     public var isEmpty: Bool { _isEmpty }
-
+    
     public func add(@XContentBuilder builder: () -> [XContent]) {
         return _add(builder())
     }
-
+    
     public func addFirst(@XContentBuilder builder: () -> [XContent]) {
         return _addFirst(builder())
     }
-
+    
     public func setContent(@XContentBuilder builder: () -> [XContent]) {
         return _setContent(builder())
     }
-
+    
     public func clear() {
         return _clear()
     }
-
+    
     // ------------------------------------------------------------------------
-
+    
     // prevent stack overflow when destroying the list of elements with same name,
     // to be applied on the first element in that list,
     // cf. https://forums.swift.org/t/deep-recursion-in-deinit-should-not-happen/54987
