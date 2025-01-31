@@ -125,17 +125,20 @@ public class DefaultProductionTemplate: XProductionTemplate {
     public let writeEmptyTags: Bool
     public let linebreak: String
     public let escapeGreaterThan: Bool
+    public let escapeAllInText: Bool
     public let escapeAll: Bool
     
     public init(
         writeEmptyTags: Bool = true,
         escapeGreaterThan: Bool = false,
+        escapeAllInText: Bool = false,
         escapeAll: Bool = false,
         linebreak: String = X_DEFAULT_LINEBREAK
     ) {
         self.writeEmptyTags = writeEmptyTags
         self.linebreak = linebreak
         self.escapeGreaterThan = escapeGreaterThan
+        self.escapeAllInText = escapeAllInText
         self.escapeAll = escapeAll
     }
     
@@ -144,6 +147,7 @@ public class DefaultProductionTemplate: XProductionTemplate {
             writer: writer,
             writeEmptyTags: writeEmptyTags,
             escapeGreaterThan: escapeGreaterThan,
+            escapeAllInText: escapeAllInText,
             escapeAll: escapeAll,
             linebreak: linebreak
         )
@@ -160,6 +164,7 @@ open class ActiveDefaultProduction: XActiveProduction {
     }
     
     let escapeGreaterThan: Bool
+    let escapeAllInText: Bool
     let escapeAll: Bool
     private let writeEmptyTags: Bool
     
@@ -173,12 +178,14 @@ open class ActiveDefaultProduction: XActiveProduction {
         writer: Writer,
         writeEmptyTags: Bool = true,
         escapeGreaterThan: Bool = false,
+        escapeAllInText: Bool = false,
         escapeAll: Bool = false,
         linebreak: String = X_DEFAULT_LINEBREAK
     ) {
         self.writer = writer
         self.writeEmptyTags = writeEmptyTags
         self.escapeGreaterThan = escapeGreaterThan
+        self.escapeAllInText = escapeAllInText
         self.escapeAll = escapeAll
         self._linebreak = linebreak
     }
@@ -297,7 +304,7 @@ open class ActiveDefaultProduction: XActiveProduction {
     
     open func writeText(text: XText) throws {
         try write(
-            escapeAll ? text.value.escapingAllForXML :
+            escapeAll || escapeAllInText ? text.value.escapingAllForXML :
                 (escapeGreaterThan ? text.value.escapingForXML.replacingOccurrences(of: ">", with: "&gt;") : text.value.escapingForXML)
         )
     }
@@ -386,6 +393,7 @@ open class ActivePrettyPrintProduction: ActiveDefaultProduction {
         writeEmptyTags: Bool = true,
         indentation: String = X_DEFAULT_INDENTATION,
         escapeGreaterThan: Bool = false,
+        escapeAllInText: Bool = false,
         escapeAll: Bool = false,
         linebreak: String = X_DEFAULT_LINEBREAK
     ) {
@@ -394,6 +402,7 @@ open class ActivePrettyPrintProduction: ActiveDefaultProduction {
             writer: writer,
             writeEmptyTags: writeEmptyTags,
             escapeGreaterThan: escapeGreaterThan,
+            escapeAllInText: escapeAllInText,
             escapeAll: escapeAll,
             linebreak: linebreak
         )
@@ -456,6 +465,7 @@ public class HTMLProductionTemplate: XProductionTemplate {
     public let suppressDocumentTypeDeclaration: Bool
     public let writeAsASCII: Bool
     public let escapeGreaterThan: Bool
+    public let escapeAllInText: Bool
     public let escapeAll: Bool
     public let suppressUncessaryPrettyPrintAtAnchors: Bool
     
@@ -466,6 +476,7 @@ public class HTMLProductionTemplate: XProductionTemplate {
         suppressDocumentTypeDeclaration: Bool = false,
         writeAsASCII: Bool = false,
         escapeGreaterThan: Bool = false,
+        escapeAllInText: Bool = false,
         escapeAll: Bool = false,
         suppressUncessaryPrettyPrintAtAnchors: Bool = false
     ) {
@@ -475,6 +486,7 @@ public class HTMLProductionTemplate: XProductionTemplate {
         self.suppressDocumentTypeDeclaration = suppressDocumentTypeDeclaration
         self.writeAsASCII = writeAsASCII
         self.escapeGreaterThan = escapeGreaterThan
+        self.escapeAllInText = escapeAllInText
         self.escapeAll = escapeAll
         self.suppressUncessaryPrettyPrintAtAnchors = suppressUncessaryPrettyPrintAtAnchors
     }
@@ -489,6 +501,7 @@ public class HTMLProductionTemplate: XProductionTemplate {
             suppressDocumentTypeDeclaration: suppressDocumentTypeDeclaration,
             writeAsASCII: writeAsASCII,
             escapeGreaterThan: escapeGreaterThan,
+            escapeAllInText: escapeAllInText,
             escapeAll: escapeAll,
             suppressUncessaryPrettyPrintAtAnchors: suppressUncessaryPrettyPrintAtAnchors
         )
@@ -513,11 +526,12 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
         linebreak: String = X_DEFAULT_LINEBREAK,
         atNode node: XNode,
         withHTMLNamespaceReference htmlNamespaceReference: NamespaceReference,
-        suppressDocumentTypeDeclaration: Bool,
-        writeAsASCII: Bool,
-        escapeGreaterThan: Bool,
-        escapeAll: Bool,
-        suppressUncessaryPrettyPrintAtAnchors: Bool
+        suppressDocumentTypeDeclaration: Bool = false,
+        writeAsASCII: Bool = false,
+        escapeGreaterThan: Bool = false,
+        escapeAllInText: Bool = false,
+        escapeAll: Bool = false,
+        suppressUncessaryPrettyPrintAtAnchors: Bool = false
     ) {
         fullHTMLPrefix = ((node as? XDocument ?? node.top) as XBranch?)?.fullPrefix(forNamespaceReference: htmlNamespaceReference) ?? ""
         htmlEmptyTags = [
@@ -577,6 +591,7 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
             writeEmptyTags: false,
             indentation: indentation,
             escapeGreaterThan: escapeGreaterThan,
+            escapeAllInText: escapeAllInText,
             escapeAll: escapeAll,
             linebreak: linebreak
         )
@@ -658,7 +673,7 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
     }
     
     open override func writeText(text: XText) throws {
-        var result = escapeAll ? text._value.escapingAllForXML : text._value.escapingForXML
+        var result = (escapeAll || escapeAllInText) ? text._value.escapingAllForXML : text._value.escapingForXML
         if escapeGreaterThan {
             result = result.replacingOccurrences(of: ">", with: "&gt;")
         }
