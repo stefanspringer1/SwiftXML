@@ -365,9 +365,20 @@ open class ActivePrettyPrintProduction: ActiveDefaultProduction {
     
     private var indentation: String
     
-    public init(writer: Writer, writeEmptyTags: Bool = true, indentation: String = X_DEFAULT_INDENTATION, linebreak: String = X_DEFAULT_LINEBREAK) {
+    public init(
+        writer: Writer,
+        writeEmptyTags: Bool = true,
+        indentation: String = X_DEFAULT_INDENTATION,
+        escapeAll: Bool = false,
+        linebreak: String = X_DEFAULT_LINEBREAK
+    ) {
         self.indentation = indentation
-        super.init(writer: writer, writeEmptyTags: writeEmptyTags, linebreak: linebreak)
+        super.init(
+            writer: writer,
+            writeEmptyTags: writeEmptyTags,
+            escapeAll: escapeAll,
+            linebreak: linebreak
+        )
     }
     
     private var indentationLevel = 0
@@ -427,6 +438,7 @@ public class HTMLProductionTemplate: XProductionTemplate {
     public let suppressDocumentTypeDeclaration: Bool
     public let writeAsASCII: Bool
     public let escapeGreaterThan: Bool
+    public let escapeAll: Bool
     public let suppressUncessaryPrettyPrintAtAnchors: Bool
     
     public init(
@@ -436,6 +448,7 @@ public class HTMLProductionTemplate: XProductionTemplate {
         suppressDocumentTypeDeclaration: Bool = false,
         writeAsASCII: Bool = false,
         escapeGreaterThan: Bool = false,
+        escapeAll: Bool = false,
         suppressUncessaryPrettyPrintAtAnchors: Bool = false
     ) {
         self.indentation = indentation
@@ -444,6 +457,7 @@ public class HTMLProductionTemplate: XProductionTemplate {
         self.suppressDocumentTypeDeclaration = suppressDocumentTypeDeclaration
         self.writeAsASCII = writeAsASCII
         self.escapeGreaterThan = escapeGreaterThan
+        self.escapeAll = escapeAll
         self.suppressUncessaryPrettyPrintAtAnchors = suppressUncessaryPrettyPrintAtAnchors
     }
     
@@ -457,6 +471,7 @@ public class HTMLProductionTemplate: XProductionTemplate {
             suppressDocumentTypeDeclaration: suppressDocumentTypeDeclaration,
             writeAsASCII: writeAsASCII,
             escapeGreaterThan: escapeGreaterThan,
+            escapeAll: escapeAll,
             suppressUncessaryPrettyPrintAtAnchors: suppressUncessaryPrettyPrintAtAnchors
         )
     }
@@ -484,6 +499,7 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
         suppressDocumentTypeDeclaration: Bool,
         writeAsASCII: Bool,
         escapeGreaterThan: Bool,
+        escapeAll: Bool,
         suppressUncessaryPrettyPrintAtAnchors: Bool
     ) {
         fullHTMLPrefix = ((node as? XDocument ?? node.top) as XBranch?)?.fullPrefix(forNamespaceReference: htmlNamespaceReference) ?? ""
@@ -540,7 +556,13 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
         self.writeAsASCII = writeAsASCII
         self.escapeGreaterThan = escapeGreaterThan
         self.suppressUncessaryPrettyPrintAtAnchors = suppressUncessaryPrettyPrintAtAnchors
-        super.init(writer: writer, writeEmptyTags: false, indentation: indentation, linebreak: linebreak)
+        super.init(
+            writer: writer,
+            writeEmptyTags: false,
+            indentation: indentation,
+            escapeAll: escapeAll,
+            linebreak: linebreak
+        )
     }
     
     open override func writeXMLDeclaration(version: String, encoding: String?, standalone: String?) throws {
