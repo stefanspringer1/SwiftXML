@@ -296,6 +296,56 @@ final class ToolsTests: XCTestCase {
         )
     }
     
+    func testHTMLOutput8() throws {
+        let source = """
+            <div><div class="table"><table><tr><td>1</td></tr></table></div></div>
+            """
+        XCTAssertEqual(
+            try parseXML(fromText: source).serialized(
+                usingProductionTemplate: HTMLProductionTemplate(
+                    suppressUncessaryPrettyPrintAtAnchors: true
+                )
+            ),
+            """
+            <!DOCTYPE html>
+            <div>
+              <div class="table">
+                <table>
+                  <tr>
+                    <td>1</td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+            """
+        )
+    }
+    
+    func testHTMLOutput9() throws {
+        let source = """
+            <div>Hello<div class="table"><table><tr><td>1</td></tr></table></div></div>
+            """
+        XCTAssertEqual(
+            try parseXML(fromText: source).serialized(
+                usingProductionTemplate: HTMLProductionTemplate(
+                    suppressUncessaryPrettyPrintAtAnchors: true
+                )
+            ),
+            """
+            <!DOCTYPE html>
+            <div>Hello
+              <div class="table">
+                <table>
+                  <tr>
+                    <td>1</td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+            """
+        )
+    }
+    
 }
 
 /// An error with a description.

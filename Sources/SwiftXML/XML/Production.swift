@@ -421,6 +421,7 @@ open class ActivePrettyPrintProduction: ActiveDefaultProduction {
     public var forcePrettyPrintAtElement = false
     
     open override func writeElementStartBeforeAttributes(element: XElement) throws {
+        if forcePrettyPrintAtElement { mixed.append(false) }
         if forcePrettyPrintAtElement || (suppressPrettyPrintBeforeElement == false && mixed.last != true) {
             if indentationLevel > 0 {
                 try write(linebreak)
@@ -453,6 +454,7 @@ open class ActivePrettyPrintProduction: ActiveDefaultProduction {
             }
             mixed.removeLast()
         }
+        if forcePrettyPrintAtElement { mixed.removeLast() }
         try super.writeElementEnd(element: element)
     }
 }
@@ -553,6 +555,13 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
         htmlStrictBlocks = [
             "\(fullHTMLPrefix)div",
             "\(fullHTMLPrefix)p",
+            "\(fullHTMLPrefix)table",
+            "\(fullHTMLPrefix)thead",
+            "\(fullHTMLPrefix)tbody",
+            "\(fullHTMLPrefix)tfoot",
+            "\(fullHTMLPrefix)tr",
+            "\(fullHTMLPrefix)th",
+            "\(fullHTMLPrefix)td",
         ]
         htmlStrictInlines = [
             "\(fullHTMLPrefix)abbr",
