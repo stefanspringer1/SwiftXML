@@ -124,15 +124,18 @@ public class DefaultProductionTemplate: XProductionTemplate {
     
     public let writeEmptyTags: Bool
     public let linebreak: String
+    public let escapeGreaterThan: Bool
     public let escapeAll: Bool
     
     public init(
         writeEmptyTags: Bool = true,
+        escapeGreaterThan: Bool = false,
         escapeAll: Bool = false,
         linebreak: String = X_DEFAULT_LINEBREAK
     ) {
         self.writeEmptyTags = writeEmptyTags
         self.linebreak = linebreak
+        self.escapeGreaterThan = escapeGreaterThan
         self.escapeAll = escapeAll
     }
     
@@ -140,6 +143,7 @@ public class DefaultProductionTemplate: XProductionTemplate {
         ActiveDefaultProduction(
             writer: writer,
             writeEmptyTags: writeEmptyTags,
+            escapeGreaterThan: escapeGreaterThan,
             escapeAll: escapeAll,
             linebreak: linebreak
         )
@@ -155,6 +159,7 @@ open class ActiveDefaultProduction: XActiveProduction {
         try writer.write(text)
     }
     
+    let escapeGreaterThan: Bool
     let escapeAll: Bool
     private let writeEmptyTags: Bool
     
@@ -167,11 +172,13 @@ open class ActiveDefaultProduction: XActiveProduction {
     public init(
         writer: Writer,
         writeEmptyTags: Bool = true,
+        escapeGreaterThan: Bool = false,
         escapeAll: Bool = false,
         linebreak: String = X_DEFAULT_LINEBREAK
     ) {
         self.writer = writer
         self.writeEmptyTags = writeEmptyTags
+        self.escapeGreaterThan = escapeGreaterThan
         self.escapeAll = escapeAll
         self._linebreak = linebreak
     }
@@ -283,7 +290,10 @@ open class ActiveDefaultProduction: XActiveProduction {
     }
     
     open func writeText(text: XText) throws {
-        try write(escapeAll ? text.value.escapingAllForXML : text.value.escapingForXML)
+        try write(
+            escapeAll ? text.value.escapingAllForXML :
+                (escapeGreaterThan ? text.value.escapingForXML.replacingOccurrences(of: ">", with: "&gt;") : text.value.escapingForXML)
+        )
     }
     
     open func writeLiteral(literal: XLiteral) throws {
@@ -369,6 +379,7 @@ open class ActivePrettyPrintProduction: ActiveDefaultProduction {
         writer: Writer,
         writeEmptyTags: Bool = true,
         indentation: String = X_DEFAULT_INDENTATION,
+        escapeGreaterThan: Bool = false,
         escapeAll: Bool = false,
         linebreak: String = X_DEFAULT_LINEBREAK
     ) {
@@ -376,6 +387,7 @@ open class ActivePrettyPrintProduction: ActiveDefaultProduction {
         super.init(
             writer: writer,
             writeEmptyTags: writeEmptyTags,
+            escapeGreaterThan: escapeGreaterThan,
             escapeAll: escapeAll,
             linebreak: linebreak
         )
@@ -487,7 +499,6 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
     public var suppressDocumentTypeDeclaration: Bool
     public let fullHTMLPrefix: String
     public let writeAsASCII: Bool
-    public let escapeGreaterThan: Bool
     public let suppressUncessaryPrettyPrintAtAnchors: Bool
     
     public init(
@@ -554,12 +565,12 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
         ]
         self.suppressDocumentTypeDeclaration = suppressDocumentTypeDeclaration
         self.writeAsASCII = writeAsASCII
-        self.escapeGreaterThan = escapeGreaterThan
         self.suppressUncessaryPrettyPrintAtAnchors = suppressUncessaryPrettyPrintAtAnchors
         super.init(
             writer: writer,
             writeEmptyTags: false,
             indentation: indentation,
+            escapeGreaterThan: escapeGreaterThan,
             escapeAll: escapeAll,
             linebreak: linebreak
         )
