@@ -96,6 +96,8 @@ let transformation = XTransformation {
 
 **UPDATE 28 (December 2024):** New: `immediateTextsCombined`.
 
+**UPDATE 29 (January 2025):** New: `backlinkOrSelf`.
+
 ---
 
 ## Related packages
@@ -479,6 +481,8 @@ func shallowClone(forwardref: Bool) -> XNode
 ```
 
 The `backlink` is then set just like when using `clone`.
+
+The property `backlinkOrSelf` gives the backlink or – it it is `nil` – the subject itself.
 
 ## Content properties
 

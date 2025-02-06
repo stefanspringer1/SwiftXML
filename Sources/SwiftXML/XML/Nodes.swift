@@ -91,11 +91,10 @@ public class XNode {
     /// acoording to the parameter used when cloning.
     ///
     /// Note that this is a weak reference, the clone must be contained by other means to exist.
-    public var backlink: XNode? {
-        get {
-            return _backlink
-        }
-    }
+    public var backlink: XNode? { _backlink }
+    
+    /// Get the backlink or – if it is `nil` – the subject itself.
+    public var backlinkOrSelf: XNode { _backlink ?? self }
     
     /// Setting the backlink manually. The identical node is returned.
     public func setting(backlink: XNode) -> XNode {
@@ -525,6 +524,9 @@ public class XContent: XNode {
     ///
     /// Note that this is a weak reference, the clone must be contained by other means to exist.
     public override var backlink: XContent? { super.backlink as? XContent }
+    
+    /// Get the backlink or – if it is `nil` – the subject itself.
+    public override var backlinkOrSelf: XContent { self.backlink ?? self }
     
     /// Setting the backlink manually. The identical node is returned.
     public func setting(backlink: XContent) -> XContent {
@@ -1618,6 +1620,9 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     /// Note that this is a weak reference, the clone must be contained by other means to exist.
     public override var backlink: XElement? { super.backlink as? XElement }
     
+    /// Get the backlink or – if it is `nil` – the subject itself.
+    public override var backlinkOrSelf: XElement { self.backlink ?? self }
+    
     /// Setting the backlink manually. The identical node is returned.
     public func setting(backlink: XElement) -> XElement {
         _backlink = backlink
@@ -1981,6 +1986,9 @@ public final class XText: XContent, XTextualContentRepresentation, ToBePeparedFo
     /// Note that this is a weak reference, the clone must be contained by other means to exist.
     public override var backlink: XText? { super.backlink as? XText }
     
+    /// Get the backlink or – if it is `nil` – the subject itself.
+    public override var backlinkOrSelf: XText { self.backlink ?? self }
+    
     /// Setting the backlink manually. The identical node is returned.
     public func setting(backlink: XText) -> XText {
         _backlink = backlink
@@ -2126,6 +2134,9 @@ public final class XLiteral: XContent, XTextualContentRepresentation, ToBePepare
     /// Note that this is a weak reference, the clone must be contained by other means to exist.
     public override var backlink: XLiteral? { super.backlink as? XLiteral }
     
+    /// Get the backlink or – if it is `nil` – the subject itself.
+    public override var backlinkOrSelf: XLiteral { self.backlink ?? self }
+    
     /// Setting the backlink manually. The identical node is returned.
     public func setting(backlink: XLiteral) -> XLiteral {
         _backlink = backlink
@@ -2233,6 +2244,9 @@ public final class XInternalEntity: XContent {
     /// Note that this is a weak reference, the clone must be contained by other means to exist.
     public override var backlink: XInternalEntity? { super.backlink as? XInternalEntity }
     
+    /// Get the backlink or – if it is `nil` – the subject itself.
+    public override var backlinkOrSelf: XInternalEntity { self.backlink ?? self }
+    
     /// Setting the backlink manually. The identical node is returned.
     public func setting(backlink: XInternalEntity) -> XInternalEntity {
         _backlink = backlink
@@ -2294,6 +2308,9 @@ public final class XExternalEntity: XContent {
     /// Note that this is a weak reference, the clone must be contained by other means to exist.
     public override var backlink: XExternalEntity? { super.backlink as? XExternalEntity }
     
+    /// Get the backlink or – if it is `nil` – the subject itself.
+    public override var backlinkOrSelf: XExternalEntity { self.backlink ?? self }
+    
     /// Setting the backlink manually. The identical node is returned.
     public func setting(backlink: XExternalEntity) -> XExternalEntity {
         _backlink = backlink
@@ -2354,6 +2371,9 @@ public final class XProcessingInstruction: XContent, CustomStringConvertible {
     ///
     /// Note that this is a weak reference, the clone must be contained by other means to exist.
     public override var backlink: XProcessingInstruction? { super.backlink as? XProcessingInstruction }
+    
+    /// Get the backlink or – if it is `nil` – the subject itself.
+    public override var backlinkOrSelf: XProcessingInstruction { self.backlink ?? self }
     
     /// Setting the backlink manually. The identical node is returned.
     public func setting(backlink: XProcessingInstruction) -> XProcessingInstruction {
@@ -2439,6 +2459,9 @@ public final class XComment: XContent {
     /// Note that this is a weak reference, the clone must be contained by other means to exist.
     public override var backlink: XComment? { super.backlink as? XComment }
     
+    /// Get the backlink or – if it is `nil` – the subject itself.
+    public override var backlinkOrSelf: XComment { self.backlink ?? self }
+    
     /// Setting the backlink manually. The identical node is returned.
     public func setting(backlink: XComment) -> XComment {
         _backlink = backlink
@@ -2499,6 +2522,9 @@ public final class XCDATASection: XContent, XTextualContentRepresentation {
     ///
     /// Note that this is a weak reference, the clone must be contained by other means to exist.
     public override var backlink: XCDATASection? { super.backlink as? XCDATASection }
+    
+    /// Get the backlink or – if it is `nil` – the subject itself.
+    public override var backlinkOrSelf: XCDATASection { self.backlink ?? self }
     
     /// Setting the backlink manually. The identical node is returned.
     public func setting(backlink: XCDATASection) -> XCDATASection {

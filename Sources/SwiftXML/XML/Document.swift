@@ -66,9 +66,10 @@ public final class XDocument: XNode, XBranchInternal {
     /// acoording to the parameter used when cloning.
     ///
     /// Note that this is a weak reference, the clone must be contained by other means to exist.
-    public override var backlink: XDocument? {
-        get { super.backlink as? XDocument }
-    }
+    public override var backlink: XDocument? { super.backlink as? XDocument }
+    
+    /// Get the backlink or – if it is `nil` – the subject itself.
+    public override var backlinkOrSelf: XDocument { self.backlink ?? self }
     
     /// Setting the backlink manually. The identical node is returned.
     public func setting(backlink: XDocument) -> XDocument {
