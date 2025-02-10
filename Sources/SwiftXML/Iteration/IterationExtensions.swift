@@ -813,6 +813,15 @@ public extension Sequence where Element: Any {
         return iterator.next()
     }
     
+    var last: Element? {
+        var iterator = makeIterator()
+        var last: Element? = nil
+        while let next = iterator.next() {
+            last = next
+        }
+        return last
+    }
+    
     var exist: Bool {
         var iterator = makeIterator()
         return iterator.next() != nil
