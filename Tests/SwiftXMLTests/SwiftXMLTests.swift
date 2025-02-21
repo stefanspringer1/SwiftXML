@@ -855,4 +855,27 @@ final class SwiftXMLTests: XCTestCase {
         
         XCTAssertEqual(document.serialized(), "<document><index.item>a</index.item><index.item>m</index.item><index.item>x</index.item><index.item>z</index.item></document>")
     }
+    
+    func testBuildOptional() throws {
+        
+        let i = 2
+        let element = XElement("X") {
+            if i > 2 {
+                XElement("A")
+            }
+            if i < 3 {
+                XElement("B")
+            }
+            if i < 1 {
+                nil
+            }
+            if i < 1 {
+                XElement("C")
+            } else {
+                nil
+            }
+        }
+        
+        XCTAssertEqual(element.serialized(), "<X><B/></X>")
+    }
 }

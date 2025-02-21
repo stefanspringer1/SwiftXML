@@ -1517,7 +1517,11 @@ public struct XContentBuilder {
     public static func buildEither(second component: [XContent]) -> [XContent] {
         component
     }
-
+    
+    public static func buildOptional(_ component: [XContent]?) -> [XContent]? {
+        component
+    }
+    
 }
 
 public final class XElement: XContent, XBranchInternal, CustomStringConvertible {
