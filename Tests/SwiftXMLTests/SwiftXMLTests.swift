@@ -935,4 +935,105 @@ final class SwiftXMLTests: XCTestCase {
         // explicitely `prefix: nil`:
         XCTAssertEqual(Array(document.descendants(prefix: nil, "mi", "mo").map{ $0.allTextsCombined}), ["a", "+", "b"])
     }
+    
+    func testReadingWithNamespaces1() throws {
+    
+        let source = """
+            <a xmlns:math="http://www.w3.org/1998/Math/MathML">
+                <math:math><math:mi>x</math:mi></math:math>
+            </a>
+            """
+        
+        let document = try parseXML(fromText: source, recognizeNamespaces: true)
+        
+        XCTAssertEqual(
+            document.descendants.map { element in
+                if let prefix = element.prefix {
+                    "element of name \"\(element.name)\" with prefix \"\(prefix)\""
+                } else {
+                    "element of name \"\(element.name)\" without prefix"
+                }
+            }.joined(separator: "\n"),
+            """
+            element of name "a" without prefix
+            element of name "math" with prefix "math"
+            element of name "mi" with prefix "math"
+            """
+        )
+        
+        XCTAssertEqual(document.serialized(), source)
+    }
+    
+    func testReadingWithNamespaces2() throws {
+    
+        let source = """
+            <a>
+                <math:math xmlns:math="http://www.w3.org/1998/Math/MathML"><math:mi>x</math:mi></math:math>
+            </a>
+            """
+        
+        let document = try parseXML(fromText: source, recognizeNamespaces: true)
+        
+        XCTAssertEqual(
+            document.descendants.map { element in
+                if let prefix = element.prefix {
+                    "element of name \"\(element.name)\" with prefix \"\(prefix)\""
+                } else {
+                    "element of name \"\(element.name)\" without prefix"
+                }
+            }.joined(separator: "\n"),
+            """
+            element of name "a" without prefix
+            element of name "math" with prefix "math"
+            element of name "mi" with prefix "math"
+            """
+        )
+        
+        XCTAssertEqual(document.serialized(), """
+            <a xmlns:math="http://www.w3.org/1998/Math/MathML">
+                <math:math><math:mi>x</math:mi></math:math>
+            </a>
+            """)
+    }
+    
+    func testReadingWithNamespaces3() throws {
+    
+        let source = """
+            <a>
+                <math:math xmlns:math="http://www.w3.org/1998/Math/MathML"><math:mi>x</math:mi></math:math>
+                <b xmlns:math2="http://www.w3.org/1998/Math/MathML">
+                    <math2:math><math2:mi>x</math2:mi></math2:math>
+                </b>
+            </a>
+            """
+        
+        let document = try parseXML(fromText: source, recognizeNamespaces: true)
+        
+        XCTAssertEqual(
+            document.descendants.map { element in
+                if let prefix = element.prefix {
+                    "element of name \"\(element.name)\" with prefix \"\(prefix)\""
+                } else {
+                    "element of name \"\(element.name)\" without prefix"
+                }
+            }.joined(separator: "\n"),
+            """
+            element of name "a" without prefix
+            element of name "math" with prefix "math"
+            element of name "mi" with prefix "math"
+            element of name "b" without prefix
+            element of name "math" with prefix "math"
+            element of name "mi" with prefix "math"
+            """
+        )
+        
+        XCTAssertEqual(document.serialized(), """
+            <a xmlns:math="http://www.w3.org/1998/Math/MathML">
+                <math:math><math:mi>x</math:mi></math:math>
+                <b>
+                    <math:math><math:mi>x</math:mi></math:math>
+                </b>
+            </a>
+            """)
+    }
 }

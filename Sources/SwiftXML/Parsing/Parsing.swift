@@ -14,6 +14,7 @@ import SwiftXMLParser
 
 public func parseXML(
     from documentSource: XDocumentSource,
+    recognizeNamespaces: Bool = false,
     registeringAttributes attributeRegisterMode: AttributeRegisterMode = .none,
     sourceInfo: String? = nil,
     textAllowedInElementWithName: ((String) -> Bool)? = nil,
@@ -53,6 +54,7 @@ public func parseXML(
         ),
         mainEventHandler: XParseBuilder(
             document: document,
+            recognizeNamespaces: recognizeNamespaces,
             keepComments: keepComments,
             keepCDATASections: keepCDATASections,
             externalWrapperElement: externalWrapperElement
@@ -138,6 +140,7 @@ public func parseXML(
 
 public func parseXML(
     fromText text: String,
+    recognizeNamespaces: Bool = false,
     registeringAttributes attributeRegisterMode: AttributeRegisterMode = .none,
     sourceInfo: String? = nil,
     textAllowedInElementWithName: ((String) -> Bool)? = nil,
@@ -155,6 +158,7 @@ public func parseXML(
 ) throws -> XDocument {
     try parseXML(
         from: .text(text),
+        recognizeNamespaces: recognizeNamespaces,
         registeringAttributes: attributeRegisterMode,
         sourceInfo: sourceInfo,
         textAllowedInElementWithName: textAllowedInElementWithName,
@@ -174,6 +178,7 @@ public func parseXML(
 
 public func parseXML(
     fromData data: Data,
+    recognizeNamespaces: Bool = false,
     registeringAttributes attributeRegisterMode: AttributeRegisterMode = .none,
     sourceInfo: String? = nil,
     internalEntityAutoResolve: Bool = false,
@@ -193,6 +198,7 @@ public func parseXML(
 ) throws -> XDocument {
     try parseXML(
         from: .data(data),
+        recognizeNamespaces: recognizeNamespaces,
         registeringAttributes: attributeRegisterMode,
         sourceInfo: sourceInfo,
         textAllowedInElementWithName: textAllowedInElementWithName,

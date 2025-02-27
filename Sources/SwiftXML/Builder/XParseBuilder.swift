@@ -18,20 +18,26 @@ public final class XParseBuilder: XEventHandler {
     }
 
     let document: XDocument
+    let recognizeNamespaces: Bool
     let keepComments: Bool
     let keepCDATASections: Bool
     let externalWrapperElement: String?
     
     var currentBranch: XBranchInternal
     
+    var resultingNamespaceURIToPrefix = [String:String]()
+    var namespaceURIAndPrefixDuringBuild = [(String,String)]()
+    
     public init(
         document: XDocument,
+        recognizeNamespaces: Bool = false,
         keepComments: Bool = false,
         keepCDATASections: Bool = false,
         externalWrapperElement: String? = nil
     ) {
         
         self.document = document
+        self.recognizeNamespaces = recognizeNamespaces
         self.keepComments = keepComments
         self.keepCDATASections = keepCDATASections
         self.externalWrapperElement = externalWrapperElement
@@ -44,9 +50,13 @@ public final class XParseBuilder: XEventHandler {
     
     public func enterExternalDataSource(data: Data, entityName: String?, systemID: String, url: URL?, textRange _: XTextRange?, dataRange _: XDataRange?) {
         if let elementName = externalWrapperElement {
+            var attributes = [String:String]()
+            attributes["name"] = entityName
+            attributes["sytemID"] = systemID
+            attributes["path"] = url?.path
             elementStart(
                 name: elementName,
-                attributes: ["name": entityName, "sytemID":  systemID, "path": url?.path],
+                attributes: &attributes,
                 textRange: nil,
                 dataRange: nil
             )
@@ -88,8 +98,41 @@ public final class XParseBuilder: XEventHandler {
         // -
     }
     
-    public func elementStart(name: String, attributes: [String:String?]?, textRange: XTextRange?, dataRange _: XDataRange?) {
+    public func elementStart(name: String, attributes: inout [String:String], textRange: XTextRange?, dataRange _: XDataRange?) {
         let element = XElement(name)
+        
+        if recognizeNamespaces {
+            var namespaceDefinitionCount = 0
+            for attributeName in attributes.keys {
+                if attributeName.hasPrefix("xmlns:"), let uri = attributes[attributeName] {
+                    namespaceDefinitionCount += 1
+                    let prefix = String(attributeName.dropFirst(6))
+                    if resultingNamespaceURIToPrefix[uri] == nil {
+                        resultingNamespaceURIToPrefix[uri] = prefix
+                    }
+                    namespaceURIAndPrefixDuringBuild.append((uri,prefix))
+                    attributes[attributeName] = nil
+                }
+            }
+            if namespaceDefinitionCount > 0 {
+                element.attached["nsCount"] = namespaceDefinitionCount
+            }
+            
+            if let colon = name.firstIndex(of: ":") {
+                let prefixOfElement = String(name[..<colon])
+                var i = namespaceURIAndPrefixDuringBuild.count - 1
+                while i >= 0 {
+                    let (uri,prefix) = namespaceURIAndPrefixDuringBuild[i]
+                    if prefix == prefixOfElement, let resultingPrefix = resultingNamespaceURIToPrefix[uri] {
+                        element.prefix = resultingPrefix
+                        element.name = String(name[colon...].dropFirst())
+                        break
+                    }
+                    i -= 1
+                }
+            }
+        }
+        
         currentBranch._add(element)
         element.setAttributes(attributes: attributes)
         currentBranch = element
@@ -97,6 +140,12 @@ public final class XParseBuilder: XEventHandler {
     }
     
     public func elementEnd(name: String, textRange: XTextRange?, dataRange _: XDataRange?) {
+        
+        if recognizeNamespaces, let element = currentBranch as? XElement, let namespaceDefinitionCount = element.attached["nsCount"] as? Int {
+            namespaceURIAndPrefixDuringBuild.removeLast(namespaceDefinitionCount)
+            element.attached["nsCount"] = nil
+        }
+        
         if let endTagTextRange = textRange, let element = currentBranch as? XElement, let startTagTextRange = element._sourceRange {
             element._sourceRange = XTextRange(
                 startLine: startTagTextRange.startLine,
@@ -193,6 +242,12 @@ public final class XParseBuilder: XEventHandler {
         document.parameterEntityDeclarations[name] = decl
     }
     
-    public func documentEnd() {}
+    public func documentEnd() {
+        if let root = document.firstChild {
+            for (uri,prefix) in resultingNamespaceURIToPrefix {
+                root["xmlns:\(prefix)"] = uri
+            }
+        }
+    }
     
 }
