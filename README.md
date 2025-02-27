@@ -1984,7 +1984,7 @@ Note that when using traversals for transforming an XML tree, using several tran
 
 ## Handling of namespaces
 
-Namespaces prefix definitions are only recognized if the attribute `recognizeNamespaces` is set to `true` in the call of the parse functions. An element that uses a defined namespace prefix then gets then name _without_ the prefix (and without the seprating colon), the prefix is separately stored in the `prefix` property of the element (which by defaut is `nil`).
+Namespaces prefix definitions are only recognized if the argument `recognizeNamespaces` is set to `true` in the call of the parse functions. An element that uses a defined namespace prefix then gets then name _without_ the prefix (and without the seprating colon), the prefix is separately stored in the `prefix` property of the element (which by defaut is `nil`).
 
 Note that the namespace definitions are then set at the root element of the document, and prefixes are changed if necessary (note the prefix `math2` at the second formula in the following example):
 
