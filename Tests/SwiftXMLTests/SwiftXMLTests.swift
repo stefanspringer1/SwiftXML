@@ -900,11 +900,11 @@ final class SwiftXMLTests: XCTestCase {
         )
         
         // must not be reached via name alone:
-        XCTAssertEqual(Array(document.firstChild!.children("mi", "mo").map{ $0.allTextsCombined}), [])
+        XCTAssertEqual(Array(document.descendants("mi", "mo").map{ $0.allTextsCombined}), [])
         XCTAssertEqual(Array(document.elements("mi", "mo").map{ $0.allTextsCombined }), [])
         
         // must be reached via prefix and name:
-        XCTAssertEqual(Array(document.firstChild!.children(prefix: "math", "mi", "mo").map{ $0.allTextsCombined}), ["a", "+", "b"])
+        XCTAssertEqual(Array(document.descendants(prefix: "math", "mi", "mo").map{ $0.allTextsCombined}), ["a", "+", "b"])
         XCTAssertEqual(Array(document.elements(prefix: "math", "mi", "mo").map{ $0.allTextsCombined }), ["a", "b", "+"])
         
         // remove the prefixes:
@@ -927,11 +927,12 @@ final class SwiftXMLTests: XCTestCase {
         )
         
         // now the queries above have their results interchanged:
-        XCTAssertEqual(Array(document.firstChild!.children("mi", "mo").map{ $0.allTextsCombined}), ["a", "+", "b"])
+        XCTAssertEqual(Array(document.descendants("mi", "mo").map{ $0.allTextsCombined}), ["a", "+", "b"])
         XCTAssertEqual(Array(document.elements("mi", "mo").map{ $0.allTextsCombined }), ["a", "b", "+"])
-        XCTAssertEqual(Array(document.firstChild!.children(prefix: "math", "mi", "mo").map{ $0.allTextsCombined}), [])
+        XCTAssertEqual(Array(document.descendants(prefix: "math", "mi", "mo").map{ $0.allTextsCombined}), [])
         XCTAssertEqual(Array(document.elements(prefix: "math", "mi", "mo").map{ $0.allTextsCombined }), [])
         
-        
+        // explicitely `prefix: nil`:
+        XCTAssertEqual(Array(document.descendants(prefix: nil, "mi", "mo").map{ $0.allTextsCombined}), ["a", "+", "b"])
     }
 }
