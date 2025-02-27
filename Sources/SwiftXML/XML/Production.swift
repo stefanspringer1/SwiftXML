@@ -260,7 +260,11 @@ open class ActiveDefaultProduction: XActiveProduction {
     }
     
     open func writeElementStartBeforeAttributes(element: XElement) throws {
-        try write("<\(element.name)")
+        if let prefix = element.prefix {
+            try write("<\(prefix):\(element.name)")
+        } else {
+            try write("<\(element.name)")
+        }
     }
     
     open func sortAttributeNames(attributeNames: [String], element: XElement) -> [String] {
@@ -298,7 +302,11 @@ open class ActiveDefaultProduction: XActiveProduction {
     
     open func writeElementEnd(element: XElement) throws {
         if !(element.isEmpty && writeAsEmptyTagIfEmpty(element: element)) {
-            try write("</\(element.name)>")
+            if let prefix = element.prefix {
+                try write("</\(prefix):\(element.name)>")
+            } else {
+                try write("</\(element.name)>")
+            }
         }
     }
     

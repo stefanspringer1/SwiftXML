@@ -180,9 +180,9 @@ public final class XElementSequenceWithCondition: XElementSequence {
         self.condition = condition
     }
     
-    public init(sequence: XElementSequence, elementName: String) {
+    public init(sequence: XElementSequence, prefix: String?, elementName: String) {
         self.sequence = sequence
-        self.condition = { $0.name == elementName }
+        self.condition = { $0.prefix == prefix && $0.name == elementName }
     }
     
     public override func makeIterator() -> XElementIterator {
@@ -203,9 +203,9 @@ public final class XElementSequenceWhileCondition: XElementSequence {
         self.condition = condition
     }
     
-    public init(sequence: XElementSequence, elementName: String) {
+    public init(sequence: XElementSequence, prefix: String?, elementName: String) {
         self.sequence = sequence
-        self.condition = { $0.name == elementName }
+        self.condition = { $0.prefix == prefix && $0.name == elementName }
     }
     
     public override func makeIterator() -> XElementIterator {
@@ -226,9 +226,9 @@ public final class XElementSequenceUntilCondition: XElementSequence {
         self.condition = condition
     }
     
-    public init(sequence: XElementSequence, elementName: String) {
+    public init(sequence: XElementSequence, prefix: String?, elementName: String) {
         self.sequence = sequence
-        self.condition = { $0.name == elementName }
+        self.condition = { $0.prefix == prefix && $0.name == elementName }
     }
     
     public override func makeIterator() -> XElementIterator {
@@ -249,9 +249,9 @@ public final class XElementSequenceIncludingCondition: XElementSequence {
         self.condition = condition
     }
     
-    public init(sequence: XElementSequence, elementName: String) {
+    public init(sequence: XElementSequence, prefix: String?, elementName: String) {
         self.sequence = sequence
-        self.condition = { $0.name == elementName }
+        self.condition = { $0.prefix == prefix && $0.name == elementName }
     }
     
     public override func makeIterator() -> XElementIterator {
@@ -770,10 +770,12 @@ public final class XDescendantsIncludingSelfSequence: XElementSequence {
 public final class XElementsOfSameNameSequence: XElementSequence {
     
     let document: XDocument
+    let prefix: String?
     let elementName: String
     
-    public init(document: XDocument, name: String) {
+    public init(document: XDocument, prefix: String?, name: String) {
         self.document = document
+        self.prefix = prefix
         self.elementName = name
     }
     
@@ -781,6 +783,7 @@ public final class XElementsOfSameNameSequence: XElementSequence {
         return XXBidirectionalElementNameIterator(
             elementIterator: XElementsOfSameNameIterator(
                 document: document,
+                prefix: prefix,
                 name: elementName
             )
         )

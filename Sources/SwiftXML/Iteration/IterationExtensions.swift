@@ -20,16 +20,16 @@ public extension XNode {
         return XElementSequenceWithCondition(sequence: XAncestorsSequence(node: self), condition: condition)
     }
     
-    func ancestors(_ name: String) -> XElementSequence {
-        return XElementSequenceWithCondition(sequence: XAncestorsSequence(node: self), elementName: name)
+    func ancestors(prefix: String? = nil, _ name: String) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XAncestorsSequence(node: self), prefix: prefix, elementName: name)
     }
     
-    func ancestors(_ names: [String]) -> XElementSequence {
-        return XElementSequenceWithCondition(sequence: XAncestorsSequence(node: self), condition: { names.isEmpty || names.contains($0.name) })
+    func ancestors(prefix: String? = nil, _ names: [String]) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XAncestorsSequence(node: self), condition: { (prefix == nil && names.isEmpty) || ($0.prefix == prefix && (names.isEmpty || names.contains($0.name))) })
     }
     
-    func ancestors(_ names: String...) -> XElementSequence {
-        return XElementSequenceWithCondition(sequence: XAncestorsSequence(node: self), condition: { names.isEmpty || names.contains($0.name) })
+    func ancestors(prefix: String? = nil, _ names: String...) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XAncestorsSequence(node: self), condition: { (prefix == nil && names.isEmpty) || ($0.prefix == prefix && (names.isEmpty || names.contains($0.name))) })
     }
     
     func ancestors(while condition: @escaping (XElement) -> Bool) -> XElementSequence {
@@ -52,16 +52,16 @@ public extension XNode {
         return XElementSequenceWithCondition(sequence: XAncestorsSequenceIncludingSelf(node: self), condition: condition)
     }
     
-    func ancestorsIncludingSelf(_ name: String) -> XElementSequence {
-        return XElementSequenceWithCondition(sequence: XAncestorsSequenceIncludingSelf(node: self), elementName: name)
+    func ancestorsIncludingSelf(prefix: String? = nil, _ name: String) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XAncestorsSequenceIncludingSelf(node: self), prefix: prefix, elementName: name)
     }
     
-    func ancestorsIncludingSelf(_ names: [String]) -> XElementSequence {
-        return XElementSequenceWithCondition(sequence: XAncestorsSequenceIncludingSelf(node: self), condition: { names.isEmpty || names.contains($0.name) })
+    func ancestorsIncludingSelf(prefix: String? = nil, _ names: [String]) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XAncestorsSequenceIncludingSelf(node: self), condition: { (prefix == nil && names.isEmpty) || ($0.prefix == prefix && (names.isEmpty || names.contains($0.name))) })
     }
     
-    func ancestorsIncludingSelf(_ names: String...) -> XElementSequence {
-        return XElementSequenceWithCondition(sequence: XAncestorsSequenceIncludingSelf(node: self), condition: { names.isEmpty || names.contains($0.name) })
+    func ancestorsIncludingSelf(prefix: String? = nil, _ names: String...) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XAncestorsSequenceIncludingSelf(node: self), condition: { (prefix == nil && names.isEmpty) || ($0.prefix == prefix && (names.isEmpty || names.contains($0.name))) })
     }
     
     func ancestorsIncludingSelf(while condition: @escaping (XElement) -> Bool) -> XElementSequence {
@@ -204,16 +204,16 @@ public extension XNode {
         return XElementSequenceWithCondition(sequence: XChildrenSequence(node: self), condition: condition)
     }
     
-    func children(_ name: String) -> XElementSequence {
-        return XElementSequenceWithCondition(sequence: XChildrenSequence(node: self), elementName: name)
+    func children(prefix: String? = nil, _ name: String) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XChildrenSequence(node: self), prefix: prefix, elementName: name)
     }
     
-    func children(_ names: [String]) -> XElementSequence {
-        return XElementSequenceWithCondition(sequence: XChildrenSequence(node: self), condition: { names.isEmpty || names.contains($0.name) })
+    func children(prefix: String? = nil, _ names: [String]) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XChildrenSequence(node: self), condition: { (prefix == nil && names.isEmpty) || ($0.prefix == prefix && (names.isEmpty || names.contains($0.name))) })
     }
     
-    func children(_ names: String...) -> XElementSequence {
-        return XElementSequenceWithCondition(sequence: XChildrenSequence(node: self), condition: { names.isEmpty || names.contains($0.name) })
+    func children(prefix: String? = nil, _ names: String...) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XChildrenSequence(node: self), condition: { (prefix == nil && names.isEmpty) || ($0.prefix == prefix && (names.isEmpty || names.contains($0.name))) })
     }
     
     func children(while condition: @escaping (XElement) -> Bool) -> XElementSequence {
@@ -236,16 +236,16 @@ public extension XNode {
         return XElementSequenceWithCondition(sequence: XReversedChildrenSequence(node: self), condition: condition)
     }
     
-    func childrenReversed(_ name: String) -> XElementSequence {
-        return XElementSequenceWithCondition(sequence: XReversedChildrenSequence(node: self), elementName: name)
+    func childrenReversed(prefix: String? = nil, _ name: String) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XReversedChildrenSequence(node: self), prefix: prefix, elementName: name)
     }
     
-    func childrenReversed(_ names: [String]) -> XElementSequence {
-        return XElementSequenceWithCondition(sequence: XReversedChildrenSequence(node: self), condition: { names.isEmpty || names.contains($0.name) })
+    func childrenReversed(prefix: String? = nil, _ names: [String]) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XReversedChildrenSequence(node: self), condition: { (prefix == nil && names.isEmpty) || ($0.prefix == prefix && (names.isEmpty || names.contains($0.name))) })
     }
     
-    func childrenReversed(_ names: String...) -> XElementSequence {
-        return XElementSequenceWithCondition(sequence: XReversedChildrenSequence(node: self), condition: { names.isEmpty || names.contains($0.name) })
+    func childrenReversed(prefix: String? = nil, _ names: String...) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XReversedChildrenSequence(node: self), condition: { (prefix == nil && names.isEmpty) || ($0.prefix == prefix && (names.isEmpty || names.contains($0.name))) })
     }
     
     func childrenReversed(while condition: @escaping (XElement) -> Bool) -> XElementSequence {
@@ -328,16 +328,16 @@ public extension XNode {
         return XElementSequenceWithCondition(sequence: XDescendantsSequence(node: self), condition: condition)
     }
     
-    func descendants(_ name: String) -> XElementSequence {
-        return XElementSequenceWithCondition(sequence: XDescendantsSequence(node: self), elementName: name)
+    func descendants(prefix: String? = nil, _ name: String) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XDescendantsSequence(node: self), prefix: prefix, elementName: name)
     }
     
-    func descendants(_ names: [String]) -> XElementSequence {
-        return XElementSequenceWithCondition(sequence: XDescendantsSequence(node: self), condition: { names.isEmpty || names.contains($0.name) })
+    func descendants(prefix: String? = nil, _ names: [String]) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XDescendantsSequence(node: self), condition: { (prefix == nil && names.isEmpty) || ($0.prefix == prefix && (names.isEmpty || names.contains($0.name))) })
     }
     
-    func descendants(_ names: String...) -> XElementSequence {
-        return XElementSequenceWithCondition(sequence: XDescendantsSequence(node: self), condition: { names.isEmpty || names.contains($0.name) })
+    func descendants(prefix: String? = nil, _ names: String...) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XDescendantsSequence(node: self), condition: { (prefix == nil && names.isEmpty) || ($0.prefix == prefix && (names.isEmpty || names.contains($0.name))) })
     }
     
     func descendants(while condition: @escaping (XElement) -> Bool) -> XElementSequence {
@@ -484,16 +484,16 @@ public extension XContent {
         return XElementSequenceWithCondition(sequence: XNextElementsSequence(content: self), condition: condition)
     }
     
-    func nextElements(_ name: String) -> XElementSequence {
-        return XElementSequenceWithCondition(sequence: XNextElementsSequence(content: self), elementName: name)
+    func nextElements(prefix: String? = nil, _ name: String) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XNextElementsSequence(content: self), prefix: prefix, elementName: name)
     }
     
-    func nextElements(_ names: String...) -> XElementSequence {
-        return XElementSequenceWithCondition(sequence: XNextElementsSequence(content: self), condition: { names.isEmpty || names.contains($0.name) })
+    func nextElements(prefix: String? = nil, _ names: String...) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XNextElementsSequence(content: self), condition: { (prefix == nil && names.isEmpty) || ($0.prefix == prefix && (names.isEmpty || names.contains($0.name))) })
     }
     
-    func nextElements(_ names: [String]) -> XElementSequence {
-        return XElementSequenceWithCondition(sequence: XNextElementsSequence(content: self), condition: { names.isEmpty || names.contains($0.name) })
+    func nextElements(prefix: String? = nil, _ names: [String]) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XNextElementsSequence(content: self), condition: { (prefix == nil && names.isEmpty) || ($0.prefix == prefix && (names.isEmpty || names.contains($0.name))) })
     }
     
     func nextElements(while condition: @escaping (XElement) -> Bool) -> XElementSequence {
@@ -516,16 +516,16 @@ public extension XContent {
         return XElementSequenceWithCondition(sequence: XPreviousElementsSequence(content: self), condition: condition)
     }
     
-    func previousElements(_ name: String) -> XElementSequence {
-        return XElementSequenceWithCondition(sequence: XPreviousElementsSequence(content: self), elementName: name)
+    func previousElements(prefix: String? = nil, _ name: String) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XPreviousElementsSequence(content: self), prefix: prefix, elementName: name)
     }
     
-    func previousElements(_ names: String...) -> XElementSequence {
-        return XElementSequenceWithCondition(sequence: XPreviousElementsSequence(content: self), condition: { names.isEmpty || names.contains($0.name) })
+    func previousElements(prefix: String? = nil, _ names: String...) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XPreviousElementsSequence(content: self), condition: { (prefix == nil && names.isEmpty) || ($0.prefix == prefix && (names.isEmpty || names.contains($0.name))) })
     }
     
-    func previousElements(_ names: [String]) -> XElementSequence {
-        return XElementSequenceWithCondition(sequence: XPreviousElementsSequence(content: self), condition: { names.isEmpty || names.contains($0.name) })
+    func previousElements(prefix: String? = nil, _ names: [String]) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XPreviousElementsSequence(content: self), condition: { (prefix == nil && names.isEmpty) || ($0.prefix == prefix && (names.isEmpty || names.contains($0.name))) })
     }
     
     func previousElements(while condition: @escaping (XElement) -> Bool) -> XElementSequence {
@@ -548,16 +548,16 @@ public extension XContent {
         return XElementSequenceWithCondition(sequence: XNextCloseElementsSequence(content: self), condition: condition)
     }
     
-    func nextCloseElements(_ name: String) -> XElementSequence {
-        return XElementSequenceWithCondition(sequence: XNextCloseElementsSequence(content: self), elementName: name)
+    func nextCloseElements(prefix: String? = nil, _ name: String) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XNextCloseElementsSequence(content: self), prefix: prefix, elementName: name)
     }
     
-    func nextCloseElements(_ names: String...) -> XElementSequence {
-        return XElementSequenceWithCondition(sequence: XNextCloseElementsSequence(content: self), condition: { names.isEmpty || names.contains($0.name) })
+    func nextCloseElements(prefix: String? = nil, _ names: String...) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XNextCloseElementsSequence(content: self), condition: { (prefix == nil && names.isEmpty) || ($0.prefix == prefix && (names.isEmpty || names.contains($0.name))) })
     }
     
-    func nextCloseElements(_ names: [String]) -> XElementSequence {
-        return XElementSequenceWithCondition(sequence: XNextCloseElementsSequence(content: self), condition: { names.isEmpty || names.contains($0.name) })
+    func nextCloseElements(prefix: String? = nil, _ names: [String]) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XNextCloseElementsSequence(content: self), condition: { (prefix == nil && names.isEmpty) || ($0.prefix == prefix && (names.isEmpty || names.contains($0.name))) })
     }
     
     func nextCloseElements(while condition: @escaping (XElement) -> Bool) -> XElementSequence {
@@ -580,16 +580,16 @@ public extension XContent {
         return XElementSequenceWithCondition(sequence: XPreviousCloseElementsSequence(content: self), condition: condition)
     }
     
-    func previousCloseElements(_ name: String) -> XElementSequence {
-        return XElementSequenceWithCondition(sequence: XPreviousCloseElementsSequence(content: self), elementName: name)
+    func previousCloseElements(prefix: String? = nil, _ name: String) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XPreviousCloseElementsSequence(content: self), prefix: prefix, elementName: name)
     }
     
-    func previousCloseElements(_ names: String...) -> XElementSequence {
-        return XElementSequenceWithCondition(sequence: XPreviousCloseElementsSequence(content: self), condition: { names.isEmpty || names.contains($0.name) })
+    func previousCloseElements(prefix: String? = nil, _ names: String...) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XPreviousCloseElementsSequence(content: self), condition: { (prefix == nil && names.isEmpty) || ($0.prefix == prefix && (names.isEmpty || names.contains($0.name))) })
     }
     
-    func previousCloseElements(_ names: [String]) -> XElementSequence {
-        return XElementSequenceWithCondition(sequence: XPreviousCloseElementsSequence(content: self), condition: { names.isEmpty || names.contains($0.name) })
+    func previousCloseElements(prefix: String? = nil, _ names: [String]) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XPreviousCloseElementsSequence(content: self), condition: { (prefix == nil && names.isEmpty) || ($0.prefix == prefix && (names.isEmpty || names.contains($0.name))) })
     }
     
     func previousCloseElements(while condition: @escaping (XElement) -> Bool) -> XElementSequence {
@@ -659,16 +659,16 @@ public extension XElement {
         return XElementSequenceWithCondition(sequence: XNextElementsIncludingSelfSequence(element: self), condition: condition)
     }
     
-    func nextElementsIncludingSelf(_ name: String) -> XElementSequence {
-        return XElementSequenceWithCondition(sequence: XNextElementsIncludingSelfSequence(element: self), elementName: name)
+    func nextElementsIncludingSelf(prefix: String? = nil, _ name: String) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XNextElementsIncludingSelfSequence(element: self), prefix: prefix, elementName: name)
     }
     
-    func nextElementsIncludingSelf(_ names: String...) -> XElementSequence {
-        return XElementSequenceWithCondition(sequence: XNextElementsIncludingSelfSequence(element: self), condition: { names.isEmpty || names.contains($0.name) })
+    func nextElementsIncludingSelf(prefix: String? = nil, _ names: String...) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XNextElementsIncludingSelfSequence(element: self), condition: { (prefix == nil && names.isEmpty) || ($0.prefix == prefix && (names.isEmpty || names.contains($0.name))) })
     }
     
-    func nextElementsIncludingSelf(_ names: [String]) -> XElementSequence {
-        return XElementSequenceWithCondition(sequence: XNextElementsIncludingSelfSequence(element: self), condition: { names.isEmpty || names.contains($0.name) })
+    func nextElementsIncludingSelf(prefix: String? = nil, _ names: [String]) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XNextElementsIncludingSelfSequence(element: self), condition: { (prefix == nil && names.isEmpty) || ($0.prefix == prefix && (names.isEmpty || names.contains($0.name))) })
     }
     
     func nextElementsIncludingSelf(while condition: @escaping (XElement) -> Bool) -> XElementSequence {
@@ -691,16 +691,16 @@ public extension XElement {
         return XElementSequenceWithCondition(sequence: XPreviousElementsIncludingSelfSequence(element: self), condition: condition)
     }
     
-    func previousElementsIncludingSelf(_ name: String) -> XElementSequence {
-        return XElementSequenceWithCondition(sequence: XPreviousElementsIncludingSelfSequence(element: self), elementName: name)
+    func previousElementsIncludingSelf(prefix: String? = nil, _ name: String) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XPreviousElementsIncludingSelfSequence(element: self), prefix: prefix, elementName: name)
     }
     
-    func previousElementsIncludingSelf(_ names: String...) -> XElementSequence {
-        return XElementSequenceWithCondition(sequence: XPreviousElementsIncludingSelfSequence(element: self), condition: { names.isEmpty || names.contains($0.name) })
+    func previousElementsIncludingSelf(prefix: String? = nil, _ names: String...) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XPreviousElementsIncludingSelfSequence(element: self), condition: { (prefix == nil && names.isEmpty) || ($0.prefix == prefix && (names.isEmpty || names.contains($0.name))) })
     }
     
-    func previousElementsIncludingSelf(_ names: [String]) -> XElementSequence {
-        return XElementSequenceWithCondition(sequence: XPreviousElementsIncludingSelfSequence(element: self), condition: { names.isEmpty || names.contains($0.name) })
+    func previousElementsIncludingSelf(prefix: String? = nil, _ names: [String]) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XPreviousElementsIncludingSelfSequence(element: self), condition: { (prefix == nil && names.isEmpty) || ($0.prefix == prefix && (names.isEmpty || names.contains($0.name))) })
     }
     
     func previousElementsIncludingSelf(while condition: @escaping (XElement) -> Bool) -> XElementSequence {
@@ -723,16 +723,16 @@ public extension XElement {
         return XElementSequenceWithCondition(sequence: XNextCloseElementsIncludingSelfSequence(element: self), condition: condition)
     }
     
-    func nextCloseElementsIncludingSelf(_ name: String) -> XElementSequence {
-        return XElementSequenceWithCondition(sequence: XNextCloseElementsIncludingSelfSequence(element: self), elementName: name)
+    func nextCloseElementsIncludingSelf(prefix: String? = nil, _ name: String) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XNextCloseElementsIncludingSelfSequence(element: self), prefix: prefix, elementName: name)
     }
     
-    func nextCloseElementsIncludingSelf(_ names: String...) -> XElementSequence {
-        return XElementSequenceWithCondition(sequence: XNextCloseElementsIncludingSelfSequence(element: self), condition: { names.isEmpty || names.contains($0.name) })
+    func nextCloseElementsIncludingSelf(prefix: String? = nil, _ names: String...) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XNextCloseElementsIncludingSelfSequence(element: self), condition: { (prefix == nil && names.isEmpty) || ($0.prefix == prefix && (names.isEmpty || names.contains($0.name))) })
     }
     
-    func nextCloseElementsIncludingSelf(_ names: [String]) -> XElementSequence {
-        return XElementSequenceWithCondition(sequence: XNextCloseElementsIncludingSelfSequence(element: self), condition: { names.isEmpty || names.contains($0.name) })
+    func nextCloseElementsIncludingSelf(prefix: String? = nil, _ names: [String]) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XNextCloseElementsIncludingSelfSequence(element: self), condition: { (prefix == nil && names.isEmpty) || ($0.prefix == prefix && (names.isEmpty || names.contains($0.name))) })
     }
     
     func nextCloseElementsIncludingSelf(while condition: @escaping (XElement) -> Bool) -> XElementSequence {
@@ -755,16 +755,16 @@ public extension XElement {
         return XElementSequenceWithCondition(sequence: XPreviousCloseElementsIncludingSelfSequence(element: self), condition: condition)
     }
     
-    func previousCloseElementsIncludingSelf(_ name: String) -> XElementSequence {
-        return XElementSequenceWithCondition(sequence: XPreviousCloseElementsIncludingSelfSequence(element: self), elementName: name)
+    func previousCloseElementsIncludingSelf(prefix: String? = nil, _ name: String) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XPreviousCloseElementsIncludingSelfSequence(element: self), prefix: prefix, elementName: name)
     }
     
-    func previousCloseElementsIncludingSelf(_ names: String...) -> XElementSequence {
-        return XElementSequenceWithCondition(sequence: XPreviousCloseElementsIncludingSelfSequence(element: self), condition: { names.isEmpty || names.contains($0.name) })
+    func previousCloseElementsIncludingSelf(prefix: String? = nil, _ names: String...) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XPreviousCloseElementsIncludingSelfSequence(element: self), condition: { (prefix == nil && names.isEmpty) || ($0.prefix == prefix && (names.isEmpty || names.contains($0.name))) })
     }
     
-    func previousCloseElementsIncludingSelf(_ names: [String]) -> XElementSequence {
-        return XElementSequenceWithCondition(sequence: XPreviousCloseElementsIncludingSelfSequence(element: self), condition: { names.isEmpty || names.contains($0.name) })
+    func previousCloseElementsIncludingSelf(prefix: String? = nil, _ names: [String]) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XPreviousCloseElementsIncludingSelfSequence(element: self), condition: { (prefix == nil && names.isEmpty) || ($0.prefix == prefix && (names.isEmpty || names.contains($0.name))) })
     }
     
     func previousCloseElementsIncludingSelf(while condition: @escaping (XElement) -> Bool) -> XElementSequence {
@@ -785,12 +785,12 @@ public extension XElement {
         return XElementSequenceWithCondition(sequence: XDescendantsIncludingSelfSequence(element: self), condition: condition)
     }
     
-    func descendantsIncludingSelf(_ name: String) -> XElementSequence {
-        return XElementSequenceWithCondition(sequence: XDescendantsIncludingSelfSequence(element: self), elementName: name)
+    func descendantsIncludingSelf(prefix: String? = nil, _ name: String) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XDescendantsIncludingSelfSequence(element: self), prefix: prefix, elementName: name)
     }
     
-    func descendantsIncludingSelf(_ names: String...) -> XElementSequence {
-        return XElementSequenceWithCondition(sequence: XDescendantsIncludingSelfSequence(element: self), condition: { names.isEmpty || names.contains($0.name) })
+    func descendantsIncludingSelf(prefix: String? = nil, _ names: String...) -> XElementSequence {
+        return XElementSequenceWithCondition(sequence: XDescendantsIncludingSelfSequence(element: self), condition: { (prefix == nil && names.isEmpty) || ($0.prefix == prefix && (names.isEmpty || names.contains($0.name))) })
     }
     
     func descendantsIncludingSelf(while condition: @escaping (XElement) -> Bool) -> XElementSequence {

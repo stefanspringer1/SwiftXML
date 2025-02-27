@@ -878,4 +878,60 @@ final class SwiftXMLTests: XCTestCase {
         
         XCTAssertEqual(element.serialized(), "<X><B/></X>")
     }
+    
+    func testPrefix() throws {
+        
+        let document = XDocument {
+            XElement(prefix: "math", "math") {
+                XElement(prefix: "math", "mi") { "a" }
+                XElement(prefix: "math", "mo") { "+" }
+                XElement(prefix: "math", "mi") { "b" }
+            }
+        }
+        
+        // prefix must be added in serialization:
+        XCTAssertEqual(document.serialized(pretty: true), """
+            <math:math>
+              <math:mi>a</math:mi>
+              <math:mo>+</math:mo>
+              <math:mi>b</math:mi>
+            </math:math>
+            """
+        )
+        
+        // must not be reached via name alone:
+        XCTAssertEqual(Array(document.firstChild!.children("mi", "mo").map{ $0.allTextsCombined}), [])
+        XCTAssertEqual(Array(document.elements("mi", "mo").map{ $0.allTextsCombined }), [])
+        
+        // must be reached via prefix and name:
+        XCTAssertEqual(Array(document.firstChild!.children(prefix: "math", "mi", "mo").map{ $0.allTextsCombined}), ["a", "+", "b"])
+        XCTAssertEqual(Array(document.elements(prefix: "math", "mi", "mo").map{ $0.allTextsCombined }), ["a", "b", "+"])
+        
+        // remove the prefixes:
+        XTransformation {
+            
+            XRule(forPrefix: "math", forElements: "math", "mi", "mo") { mathElement in
+                mathElement.prefix = nil
+            }
+            
+        }.execute(inDocument: document)
+        
+        // prefix is gone:
+        XCTAssertEqual(document.serialized(pretty: true), """
+            <math>
+              <mi>a</mi>
+              <mo>+</mo>
+              <mi>b</mi>
+            </math>
+            """
+        )
+        
+        // now the queries above have their results interchanged:
+        XCTAssertEqual(Array(document.firstChild!.children("mi", "mo").map{ $0.allTextsCombined}), ["a", "+", "b"])
+        XCTAssertEqual(Array(document.elements("mi", "mo").map{ $0.allTextsCombined }), ["a", "b", "+"])
+        XCTAssertEqual(Array(document.firstChild!.children(prefix: "math", "mi", "mo").map{ $0.allTextsCombined}), [])
+        XCTAssertEqual(Array(document.elements(prefix: "math", "mi", "mo").map{ $0.allTextsCombined }), [])
+        
+        
+    }
 }

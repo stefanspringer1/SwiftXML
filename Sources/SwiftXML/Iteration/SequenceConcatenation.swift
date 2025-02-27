@@ -14,16 +14,18 @@ import Foundation
 
 public final class XElementsOfNamesSequence: XElementSequence {
     
+    private let prefix: String?
     private let names: [String]
     private let document: XDocument
     
-    init(forNames names: [String], forDocument document: XDocument) {
+    init(forPrefix prefix: String?, forNames names: [String], forDocument document: XDocument) {
+        self.prefix = prefix
         self.names = names
         self.document = document
     }
     
     public override func makeIterator() -> XElementIterator {
-        return XElementsOfNamesIterator(forNames: names, forDocument: document)
+        return XElementsOfNamesIterator(forPrefix: prefix, forNames: names, forDocument: document)
     }
     
 }
@@ -34,10 +36,11 @@ public final class XElementsOfNamesIterator: XElementIterator {
     private var foundElement = false
     private var iteratorIndex = 0
     
-    init(forNames names: [String], forDocument document: XDocument) {
+    init(forPrefix prefix: String?, forNames names: [String], forDocument document: XDocument) {
         iterators = names.map{ XXBidirectionalElementNameIterator(
             elementIterator: XElementsOfSameNameIterator(
                 document: document,
+                prefix: prefix,
                 name: $0,
                 keepLast: true
             )

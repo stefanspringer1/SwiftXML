@@ -215,18 +215,32 @@ public final class XDocument: XNode, XBranchInternal {
     var _elementsOfName_first = [String:XElement]()
     var _elementsOfName_last = [String:XElement]()
     
+    var _elementsOfPrefixAndName_first = TieredDictionary<String,String,XElement>()
+    var _elementsOfPrefixAndName_last = TieredDictionary<String,String,XElement>()
+    
     func registerElement(element: XElement) {
         
         // register via name:
         let name = element.name
-        if let theLast = _elementsOfName_last[name] {
-            theLast.nextWithSameName = element
-            element.previousWithSameName = theLast
+        if let prefix = element.prefix {
+            if let theLast = _elementsOfPrefixAndName_last[prefix,name] {
+                theLast.nextWithSameName = element
+                element.previousWithSameName = theLast
+            }
+            else {
+                _elementsOfPrefixAndName_first[prefix,name] = element
+            }
+            _elementsOfPrefixAndName_last[prefix,name] = element
+        } else {
+            if let theLast = _elementsOfName_last[name] {
+                theLast.nextWithSameName = element
+                element.previousWithSameName = theLast
+            }
+            else {
+                _elementsOfName_first[name] = element
+            }
+            _elementsOfName_last[name] = element
         }
-        else {
-            _elementsOfName_first[name] = element
-        }
-        _elementsOfName_last[name] = element
         
         // register according attributes:
         for (attributeName,attributeValue) in element._attributes {
@@ -245,12 +259,22 @@ public final class XDocument: XNode, XBranchInternal {
         let name = element.name
         element.previousWithSameName?.nextWithSameName = element.nextWithSameName
         element.nextWithSameName?.previousWithSameName = element.previousWithSameName
-        if _elementsOfName_first[name] === element {
-            _elementsOfName_first[name] = element.nextWithSameName
+        if let prefix = element.prefix {
+            if _elementsOfPrefixAndName_first[prefix,name] === element {
+                _elementsOfPrefixAndName_first[prefix,name] = element.nextWithSameName
+            }
+            if _elementsOfPrefixAndName_last[prefix,name] === element {
+                _elementsOfPrefixAndName_last[prefix,name] = element.previousWithSameName
+            }
+        } else {
+            if _elementsOfName_first[name] === element {
+                _elementsOfName_first[name] = element.nextWithSameName
+            }
+            if _elementsOfName_last[name] === element {
+                _elementsOfName_last[name] = element.previousWithSameName
+            }
         }
-        if _elementsOfName_last[name] === element {
-            _elementsOfName_last[name] = element.previousWithSameName
-        }
+        
         element.previousWithSameName = nil
         element.nextWithSameName = nil
         
@@ -263,16 +287,16 @@ public final class XDocument: XNode, XBranchInternal {
         element._document = nil
     }
     
-    public func elements(_ name: String) -> XElementSequence {
-        return XElementsOfSameNameSequence(document: self, name: name)
+    public func elements(prefix: String? = nil, _ name: String) -> XElementSequence {
+        return XElementsOfSameNameSequence(document: self, prefix: prefix, name: name)
     }
     
-    public func elements(_ names: String...) -> XElementSequence {
-        return elements(names)
+    public func elements(prefix: String? = nil, _ names: String...) -> XElementSequence {
+        return elements(prefix: prefix, names)
     }
     
-    public func elements(_ names: [String]) -> XElementSequence {
-        return XElementsOfNamesSequence(forNames: names, forDocument: self)
+    public func elements(prefix: String? = nil, _ names: [String]) -> XElementSequence {
+        return XElementsOfNamesSequence(forPrefix: prefix, forNames: names, forDocument: self)
     }
     
     // -------------------------------------------------------------------------

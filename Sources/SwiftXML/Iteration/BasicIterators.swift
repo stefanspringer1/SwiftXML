@@ -550,12 +550,14 @@ public final class XElementsOfSameNameIterator: XElementIteratorProtocol {
     
     private var started = false
     weak var document: XDocument?
+    let prefix: String?
     let name: String
     weak var currentElement: XElement? = nil
     let keepLast: Bool
     
-    public init(document: XDocument, name: String, keepLast: Bool = false) {
+    public init(document: XDocument, prefix: String?, name: String, keepLast: Bool = false) {
         self.document = document
+        self.prefix = prefix
         self.name = name
         self.keepLast = keepLast
     }
@@ -567,7 +569,11 @@ public final class XElementsOfSameNameIterator: XElementIteratorProtocol {
             currentElement = currentElement?.nextWithSameName
         }
         else {
-            currentElement = document?._elementsOfName_first[name]
+            if let prefix {
+                currentElement = document?._elementsOfPrefixAndName_first[prefix,name]
+            } else {
+                currentElement = document?._elementsOfName_first[name]
+            }
             started = true
         }
         if currentElement == nil && keepLast {

@@ -1677,6 +1677,26 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         return self
     }
     
+    var _prefix: String?
+    
+    public var prefix: String? {
+        get { _prefix }
+        set(newPrefix) {
+            if newPrefix != _prefix {
+                if let theDocument = _document {
+                    gotoPreviousOnNameIterators()
+                    for nameIterator in nameIterators { _ = nameIterator.previous() }
+                    theDocument.unregisterElement(element: self)
+                    _prefix = newPrefix
+                    theDocument.registerElement(element: self)
+                }
+                else {
+                    _prefix = newPrefix
+                }
+            }
+        }
+    }
+    
     var _name: String
     
     public var name: String {
@@ -1837,11 +1857,13 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     }
 
     public init(
+        prefix: String? = nil,
         _ name: String,
         _ attributes: [String:String?]? = nil,
         withBackLinkFrom backlinkSource: XElement? = nil,
         attached: [String:Any?]? = nil
     ) {
+        self._prefix = prefix
         self._name = name
         super.init()
         self._lastInTree = self
@@ -1861,6 +1883,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     }
     
     public convenience init(
+        prefix: String? = nil,
         _ name: String,
         _ attributes: [String:String?]? = nil,
         withBackLinkFrom backlinkSource: XElement? = nil,
@@ -1868,14 +1891,15 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         adjustDocument _adjustDocument: Bool = false,
         @XContentBuilder builder: () -> [XContent]
     ) {
-        self.init(name, attributes, withBackLinkFrom: backlinkSource, attached: attached)
+        self.init(prefix: prefix, name, attributes, withBackLinkFrom: backlinkSource, attached: attached)
         self.add(builder: builder)
         if _adjustDocument {
             adjustDocument()
         }
     }
     
-    init(_ name: String, document: XDocument) {
+    init(prefix: String? = nil, _ name: String, document: XDocument) {
+        self._prefix = prefix
         self._name = name
         super.init()
         setDocument(document: _document)

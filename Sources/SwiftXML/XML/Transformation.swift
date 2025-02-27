@@ -16,6 +16,7 @@ public typealias XAttributeAction = (XAttributeSpot)->()
 
 public struct XRule {
 
+    public let prefix: String?
     public let names: [String]
     public let action: Any
     
@@ -24,14 +25,16 @@ public struct XRule {
     public let actionFile: String
     public let actionLine: Int
 
-    public init(forElements names: [String], file: String = #file, line: Int = #line, action: @escaping XElementAction) {
+    public init(forPrefix prefix: String? = nil, forElements names: [String], file: String = #file, line: Int = #line, action: @escaping XElementAction) {
+        self.prefix = prefix
         self.names = names
         self.action = action
         self.actionFile = file
         self.actionLine = line
     }
 
-    public init(forElements names: String..., file: String = #file, line: Int = #line, action: @escaping XElementAction) {
+    public init(forPrefix prefix: String? = nil, forElements names: String..., file: String = #file, line: Int = #line, action: @escaping XElementAction) {
+        self.prefix = prefix
         self.names = names
         self.action = action
         self.actionFile = file
@@ -39,6 +42,7 @@ public struct XRule {
     }
     
     public init(forRegisteredAttributes names: [String], file: String = #file, line: Int = #line, action: @escaping XAttributeAction) {
+        self.prefix = nil
         self.names = names
         self.action = action
         self.actionFile = file
@@ -46,6 +50,7 @@ public struct XRule {
     }
     
     public init(forRegisteredAttributes names: String..., file: String = #file, line: Int = #line, action: @escaping XAttributeAction) {
+        self.prefix = nil
         self.names = names
         self.action = action
         self.actionFile = file
@@ -54,22 +59,26 @@ public struct XRule {
     
 #else
     
-    public init(forElements names: [String], action: @escaping XElementAction) {
+    public init(forPrefix prefix: String? = nil, forElements names: [String], action: @escaping XElementAction) {
+        self.prefix = prefix
         self.names = names
         self.action = action
     }
 
-    public init(forElements names: String..., action: @escaping XElementAction) {
+    public init(forPrefix prefix: String? = nil, forElements names: String..., action: @escaping XElementAction) {
+        self.prefix = prefix
         self.names = names
         self.action = action
     }
     
     public init(forRegisteredAttributes names: [String], action: @escaping XAttributeAction) {
+        self.prefix = nil
         self.names = names
         self.action = action
     }
     
     public init(forRegisteredAttributes names: String..., action: @escaping XAttributeAction) {
+        self.prefix = nil
         self.names = names
         self.action = action
     }
@@ -147,14 +156,14 @@ public class XTransformation {
                 for name in rule.names {
                     #if DEBUG
                     iteratorsWithAppliedActions.append(AppliedAction(
-                        iterator: XXBidirectionalElementNameIterator(elementIterator: XElementsOfSameNameIterator(document: document, name: name, keepLast: true), keepLast: true),
+                        iterator: XXBidirectionalElementNameIterator(elementIterator: XElementsOfSameNameIterator(document: document, prefix: rule.prefix, name: name, keepLast: true), keepLast: true),
                         action: elementAction,
                         actionFile: rule.actionFile,
                         actionLine: rule.actionLine
                     ))
                     #else
                     iteratorsWithAppliedActions.append(AppliedAction(
-                        iterator: XXBidirectionalElementNameIterator(elementIterator: XElementsOfSameNameIterator(document: document, name: name, keepLast: true), keepLast: true),
+                        iterator: XXBidirectionalElementNameIterator(elementIterator: XElementsOfSameNameIterator(document: document, prefix: rule.prefix, name: name, keepLast: true), keepLast: true),
                         action: elementAction
                     ))
                     #endif
