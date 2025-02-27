@@ -2037,19 +2037,33 @@ element "mo" with prefix "math"
 ---
 **NOTE**
 
-- As all namespace rpefix definitions are being set at the root element, this may silently change the meaning of some element names with according prefixes that before had been outside the sections of those definitions.
+- As all namespace prefix definitions are being set at the root element, this may silently change the meaning of some element names with according prefixes that before had been outside the sections of those definitions.
 - In the current state of the library, no namespace handling is being applied for attributes.
 
 ---
 
-You could also handle namespaces without the letting the parse function recognize them:
+A rule then could be formulated as follows:
+
+```swift
+let mathMLPrefix = myDocument.prefix(forNamespace: "http://www.w3.org/1998/Math/MathML")
+
+let transformation = XTransformation {
+
+    XRule(forPrefix: mathMLPrefix, forElements: "mo") { mo in
+        ...
+    }
+
+    ...
+```
+
+But you could also work with namespaces without letting the parse function recognize them (i.e. when `recognizeNamespaces` has the default value `false`):
 
 ```swift
 let fullMathMLPrefix = myDocument.fullPrefix(forNamespace: "http://www.w3.org/1998/Math/MathML")
 
 let transformation = XTransformation {
 
-    XRule(forElements: "\(fullMathMLPrefix)a") { a in
+    XRule(forElements: "\(fullMathMLPrefix)mo") { mo in
         ...
     }
 
@@ -2064,7 +2078,7 @@ XDocument.setNamespace(:withPossiblyFullPrefix:)
 
 Here the prefix might be a “full” prefix, i.e. it could contain a closing `:`. An existing namespace declaration for the same namespace but with another prefix is not (!) removed.
 
-Note these three helper methods are also avalaible for an element.
+Note these helper methods for getting and setting namespace prefix definitions are also avalaible for an element.
 
 ### Using async/await
 
