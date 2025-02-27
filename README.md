@@ -98,6 +98,8 @@ let transformation = XTransformation {
 
 **UPDATE 29 (January 2025):** New: `backlinkOrSelf`.
 
+**UPDATE 30 (February 2025):** New `recognizeNamespaces:` in call to parse functions (default value is `false`).
+
 ---
 
 ## Related packages
