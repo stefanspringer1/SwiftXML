@@ -1036,4 +1036,24 @@ final class SwiftXMLTests: XCTestCase {
             </a>
             """)
     }
+    
+    func testNamespacesFromReadme() throws {
+        
+        let source = """
+            <a>
+                <math:math xmlns:math="http://www.w3.org/1998/Math/MathML"><math:mi>x</math:mi></math:math>
+                <b xmlns:math2="http://www.w3.org/1998/Math/MathML">
+                    <math2:math><math2:mi>n</math2:mi><math2:mo>!</math2:mo></math2:math>
+                </b>
+            </a>
+            """
+
+        let document = try parseXML(fromText: source, recognizeNamespaces: true)
+
+        document.echo()
+        
+        for element in document.descendants(prefix: document.prefix(forNamespace: "http://www.w3.org/1998/Math/MathML"), "math", "mo", "mi") {
+            print("element \"\(element.name)\" with prefix \"\(element.prefix ?? "")\"")
+        }
+    }
 }

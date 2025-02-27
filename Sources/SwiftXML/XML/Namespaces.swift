@@ -31,6 +31,11 @@ public enum NamespaceReference {
 
 extension XDocument {
     
+    /// Read the the prefix for a namespace URL string from the root element.
+    public func prefix(forNamespace namespace: String) -> String? {
+        self.children.first?.prefix(forNamespace: namespace)
+    }
+    
     /// Read the the full prefix for a namespace URL string from the root element.
     /// "Full" means that a closing ":" is added automatically.
     /// If no prefix is defined, an empty string is returned.
@@ -65,19 +70,27 @@ extension XDocument {
 
 extension XElement {
     
+    /// Read the the prefix for a namespace URL string from the element.
+    public func prefix(forNamespace namespace: String) -> String? {
+        var foundPrefix: String? = nil
+        for attributeName in attributeNames {
+            if attributeName.hasPrefix("xmlns:"), let value = self[attributeName], value == namespace {
+                foundPrefix = String(attributeName.dropFirst(6))
+                break
+            }
+        }
+        return foundPrefix
+    }
+    
     /// Read the the full prefix for a namespace URL string from the element.
     /// "Full" means that a closing ":" is added automatically.
     /// If no prefix is defined, an empty string is returned.
     public func fullPrefix(forNamespace namespace: String) -> String {
-        var foundPrefix: String? = nil
-        let namespaceDeclarationPrefix = "xmlns:"
-        for attributeName in attributeNames {
-            if attributeName.hasPrefix(namespaceDeclarationPrefix), let value = self[attributeName], value == namespace {
-                foundPrefix = String(attributeName.dropFirst(namespaceDeclarationPrefix.count)) + ":"
-                break
-            }
+        if let foundPrefix = prefix(forNamespace: namespace) {
+            return "\(foundPrefix):"
+        } else {
+            return ""
         }
-        return foundPrefix ?? ""
     }
     
     /// Read the the full prefix for a namespace reference.

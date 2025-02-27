@@ -225,7 +225,7 @@ This library gives full control of how to handle entities. Named entity referenc
 
 Automated inclusion of the content external parsed entities can be configurated, the content might then be wrapped by elements with according information of the enities.
 
-Elements or attributes with namespace prefixes are given the full name “prefix:unprefixed". See the section on handling of namespaces for motivation and about how to handle namespaces.
+Namespaces definitions and their prefixes are only recognized if the attribute `recognizeNamespaces` is set to `true` in the call of the parse functions. See the section on handling of namespaces about how to namespaces are handled.
 
 For any error during parsing an error is thrown and no document is then provided.
 
@@ -247,6 +247,7 @@ Reading from a URL which references a local file:
 ```swift
 func parseXML(
     fromURL: URL,
+    recognizeNamespaces: Bool = false,
     registeringAttributes attributeRegisterMode: AttributeRegisterMode = .none,
     sourceInfo: String? = nil,
     textAllowedInElementWithName: ((String) -> Bool)? = nil,
@@ -1981,25 +1982,65 @@ Note that when using traversals for transforming an XML tree, using several tran
 
 ## Handling of namespaces
 
-The library is very strong when it comes to tracking elements of a certain name and formulating according rules. Adding an additional layer by supporting namespaces directly at those points would make the implementation of the library more complicated and less efficient. Let us see then how one would then handle XML documents which are using namespaces.
+Namespaces prefix definitions are only recognized if the attribute `recognizeNamespaces` is set to `true` in the call of the parse functions. An element that uses a defined namespace prefix then gets then name _without_ the prefix (and without the seprating colon), the prefix is separately stored in the `prefix` property of the element (which by defaut is `nil`).
 
-First, you can always look up the namespace prefix settings (attributes `xmlns:...`) in your document. As mentioned in the section about limitations of the XML input, the annotations of namespace prefixes via `xmlns:...` attributes should only be at the root element of the XML source. There are then the following two helper methods to help you with the task of handling the namespaces:
-
-Read the the full prefix for a namespace URL string from the root element:
+Note that the namespace definitions are then set at the root element of the document, and prefixes are changed if necessary (note the prefix `math2` at the second formula in the following example):
 
 ```swift
-XDocument.fullPrefix(forNamespace:) -> String
+let source = """
+    <a>
+        <math:math xmlns:math="http://www.w3.org/1998/Math/MathML"><math:mi>x</math:mi></math:math>
+        <b xmlns:math2="http://www.w3.org/1998/Math/MathML">
+            <math2:math><math2:mi>n</math2:mi>math2:mo>!</math2:mo></math2:math>
+        </b>
+    </a>
+    """
+
+let document = try parseXML(fromText: source, recognizeNamespaces: true)
+
+document.echo()
 ```
 
-“Full” means that a closing `:` is added automatically. If no prefix is defined, an empty string is returned.
+The resulting output is:
 
-Get a map from the namespace URL strings to the full prefixes from the root element:
+```xml
+<a xmlns:math="http://www.w3.org/1998/Math/MathML">
+    <math:math><math:mi>x</math:mi></math:math>
+    <b>
+        <math:math><math:mi>n</math:mi><math:mo>!</math:mo></math:math>
+    </b>
+</a>
+```
+
+In rules and when searching for content, the according prefixes the have to be used:
 
 ```swift
-XDocument.fullPrefixesForNamespaces
+for element in document.descendants(prefix: document.prefix(forNamespace: "http://www.w3.org/1998/Math/MathML"), "math", "mo", "mi") {
+    print("element \"\(element.name)\" with prefix \"\(element.prefix ?? "")\"")
+}
 ```
 
-When you then like to access or change elements in that namespace, add the according prefix dynamically in your code:
+There, the method `XDocument.fullPrefix(forNamespace:) -> String` to get the according prefix from the document root.
+
+The resulting output:
+
+```text
+element "math" with prefix "math"
+element "mi" with prefix "math"
+element "math" with prefix "math"
+element "mi" with prefix "math"
+element "mo" with prefix "math"
+```
+
+---
+**NOTE**
+
+- As all namespace rpefix definitions are being set at the root element, this may silently change the meaning of some element names with according prefixes that before had been outside the sections of those definitions.
+- In the current state of the library, no namespace handling is being applied for attributes.
+
+---
+
+You could also handle namespaces without the letting the parse function recognize them:
 
 ```swift
 let fullMathMLPrefix = myDocument.fullPrefix(forNamespace: "http://www.w3.org/1998/Math/MathML")
