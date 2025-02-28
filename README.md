@@ -993,12 +993,12 @@ for _ in document.descendants("paragraph") {
 }
 ```
 
-You can also use multiple names (e.g. `descendants("paragraph", "table")`). If no name is given, all elements are given in the result regardless the name, e.g. `children()` means the same as `children`.
+You can also use multiple names (e.g. `descendants("paragraph", "table")`).`children()`
 
-If you do not list any element names in methods like `descendants()`, it does the same as the the according property, e.g. `descendants`, i.e. it will find all according elements disregarding the names.
+If you do not list any element names in methods like `descendants()` or `children()`, it lists elements independently of their names, but other than e.g. `descendants`, it only lists elements without prefix (cf. the section about the handling of namespaces).
 
 ---
-**NODE**
+**NOTE**
 
 Note that `nextElements("paragraph")` (filtering the next elements by name) is different from `nextElements(while: { $0.name == "paragraph" })`.
 
@@ -2055,11 +2055,12 @@ let transformation = XTransformation {
 ```
 
 ---
-**NOTES**
+**NOTE**
 
 - When searching for elements by only using a name and not a prefix, only elements with this name _without_ a prefix will be found. E.g. `children("mo")` will not (!) find children which have the name `"mo"` but e.g. the prefix `"math"`. The reason for this is that we want to keep the searching for elements without prefixes be at the same time precise and simple, we do not want to demand writing `children(prefix: nil, "p")` for precision, and this also aligns with direct access to elements like `document.elements("p")` or rules like `XRule(forElements: "p")` that should always be precise in what elements are meant.
 - On the other hand, the direct comparison with the name of an element just compares the name and disregards the prefix. You might want to write e.g. `(element.prefix, element.name) == (prefix, name)` or `(element.prefix, element.name) == (nil, name)` in some cases to be more precise. (A qualified name is not introduced because we want to avoid exhaustive composing of names with prefixes in code which uses this library.)
 - You can also search only by prefix e.g. by `descendant(prefix: myPrefix)`.
+- If you use these methods without any arguments e.g. `descendants()` note that _only elements without prefix are found,_ this is different from using the according property e.g. `descendants`.
 - You might change prefix and name at the same time by using `XElement.set(prefix:name:)`. 
 - You can freely use prefixes that are not defined, e.g. to allow rules to only apply to certain parts. Example: Duplicate formulas using different prefixes to transform them into two different outputs according to the prefixes inside the same document.
 - As all namespace prefix definitions are being set at the root element, this may silently change the meaning of some element names with according prefixes that before had been outside the sections of those definitions.
