@@ -916,10 +916,6 @@ final class SwiftXMLTests: XCTestCase {
         // must not be reached via name alone:
         XCTAssertEqual(Array(document.descendants("mi", "mo").map{ $0.immediateTextsCombined }), [])
         XCTAssertEqual(Array(document.elements("mi", "mo").map{ $0.immediateTextsCombined }), [])
-        // but:
-        XCTAssertEqual(Array(document.descendants().map{ $0.immediateTextsCombined }), ["", "a", "+", "b"])
-        // ...which is the same as:
-        XCTAssertEqual(Array(document.descendants.map{ $0.immediateTextsCombined }), ["", "a", "+", "b"])
         
         // must be reached via prefix and name:
         XCTAssertEqual(Array(document.descendants(prefix: "math", "mi", "mo").map{ $0.immediateTextsCombined }), ["a", "+", "b"])
@@ -964,9 +960,14 @@ final class SwiftXMLTests: XCTestCase {
         
         let document = try parseXML(fromText: source, recognizeNamespaces: true)
         
-        XCTAssertEqual(Array(document.descendants.map{ $0.name }), ["a", "math", "mi"])
+        
+        XCTAssertEqual(Array(document.descendants(prefix: "math", "mi").map{ $0.name }), ["mi"])
         XCTAssertEqual(Array(document.descendants(prefix: "math").map{ $0.name }), ["math", "mi"])
+        // but when explicitely telling "no name":
         XCTAssertEqual(Array(document.descendants(prefix: "math", []).map{ $0.name }), [])
+        
+        XCTAssertEqual(Array(document.descendants.map{ $0.name }), ["a", "math", "mi"])
+        // but:
         XCTAssertEqual(Array(document.descendants().map{ $0.name }), ["a"])
         // ...which is the same as:
         XCTAssertEqual(Array(document.descendants(prefix: nil).map{ $0.name }), ["a"])
