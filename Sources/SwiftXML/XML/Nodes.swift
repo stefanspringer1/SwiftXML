@@ -204,28 +204,34 @@ public class XNode {
         }
     }
     
-    public func parent(_ name: String) -> XElement? {
+    public func parent(prefix: String? = nil, _ name: String) -> XElement? {
         let element = parent
-        if let theElement = element, theElement.name == name {
-            return theElement
+        if let element, element.prefix == prefix, element.name == name {
+            return element
         }
         else {
             return nil
         }
     }
     
-    public func parent(_ names: [String]) -> XElement? {
+    public func parent(prefix: String? = nil, _ names: [String]) -> XElement? {
         let element = parent
-        if let theElement = element, names.contains(theElement.name) {
-            return theElement
+        if let element, element.prefix == prefix, names.contains(element.name) {
+            return element
         }
         else {
             return nil
         }
     }
     
-    public func parent(_ names: String...) -> XElement? {
-        parent(names)
+    public func parent(prefix: String? = nil, _ names: String...) -> XElement? {
+        let element = parent
+        if let element, element.prefix == prefix, names.isEmpty || names.contains(element.name) {
+            return element
+        }
+        else {
+            return nil
+        }
     }
     
     weak var _previous: XContent? = nil
