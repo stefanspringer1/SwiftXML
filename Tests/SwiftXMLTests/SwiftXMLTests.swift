@@ -1037,6 +1037,26 @@ final class SwiftXMLTests: XCTestCase {
             """)
     }
     
+    func testChangingNamespaceAndName() throws {
+        
+        let source = """
+            <a xmlns:myPrefix="http//:soandso">
+                <myPrefix:b/>
+            </a>
+            """
+        
+        let document = try parseXML(fromText: source, recognizeNamespaces: true)
+
+        for b in document.descendants(prefix: "myPrefix", "b") {
+            b.set(prefix: "newPrefix", name: "c")
+        }
+        
+        XCTAssertEqual(
+            document.descendants(prefix: "newPrefix", "c").map{ "element \"\($0.name)\" with prefix \"\($0.prefix ?? "")\"" }.joined(separator: "\n"),
+            #"element "c" with prefix "newPrefix""#
+        )
+    }
+    
     func testNamespacesFromReadme() throws {
         
         let source = """
@@ -1056,4 +1076,5 @@ final class SwiftXMLTests: XCTestCase {
             print("element \"\(element.name)\" with prefix \"\(element.prefix ?? "")\"")
         }
     }
+    
 }
