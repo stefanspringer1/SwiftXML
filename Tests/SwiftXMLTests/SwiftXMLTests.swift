@@ -954,6 +954,25 @@ final class SwiftXMLTests: XCTestCase {
         XCTAssertEqual(Array(document.descendants(prefix: nil, "mi", "mo").map{ $0.immediateTextsCombined }), ["a", "+", "b"])
     }
     
+    func testNamespaceSearchVariations() throws {
+    
+        let source = """
+            <a xmlns:math="http://www.w3.org/1998/Math/MathML">
+                <math:math><math:mi>x</math:mi></math:math>
+            </a>
+            """
+        
+        let document = try parseXML(fromText: source, recognizeNamespaces: true)
+        
+        XCTAssertEqual(Array(document.descendants.map{ $0.name }), ["a", "math", "mi"])
+        XCTAssertEqual(Array(document.descendants(prefix: "math").map{ $0.name }), ["math", "mi"])
+        XCTAssertEqual(Array(document.descendants(prefix: "math", []).map{ $0.name }), [])
+        XCTAssertEqual(Array(document.descendants().map{ $0.name }), ["a"])
+        // ...which is the same as:
+        XCTAssertEqual(Array(document.descendants(prefix: nil).map{ $0.name }), ["a"])
+        
+    }
+    
     func testReadingWithNamespaces1() throws {
     
         let source = """
