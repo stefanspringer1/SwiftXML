@@ -1680,7 +1680,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     }
     
     public override var shallowClone: XElement {
-        let theClone = XElement(name)
+        let theClone = XElement(prefix: _prefix, _name)
         theClone._backlink = self
         theClone._sourceRange = self._sourceRange
         theClone.copyAttributes(from: self)
