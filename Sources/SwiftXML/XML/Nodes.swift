@@ -928,8 +928,11 @@ public protocol XBranch: XNode {
     func lastContent(_ condition: (XContent) -> Bool) -> XContent?
     var firstChild: XElement? { get }
     func firstChild(_ name: String) -> XElement?
+    func firstChild(prefix: String?, _ name: String) -> XElement?
     func firstChild(_ names: [String]) -> XElement?
+    func firstChild(prefix: String?, _ names: [String]) -> XElement?
     func firstChild(_ names: String...) -> XElement?
+    func firstChild(prefix: String?, _ names: String...) -> XElement?
     func firstChild(_ condition: (XElement) -> Bool) -> XElement?
     var isEmpty: Bool { get }
     func add(@XContentBuilder builder: () -> [XContent])
@@ -960,10 +963,10 @@ extension XBranchInternal {
         return nil
     }
     
-    public func _firstChild(_ name: String) -> XElement? {
+    public func _firstChild(prefix: String? = nil, _ name: String) -> XElement? {
         var node = __firstContent
         while let theNode = node {
-            if let child = theNode as? XElement, child.name == name {
+            if let child = theNode as? XElement, child.prefix == prefix, child.name == name {
                 return child
             }
             node = theNode._next
@@ -971,10 +974,10 @@ extension XBranchInternal {
         return nil
     }
     
-    public func _firstChild(_ names: [String]) -> XElement? {
+    public func _firstChild(prefix: String? = nil, _ names: [String]) -> XElement? {
         var node = __firstContent
         while let theNode = node {
-            if let child = theNode as? XElement, names.contains(child.name) {
+            if let child = theNode as? XElement, child.prefix == prefix, names.contains(child.name) {
                 return child
             }
             node = theNode._next
@@ -982,8 +985,8 @@ extension XBranchInternal {
         return nil
     }
     
-    public func _firstChild(_ names: String...) -> XElement? {
-        firstChild(names)
+    public func _firstChild(prefix: String? = nil, _ names: String...) -> XElement? {
+        _firstChild(prefix: prefix, names)
     }
     
     public func _firstChild(_ condition: (XElement) -> Bool) -> XElement? {
@@ -1532,12 +1535,24 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         _firstChild(name)
     }
     
+    public func firstChild(prefix: String?, _ name: String) -> XElement? {
+        _firstChild(prefix: prefix, name)
+    }
+    
     public func firstChild(_ names: [String]) -> XElement? {
         _firstChild(names)
     }
     
+    public func firstChild(prefix: String?, _ names: [String]) -> XElement? {
+        _firstChild(prefix: prefix, names)
+    }
+    
     public func firstChild(_ names: String...) -> XElement? {
         _firstChild(names)
+    }
+    
+    public func firstChild(prefix: String?, _ names: String...) -> XElement? {
+        _firstChild(prefix: prefix, names)
     }
     
     public func firstChild(_ condition: (XElement) -> Bool) -> XElement? {

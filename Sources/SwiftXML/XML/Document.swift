@@ -23,21 +23,33 @@ public enum AttributeRegisterMode {
 }
 
 public final class XDocument: XNode, XBranchInternal {
-    
+
     public var firstChild: XElement? { _firstChild }
     
     public func firstChild(_ name: String) -> XElement? {
         _firstChild(name)
     }
     
+    public func firstChild(prefix: String?, _ name: String) -> XElement? {
+        _firstChild(prefix: prefix, name)
+    }
+    
     public func firstChild(_ names: [String]) -> XElement? {
         _firstChild(names)
+    }
+    
+    public func firstChild(prefix: String?, _ names: [String]) -> XElement? {
+        _firstChild(prefix: prefix, names)
     }
     
     public func firstChild(_ names: String...) -> XElement? {
         _firstChild(names)
     }
-        
+    
+    public func firstChild(prefix: String?, _ names: String...) -> XElement? {
+        _firstChild(prefix: prefix, names)
+    }
+    
     public func firstChild(_ condition: (XElement) -> Bool) -> XElement? {
         _firstChild(condition)
     }
