@@ -2034,16 +2034,7 @@ element "mi" with prefix "math"
 element "mo" with prefix "math"
 ```
 
----
-**NOTE**
-
-- You can freely use prefixes that are not defined, e.g. to allow rules to only apply to certain parts. Example: Duplicate formulas using different prefixes to transform them into two different outputs according to the prefixes inside the same document.
-- As all namespace prefix definitions are being set at the root element, this may silently change the meaning of some element names with according prefixes that before had been outside the sections of those definitions.
-- In the current state of the library, no namespace handling is being applied for attributes.
-
----
-
-A rule then could be formulated as follows:
+A rule for one of those elements then could be formulated as follows:
 
 ```swift
 let mathMLPrefix = myDocument.prefix(forNamespace: "http://www.w3.org/1998/Math/MathML")
@@ -2057,7 +2048,17 @@ let transformation = XTransformation {
     ...
 ```
 
-But you could also work with namespaces without letting the parse function recognize them (i.e. when `recognizeNamespaces` has the default value `false`):
+---
+**NOTES**
+
+- When searching for elements by only using a name and not a prefix, only elements with this name _without_ a prefix will be found. E.g. `children("mo")` will not (!) find children which have the name `"mo"` but e.g. the prefix `"math"`. The reason for this is that we want to keep the searching for elements without prefixes be at the same time precise and simple, we do not want to demand writing `children(prefix: nil, "p")` for precision. This also aligns with direct access to elements like `document.elements("p")` or rules like `XRule(forElements: "p")` that always should be precise in what elements are meant.
+- You can freely use prefixes that are not defined, e.g. to allow rules to only apply to certain parts. Example: Duplicate formulas using different prefixes to transform them into two different outputs according to the prefixes inside the same document.
+- As all namespace prefix definitions are being set at the root element, this may silently change the meaning of some element names with according prefixes that before had been outside the sections of those definitions.
+- In the current state of the library, no namespace handling is being applied for attributes.
+
+---
+
+You could also work with namespaces without letting the parse function recognize them (i.e. when `recognizeNamespaces` has the default value `false`):
 
 ```swift
 let fullMathMLPrefix = myDocument.fullPrefix(forNamespace: "http://www.w3.org/1998/Math/MathML")
