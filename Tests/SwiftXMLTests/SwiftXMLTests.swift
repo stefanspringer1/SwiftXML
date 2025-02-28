@@ -879,6 +879,20 @@ final class SwiftXMLTests: XCTestCase {
         XCTAssertEqual(element.serialized(), "<X><B/></X>")
     }
     
+    func testDescendantsMethodWithoutArguments() {
+        
+        let document = XDocument {
+            XElement("A") {
+                XElement("B")
+            }
+        }
+        
+        XCTAssertEqual(Array(document.descendants().map{ $0.name }), ["A", "B"])
+        // ...which is the same as:
+        XCTAssertEqual(Array(document.descendants.map{ $0.name }), ["A", "B"])
+                         
+    }
+    
     func testPrefix() throws {
         
         let document = XDocument {
@@ -900,12 +914,16 @@ final class SwiftXMLTests: XCTestCase {
         )
         
         // must not be reached via name alone:
-        XCTAssertEqual(Array(document.descendants("mi", "mo").map{ $0.allTextsCombined}), [])
-        XCTAssertEqual(Array(document.elements("mi", "mo").map{ $0.allTextsCombined }), [])
+        XCTAssertEqual(Array(document.descendants("mi", "mo").map{ $0.immediateTextsCombined }), [])
+        XCTAssertEqual(Array(document.elements("mi", "mo").map{ $0.immediateTextsCombined }), [])
+        // but:
+        XCTAssertEqual(Array(document.descendants().map{ $0.immediateTextsCombined }), ["", "a", "+", "b"])
+        // ...which is the same as:
+        XCTAssertEqual(Array(document.descendants.map{ $0.immediateTextsCombined }), ["", "a", "+", "b"])
         
         // must be reached via prefix and name:
-        XCTAssertEqual(Array(document.descendants(prefix: "math", "mi", "mo").map{ $0.allTextsCombined}), ["a", "+", "b"])
-        XCTAssertEqual(Array(document.elements(prefix: "math", "mi", "mo").map{ $0.allTextsCombined }), ["a", "b", "+"])
+        XCTAssertEqual(Array(document.descendants(prefix: "math", "mi", "mo").map{ $0.immediateTextsCombined }), ["a", "+", "b"])
+        XCTAssertEqual(Array(document.elements(prefix: "math", "mi", "mo").map{ $0.immediateTextsCombined }), ["a", "b", "+"])
         
         // remove the prefixes:
         XTransformation {
@@ -927,13 +945,13 @@ final class SwiftXMLTests: XCTestCase {
         )
         
         // now the queries above have their results interchanged:
-        XCTAssertEqual(Array(document.descendants("mi", "mo").map{ $0.allTextsCombined}), ["a", "+", "b"])
-        XCTAssertEqual(Array(document.elements("mi", "mo").map{ $0.allTextsCombined }), ["a", "b", "+"])
-        XCTAssertEqual(Array(document.descendants(prefix: "math", "mi", "mo").map{ $0.allTextsCombined}), [])
-        XCTAssertEqual(Array(document.elements(prefix: "math", "mi", "mo").map{ $0.allTextsCombined }), [])
+        XCTAssertEqual(Array(document.descendants("mi", "mo").map{ $0.immediateTextsCombined }), ["a", "+", "b"])
+        XCTAssertEqual(Array(document.elements("mi", "mo").map{ $0.immediateTextsCombined }), ["a", "b", "+"])
+        XCTAssertEqual(Array(document.descendants(prefix: "math", "mi", "mo").map{ $0.immediateTextsCombined }), [])
+        XCTAssertEqual(Array(document.elements(prefix: "math", "mi", "mo").map{ $0.immediateTextsCombined }), [])
         
         // explicitely `prefix: nil`:
-        XCTAssertEqual(Array(document.descendants(prefix: nil, "mi", "mo").map{ $0.allTextsCombined}), ["a", "+", "b"])
+        XCTAssertEqual(Array(document.descendants(prefix: nil, "mi", "mo").map{ $0.immediateTextsCombined }), ["a", "+", "b"])
     }
     
     func testReadingWithNamespaces1() throws {
@@ -1035,6 +1053,22 @@ final class SwiftXMLTests: XCTestCase {
                 </b>
             </a>
             """)
+    }
+    
+    func testSerachingOnlyByPrefix() throws {
+        
+        let source = """
+            <a xmlns:myPrefix="http//:soandso">
+                <myPrefix:b/>
+            </a>
+            """
+        
+        let document = try parseXML(fromText: source, recognizeNamespaces: true)
+        
+        XCTAssertEqual(
+            document.descendants(prefix: "myPrefix").map{ "element \"\($0.name)\" with prefix \"\($0.prefix ?? "")\"" }.joined(separator: "\n"),
+            #"element "b" with prefix "myPrefix""#
+        )
     }
     
     func testChangingNamespaceAndName() throws {
