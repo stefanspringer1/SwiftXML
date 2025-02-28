@@ -1111,6 +1111,22 @@ final class SwiftXMLTests: XCTestCase {
         )
     }
     
+    func testSerializedAndDescriptionAndXPathWithNamespaces() throws {
+        let element = XElement(prefix: "math", "mi", ["style": "italic"]) { "b" }
+        let document = XDocument {
+            XElement("a") {
+                XElement(prefix: "math", "math") {
+                    XElement(prefix: "math", "mi") { "a" }
+                    XElement(prefix: "math", "mo") { "+" }
+                    element
+                }
+            }
+        }
+        XCTAssertEqual(document.serialized(), #"<a><math:math><math:mi>a</math:mi><math:mo>+</math:mo><math:mi style="italic">b</math:mi></math:math></a>"#)
+        XCTAssertEqual(element.description, #"<math:mi style="italic">"#)
+        XCTAssertEqual(element.xPath, "/a[1]/math:math[1]/math:mi[2]")
+    }
+    
     func testNamespacesFromReadme() throws {
         
         let source = """

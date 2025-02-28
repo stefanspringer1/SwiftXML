@@ -1667,8 +1667,9 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
 
     public override var description: String {
         get {
-            """
-            <\(name)\(_attributes.isEmpty == false ? " " : "")\(_attributes.sorted{ $0.0.caseInsensitiveCompare($1.0) == .orderedAscending }.map { (attributeName,attributeValue) in "\(attributeName)=\"\(attributeValue.escapingDoubleQuotedValueForXML)\"" }.joined(separator: " ") ?? "")>
+            let displayName = if let prefix = _prefix { "\(prefix):\(_name)" } else { _name }
+            return """
+            <\(displayName)\(_attributes.isEmpty == false ? " " : "")\(_attributes.sorted{ $0.0.caseInsensitiveCompare($1.0) == .orderedAscending }.map { (attributeName,attributeValue) in "\(attributeName)=\"\(attributeValue.escapingDoubleQuotedValueForXML)\"" }.joined(separator: " ") ?? "")>
             """
         }
     }
@@ -1763,13 +1764,17 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     
     public var xPath: String {
         get {
-            let myName = name
+            let myPrefix = _prefix
+            let myName = _name
+            let myDisplayName = if let prefix = _prefix { "\(prefix):\(myName)" } else { myName }
             return "/" + ([
                 self.ancestors.reversed().map {
-                    let itsName = $0.name
-                    return "\(itsName)[\($0.previousElements.filter { $0.name == itsName }.count+1)]"
+                    let itsPrefix = $0._prefix
+                    let itsName = $0._name
+                    let itsDisplayName = if let prefix = $0._prefix { "\(prefix):\(itsName)" } else { itsName }
+                    return "\(itsDisplayName)[\($0.previousElements.filter { $0._prefix == itsPrefix && $0._name == itsName }.count+1)]"
                 }.joined(separator: "/"),
-                "\(name)[\(previousElements.filter { $0.name == myName }.count+1)]"
+                "\(myDisplayName)[\(previousElements.filter { $0._prefix == myPrefix && $0._name == myName }.count+1)]"
             ].joinedNonEmpties(separator: "/") ?? "")
         }
     }
