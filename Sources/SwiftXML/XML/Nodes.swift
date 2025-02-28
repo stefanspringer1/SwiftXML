@@ -1732,6 +1732,23 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         }
     }
     
+    public func set(prefix: String?, name: String) {
+        if prefix != _prefix || name != _name {
+            if let theDocument = _document {
+                gotoPreviousOnNameIterators()
+                for nameIterator in nameIterators { _ = nameIterator.previous() }
+                theDocument.unregisterElement(element: self)
+                _prefix = prefix
+                _name = name
+                theDocument.registerElement(element: self)
+            }
+            else {
+                _prefix = prefix
+                _name = name
+            }
+        }
+    }
+    
     public func hasEqualValues(as other: XElement) -> Bool {
         return self.name == other.name
         && self._attributes.keys.allSatisfy { self[$0] == other[$0] }
