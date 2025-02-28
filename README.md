@@ -2037,6 +2037,7 @@ element "mo" with prefix "math"
 ---
 **NOTE**
 
+- You can freely use prefixes that are not defined, e.g. to allow rules to only apply to certain parts. Example: Duplicate formulas using different prefixes to transform them into two different outputs according to the prefixes inside the same document.
 - As all namespace prefix definitions are being set at the root element, this may silently change the meaning of some element names with according prefixes that before had been outside the sections of those definitions.
 - In the current state of the library, no namespace handling is being applied for attributes.
 
