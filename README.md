@@ -100,6 +100,8 @@ let transformation = XTransformation {
 
 **UPDATE 30 (February 2025):** New `recognizeNamespaces:` in call to parse functions (default value is `false`).
 
+**UPDATE 31 (March 2025):** You can now use the builder notation for CDATA sections and comments.
+
 ---
 
 ## Related packages
@@ -1165,6 +1167,8 @@ Result:
 
 For `XContentConvertible` there is also the `xml` property that returns an according array of `XContent`.
 
+When constructing CDATA sections and comments, you can aso use the `XCDATASection { ... }` and `XComment { ... }` notation, but only with `String` content.
+
 ### Defining content
 
 When constructing an element, its contents are given in parentheses `{...}` (those parentheses are the `builder` argument of the initializer).
@@ -1635,6 +1639,13 @@ This can be very convenient when processing text, e.g. it is then very straightf
 You can avoid merging of text `text` with other texts by setting the `isolated` property to `true` (you can also choose to set this value during initialization of an XText). Consider the following example where the occurrences of a search text gets a greenish background. In this example, you do not want `part` to be added to `text` in the iteration:
 
 ```swift
+let document = try parseXML(fromText: """
+    <doc>
+        <paragraph>Hello world!</paragraph>
+        <paragraph>world world world</paragraph>
+    </doc>
+    """)
+
 let searchText = "world"
 
 document.traverse { node in
@@ -1644,9 +1655,11 @@ document.traverse { node in
             var addSearchText = false
             for part in text.value.components(separatedBy: searchText) {
                 text.insertPrevious {
-                    addSearchText ? XElement("span", ["style": "background:LightGreen"]) {
-                        searchText
-                    } : nil
+                    if addSearchText {
+                        XElement("span", ["style": "background:LightGreen"]) {
+                            searchText
+                        }
+                    }
                     part
                 }
                 addSearchText = true

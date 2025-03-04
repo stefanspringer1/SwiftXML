@@ -906,12 +906,14 @@ final class SwiftXMLTests: XCTestCase {
             " world"
             if condition1 {
                 " condition1"
+                " condition1"
             }
             if condition2 {
                 " condition2"
+                " condition2"
             }
         }
-        XCTAssertEqual(cdata2.serialized(), "<![CDATA[hello world condition1]]>")
+        XCTAssertEqual(cdata2.serialized(), "<![CDATA[hello world condition1 condition1]]>")
     }
     
     func testCommentInitialization() throws {
@@ -930,24 +932,28 @@ final class SwiftXMLTests: XCTestCase {
             " world"
             if condition1 {
                 " condition1"
+                " condition1"
             }
             if condition2 {
                 " condition2"
+                " condition2"
             }
         }
-        XCTAssertEqual(cdata2a.serialized(), "<!-- hello world condition1 -->")
+        XCTAssertEqual(cdata2a.serialized(), "<!-- hello world condition1 condition1 -->")
         
         let cdata2b = XComment(withAdditionalSpace: false) {
             "hello"
             " world"
             if condition1 {
                 " condition1"
+                " condition1"
             }
             if condition2 {
                 " condition2"
+                " condition2"
             }
         }
-        XCTAssertEqual(cdata2b.serialized(), "<!--hello world condition1-->")
+        XCTAssertEqual(cdata2b.serialized(), "<!--hello world condition1 condition1-->")
     }
     
     func testPrefix() throws {

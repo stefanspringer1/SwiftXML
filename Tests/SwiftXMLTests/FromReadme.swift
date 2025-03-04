@@ -665,4 +665,45 @@ final class FromReadmeTests: XCTestCase {
         XCTAssertEqual(document.children.children("p")[99]?.description ?? "-", "-")
         XCTAssertEqual(document.allTexts[2]?.value ?? "-", "The first paragraph.")
     }
+    
+    func testTextHandling() throws {
+        
+        let document = try parseXML(fromText: """
+            <doc>
+                <paragraph>Hello world!</paragraph>
+                <paragraph>world world world</paragraph>
+            </doc>
+            """)
+
+        let searchText = "world"
+
+        document.traverse { node in
+            if let text = node as? XText {
+                if text.value.contains(searchText) {
+                    text.isolated = true
+                    var addSearchText = false
+                    for part in text.value.components(separatedBy: searchText) {
+                        text.insertPrevious {
+                            if addSearchText {
+                                XElement("span", ["style": "background:LightGreen"]) {
+                                    searchText
+                                }
+                            }
+                            part
+                        }
+                        addSearchText = true
+                    }
+                    text.remove()
+                    text.isolated = false
+                }
+            }
+        }
+
+        XCTAssertEqual(document.serialized(), """
+            <doc>
+                <paragraph>Hello <span style="background:LightGreen">world</span>!</paragraph>
+                <paragraph><span style="background:LightGreen">world</span> <span style="background:LightGreen">world</span> <span style="background:LightGreen">world</span></paragraph>
+            </doc>
+            """)
+    }
 }
