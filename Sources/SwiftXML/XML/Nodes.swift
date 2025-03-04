@@ -1468,7 +1468,7 @@ public struct XContentBuilder {
     
     // empty:
     public static func buildBlock() -> [XContent] {
-        return [XContent]()
+        [XContent]()
     }
     
     public static func buildBlock(_ components: XContentConvertible?...) -> [XContent] {
@@ -1495,9 +1495,9 @@ public struct XContentBuilder {
     
     public static func buildExpression(_ expression: XContentConvertible?) -> [XContent] {
         if let expression {
-            return buildExpression(expression)
+            buildExpression(expression)
         } else {
-            return [XContent]()
+            [XContent]()
         }
     }
     
@@ -1529,6 +1529,56 @@ public struct XContentBuilder {
     
     public static func buildOptional(_ component: [XContent]?) -> [XContent]? {
         component
+    }
+    
+}
+
+@resultBuilder
+public struct XStringBuilder {
+    
+    // empty:
+    public static func buildBlock() -> [String] {
+        [String]()
+    }
+    
+    public static func buildBlock(_ components: String?...) -> [String] {
+        components.compactMap{ $0 }
+    }
+    
+    public static func buildBlock(_ sequences: any Sequence<String>...) -> [String] {
+        sequences.flatMap{ $0.map{ $0 } }
+    }
+    
+    public static func buildExpression(_ expression: String) -> [String] {
+        [expression]
+    }
+    
+    public static func buildExpression(_ expression: String?) -> [String] {
+        if let expression {
+            return [expression]
+        } else {
+            return [String]()
+        }
+    }
+    
+    public static func buildExpression(_ array: [String]) -> [String] {
+        array.map{ $0 }
+    }
+    
+    public static func buildExpression(_ array: [String?]) -> [String] {
+        array.compactMap{ $0 }
+    }
+    
+    public static func buildEither(first component: [String]) -> [String] {
+        component
+    }
+    
+    public static func buildEither(second component: [String]) -> [String] {
+        component
+    }
+    
+    public static func buildOptional(_ component: [String]?) -> [String] {
+        component ?? [String]()
     }
     
 }
@@ -2565,6 +2615,11 @@ public final class XComment: XContent {
         self._value = withAdditionalSpace ? " \(text) " : text
     }
     
+    public init(withAdditionalSpace: Bool = true, @XStringBuilder builder: () -> [String]) {
+        let text = builder().joined()
+        self._value = withAdditionalSpace ? " \(text) " : text
+    }
+    
     override func produceEntering(activeProduction: XActiveProduction) throws {
         try activeProduction.writeComment(comment: self)
     }
@@ -2627,6 +2682,10 @@ public final class XCDATASection: XContent, XTextualContentRepresentation {
     
     public init(_ text: String) {
         self._value = text
+    }
+    
+    public init(@XStringBuilder builder: () -> [String]) {
+        self._value = builder().joined()
     }
     
     override func produceEntering(activeProduction: XActiveProduction) throws {
