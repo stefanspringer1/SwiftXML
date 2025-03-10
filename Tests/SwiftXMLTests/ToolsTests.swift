@@ -163,7 +163,7 @@ final class ToolsTests: XCTestCase {
     
     func testHTMLOutput0() throws {
         let source = """
-            <div><h1>The title</h1><p>1st paragraph</p><a name="anchor1"/><p>2nd paragraph</p></div>
+            <div><h1>The title</h1><p>1st paragraph</p><a name="anchor1"/><p>2nd paragraph</p><div id="id1"/><script/></div>
             """
         XCTAssertEqual(
             try parseXML(fromText: source).serialized(usingProductionTemplate: HTMLProductionTemplate()),
@@ -174,6 +174,8 @@ final class ToolsTests: XCTestCase {
               <p>1st paragraph</p>
               <a name="anchor1"></a>
               <p>2nd paragraph</p>
+              <div id="id1"></div>
+              <script></script>
             </div>
             """
         )
