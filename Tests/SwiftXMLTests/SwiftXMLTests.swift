@@ -1174,6 +1174,27 @@ final class SwiftXMLTests: XCTestCase {
         )
     }
     
+    func testChangingNamespaceAndNameViaProperty() throws {
+        
+        let source = """
+            <a xmlns:myPrefix="http//:soandso">
+                <myPrefix:b/>
+            </a>
+            """
+        
+        let document = try parseXML(fromText: source, recognizeNamespaces: true)
+
+        for b in document.descendants(prefix: "myPrefix", "b") {
+            b.prefixAndName = ("newPrefix", "c")
+            XCTAssertTrue(b.prefixAndName == ("newPrefix", "c"))
+        }
+        
+        XCTAssertEqual(
+            document.descendants(prefix: "newPrefix", "c").map{ "element \"\($0.name)\" with prefix \"\($0.prefix ?? "")\"" }.joined(separator: "\n"),
+            #"element "c" with prefix "newPrefix""#
+        )
+    }
+    
     func testSerializedAndDescriptionAndXPathWithNamespaces() throws {
         let element = XElement(prefix: "math", "mi", ["style": "italic"]) { "b" }
         let document = XDocument {

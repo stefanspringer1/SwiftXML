@@ -1789,6 +1789,13 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         }
     }
     
+    public var prefixAndName: (prefix: String?, name: String) {
+        get { (_prefix, _name) }
+        set(newPrefixAndName) {
+            set(prefix: newPrefixAndName.prefix, name: newPrefixAndName.name)
+        }
+    }
+    
     public func set(prefix: String?, name: String) {
         if prefix != _prefix || name != _name {
             if let theDocument = _document {

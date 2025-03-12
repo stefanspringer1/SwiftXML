@@ -102,6 +102,8 @@ let transformation = XTransformation {
 
 **UPDATE 31 (March 2025):** You can now use the builder notation for CDATA sections and comments.
 
+**UPDATE 32 (March 2025):** New property `prefixAndName` of `XElement`.
+
 ---
 
 ## Related packages
