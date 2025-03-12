@@ -104,6 +104,8 @@ let transformation = XTransformation {
 
 **UPDATE 32 (March 2025):** New property `prefixAndName` of `XElement`.
 
+**UPDATE 33 (March 2025):** Removed property `prefixAndName` of `XElement`, added `XElement.has(prefix:name:)` instead.
+
 ---
 
 ## Related packages

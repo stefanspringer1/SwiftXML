@@ -1789,13 +1789,6 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         }
     }
     
-    public var prefixAndName: (prefix: String?, name: String) {
-        get { (_prefix, _name) }
-        set(newPrefixAndName) {
-            set(prefix: newPrefixAndName.prefix, name: newPrefixAndName.name)
-        }
-    }
-    
     public func set(prefix: String?, name: String) {
         if prefix != _prefix || name != _name {
             if let theDocument = _document {
@@ -1811,6 +1804,10 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
                 _name = name
             }
         }
+    }
+    
+    public func has(prefix: String?, name: String) -> Bool {
+        _prefix == prefix && _name == name
     }
     
     public func hasEqualValues(as other: XElement) -> Bool {
