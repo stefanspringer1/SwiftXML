@@ -2078,7 +2078,7 @@ let transformation = XTransformation {
 - On the other hand, the direct comparison with the name of an element just compares the name and disregards the prefix. You might want to write e.g. `(element.prefix, element.name) == (prefix, name)` or `(element.prefix, element.name) == (nil, name)` in some cases to be more precise. (A qualified name is not introduced because we want to avoid exhaustive composing of names with prefixes in code which uses this library.)
 - You can also search only by prefix e.g. by `descendant(prefix: myPrefix)`.
 - If you use these methods without any arguments e.g. `descendants()` note that _only elements without prefix are found,_ this is different from using the according property e.g. `descendants`.
-- You might change prefix and name at the same time by using `XElement.set(prefix:name:)`. 
+- You might change prefix and name at the same time by using `XElement.set(prefix:name:)` or compare both prefix and name via `XElement.has(prefix:name:)`.
 - You can freely use prefixes that are not defined, e.g. to allow rules to only apply to certain parts. Example: Duplicate formulas using different prefixes to transform them into two different outputs according to the prefixes inside the same document.
 - As all namespace prefix definitions are being set at the root element, this may silently change the meaning of some element names with according prefixes that before had been outside the sections of those definitions.
 - In the current state of the library, no namespace handling is being applied for attributes.
