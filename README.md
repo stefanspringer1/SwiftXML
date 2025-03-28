@@ -2009,7 +2009,9 @@ When transforming elements, it might be convenient to keep the identity of trans
 
 Namespaces prefix definitions are only recognized if the argument `recognizeNamespaces` is set to `true` in the call of the parse functions. An element that uses a defined namespace prefix then gets then name _without_ the prefix (and without the seprating colon), the prefix is separately stored in the `prefix` property of the element (which by defaut is `nil`).
 
-Note that the namespace definitions are then set at the root element of the document, and prefixes are changed if necessary (note the prefix `math2` at the second formula in the following example):
+Prefixes that are being recognized in this manner might be referred to as “recognized prefixes”. Prefixes can also be set explicitly, which does not require the presence of corresponding prefix definitions, those prefixes might be referred to as “explicit prefixes”.
+
+Note that when `recognizeNamespaces` is activated, the namespace definitions are set at the root element of the document, and prefixes are changed if necessary (note the prefix `math2` at the second formula in the following example):
 
 ```swift
 let source = """
