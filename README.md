@@ -711,6 +711,14 @@ refid="1":
 <b refid="1">Second reference to "1".</b>
 ```
 
+If the value according to an attribute name should be unique, find the according element by::
+
+```swift
+if let element = document.registeredValues("1", forAttribute: "refid").first?.element {
+    ...
+}
+```
+
 ---
 **NOTE**
 

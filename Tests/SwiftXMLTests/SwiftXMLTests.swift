@@ -1243,6 +1243,7 @@ final class SwiftXMLTests: XCTestCase {
 
         let document = try parseXML(fromText: source, registeringValuesForAttributes: .selected(["id", "refid"]))
         
+        // cannot find them by name only:
         XCTAssertEqual(
             document.registeredAttributes("id").map{ $0.element.description }.joined(separator: "\n"),
             """
@@ -1263,6 +1264,9 @@ final class SwiftXMLTests: XCTestCase {
             <b refid="1">Second reference to "1".</b>
             """
         )
+        
+        // if the value according to an attribute name should be unique, find the according element by:
+        let _: XElement? = document.registeredValues("1", forAttribute: "refid").first?.element
         
         document.firstChild?.add {
             XElement("b", ["refid": "1"]) { #"Third reference to "1"."# }
