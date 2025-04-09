@@ -1266,7 +1266,7 @@ final class SwiftXMLTests: XCTestCase {
         )
         
         // if the value according to an attribute name should be unique, find the according element by:
-        let _: XElement? = document.registeredValues("1", forAttribute: "refid").first?.element
+        let _: XElement? = document.registeredValues("1", forAttribute: "id").first?.element
         
         document.firstChild?.add {
             XElement("b", ["refid": "1"]) { #"Third reference to "1"."# }

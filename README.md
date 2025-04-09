@@ -714,7 +714,7 @@ refid="1":
 If the value according to an attribute name should be unique, find the according element by::
 
 ```swift
-if let element = document.registeredValues("1", forAttribute: "refid").first?.element {
+if let element = document.registeredValues("1", forAttribute: "id").first?.element {
     ...
 }
 ```
