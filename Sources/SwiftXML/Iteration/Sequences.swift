@@ -810,6 +810,29 @@ public final class XAttributesOfSameNameSequence: XAttributeSequence {
     }
 }
 
+public final class XAttributesOfSameValueSequence: XAttributeSequence {
+    
+    let document: XDocument
+    let attributeName: String
+    let attributeValue: String
+    
+    public init(document: XDocument, attributeName: String, attributeValue: String) {
+        self.document = document
+        self.attributeName = attributeName
+        self.attributeValue = attributeValue
+    }
+    
+    public override func makeIterator() -> XAttributeIterator {
+        return XBidirectionalAttributeIterator(
+            forAttributeName: attributeName, attributeIterator: XAttributesOfSameValueIterator(
+                document: document,
+                attributeName: attributeName,
+                attributeValue: attributeValue
+            )
+        )
+    }
+}
+
 /**
  A sequence iterating only over one element. This ist mainly for testing.
  */

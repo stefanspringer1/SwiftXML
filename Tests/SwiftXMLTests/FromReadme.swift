@@ -706,4 +706,35 @@ final class FromReadmeTests: XCTestCase {
             </doc>
             """)
     }
+    
+    func testRegisteredAttributeValues() throws {
+        let source = """
+            <a>
+                <b id="1"/>
+                <b id="2"/>
+                <b refid="1">First reference to "1".</b>
+                <b refid="1">Second reference to "1".</b>
+            </a>
+            """
+
+        let document = try parseXML(fromText: source, registeringValuesForAttributes: .selected(["id", "refid"]))
+        
+        XCTAssertEqual(
+            """
+            id="1":
+            \(document.registeredValues("1", forAttribute: "id").map{ $0.element.description }.joined(separator: "\n"))
+            
+            refid="1":
+            \(document.registeredValues("1", forAttribute: "refid").map{ $0.element.serialized() }.joined(separator: "\n"))
+            """,
+            """
+            id="1":
+            <b id="1">
+
+            refid="1":
+            <b refid="1">First reference to "1".</b>
+            <b refid="1">Second reference to "1".</b>
+            """
+        )
+    }
 }

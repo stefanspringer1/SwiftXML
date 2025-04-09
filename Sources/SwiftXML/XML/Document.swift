@@ -263,6 +263,15 @@ public final class XDocument: XNode, XBranchInternal {
             }
         }
         
+        // register according attributes values:
+        for (attributeName,attributeValue) in element._attributes {
+            if _document?.attributeValueToBeRegistered(forAttributeName: attributeName) == true {
+                let attributeProperties = AttributeProperties(value: attributeValue, element: element)
+                element._registeredAttributeValues[attributeName] = attributeProperties
+                registerAttributeValue(attributeProperties: attributeProperties, withName: attributeName)
+            }
+        }
+        
         element._document = self
     }
     
@@ -296,6 +305,12 @@ public final class XDocument: XNode, XBranchInternal {
         }
         element._registeredAttributes.removeAll()
         
+        // unregister registered attribute values:
+        for (attributeName,attributeProperties) in element._registeredAttributeValues {
+            unregisterAttributeValue(attributeProperties: attributeProperties, withName: attributeName)
+        }
+        element._registeredAttributes.removeAll()
+        
         element._document = nil
     }
     
@@ -312,36 +327,65 @@ public final class XDocument: XNode, XBranchInternal {
     }
     
     // -------------------------------------------------------------------------
-    // attributes of same name:
+    // attributes of same name or also same value:
     // -------------------------------------------------------------------------
     
     var _attributesOfName_first = [String:AttributeProperties]()
     var _attributesOfName_last = [String:AttributeProperties]()
     
+    var _attributesOfValue_first = TieredDictionary<String,String,AttributeProperties>()
+    var _attributesOfValue_last = TieredDictionary<String,String,AttributeProperties>()
+    
     func registerAttribute(attributeProperties: AttributeProperties, withName name: String) {
         if let theLast = _attributesOfName_last[name] {
-            theLast.nextWithSameName = attributeProperties
-            attributeProperties.previousWithSameName = theLast
+            theLast.nextWithCondition = attributeProperties
+            attributeProperties.previousWithCondition = theLast
         }
         else {
             _attributesOfName_first[name] = attributeProperties
         }
         _attributesOfName_last[name] = attributeProperties
-        attributeProperties.nextWithSameName = nil
+        attributeProperties.nextWithCondition = nil
+    }
+    
+    func registerAttributeValue(attributeProperties: AttributeProperties, withName name: String) {
+        if let theLast = _attributesOfValue_last[name,attributeProperties.value] {
+            theLast.nextWithCondition = attributeProperties
+            attributeProperties.previousWithCondition = theLast
+        }
+        else {
+            _attributesOfValue_first[name,attributeProperties.value] = attributeProperties
+        }
+        _attributesOfValue_last[name,attributeProperties.value] = attributeProperties
+        attributeProperties.nextWithCondition = nil
     }
     
     func unregisterAttribute(attributeProperties: AttributeProperties, withName name: String) {
         attributeProperties.gotoPreviousOnAttributeIterators()
-        attributeProperties.previousWithSameName?.nextWithSameName = attributeProperties.nextWithSameName
-        attributeProperties.nextWithSameName?.previousWithSameName = attributeProperties.previousWithSameName
+        attributeProperties.previousWithCondition?.nextWithCondition = attributeProperties.nextWithCondition
+        attributeProperties.nextWithCondition?.previousWithCondition = attributeProperties.previousWithCondition
         if _attributesOfName_first[name] === attributeProperties {
-            _attributesOfName_first[name] = attributeProperties.nextWithSameName
+            _attributesOfName_first[name] = attributeProperties.nextWithCondition
         }
         if _attributesOfName_last[name] === attributeProperties {
-            _attributesOfName_last[name] = attributeProperties.previousWithSameName
+            _attributesOfName_last[name] = attributeProperties.previousWithCondition
         }
-        attributeProperties.previousWithSameName = nil
-        attributeProperties.nextWithSameName = nil
+        attributeProperties.previousWithCondition = nil
+        attributeProperties.nextWithCondition = nil
+    }
+    
+    func unregisterAttributeValue(attributeProperties: AttributeProperties, withName name: String) {
+        attributeProperties.gotoPreviousOnAttributeIterators()
+        attributeProperties.previousWithCondition?.nextWithCondition = attributeProperties.nextWithCondition
+        attributeProperties.nextWithCondition?.previousWithCondition = attributeProperties.previousWithCondition
+        if _attributesOfValue_first[name,attributeProperties.value] === attributeProperties {
+            _attributesOfValue_first[name,attributeProperties.value] = attributeProperties.nextWithCondition
+        }
+        if _attributesOfValue_last[name,attributeProperties.value] === attributeProperties {
+            _attributesOfValue_last[name,attributeProperties.value] = attributeProperties.previousWithCondition
+        }
+        attributeProperties.previousWithCondition = nil
+        attributeProperties.nextWithCondition = nil
     }
     
     public func registeredAttributes(_ name: String) -> XAttributeSequence {
@@ -354,6 +398,10 @@ public final class XDocument: XNode, XBranchInternal {
     
     public func registeredAttributes(_ names: [String]) -> XAttributeSequence {
         return XAttributesOfNamesSequence(forNames: names, forDocument: self)
+    }
+    
+    public func registeredValues(_ value: String, forAttribute name: String) -> XAttributeSequence {
+        return XAttributesOfSameValueSequence(document: self, attributeName: name, attributeValue: value)
     }
     
     deinit {
@@ -369,6 +417,7 @@ public final class XDocument: XNode, XBranchInternal {
     // -------------------------------------------------------------------------
     
     private let _attributeRegisterMode: AttributeRegisterMode
+    private let _attributeValueRegisterMode: AttributeRegisterMode
     
     func attributeToBeRegistered(withName name: String) -> Bool {
         switch _attributeRegisterMode {
@@ -381,11 +430,24 @@ public final class XDocument: XNode, XBranchInternal {
         }
     }
     
+    func attributeValueToBeRegistered(forAttributeName name: String) -> Bool {
+        switch _attributeValueRegisterMode {
+        case .none:
+            false
+        case .selected(let attributeNames):
+            attributeNames.contains(name)
+        case .all:
+            true
+        }
+    }
+    
     public init(
         attached: [String:Any?]? = nil,
-        registeringAttributes attributeRegisterMode: AttributeRegisterMode = .none
+        registeringAttributes attributeRegisterMode: AttributeRegisterMode = .none,
+        registeringValuesForAttributes attributeValueRegisterMode: AttributeRegisterMode = .none
     ) {
         self._attributeRegisterMode = attributeRegisterMode
+        self._attributeValueRegisterMode = attributeValueRegisterMode
         super.init()
         _document = self
         self._lastInTree = self
@@ -401,9 +463,10 @@ public final class XDocument: XNode, XBranchInternal {
     public convenience init(
         attached: [String:Any?]? = nil,
         registeringAttributes attributeRegisterMode: AttributeRegisterMode = .none,
+        registeringValuesForAttributes attributeValueRegisterMode: AttributeRegisterMode = .none,
         @XContentBuilder builder: () -> [XContent]
     ) {
-        self.init(attached: attached, registeringAttributes: attributeRegisterMode)
+        self.init(attached: attached, registeringAttributes: attributeRegisterMode, registeringValuesForAttributes: attributeValueRegisterMode)
         for node in builder() {
             _add(node)
         }

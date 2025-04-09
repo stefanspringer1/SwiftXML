@@ -1324,8 +1324,8 @@ final class AttributeProperties {
     var value: String
     weak var element: XElement?
     
-    weak var previousWithSameName: AttributeProperties? = nil
-    var nextWithSameName: AttributeProperties? = nil
+    weak var previousWithCondition: AttributeProperties? = nil
+    var nextWithCondition: AttributeProperties? = nil
     
     init(value: String, element: XElement) {
         self.value = value
@@ -1338,8 +1338,8 @@ final class AttributeProperties {
     // !!! This should not be necessary anymore with Swift 5.7 or on masOS 13. !!!
     func removeFollowingWithSameName() {
         var node = self
-        while isKnownUniquelyReferenced(&node.nextWithSameName) {
-            (node, node.nextWithSameName) = (node.nextWithSameName!, nil)
+        while isKnownUniquelyReferenced(&node.nextWithCondition) {
+            (node, node.nextWithCondition) = (node.nextWithCondition!, nil)
         }
     }
 }
@@ -1688,6 +1688,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     
     var _attributes = [String:String]() // contains all attributes, including the registered ones
     var _registeredAttributes = [String:AttributeProperties]() // the registered attributes
+    var _registeredAttributeValues = [String:AttributeProperties]() // the registered attribute values
     
     /// After cloning, this is the reference to the original node or to the cloned node respectively,
     /// acoording to the parameter used when cloning.
@@ -1924,7 +1925,10 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
             _attributes[attributeName]
         }
         set {
-            _attributes[attributeName] = newValue
+            
+            let oldValue = _attributes[attributeName]
+            guard newValue != oldValue else { return }
+            
             if let theDocument = _document, theDocument.attributeToBeRegistered(withName: attributeName) {
                 if let newValue {
                     if let existingAttribute = _registeredAttributes[attributeName] {
@@ -1941,6 +1945,22 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
                     theDocument.unregisterAttribute(attributeProperties: existingAttribute, withName: attributeName)
                 }
             }
+            
+            if let theDocument = _document, theDocument.attributeValueToBeRegistered(forAttributeName: attributeName) {
+                if let existingAttribute = _registeredAttributeValues[attributeName]  {
+                    theDocument.unregisterAttributeValue(attributeProperties: existingAttribute, withName: attributeName)
+                }
+                if let newValue {
+                    let newAttribute = AttributeProperties(value: newValue, element: self)
+                    _registeredAttributeValues[attributeName] = newAttribute
+                    theDocument.registerAttributeValue(attributeProperties: newAttribute, withName: attributeName)
+                } else {
+                    _registeredAttributeValues[attributeName] = nil
+                }
+            }
+            
+            _attributes[attributeName] = newValue
+            
         }
     }
     

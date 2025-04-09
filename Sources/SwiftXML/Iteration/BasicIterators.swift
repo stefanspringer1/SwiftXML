@@ -617,7 +617,7 @@ final class XAttributesOfSameNameIterator: XAttributeIteratorProtocol {
         let oldStarted = started
         let oldCurrent = currentAttribute
         if started {
-            currentAttribute = currentAttribute?.nextWithSameName
+            currentAttribute = currentAttribute?.nextWithCondition
         }
         else {
             currentAttribute = document?._attributesOfName_first[attributeName]
@@ -633,7 +633,56 @@ final class XAttributesOfSameNameIterator: XAttributeIteratorProtocol {
     
     func previous() -> AttributeProperties? {
         if started {
-            currentAttribute = currentAttribute?.previousWithSameName
+            currentAttribute = currentAttribute?.previousWithCondition
+            if currentAttribute == nil {
+                started = false
+            }
+            return currentAttribute
+        }
+        return nil
+    }
+}
+
+/**
+ Iterates though the elements with a specified attribute value.
+ */
+final class XAttributesOfSameValueIterator: XAttributeIteratorProtocol {
+
+    private var started = false
+    weak var document: XDocument?
+    let attributeName: String
+    let attributeValue: String
+    weak var currentAttribute: AttributeProperties? = nil
+    let keepLast: Bool
+    
+    public init(document: XDocument, attributeName: String, attributeValue: String, keepLast: Bool = false) {
+        self.document = document
+        self.attributeName = attributeName
+        self.attributeValue = attributeValue
+        self.keepLast = keepLast
+    }
+    
+    func next() -> AttributeProperties? {
+        let oldStarted = started
+        let oldCurrent = currentAttribute
+        if started {
+            currentAttribute = currentAttribute?.nextWithCondition
+        }
+        else {
+            currentAttribute = document?._attributesOfValue_first[attributeName,attributeValue]
+            started = true
+        }
+        if currentAttribute == nil && keepLast {
+            started = oldStarted
+            currentAttribute = oldCurrent
+            return nil
+        }
+        return currentAttribute
+    }
+    
+    func previous() -> AttributeProperties? {
+        if started {
+            currentAttribute = currentAttribute?.previousWithCondition
             if currentAttribute == nil {
                 started = false
             }

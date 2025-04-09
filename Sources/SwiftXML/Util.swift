@@ -315,6 +315,16 @@ class TieredDictionary<K1: Hashable,K2: Hashable,V> {
         }
     }
     
+    public func removeValue(forKey1 key1: K1, andKey2 key2: K2) -> V? {
+        guard let indexForKey1 = dictionary[key1] else { return nil }
+        guard let value = indexForKey1.referenced[key2] else { return nil }
+        indexForKey1.referenced[key2] = nil
+        if indexForKey1.referenced.isEmpty {
+            dictionary[key1] = nil
+        }
+        return value
+    }
+    
     public subscript(key1: K1, key2: K2) -> V? {
         
         set {
@@ -349,6 +359,14 @@ class TieredDictionary<K1: Hashable,K2: Hashable,V> {
             }
         }
         return keys
+    }
+    
+    public var all: [V] {
+        leftKeys.compactMap { dictionary[$0]?.referenced.values }.flatMap{ $0 }
+    }
+    
+    public func all(forFirstKey key1: K1) -> Dictionary<K2, V>.Values? {
+        dictionary[key1]?.referenced.values
     }
     
     public func removeAll(keepingCapacity keepCapacity: Bool = false) {

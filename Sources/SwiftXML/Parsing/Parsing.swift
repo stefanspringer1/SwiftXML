@@ -16,6 +16,7 @@ public func parseXML(
     from documentSource: XDocumentSource,
     recognizeNamespaces: Bool = false,
     registeringAttributes attributeRegisterMode: AttributeRegisterMode = .none,
+    registeringValuesForAttributes attributeValueRegisterMode: AttributeRegisterMode = .none,
     sourceInfo: String? = nil,
     textAllowedInElementWithName: ((String) -> Bool)? = nil,
     internalEntityAutoResolve: Bool = false,
@@ -31,7 +32,7 @@ public func parseXML(
     immediateTextHandlingNearEntities: ImmediateTextHandlingNearEntities = .atExternalEntities
 ) throws -> XDocument {
     
-    let document = XDocument(registeringAttributes: attributeRegisterMode)
+    let document = XDocument(registeringAttributes: attributeRegisterMode, registeringValuesForAttributes: attributeValueRegisterMode)
     
     switch documentSource {
     case .url(url: let url):
@@ -69,6 +70,7 @@ public func parseXML(
 public func parseXML(
     fromPath path: String,
     registeringAttributes attributeRegisterMode: AttributeRegisterMode = .none,
+    registeringValuesForAttributes attributeValueRegisterMode: AttributeRegisterMode = .none,
     sourceInfo: String? = nil,
     textAllowedInElementWithName: ((String) -> Bool)? = nil,
     internalEntityAutoResolve: Bool = false,
@@ -86,6 +88,7 @@ public func parseXML(
     try parseXML(
         from: .path(path),
         registeringAttributes: attributeRegisterMode,
+        registeringValuesForAttributes: attributeValueRegisterMode,
         sourceInfo: sourceInfo,
         textAllowedInElementWithName: textAllowedInElementWithName,
         internalEntityAutoResolve: internalEntityAutoResolve,
@@ -105,6 +108,7 @@ public func parseXML(
 public func parseXML(
     fromURL url: URL,
     registeringAttributes attributeRegisterMode: AttributeRegisterMode = .none,
+    registeringValuesForAttributes attributeValueRegisterMode: AttributeRegisterMode = .none,
     sourceInfo: String? = nil,
     textAllowedInElementWithName: ((String) -> Bool)? = nil,
     internalEntityAutoResolve: Bool = false,
@@ -122,6 +126,7 @@ public func parseXML(
     try parseXML(
         from: .url(url),
         registeringAttributes: attributeRegisterMode,
+        registeringValuesForAttributes: attributeValueRegisterMode,
         sourceInfo: sourceInfo,
         textAllowedInElementWithName: textAllowedInElementWithName,
         internalEntityAutoResolve: internalEntityAutoResolve,
@@ -142,6 +147,7 @@ public func parseXML(
     fromText text: String,
     recognizeNamespaces: Bool = false,
     registeringAttributes attributeRegisterMode: AttributeRegisterMode = .none,
+    registeringValuesForAttributes attributeValueRegisterMode: AttributeRegisterMode = .none,
     sourceInfo: String? = nil,
     textAllowedInElementWithName: ((String) -> Bool)? = nil,
     internalEntityAutoResolve: Bool = false,
@@ -160,6 +166,7 @@ public func parseXML(
         from: .text(text),
         recognizeNamespaces: recognizeNamespaces,
         registeringAttributes: attributeRegisterMode,
+        registeringValuesForAttributes: attributeValueRegisterMode,
         sourceInfo: sourceInfo,
         textAllowedInElementWithName: textAllowedInElementWithName,
         internalEntityAutoResolve: internalEntityAutoResolve,
@@ -180,6 +187,7 @@ public func parseXML(
     fromData data: Data,
     recognizeNamespaces: Bool = false,
     registeringAttributes attributeRegisterMode: AttributeRegisterMode = .none,
+    registeringValuesForAttributes attributeValueRegisterMode: AttributeRegisterMode = .none,
     sourceInfo: String? = nil,
     internalEntityAutoResolve: Bool = false,
     internalEntityResolver: InternalEntityResolver? = nil,
@@ -200,6 +208,7 @@ public func parseXML(
         from: .data(data),
         recognizeNamespaces: recognizeNamespaces,
         registeringAttributes: attributeRegisterMode,
+        registeringValuesForAttributes: attributeValueRegisterMode,
         sourceInfo: sourceInfo,
         textAllowedInElementWithName: textAllowedInElementWithName,
         internalEntityAutoResolve: internalEntityAutoResolve,

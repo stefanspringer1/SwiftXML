@@ -1204,11 +1204,88 @@ final class SwiftXMLTests: XCTestCase {
 
         let document = try parseXML(fromText: source, recognizeNamespaces: true)
 
-        document.echo()
+        XCTAssertEqual(
+            document.serialized(),
+            """
+            <a xmlns:math="http://www.w3.org/1998/Math/MathML">
+                <math:math><math:mi>x</math:mi></math:math>
+                <b>
+                    <math:math><math:mi>n</math:mi><math:mo>!</math:mo></math:math>
+                </b>
+            </a>
+            """
+        )
         
-        for element in document.descendants(prefix: document.prefix(forNamespace: "http://www.w3.org/1998/Math/MathML"), "math", "mo", "mi") {
-            print("element \"\(element.name)\" with prefix \"\(element.prefix ?? "")\"")
+        XCTAssertEqual(
+            document.descendants(prefix: document.prefix(forNamespace: "http://www.w3.org/1998/Math/MathML"), "math", "mo", "mi").map {
+                "element \"\($0.name)\" with prefix \"\($0.prefix ?? "")\""
+            }.joined(separator: "\n"),
+            """
+            element "math" with prefix "math"
+            element "mi" with prefix "math"
+            element "math" with prefix "math"
+            element "mi" with prefix "math"
+            element "mo" with prefix "math"
+            """
+        )
+    }
+    
+    func testRegisteredAttributeValues() throws {
+        
+        let source = """
+            <a>
+                <b id="1"/>
+                <b id="2"/>
+                <b refid="1">First reference to "1".</b>
+                <b refid="1">Second reference to "1".</b>
+            </a>
+            """
+
+        let document = try parseXML(fromText: source, registeringValuesForAttributes: .selected(["id", "refid"]))
+        
+        XCTAssertEqual(
+            document.registeredAttributes("id").map{ $0.element.description }.joined(separator: "\n"),
+            """
+            """
+        )
+        
+        XCTAssertEqual(
+            document.registeredValues( "1", forAttribute: "id").map{ $0.element.description }.joined(separator: "\n"),
+            """
+            <b id="1">
+            """
+        )
+        
+        XCTAssertEqual(
+            document.registeredValues("1", forAttribute: "refid").map{ $0.element.serialized() }.joined(separator: "\n"),
+            """
+            <b refid="1">First reference to "1".</b>
+            <b refid="1">Second reference to "1".</b>
+            """
+        )
+        
+        document.firstChild?.add {
+            XElement("b", ["refid": "1"]) { #"Third reference to "1"."# }
         }
+        
+        XCTAssertEqual(
+            document.registeredValues("1", forAttribute: "refid").map{ $0.element.serialized() }.joined(separator: "\n"),
+            """
+            <b refid="1">First reference to "1".</b>
+            <b refid="1">Second reference to "1".</b>
+            <b refid="1">Third reference to "1".</b>
+            """
+        )
+        
+        document.descendants({ $0["refid"] == "1" }).first?.remove()
+        
+        XCTAssertEqual(
+            document.registeredValues("1", forAttribute: "refid").map{ $0.element.serialized() }.joined(separator: "\n"),
+            """
+            <b refid="1">Second reference to "1".</b>
+            <b refid="1">Third reference to "1".</b>
+            """
+        )
     }
     
 }

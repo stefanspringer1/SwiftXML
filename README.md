@@ -679,6 +679,47 @@ let allValuesInfo = document.elements("x").compactMap{
 print(allValuesInfo) // "a="1" in <x a="1">, b="2" in <x b="2">, c="3" in <x c="3">, d="4" in <x d="4">"
 ```
 
+You can register attributes _values_ by using the argument `registeringValuesForAttributes:` when parsing or creating a document:
+
+```swift
+let source = """
+    <a>
+        <b id="1"/>
+        <b id="2"/>
+        <b refid="1">First reference to "1".</b>
+        <b refid="1">Second reference to "1".</b>
+    </a>
+    """
+
+let document = try parseXML(fromText: source, registeringValuesForAttributes: .selected(["id", "refid"]))
+
+print(#"id="1":"#)
+print(document.registeredValues("1", forAttribute: "id").map{ $0.element.description }.joined(separator: "\n"))
+print()
+print(#"refid="1":"#)
+print(document.registeredValues("1", forAttribute: "refid").map{ $0.element.serialized() }.joined(separator: "\n"))
+```
+
+Result:
+
+```text
+id="1":
+<b id="1">
+
+refid="1":
+<b refid="1">First reference to "1".</b>
+<b refid="1">Second reference to "1".</b>
+```
+
+---
+**NOTE**
+
+- `document.registeredAttributes("id")` or `document.registeredAttributes("refid")` would give you an empty sequence in the above example, you would have to add `registeringAttributes: .selected(["id", "refid"]))` to also find these attributes by name only.
+- It was decided not to introduce rules for attribute values for the time being.
+
+---
+
+
 ## Finding related content
 
 Starting from some content, you might want to find related content, e.g. its children. The names chosen for the accordings methods come from the idea that all content have a natural order, namely the order of a depth-first traversal, which is the same order in which the content of an XML document is stored in a text file. This order gives a meaning to method names such a `nextTouching`. Note that, other than for the iterations you get via `elements(_:)`, even nodes that stay in the same document can occur in such an iteration sevaral times if moved accordingly during the iteration.
