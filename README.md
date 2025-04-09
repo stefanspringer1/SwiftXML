@@ -725,10 +725,10 @@ if let element = document.registeredValues("1", forAttribute: "id").first?.eleme
 **NOTE**
 
 - `document.registeredAttributes("id")` or `document.registeredAttributes("refid")` would give you an empty sequence in the above example, you would have to add `registeringAttributes: .selected(["id", "refid"]))` to also find these attributes by name only.
+- As `registeredValues(forAttribute:)` returns a lazy sequence that also considers new values that are set during its iteration, you might first make an array out of the sequence via `ArrayArray(document.registeredValues(...))` if you plan to change the according values.
 - It was decided not to introduce rules for attribute values for the time being.
 
 ---
-
 
 ## Finding related content
 

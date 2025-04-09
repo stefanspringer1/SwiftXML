@@ -1265,6 +1265,15 @@ final class SwiftXMLTests: XCTestCase {
             """
         )
         
+        // same by first filling an array with the contents of the sequence:
+        XCTAssertEqual(
+            Array(document.registeredValues("1", forAttribute: "refid")).map{ $0.element.serialized() }.joined(separator: "\n"),
+            """
+            <b refid="1">First reference to "1".</b>
+            <b refid="1">Second reference to "1".</b>
+            """
+        )
+        
         // if the value according to an attribute name should be unique, find the according element by:
         let _: XElement? = document.registeredValues("1", forAttribute: "id").first?.element
         
