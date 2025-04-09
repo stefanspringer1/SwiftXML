@@ -106,6 +106,8 @@ let transformation = XTransformation {
 
 **UPDATE 33 (March 2025):** Removed property `prefixAndName` of `XElement`, added `XElement.has(prefix:name:)` instead.
 
+**UPDATE 34 (April 2025):** Introduced registering of attribute values (e.g. `document.registeredValues("1", forAttribute: "id")`).
+
 ---
 
 ## Related packages
