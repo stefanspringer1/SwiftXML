@@ -672,8 +672,8 @@ let document = try parseXML(fromText: """
     </test>
     """, registeringAttributes: .selected(["a", "c"]))
 
-let registeredValuesInfo = document.registeredAttributes("a", "b", "c", "d").map{ "\($0.name)=\"\($0.value)\" in \($0.element)" }.joined(separator: ", ")
-print(registeredValuesInfo) // "a="1" in <x a="1">, c="3" in <x c="3">"
+let registeredAttributesInfo = document.registeredAttributes("a", "b", "c", "d").map{ "\($0.name)=\"\($0.value)\" in \($0.element)" }.joined(separator: ", ")
+print(registeredAttributesInfo) // "a="1" in <x a="1">, c="3" in <x c="3">"
 
 let allValuesInfo = document.elements("x").compactMap{
     if let name = $0.attributeNames.first, let value = $0[name] { "\(name)=\"\(value)\" in \($0)" } else { nil }
