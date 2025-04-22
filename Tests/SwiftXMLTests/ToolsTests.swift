@@ -350,7 +350,7 @@ final class ToolsTests: XCTestCase {
     
     func testHTMLOutput10() throws {
         let source = """
-            <div><span>leading span of the wrapper block</span><div>a block within the block</div>followed by text <span>and a text</span> and some more text <span>and another span</span> <div>and another div</div></div>
+            <div><span>leading span of the wrapper block</span><div>a block within the block</div>followed by text <a>an anchor</a><span>and a text</span> and some more text <span>and another span</span> <div>and another div</div></div>
             """
         XCTAssertEqual(
             try parseXML(fromText: source).serialized(
@@ -361,13 +361,12 @@ final class ToolsTests: XCTestCase {
             """
             <!DOCTYPE html>
             <div><span>leading span of the wrapper block</span>
-              <div>a block within the block</div>followed by text <span>and a text</span> and some more text <span>and another span</span> 
+              <div>a block within the block</div>followed by text <a>an anchor</a><span>and a text</span> and some more text <span>and another span</span> 
               <div>and another div</div>
             </div>
             """
         )
     }
-    
     
 }
 

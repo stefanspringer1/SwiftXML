@@ -634,7 +634,8 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
         return htmlEmptyTags.contains(element.name)
     }
     
-    private func isStrictlyInline(_ node: XNode) -> Bool {
+    private func isStrictlyInline(_ node: XNode?) -> Bool {
+        guard let node else { return false }
         return node is XText || {
             if let element = node as? XElement {
                 return htmlStrictInlines.contains(element.name)
@@ -643,6 +644,16 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
                 return false
             }
         }()
+    }
+    
+    private func isStrictlyBlock(_ node: XNode?) -> Bool {
+        guard let node else { return false }
+        if let element = node as? XElement {
+            return htmlStrictBlocks.contains(element.name)
+        }
+        else {
+            return false
+        }
     }
     
     open override func mightHaveMixedContent(element: XElement) -> Bool {
@@ -663,7 +674,10 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
     open override func writeElementStartBeforeAttributes(element: XElement) throws {
         let oldSuppressPrettyPrintBeforeElement = suppressPrettyPrintBeforeElement
         let oldForcePrettyPrintAtElement = forcePrettyPrintAtElement
-        suppressPrettyPrintBeforeElement = isStrictlyInline(element) || suppressUncessaryPrettyPrintAtAnchors && element.name == "a" && (!element.hasPrevious || (element.previousTouching as? XElement)?.fullfills({ $0.name == "a" && $0["name"] != nil}) == true) && element["name"] != nil
+        suppressPrettyPrintBeforeElement = isStrictlyInline(element) || (
+            suppressUncessaryPrettyPrintAtAnchors && element.name == "a"
+            && !isStrictlyBlock(element.previousTouching)
+        )
         forcePrettyPrintAtElement = htmlStrictBlocks.contains(element.name)
         try super.writeElementStartBeforeAttributes(element: element)
         suppressPrettyPrintBeforeElement = oldSuppressPrettyPrintBeforeElement
