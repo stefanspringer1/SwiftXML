@@ -663,7 +663,7 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
     open override func writeElementStartBeforeAttributes(element: XElement) throws {
         let oldSuppressPrettyPrintBeforeElement = suppressPrettyPrintBeforeElement
         let oldForcePrettyPrintAtElement = forcePrettyPrintAtElement
-        suppressPrettyPrintBeforeElement = suppressUncessaryPrettyPrintAtAnchors && element.name == "a" && (!element.hasPrevious || (element.previousTouching as? XElement)?.fullfills({ $0.name == "a" && $0["name"] != nil}) == true) && element["name"] != nil
+        suppressPrettyPrintBeforeElement = isStrictlyInline(element) || suppressUncessaryPrettyPrintAtAnchors && element.name == "a" && (!element.hasPrevious || (element.previousTouching as? XElement)?.fullfills({ $0.name == "a" && $0["name"] != nil}) == true) && element["name"] != nil
         forcePrettyPrintAtElement = htmlStrictBlocks.contains(element.name)
         try super.writeElementStartBeforeAttributes(element: element)
         suppressPrettyPrintBeforeElement = oldSuppressPrettyPrintBeforeElement
