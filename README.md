@@ -470,7 +470,7 @@ var clone: XNode
 ```
 (The result will be more specific if the subject is known to be more specific.)
 
-By default, the clone of a document will register the same attributes and values, but by default clones loose their attachments. You can change this by calling `clone(keepAttachments:registeringAttributes:registeringValuesForAttributes:)` for a document (those arguments have default values which produce the defaut behaviour) or `clone(keepAttachments:)` for an element. Those argument are also available for `makeVersion().
+By default, the clone of a document will register the same attributes and values, but by default clones loose their attachments. You can change this by calling `clone(keepAttachments:registeringAttributes:registeringValuesForAttributes:)` for a document or `clone(keepAttachments:)` for an element. (Those arguments have default values which produce the defaut behaviour, use `nil` for the to `AttributeRegisterMode` values to achieve this explicitly.) Those argument are also available for `makeVersion().
 
 Any content and the document itself possesses the property `backlink` that can be used as a relation between a clone and the original node. If you create a clone by using the `clone` property, the `backlink` value of a node in the clone points to the original node. So when working with a clone, you can easily look at the original nodes.
 
