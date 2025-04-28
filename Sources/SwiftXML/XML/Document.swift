@@ -108,10 +108,14 @@ public final class XDocument: XNode, XBranchInternal {
     
     private var versions = [XDocument]()
     
-    public func makeVersion() {
-        let clone = shallowClone
+    public func makeVersion(
+        keepAttachments: Bool = false,
+        registeringAttributes attributeRegisterMode: AttributeRegisterMode? = nil,
+        registeringValuesForAttributes attributeValueRegisterMode: AttributeRegisterMode? = nil
+    ) {
+        let clone = shallowClone(keepAttachments: keepAttachments, registeringAttributes: attributeRegisterMode, registeringValuesForAttributes: attributeValueRegisterMode)
         versions.append(clone)
-        clone._addClones(from: self, pointingToClone: true)
+        clone._addClones(from: self, pointingToClone: true, keepAttachments: keepAttachments)
     }
     
     /// Remove the last version.
