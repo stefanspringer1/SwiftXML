@@ -187,7 +187,18 @@ public final class XDocument: XNode, XBranchInternal {
     // ------------------------------------------------------------------------
     
     public override var shallowClone: XDocument {
-        let theClone = XDocument()
+        shallowClone()
+    }
+    
+    public func shallowClone(
+        keepAttachments: Bool = false,
+        registeringAttributes attributeRegisterMode: AttributeRegisterMode? = nil,
+        registeringValuesForAttributes attributeValueRegisterMode: AttributeRegisterMode? = nil
+    ) -> XDocument {
+        let theClone = XDocument(
+            registeringAttributes: attributeRegisterMode ?? _attributeRegisterMode,
+            registeringValuesForAttributes: attributeValueRegisterMode ?? _attributeValueRegisterMode
+        )
         theClone._backlink = self
         theClone.xmlVersion = xmlVersion
         theClone.encoding = encoding
@@ -196,6 +207,7 @@ public final class XDocument: XNode, XBranchInternal {
         theClone.publicID = publicID
         theClone.systemID = systemID
         theClone._sourcePath = _sourcePath
+        if keepAttachments { theClone.attached = attached }
         for (name, declaration) in internalEntityDeclarations { theClone.internalEntityDeclarations[name] = declaration.clone }
         for (name, declaration) in parameterEntityDeclarations { theClone.parameterEntityDeclarations[name] = declaration.clone }
         for (name, declaration) in externalEntityDeclarations { theClone.externalEntityDeclarations[name] = declaration.clone }
@@ -207,8 +219,21 @@ public final class XDocument: XNode, XBranchInternal {
     }
     
     public override var clone: XDocument {
-        let theClone = shallowClone
-        theClone._addClones(from: self)
+        clone()
+    }
+    
+    public func clone(
+        keepAttachments: Bool = false,
+        registeringAttributes attributeRegisterMode: AttributeRegisterMode? = nil,
+        registeringValuesForAttributes attributeValueRegisterMode: AttributeRegisterMode? = nil
+    ) -> XDocument {
+        let theClone = shallowClone(
+            keepAttachments: keepAttachments,
+            registeringAttributes: attributeRegisterMode,
+            registeringValuesForAttributes: attributeValueRegisterMode
+        )
+        theClone._addClones(from: self, keepAttachments: keepAttachments)
+        if keepAttachments { theClone.attached = attached }
         return theClone
     }
     

@@ -1009,17 +1009,25 @@ extension XBranchInternal {
     /**
      I am the clone, add the content!
      */
-    func _addClones(from source: XBranchInternal, pointingToClone: Bool = false) {
+    func _addClones(from source: XBranchInternal, pointingToClone: Bool = false, keepAttachments: Bool = false) {
         for node in source.content {
             // we need a reference from the clone to the origin first:
-            _add(node.shallowClone)
+            if let element = node as? XElement {
+                _add(element.shallowClone(keepAttachments: keepAttachments))
+            } else {
+                _add(node.shallowClone)
+            }
         }
         for node in allContent {
             if let element = node as? XElement {
                 // using the reference to the origin here:
                 if let backlink = element._backlink as? XElement {
                     for node in backlink.content {
-                        element._add(node.shallowClone)
+                        let shallowClone = node.shallowClone
+                        if keepAttachments {
+                            shallowClone.attached = element.attached
+                        }
+                        element._add(shallowClone)
                     }
                 }
             }
@@ -1732,16 +1740,26 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     }
     
     public override var shallowClone: XElement {
+        shallowClone()
+    }
+    
+    public func shallowClone(keepAttachments: Bool = false) -> XElement {
         let theClone = XElement(prefix: _prefix, _name)
         theClone._backlink = self
         theClone._sourceRange = self._sourceRange
         theClone.copyAttributes(from: self)
+        if keepAttachments { theClone.attached = attached }
         return theClone
     }
     
     public override var clone: XElement {
+        clone()
+    }
+    
+    public func clone(keepAttachments: Bool = false) -> XElement {
         let theClone = shallowClone
-        theClone._addClones(from: self)
+        if keepAttachments { theClone.attached = attached }
+        theClone._addClones(from: self, keepAttachments: keepAttachments)
         return theClone
     }
     

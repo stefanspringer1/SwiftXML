@@ -74,6 +74,42 @@ final class SwiftXMLTests: XCTestCase {
         XCTAssertEqual(document.registeredAttributes("id").map { attributeSpot in attributeSpot.value }.joined(separator: ", "), "1, 2, 3")
     }
     
+    func testAttributeFromClonedDocumentDefault() throws {
+        let document = try parseXML(fromText: """
+            <a id="1">
+                <b id="2"/>
+                <b id="3"/>
+            </a>
+            """, registeringAttributes: .selected(["id"]))
+        
+        let element = document.children.first!
+        element.attached["test"] = "hello"
+        
+        let clone = document.clone()
+        let elementInClone = clone.children.first!
+        XCTAssertEqual(elementInClone.attached["test"] as? String, nil)
+        XCTAssertEqual(elementInClone["id"], "1")
+        XCTAssertEqual(clone.registeredAttributes("id").map { attributeSpot in attributeSpot.value }.joined(separator: ", "), "1, 2, 3")
+    }
+    
+    func testAttributeFromClonedDocumentNonDefault() throws {
+        let document = try parseXML(fromText: """
+            <a id="1">
+                <b id="2"/>
+                <b id="3"/>
+            </a>
+            """, registeringAttributes: .selected(["id"]))
+        
+        let element = document.children.first!
+        element.attached["test"] = "hello"
+        
+        let clone = document.clone(keepAttachments: true, registeringAttributes: AttributeRegisterMode.none, registeringValuesForAttributes: AttributeRegisterMode.none)
+        let elementInClone = clone.children.first!
+        XCTAssertEqual(elementInClone.attached["test"] as? String, "hello")
+        XCTAssertEqual(elementInClone["id"], "1")
+        XCTAssertEqual(clone.registeredAttributes("id").map { attributeSpot in attributeSpot.value }.joined(separator: ", "), "")
+    }
+    
     func testClone() throws {
         let source = """
             <a id="1">
@@ -84,6 +120,26 @@ final class SwiftXMLTests: XCTestCase {
         let document = try parseXML(fromText: source)
         let clone = document.clone
         XCTAssertEqual(clone.serialized(), source)
+    }
+    
+    func testCloningElementWithAttachments() throws {
+        
+        let element1 = XElement("element1", attached: ["test1": "hello 1"])
+        let element2 = XElement("element2", attached: ["test2": "hello 2"]) {
+            element1
+        }
+        
+        do {
+            let clone = element2.clone
+            XCTAssertEqual(clone.attached["test2"] as? String, nil)
+            XCTAssertEqual(clone.firstChild?.attached["test1"] as? String, nil)
+        }
+        
+        do {
+            let clone = element2.clone(keepAttachments: true)
+            XCTAssertEqual(clone.attached["test2"] as? String, "hello 2")
+            XCTAssertEqual(clone.firstChild?.attached["test1"] as? String, "hello 1")
+        }
     }
     
     func testAttributeSetting() throws {
