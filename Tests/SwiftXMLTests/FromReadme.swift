@@ -553,6 +553,10 @@ final class FromReadmeTests: XCTestCase {
         // make a clone with inverse backlinks,
         // pointing from the original document to the clone:
         document.makeVersion()
+        do {
+            let backlink: XDocument? = document.backlink
+            XCTAssert(backlink != nil)
+        }
         
         transformation.execute(inDocument: document)
         

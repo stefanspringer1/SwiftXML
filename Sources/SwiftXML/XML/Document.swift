@@ -106,40 +106,42 @@ public final class XDocument: XNode, XBranchInternal {
         }
     }
     
-    private var versions = [XDocument]()
+    private var _versions = [XDocument]()
+    public var versions: [XDocument] { _versions }
+    public var lastVersion: XDocument? { _versions.last }
     
     public func makeVersion(
         keepAttachments: Bool = false,
         registeringAttributes attributeRegisterMode: AttributeRegisterMode? = nil,
         registeringValuesForAttributes attributeValueRegisterMode: AttributeRegisterMode? = nil
     ) {
-        let clone = shallowClone(keepAttachments: keepAttachments, registeringAttributes: attributeRegisterMode, registeringValuesForAttributes: attributeValueRegisterMode)
-        versions.append(clone)
+        let clone = _shallowClone(keepAttachments: keepAttachments, registeringAttributes: attributeRegisterMode, registeringValuesForAttributes: attributeValueRegisterMode, pointingToClone: true)
+        _versions.append(clone)
         clone._addClones(from: self, pointingToClone: true, keepAttachments: keepAttachments)
     }
     
     /// Remove the last version.
     public func forgetLastVersion() {
-        if versions.count > 0 {
-            versions.removeLast()
+        if _versions.count > 0 {
+            _versions.removeLast()
         }
     }
     
     /// Remove versions but keep the last n ones.
     public func forgetVersions(keeping n: Int = 0) {
-        if versions.count > 0 {
-            let oldVersions = versions
-            versions = [XDocument]()
+        if _versions.count > 0 {
+            let oldVersions = _versions
+            _versions = [XDocument]()
             if n > 0 {
                 let startIndex = oldVersions.count - n
                 if startIndex >= 0 {
                     let endIndex = oldVersions.count - 1
                     for index in startIndex...endIndex {
-                        versions.append(oldVersions[index])
+                        _versions.append(oldVersions[index])
                     }
                 }
             }
-            let lastVersion = versions.first ?? self
+            let lastVersion = _versions.first ?? self
             lastVersion._backlink = nil
             for content in lastVersion.allContent { content._backlink = nil }
         }
@@ -199,11 +201,29 @@ public final class XDocument: XNode, XBranchInternal {
         registeringAttributes attributeRegisterMode: AttributeRegisterMode? = nil,
         registeringValuesForAttributes attributeValueRegisterMode: AttributeRegisterMode? = nil
     ) -> XDocument {
+        _shallowClone(
+            keepAttachments: keepAttachments,
+            registeringAttributes: attributeRegisterMode,
+            registeringValuesForAttributes: attributeValueRegisterMode,
+            pointingToClone: false
+        )
+    }
+    
+    private func _shallowClone(
+        keepAttachments: Bool = false,
+        registeringAttributes attributeRegisterMode: AttributeRegisterMode? = nil,
+        registeringValuesForAttributes attributeValueRegisterMode: AttributeRegisterMode? = nil,
+        pointingToClone: Bool
+    ) -> XDocument {
         let theClone = XDocument(
             registeringAttributes: attributeRegisterMode ?? _attributeRegisterMode,
             registeringValuesForAttributes: attributeValueRegisterMode ?? _attributeValueRegisterMode
         )
-        theClone._backlink = self
+        if pointingToClone {
+            self._backlink = theClone
+        } else {
+            theClone._backlink = self
+        }
         theClone.xmlVersion = xmlVersion
         theClone.encoding = encoding
         theClone.standalone = standalone
@@ -230,13 +250,28 @@ public final class XDocument: XNode, XBranchInternal {
         keepAttachments: Bool = false,
         registeringAttributes attributeRegisterMode: AttributeRegisterMode? = nil,
         registeringValuesForAttributes attributeValueRegisterMode: AttributeRegisterMode? = nil
-    ) -> XDocument {
-        let theClone = shallowClone(
+    )  -> XDocument {
+        _clone(
             keepAttachments: keepAttachments,
             registeringAttributes: attributeRegisterMode,
-            registeringValuesForAttributes: attributeValueRegisterMode
+            registeringValuesForAttributes: attributeValueRegisterMode,
+            pointingToClone: false
         )
-        theClone._addClones(from: self, keepAttachments: keepAttachments)
+    }
+    
+    private func _clone(
+        keepAttachments: Bool = false,
+        registeringAttributes attributeRegisterMode: AttributeRegisterMode? = nil,
+        registeringValuesForAttributes attributeValueRegisterMode: AttributeRegisterMode? = nil,
+        pointingToClone: Bool
+    ) -> XDocument {
+        let theClone = _shallowClone(
+            keepAttachments: keepAttachments,
+            registeringAttributes: attributeRegisterMode,
+            registeringValuesForAttributes: attributeValueRegisterMode,
+            pointingToClone: pointingToClone
+        )
+        theClone._addClones(from: self, pointingToClone: pointingToClone, keepAttachments: keepAttachments)
         if keepAttachments { theClone.attached = attached }
         return theClone
     }
