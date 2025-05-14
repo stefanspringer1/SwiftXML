@@ -366,6 +366,37 @@ public class XElementIteratorWithConditionAndUntilCondition: XElementIterator {
     }
 }
 
+public class XElementIteratorWithConditionAndWhileCondition: XElementIterator {
+    
+    let iterator: XElementIterator
+    let condition: (XElement) -> Bool
+    let whileCondition: (XElement) -> Bool
+    
+    init(iterator: XElementIterator, condition: @escaping (XElement) -> Bool, while whileCondition: @escaping (XElement) -> Bool) {
+        self.iterator = iterator
+        self.condition = condition
+        self.whileCondition = whileCondition
+    }
+    
+    init(iterator: XElementIterator, elementName: String, while whileCondition: @escaping (XElement) -> Bool) {
+        self.iterator = iterator
+        self.condition = { $0.name == elementName }
+        self.whileCondition = whileCondition
+    }
+    
+    public override func next() -> XElement? {
+        while let element = iterator.next() {
+            if !whileCondition(element) {
+                return nil
+            } else if !condition(element) {
+                continue
+            }
+            return element
+        }
+        return nil
+    }
+}
+
 public class XContentIteratorWithConditionAndUntilCondition: XContentIterator {
     
     let iterator: XContentIterator
@@ -391,6 +422,31 @@ public class XContentIteratorWithConditionAndUntilCondition: XContentIterator {
     }
 }
 
+public class XContentIteratorWithConditionAndWhileCondition: XContentIterator {
+    
+    let iterator: XContentIterator
+    let condition: (XContent) -> Bool
+    let whileCondition: (XContent) -> Bool
+    
+    init(iterator: XContentIterator, condition: @escaping (XContent) -> Bool, while whileCondition: @escaping (XContent) -> Bool) {
+        self.iterator = iterator
+        self.condition = condition
+        self.whileCondition = whileCondition
+    }
+    
+    public override func next() -> XContent? {
+        while let content = iterator.next() {
+            if !whileCondition(content) {
+                return nil
+            } else if !condition(content) {
+                continue
+            }
+            return content
+        }
+        return nil
+    }
+}
+
 public class XTextIteratorWithConditionAndUntilCondition: XTextIterator {
     
     let iterator: XTextIterator
@@ -406,6 +462,31 @@ public class XTextIteratorWithConditionAndUntilCondition: XTextIterator {
     public override func next() -> XText? {
         while let content = iterator.next() {
             if untilCondition(content) {
+                return nil
+            } else if !condition(content) {
+                continue
+            }
+            return content
+        }
+        return nil
+    }
+}
+
+public class XTextIteratorWithConditionAndWhileCondition: XTextIterator {
+    
+    let iterator: XTextIterator
+    let condition: (XText) -> Bool
+    let whileCondition: (XText) -> Bool
+    
+    init(iterator: XTextIterator, condition: @escaping (XText) -> Bool, while whileCondition: @escaping (XText) -> Bool) {
+        self.iterator = iterator
+        self.condition = condition
+        self.whileCondition = whileCondition
+    }
+    
+    public override func next() -> XText? {
+        while let content = iterator.next() {
+            if !whileCondition(content) {
                 return nil
             } else if !condition(content) {
                 continue
@@ -1354,7 +1435,7 @@ public final class XNextCloseElementsIncludingSelfIterator: XElementIteratorProt
 }
 
 /**
- Iterates though the texts of a branch.
+ Iterates though the texts at the same level.
  */
 public final class XNextTextsIterator: XTextIterator {
     

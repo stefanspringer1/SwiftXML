@@ -266,6 +266,33 @@ public final class XElementSequenceWithConditionAndUntilCondition: XElementSeque
     }
 }
 
+public final class XElementSequenceWithConditionAndWhileCondition: XElementSequence {
+    
+    let sequence: XElementSequence
+    let condition: (XElement) -> Bool
+    let whileCondition: (XElement) -> Bool
+    
+    public init(sequence: XElementSequence, condition: @escaping (XElement) -> Bool, while whileCondition: @escaping (XElement) -> Bool) {
+        self.sequence = sequence
+        self.condition = condition
+        self.whileCondition = whileCondition
+    }
+    
+    public init(sequence: XElementSequence, prefix: String?, elementName: String, while whileCondition: @escaping (XElement) -> Bool) {
+        self.sequence = sequence
+        self.condition = { $0.prefix == prefix && $0.name == elementName }
+        self.whileCondition = whileCondition
+    }
+    
+    public override func makeIterator() -> XElementIterator {
+        return XElementIteratorWithConditionAndWhileCondition(
+            iterator: sequence.makeIterator(),
+            condition: condition,
+            while: whileCondition
+        )
+    }
+}
+
 public final class XContentSequenceWithConditionAndUntilCondition: XContentSequence {
     
     let sequence: XContentSequence
@@ -287,6 +314,27 @@ public final class XContentSequenceWithConditionAndUntilCondition: XContentSeque
     }
 }
 
+public final class XContentSequenceWithConditionAndWhileCondition: XContentSequence {
+    
+    let sequence: XContentSequence
+    let condition: (XContent) -> Bool
+    let whileCondition: (XContent) -> Bool
+    
+    public init(sequence: XContentSequence, condition: @escaping (XContent) -> Bool, while whileCondition: @escaping (XContent) -> Bool) {
+        self.sequence = sequence
+        self.condition = condition
+        self.whileCondition = whileCondition
+    }
+    
+    public override func makeIterator() -> XContentIterator {
+        return XContentIteratorWithConditionAndWhileCondition(
+            iterator: sequence.makeIterator(),
+            condition: condition,
+            while: whileCondition
+        )
+    }
+}
+
 public final class XTextSequenceWithConditionAndUntilCondition: XTextSequence {
     
     let sequence: XTextSequence
@@ -304,6 +352,27 @@ public final class XTextSequenceWithConditionAndUntilCondition: XTextSequence {
             iterator: sequence.makeIterator(),
             condition: condition,
             until: untilCondition
+        )
+    }
+}
+
+public final class XTextSequenceWithConditionAndWhileCondition: XTextSequence {
+    
+    let sequence: XTextSequence
+    let condition: (XText) -> Bool
+    let whileCondition: (XText) -> Bool
+    
+    public init(sequence: XTextSequence, condition: @escaping (XText) -> Bool, while whileCondition: @escaping (XText) -> Bool) {
+        self.sequence = sequence
+        self.condition = condition
+        self.whileCondition = whileCondition
+    }
+    
+    public override func makeIterator() -> XTextIterator {
+        return XTextIteratorWithConditionAndWhileCondition(
+            iterator: sequence.makeIterator(),
+            condition: condition,
+            while: whileCondition
         )
     }
 }

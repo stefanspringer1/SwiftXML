@@ -20,12 +20,20 @@ public extension XNode {
         return XElementSequenceWithCondition(sequence: XAncestorsSequence(node: self), condition: condition)
     }
     
+    func ancestors(_ condition: @escaping (XElement) -> Bool, while whileCondition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWithConditionAndWhileCondition(sequence: XAncestorsSequence(node: self), condition: condition, while: whileCondition)
+    }
+    
     func ancestors(_ condition: @escaping (XElement) -> Bool, until untilCondition: @escaping (XElement) -> Bool) -> XElementSequence {
         return XElementSequenceWithConditionAndUntilCondition(sequence: XAncestorsSequence(node: self), condition: condition, until: untilCondition)
     }
     
     func ancestors(prefix: String? = nil, _ name: String) -> XElementSequence {
         return XElementSequenceWithCondition(sequence: XAncestorsSequence(node: self), prefix: prefix, elementName: name)
+    }
+    
+    func ancestors(prefix: String? = nil, _ name: String, while whileCondition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWithConditionAndWhileCondition(sequence: XAncestorsSequence(node: self), prefix: prefix, elementName: name, while: whileCondition)
     }
     
     func ancestors(prefix: String? = nil, _ name: String, until untilCondition: @escaping (XElement) -> Bool) -> XElementSequence {
@@ -36,12 +44,20 @@ public extension XNode {
         return XElementSequenceWithCondition(sequence: XAncestorsSequence(node: self), condition: { $0.prefix == prefix && names.contains($0.name) })
     }
     
+    func ancestors(prefix: String? = nil, _ names: [String], while whileCondition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWithConditionAndWhileCondition(sequence: XAncestorsSequence(node: self), condition: { $0.prefix == prefix && names.contains($0.name) }, while: whileCondition)
+    }
+    
     func ancestors(prefix: String? = nil, _ names: [String], until untilCondition: @escaping (XElement) -> Bool) -> XElementSequence {
         return XElementSequenceWithConditionAndUntilCondition(sequence: XAncestorsSequence(node: self), condition: { $0.prefix == prefix && names.contains($0.name) }, until: untilCondition)
     }
     
     func ancestors(prefix: String? = nil, _ names: String...) -> XElementSequence {
         return XElementSequenceWithCondition(sequence: XAncestorsSequence(node: self), condition: { $0.prefix == prefix && (names.isEmpty || names.contains($0.name)) })
+    }
+    
+    func ancestors(prefix: String? = nil, _ names: String..., while whileCondition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWithConditionAndWhileCondition(sequence: XAncestorsSequence(node: self), condition: { $0.prefix == prefix && (names.isEmpty || names.contains($0.name)) }, while: whileCondition)
     }
     
     func ancestors(prefix: String? = nil, _ names: String..., until untilCondition: @escaping (XElement) -> Bool) -> XElementSequence {
@@ -68,12 +84,20 @@ public extension XNode {
         return XElementSequenceWithCondition(sequence: XAncestorsSequenceIncludingSelf(node: self), condition: condition)
     }
     
+    func ancestorsIncludingSelf(_ condition: @escaping (XElement) -> Bool, while whileCondition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWithConditionAndWhileCondition(sequence: XAncestorsSequenceIncludingSelf(node: self), condition: condition, while: whileCondition)
+    }
+    
     func ancestorsIncludingSelf(_ condition: @escaping (XElement) -> Bool, until untilCondition: @escaping (XElement) -> Bool) -> XElementSequence {
         return XElementSequenceWithConditionAndUntilCondition(sequence: XAncestorsSequenceIncludingSelf(node: self), condition: condition, until: untilCondition)
     }
     
     func ancestorsIncludingSelf(prefix: String? = nil, _ name: String) -> XElementSequence {
         return XElementSequenceWithCondition(sequence: XAncestorsSequenceIncludingSelf(node: self), prefix: prefix, elementName: name)
+    }
+    
+    func ancestorsIncludingSelf(prefix: String? = nil, _ name: String, while whileCondition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWithConditionAndWhileCondition(sequence: XAncestorsSequenceIncludingSelf(node: self), prefix: prefix, elementName: name, while: whileCondition)
     }
     
     func ancestorsIncludingSelf(prefix: String? = nil, _ name: String, until untilCondition: @escaping (XElement) -> Bool) -> XElementSequence {
@@ -84,12 +108,20 @@ public extension XNode {
         return XElementSequenceWithCondition(sequence: XAncestorsSequenceIncludingSelf(node: self), condition: { $0.prefix == prefix && names.contains($0.name) })
     }
     
+    func ancestorsIncludingSelf(prefix: String? = nil, _ names: [String], while whileCondition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWithConditionAndWhileCondition(sequence: XAncestorsSequenceIncludingSelf(node: self), condition: { $0.prefix == prefix && names.contains($0.name) }, while: whileCondition)
+    }
+    
     func ancestorsIncludingSelf(prefix: String? = nil, _ names: [String], until untilCondition: @escaping (XElement) -> Bool) -> XElementSequence {
         return XElementSequenceWithConditionAndUntilCondition(sequence: XAncestorsSequenceIncludingSelf(node: self), condition: { $0.prefix == prefix && names.contains($0.name) }, until: untilCondition)
     }
     
     func ancestorsIncludingSelf(prefix: String? = nil, _ names: String...) -> XElementSequence {
         return XElementSequenceWithCondition(sequence: XAncestorsSequenceIncludingSelf(node: self), condition: { $0.prefix == prefix && (names.isEmpty || names.contains($0.name)) })
+    }
+    
+    func ancestorsIncludingSelf(prefix: String? = nil, _ names: String..., while whileCondition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWithConditionAndWhileCondition(sequence: XAncestorsSequenceIncludingSelf(node: self), condition: { $0.prefix == prefix && (names.isEmpty || names.contains($0.name)) }, while: whileCondition)
     }
     
     func ancestorsIncludingSelf(prefix: String? = nil, _ names: String..., until untilCondition: @escaping (XElement) -> Bool) -> XElementSequence {
@@ -116,8 +148,12 @@ public extension XNode {
         return XContentSequenceWithCondition(sequence: XSequenceOfContent(node: self), condition: condition)
     }
     
+    func content(_ condition: @escaping (XContent) -> Bool, while whileCondition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentSequenceWithConditionAndWhileCondition(sequence: XSequenceOfContent(node: self), condition: condition, while: whileCondition)
+    }
+    
     func content(_ condition: @escaping (XContent) -> Bool, until untilCondition: @escaping (XContent) -> Bool) -> XContentSequence {
-        return XContentSequenceWithConditionAndUntilCondition(sequence: XSequenceOfContent(node: self), condition: condition, until: condition)
+        return XContentSequenceWithConditionAndUntilCondition(sequence: XSequenceOfContent(node: self), condition: condition, until: untilCondition)
     }
     
     func content(while condition: @escaping (XContent) -> Bool) -> XContentSequence {
@@ -138,6 +174,10 @@ public extension XNode {
     
     func contentReversed(_ condition: @escaping (XContent) -> Bool) -> XContentSequence {
         return XContentSequenceWithCondition(sequence: XReversedSequenceOfContent(node: self), condition: condition)
+    }
+    
+    func contentReversed(_ condition: @escaping (XContent) -> Bool, while whileCondition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentSequenceWithConditionAndWhileCondition(sequence: XReversedSequenceOfContent(node: self), condition: condition, while: whileCondition)
     }
     
     func contentReversed(_ condition: @escaping (XContent) -> Bool, until untilCondition: @escaping (XContent) -> Bool) -> XContentSequence {
@@ -164,6 +204,10 @@ public extension XNode {
         return XTextSequenceWithCondition(sequence: XSequenceOfImmediateTexts(node: self), condition: condition)
     }
     
+    func immediateTexts(_ condition: @escaping (XText) -> Bool, while whileCondition: @escaping (XContent) -> Bool) -> XTextSequence {
+        return XTextSequenceWithConditionAndWhileCondition(sequence: XSequenceOfImmediateTexts(node: self), condition: condition, while: whileCondition)
+    }
+    
     func immediateTexts(_ condition: @escaping (XText) -> Bool, until untilCondition: @escaping (XContent) -> Bool) -> XTextSequence {
         return XTextSequenceWithConditionAndUntilCondition(sequence: XSequenceOfImmediateTexts(node: self), condition: condition, until: untilCondition)
     }
@@ -186,6 +230,10 @@ public extension XNode {
     
     func immediateTextsReversed(_ condition: @escaping (XText) -> Bool) -> XTextSequence {
         return XTextSequenceWithCondition(sequence: XReversedSequenceOfImmediateTexts(node: self), condition: condition)
+    }
+    
+    func immediateTextsReversed(_ condition: @escaping (XText) -> Bool, while whileCondition: @escaping (XContent) -> Bool) -> XTextSequence {
+        return XTextSequenceWithConditionAndWhileCondition(sequence: XReversedSequenceOfImmediateTexts(node: self), condition: condition, while: whileCondition)
     }
     
     func immediateTextsReversed(_ condition: @escaping (XText) -> Bool, until untilCondition: @escaping (XContent) -> Bool) -> XTextSequence {
@@ -212,6 +260,10 @@ public extension XNode {
         return XTextSequenceWithCondition(sequence: XSequenceOfAllTexts(node: self), condition: condition)
     }
     
+    func allTexts(_ condition: @escaping (XText) -> Bool, while whileCondition: @escaping (XContent) -> Bool) -> XTextSequence {
+        return XTextSequenceWithConditionAndWhileCondition(sequence: XSequenceOfAllTexts(node: self), condition: condition, while: whileCondition)
+    }
+    
     func allTexts(_ condition: @escaping (XText) -> Bool, until untilCondition: @escaping (XContent) -> Bool) -> XTextSequence {
         return XTextSequenceWithConditionAndUntilCondition(sequence: XSequenceOfAllTexts(node: self), condition: condition, until: untilCondition)
     }
@@ -234,6 +286,10 @@ public extension XNode {
     
     func allTextsReversed(_ condition: @escaping (XText) -> Bool) -> XTextSequence {
         return XTextSequenceWithCondition(sequence: XReversedSequenceOfAllTexts(node: self), condition: condition)
+    }
+    
+    func allTextsReversed(_ condition: @escaping (XText) -> Bool, while whileCondition: @escaping (XContent) -> Bool) -> XTextSequence {
+        return XTextSequenceWithConditionAndWhileCondition(sequence: XReversedSequenceOfAllTexts(node: self), condition: condition, while: whileCondition)
     }
     
     func allTextsReversed(_ condition: @escaping (XText) -> Bool, until untilCondition: @escaping (XContent) -> Bool) -> XTextSequence {
@@ -260,12 +316,20 @@ public extension XNode {
         return XElementSequenceWithCondition(sequence: XChildrenSequence(node: self), condition: condition)
     }
     
+    func children(_ condition: @escaping (XElement) -> Bool, while whileCondition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWithConditionAndWhileCondition(sequence: XChildrenSequence(node: self), condition: condition, while: whileCondition)
+    }
+    
     func children(_ condition: @escaping (XElement) -> Bool, until untilCondition: @escaping (XElement) -> Bool) -> XElementSequence {
         return XElementSequenceWithConditionAndUntilCondition(sequence: XChildrenSequence(node: self), condition: condition, until: untilCondition)
     }
     
     func children(prefix: String? = nil, _ name: String) -> XElementSequence {
         return XElementSequenceWithCondition(sequence: XChildrenSequence(node: self), prefix: prefix, elementName: name)
+    }
+    
+    func children(prefix: String? = nil, _ name: String, while whileCondition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWithConditionAndWhileCondition(sequence: XChildrenSequence(node: self), prefix: prefix, elementName: name, while: whileCondition)
     }
     
     func children(prefix: String? = nil, _ name: String, until untilCondition: @escaping (XElement) -> Bool) -> XElementSequence {
@@ -276,12 +340,20 @@ public extension XNode {
         return XElementSequenceWithCondition(sequence: XChildrenSequence(node: self), condition: { $0.prefix == prefix && names.contains($0.name) })
     }
     
+    func children(prefix: String? = nil, _ names: [String], while whileCondition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWithConditionAndWhileCondition(sequence: XChildrenSequence(node: self), condition: { $0.prefix == prefix && names.contains($0.name) }, while: whileCondition)
+    }
+    
     func children(prefix: String? = nil, _ names: [String], until untilCondition: @escaping (XElement) -> Bool) -> XElementSequence {
         return XElementSequenceWithConditionAndUntilCondition(sequence: XChildrenSequence(node: self), condition: { $0.prefix == prefix && names.contains($0.name) }, until: untilCondition)
     }
     
     func children(prefix: String? = nil, _ names: String...) -> XElementSequence {
         return XElementSequenceWithCondition(sequence: XChildrenSequence(node: self), condition: { $0.prefix == prefix && (names.isEmpty || names.contains($0.name)) })
+    }
+    
+    func children(prefix: String? = nil, _ names: String..., while whileCondition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWithConditionAndWhileCondition(sequence: XChildrenSequence(node: self), condition: { $0.prefix == prefix && (names.isEmpty || names.contains($0.name)) }, while: whileCondition)
     }
     
     func children(prefix: String? = nil, _ names: String..., until untilCondition: @escaping (XElement) -> Bool) -> XElementSequence {
@@ -308,12 +380,20 @@ public extension XNode {
         return XElementSequenceWithCondition(sequence: XReversedChildrenSequence(node: self), condition: condition)
     }
     
+    func childrenReversed(_ condition: @escaping (XElement) -> Bool, while whileCondition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWithConditionAndWhileCondition(sequence: XReversedChildrenSequence(node: self), condition: condition, while: whileCondition)
+    }
+    
     func childrenReversed(_ condition: @escaping (XElement) -> Bool, until untilCondition: @escaping (XElement) -> Bool) -> XElementSequence {
         return XElementSequenceWithConditionAndUntilCondition(sequence: XReversedChildrenSequence(node: self), condition: condition, until: untilCondition)
     }
     
     func childrenReversed(prefix: String? = nil, _ name: String) -> XElementSequence {
         return XElementSequenceWithCondition(sequence: XReversedChildrenSequence(node: self), prefix: prefix, elementName: name)
+    }
+    
+    func childrenReversed(prefix: String? = nil, _ name: String, while whileCondition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWithConditionAndWhileCondition(sequence: XReversedChildrenSequence(node: self), prefix: prefix, elementName: name, while: whileCondition)
     }
     
     func childrenReversed(prefix: String? = nil, _ name: String, until untilCondition: @escaping (XElement) -> Bool) -> XElementSequence {
@@ -324,12 +404,20 @@ public extension XNode {
         return XElementSequenceWithCondition(sequence: XReversedChildrenSequence(node: self), condition: { $0.prefix == prefix && names.contains($0.name) })
     }
     
+    func childrenReversed(prefix: String? = nil, _ names: [String], while whileCondition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWithConditionAndWhileCondition(sequence: XReversedChildrenSequence(node: self), condition: { $0.prefix == prefix && names.contains($0.name) }, while: whileCondition)
+    }
+    
     func childrenReversed(prefix: String? = nil, _ names: [String], until untilCondition: @escaping (XElement) -> Bool) -> XElementSequence {
         return XElementSequenceWithConditionAndUntilCondition(sequence: XReversedChildrenSequence(node: self), condition: { $0.prefix == prefix && names.contains($0.name) }, until: untilCondition)
     }
     
     func childrenReversed(prefix: String? = nil, _ names: String...) -> XElementSequence {
         return XElementSequenceWithCondition(sequence: XReversedChildrenSequence(node: self), condition: { $0.prefix == prefix && (names.isEmpty || names.contains($0.name)) })
+    }
+    
+    func childrenReversed(prefix: String? = nil, _ names: String..., while whileCondition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWithConditionAndWhileCondition(sequence: XReversedChildrenSequence(node: self), condition: { $0.prefix == prefix && (names.isEmpty || names.contains($0.name)) }, while: whileCondition)
     }
     
     func childrenReversed(prefix: String? = nil, _ names: String..., until untilCondition: @escaping (XElement) -> Bool) -> XElementSequence {
@@ -356,6 +444,10 @@ public extension XNode {
         return XContentSequenceWithCondition(sequence: XAllContentSequence(node: self), condition: condition)
     }
     
+    func allContent(_ condition: @escaping (XContent) -> Bool, while whileCondition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentSequenceWithConditionAndWhileCondition(sequence: XAllContentSequence(node: self), condition: condition, while: whileCondition)
+    }
+    
     func allContent(_ condition: @escaping (XContent) -> Bool, until untilCondition: @escaping (XContent) -> Bool) -> XContentSequence {
         return XContentSequenceWithConditionAndUntilCondition(sequence: XAllContentSequence(node: self), condition: condition, until: untilCondition)
     }
@@ -378,6 +470,10 @@ public extension XNode {
     
     func allContentIncludingSelf(_ condition: @escaping (XContent) -> Bool) -> XContentSequence {
         return XContentSequenceWithCondition(sequence: XAllContentIncludingSelfSequence(node: self), condition: condition)
+    }
+    
+    func allContentIncludingSelf(_ condition: @escaping (XContent) -> Bool, while whileCondition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentSequenceWithConditionAndWhileCondition(sequence: XAllContentIncludingSelfSequence(node: self), condition: condition, while: whileCondition)
     }
     
     func allContentIncludingSelf(_ condition: @escaping (XContent) -> Bool, until untilCondition: @escaping (XContent) -> Bool) -> XContentSequence {
@@ -404,6 +500,10 @@ public extension XNode {
         return XContentSequenceWithCondition(sequence: XReversedSequenceOfAllContent(node: self), condition: condition)
     }
     
+    func allContentReversed(_ condition: @escaping (XContent) -> Bool, while whileCondition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentSequenceWithConditionAndWhileCondition(sequence: XReversedSequenceOfAllContent(node: self), condition: condition, while: whileCondition)
+    }
+    
     func allContentReversed(_ condition: @escaping (XContent) -> Bool, until untilCondition: @escaping (XContent) -> Bool) -> XContentSequence {
         return XContentSequenceWithConditionAndUntilCondition(sequence: XReversedSequenceOfAllContent(node: self), condition: condition, until: untilCondition)
     }
@@ -428,12 +528,20 @@ public extension XNode {
         return XElementSequenceWithCondition(sequence: XDescendantsSequence(node: self), condition: condition)
     }
     
+    func descendants(_ condition: @escaping (XElement) -> Bool, while whileCondition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWithConditionAndWhileCondition(sequence: XDescendantsSequence(node: self), condition: condition, while: whileCondition)
+    }
+    
     func descendants(_ condition: @escaping (XElement) -> Bool, until untilCondition: @escaping (XElement) -> Bool) -> XElementSequence {
         return XElementSequenceWithConditionAndUntilCondition(sequence: XDescendantsSequence(node: self), condition: condition, until: untilCondition)
     }
     
     func descendants(prefix: String? = nil, _ name: String) -> XElementSequence {
         return XElementSequenceWithCondition(sequence: XDescendantsSequence(node: self), prefix: prefix, elementName: name)
+    }
+    
+    func descendants(prefix: String? = nil, _ name: String, while whileCondition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWithConditionAndWhileCondition(sequence: XDescendantsSequence(node: self), prefix: prefix, elementName: name, while: whileCondition)
     }
     
     func descendants(prefix: String? = nil, _ name: String, until untilCondition: @escaping (XElement) -> Bool) -> XElementSequence {
@@ -444,12 +552,20 @@ public extension XNode {
         return XElementSequenceWithCondition(sequence: XDescendantsSequence(node: self), condition: { $0.prefix == prefix && names.contains($0.name) })
     }
     
+    func descendants(prefix: String? = nil, _ names: [String], while whileCondition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWithConditionAndWhileCondition(sequence: XDescendantsSequence(node: self), condition: { $0.prefix == prefix && names.contains($0.name) }, while: whileCondition)
+    }
+    
     func descendants(prefix: String? = nil, _ names: [String], until untilCondition: @escaping (XElement) -> Bool) -> XElementSequence {
         return XElementSequenceWithConditionAndUntilCondition(sequence: XDescendantsSequence(node: self), condition: { $0.prefix == prefix && names.contains($0.name) }, until: untilCondition)
     }
     
     func descendants(prefix: String? = nil, _ names: String...) -> XElementSequence {
         return XElementSequenceWithCondition(sequence: XDescendantsSequence(node: self), condition: { $0.prefix == prefix && (names.isEmpty || names.contains($0.name)) })
+    }
+    
+    func descendants(prefix: String? = nil, _ names: String..., while whileCondition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWithConditionAndWhileCondition(sequence: XDescendantsSequence(node: self), condition: { $0.prefix == prefix && (names.isEmpty || names.contains($0.name)) }, while: whileCondition)
     }
     
     func descendants(prefix: String? = nil, _ names: String..., until untilCondition: @escaping (XElement) -> Bool) -> XElementSequence {
@@ -480,6 +596,10 @@ public extension XContent {
         return XContentSequenceWithCondition(sequence: XNextSequence(content: self), condition: condition)
     }
     
+    func next(_ condition: @escaping (XContent) -> Bool, while whileCondition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentSequenceWithConditionAndWhileCondition(sequence: XNextSequence(content: self), condition: condition, while: whileCondition)
+    }
+    
     func next(_ condition: @escaping (XContent) -> Bool, until untilCondition: @escaping (XContent) -> Bool) -> XContentSequence {
         return XContentSequenceWithConditionAndUntilCondition(sequence: XNextSequence(content: self), condition: condition, until: untilCondition)
     }
@@ -502,6 +622,10 @@ public extension XContent {
     
     func nextIncludingSelf(_ condition: @escaping (XContent) -> Bool) -> XContentSequence {
         return XContentSequenceWithCondition(sequence: XNextIncludingSelfSequence(content: self), condition: condition)
+    }
+    
+    func nextIncludingSelf(_ condition: @escaping (XContent) -> Bool, while whileCondition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentSequenceWithConditionAndWhileCondition(sequence: XNextIncludingSelfSequence(content: self), condition: condition, while: whileCondition)
     }
     
     func nextIncludingSelf(_ condition: @escaping (XContent) -> Bool, until untilCondition: @escaping (XContent) -> Bool) -> XContentSequence {
@@ -528,6 +652,10 @@ public extension XContent {
         return XContentSequenceWithCondition(sequence: XPreviousSequence(content: self), condition: condition)
     }
     
+    func previous(_ condition: @escaping (XContent) -> Bool, while whileCondition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentSequenceWithConditionAndWhileCondition(sequence: XPreviousSequence(content: self), condition: condition, while: whileCondition)
+    }
+    
     func previous(_ condition: @escaping (XContent) -> Bool, until untilCondition: @escaping (XContent) -> Bool) -> XContentSequence {
         return XContentSequenceWithConditionAndUntilCondition(sequence: XPreviousSequence(content: self), condition: condition, until: untilCondition)
     }
@@ -550,6 +678,10 @@ public extension XContent {
     
     func previousIncludingSelf(_ condition: @escaping (XContent) -> Bool) -> XContentSequence {
         return XContentSequenceWithCondition(sequence: XPreviousIncludingSelfSequence(content: self), condition: condition)
+    }
+    
+    func previousIncludingSelf(_ condition: @escaping (XContent) -> Bool, while whileCondition: @escaping (XContent) -> Bool) -> XContentSequence {
+        return XContentSequenceWithConditionAndWhileCondition(sequence: XPreviousIncludingSelfSequence(content: self), condition: condition, while: whileCondition)
     }
     
     func previousIncludingSelf(_ condition: @escaping (XContent) -> Bool, until untilCondition: @escaping (XContent) -> Bool) -> XContentSequence {
@@ -576,6 +708,10 @@ public extension XContent {
         return XTextSequenceWithCondition(sequence: XNextTextsSequence(content: self), condition: condition)
     }
     
+    func nextTexts(_ condition: @escaping (XText) -> Bool, while whileCondition: @escaping (XText) -> Bool) -> XTextSequence {
+        return XTextSequenceWithConditionAndWhileCondition(sequence: XNextTextsSequence(content: self), condition: condition, while: whileCondition)
+    }
+    
     func nextTexts(_ condition: @escaping (XText) -> Bool, until untilCondition: @escaping (XText) -> Bool) -> XTextSequence {
         return XTextSequenceWithConditionAndUntilCondition(sequence: XNextTextsSequence(content: self), condition: condition, until: untilCondition)
     }
@@ -598,6 +734,10 @@ public extension XContent {
     
     func previousTexts(_ condition: @escaping (XText) -> Bool) -> XTextSequence {
         return XTextSequenceWithCondition(sequence: XPreviousTextsSequence(content: self), condition: condition)
+    }
+    
+    func previousTexts(_ condition: @escaping (XText) -> Bool, while whileCondition: @escaping (XText) -> Bool) -> XTextSequence {
+        return XTextSequenceWithConditionAndWhileCondition(sequence: XPreviousTextsSequence(content: self), condition: condition, while: whileCondition)
     }
     
     func previousTexts(_ condition: @escaping (XText) -> Bool, until untilCondition: @escaping (XText) -> Bool) -> XTextSequence {
@@ -624,12 +764,20 @@ public extension XContent {
         return XElementSequenceWithCondition(sequence: XNextElementsSequence(content: self), condition: condition)
     }
     
+    func nextElements(_ condition: @escaping (XElement) -> Bool, while whileCondition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWithConditionAndWhileCondition(sequence: XNextElementsSequence(content: self), condition: condition, while: whileCondition)
+    }
+    
     func nextElements(_ condition: @escaping (XElement) -> Bool, until untilCondition: @escaping (XElement) -> Bool) -> XElementSequence {
         return XElementSequenceWithConditionAndUntilCondition(sequence: XNextElementsSequence(content: self), condition: condition, until: untilCondition)
     }
     
     func nextElements(prefix: String? = nil, _ name: String) -> XElementSequence {
         return XElementSequenceWithCondition(sequence: XNextElementsSequence(content: self), prefix: prefix, elementName: name)
+    }
+    
+    func nextElements(prefix: String? = nil, _ name: String, while whileCondition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWithConditionAndWhileCondition(sequence: XNextElementsSequence(content: self), prefix: prefix, elementName: name, while: whileCondition)
     }
     
     func nextElements(prefix: String? = nil, _ name: String, until untilCondition: @escaping (XElement) -> Bool) -> XElementSequence {
@@ -640,12 +788,20 @@ public extension XContent {
         return XElementSequenceWithCondition(sequence: XNextElementsSequence(content: self), condition: { $0.prefix == prefix && names.contains($0.name) })
     }
     
+    func nextElements(prefix: String? = nil, _ names: [String], while whileCondition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWithConditionAndWhileCondition(sequence: XNextElementsSequence(content: self), condition: { $0.prefix == prefix && names.contains($0.name) }, while: whileCondition)
+    }
+    
     func nextElements(prefix: String? = nil, _ names: [String], until untilCondition: @escaping (XElement) -> Bool) -> XElementSequence {
         return XElementSequenceWithConditionAndUntilCondition(sequence: XNextElementsSequence(content: self), condition: { $0.prefix == prefix && names.contains($0.name) }, until: untilCondition)
     }
     
     func nextElements(prefix: String? = nil, _ names: String...) -> XElementSequence {
         return XElementSequenceWithCondition(sequence: XNextElementsSequence(content: self), condition: { $0.prefix == prefix && (names.isEmpty || names.contains($0.name)) })
+    }
+    
+    func nextElements(prefix: String? = nil, _ names: String..., while whileCondition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWithConditionAndWhileCondition(sequence: XNextElementsSequence(content: self), condition: { $0.prefix == prefix && (names.isEmpty || names.contains($0.name)) }, while: whileCondition)
     }
     
     func nextElements(prefix: String? = nil, _ names: String..., until untilCondition: @escaping (XElement) -> Bool) -> XElementSequence {
@@ -672,12 +828,20 @@ public extension XContent {
         return XElementSequenceWithCondition(sequence: XPreviousElementsSequence(content: self), condition: condition)
     }
     
+    func previousElements(_ condition: @escaping (XElement) -> Bool, while whileCondition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWithConditionAndWhileCondition(sequence: XPreviousElementsSequence(content: self), condition: condition, while: whileCondition)
+    }
+    
     func previousElements(_ condition: @escaping (XElement) -> Bool, until untilCondition: @escaping (XElement) -> Bool) -> XElementSequence {
         return XElementSequenceWithConditionAndUntilCondition(sequence: XPreviousElementsSequence(content: self), condition: condition, until: untilCondition)
     }
     
     func previousElements(prefix: String? = nil, _ name: String) -> XElementSequence {
         return XElementSequenceWithCondition(sequence: XPreviousElementsSequence(content: self), prefix: prefix, elementName: name)
+    }
+    
+    func previousElements(prefix: String? = nil, _ name: String, while whileCondition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWithConditionAndWhileCondition(sequence: XPreviousElementsSequence(content: self), prefix: prefix, elementName: name, while: whileCondition)
     }
     
     func previousElements(prefix: String? = nil, _ name: String, until untilCondition: @escaping (XElement) -> Bool) -> XElementSequence {
@@ -688,12 +852,20 @@ public extension XContent {
         return XElementSequenceWithCondition(sequence: XPreviousElementsSequence(content: self), condition: { $0.prefix == prefix && names.contains($0.name) })
     }
     
+    func previousElements(prefix: String? = nil, _ names: [String], while whileCondition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWithConditionAndWhileCondition(sequence: XPreviousElementsSequence(content: self), condition: { $0.prefix == prefix && names.contains($0.name) }, while: whileCondition)
+    }
+    
     func previousElements(prefix: String? = nil, _ names: [String], until untilCondition: @escaping (XElement) -> Bool) -> XElementSequence {
         return XElementSequenceWithConditionAndUntilCondition(sequence: XPreviousElementsSequence(content: self), condition: { $0.prefix == prefix && names.contains($0.name) }, until: untilCondition)
     }
     
     func previousElements(prefix: String? = nil, _ names: String...) -> XElementSequence {
         return XElementSequenceWithCondition(sequence: XPreviousElementsSequence(content: self), condition: { $0.prefix == prefix && (names.isEmpty || names.contains($0.name)) })
+    }
+    
+    func previousElements(prefix: String? = nil, _ names: String..., while whileCondition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWithConditionAndWhileCondition(sequence: XPreviousElementsSequence(content: self), condition: { $0.prefix == prefix && (names.isEmpty || names.contains($0.name)) }, while: whileCondition)
     }
     
     func previousElements(prefix: String? = nil, _ names: String..., until untilCondition: @escaping (XElement) -> Bool) -> XElementSequence {
@@ -720,12 +892,20 @@ public extension XContent {
         return XElementSequenceWithCondition(sequence: XNextCloseElementsSequence(content: self), condition: condition)
     }
     
+    func nextCloseElements(_ condition: @escaping (XElement) -> Bool, while whileCondition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWithConditionAndWhileCondition(sequence: XNextCloseElementsSequence(content: self), condition: condition, while: whileCondition)
+    }
+    
     func nextCloseElements(_ condition: @escaping (XElement) -> Bool, until untilCondition: @escaping (XElement) -> Bool) -> XElementSequence {
         return XElementSequenceWithConditionAndUntilCondition(sequence: XNextCloseElementsSequence(content: self), condition: condition, until: untilCondition)
     }
     
     func nextCloseElements(prefix: String? = nil, _ name: String) -> XElementSequence {
         return XElementSequenceWithCondition(sequence: XNextCloseElementsSequence(content: self), prefix: prefix, elementName: name)
+    }
+    
+    func nextCloseElements(prefix: String? = nil, _ name: String, while whileCondition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWithConditionAndWhileCondition(sequence: XNextCloseElementsSequence(content: self), prefix: prefix, elementName: name, while: whileCondition)
     }
     
     func nextCloseElements(prefix: String? = nil, _ name: String, until untilCondition: @escaping (XElement) -> Bool) -> XElementSequence {
@@ -736,12 +916,20 @@ public extension XContent {
         return XElementSequenceWithCondition(sequence: XNextCloseElementsSequence(content: self), condition: { $0.prefix == prefix && names.contains($0.name) })
     }
     
+    func nextCloseElements(prefix: String? = nil, _ names: [String], while whileCondition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWithConditionAndWhileCondition(sequence: XNextCloseElementsSequence(content: self), condition: { $0.prefix == prefix && names.contains($0.name) }, while: whileCondition)
+    }
+    
     func nextCloseElements(prefix: String? = nil, _ names: [String], until untilCondition: @escaping (XElement) -> Bool) -> XElementSequence {
         return XElementSequenceWithConditionAndUntilCondition(sequence: XNextCloseElementsSequence(content: self), condition: { $0.prefix == prefix && names.contains($0.name) }, until: untilCondition)
     }
     
     func nextCloseElements(prefix: String? = nil, _ names: String...) -> XElementSequence {
         return XElementSequenceWithCondition(sequence: XNextCloseElementsSequence(content: self), condition: { $0.prefix == prefix && (names.isEmpty || names.contains($0.name)) })
+    }
+    
+    func nextCloseElements(prefix: String? = nil, _ names: String..., while whileCondition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWithConditionAndWhileCondition(sequence: XNextCloseElementsSequence(content: self), condition: { $0.prefix == prefix && (names.isEmpty || names.contains($0.name)) }, while: whileCondition)
     }
     
     func nextCloseElements(prefix: String? = nil, _ names: String..., until untilCondition: @escaping (XElement) -> Bool) -> XElementSequence {
@@ -768,12 +956,20 @@ public extension XContent {
         return XElementSequenceWithCondition(sequence: XPreviousCloseElementsSequence(content: self), condition: condition)
     }
     
+    func previousCloseElements(_ condition: @escaping (XElement) -> Bool, while whileCondition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWithConditionAndWhileCondition(sequence: XPreviousCloseElementsSequence(content: self), condition: condition, while: whileCondition)
+    }
+    
     func previousCloseElements(_ condition: @escaping (XElement) -> Bool, until untilCondition: @escaping (XElement) -> Bool) -> XElementSequence {
         return XElementSequenceWithConditionAndUntilCondition(sequence: XPreviousCloseElementsSequence(content: self), condition: condition, until: untilCondition)
     }
     
     func previousCloseElements(prefix: String? = nil, _ name: String) -> XElementSequence {
         return XElementSequenceWithCondition(sequence: XPreviousCloseElementsSequence(content: self), prefix: prefix, elementName: name)
+    }
+    
+    func previousCloseElements(prefix: String? = nil, _ name: String, while whileCondition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWithConditionAndWhileCondition(sequence: XPreviousCloseElementsSequence(content: self), prefix: prefix, elementName: name, while: whileCondition)
     }
     
     func previousCloseElements(prefix: String? = nil, _ name: String, until untilCondition: @escaping (XElement) -> Bool) -> XElementSequence {
@@ -784,12 +980,20 @@ public extension XContent {
         return XElementSequenceWithCondition(sequence: XPreviousCloseElementsSequence(content: self), condition: { $0.prefix == prefix && names.contains($0.name) })
     }
     
+    func previousCloseElements(prefix: String? = nil, _ names: [String], while whileCondition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWithConditionAndWhileCondition(sequence: XPreviousCloseElementsSequence(content: self), condition: { $0.prefix == prefix && names.contains($0.name) }, while: whileCondition)
+    }
+    
     func previousCloseElements(prefix: String? = nil, _ names: [String], until untilCondition: @escaping (XElement) -> Bool) -> XElementSequence {
         return XElementSequenceWithConditionAndUntilCondition(sequence: XPreviousCloseElementsSequence(content: self), condition: { $0.prefix == prefix && names.contains($0.name) }, until: untilCondition)
     }
     
     func previousCloseElements(prefix: String? = nil, _ names: String...) -> XElementSequence {
         return XElementSequenceWithCondition(sequence: XPreviousCloseElementsSequence(content: self), condition: { $0.prefix == prefix && (names.isEmpty || names.contains($0.name)) })
+    }
+    
+    func previousCloseElements(prefix: String? = nil, _ names: String..., while whileCondition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWithConditionAndWhileCondition(sequence: XPreviousCloseElementsSequence(content: self), condition: { $0.prefix == prefix && (names.isEmpty || names.contains($0.name)) }, while: whileCondition)
     }
     
     func previousCloseElements(prefix: String? = nil, _ names: String..., until untilCondition: @escaping (XElement) -> Bool) -> XElementSequence {
@@ -819,6 +1023,10 @@ public extension XText {
         return XTextSequenceWithCondition(sequence: XNextTextsIncludingSelfSequence(text: self), condition: condition)
     }
     
+    func nextTextsIncludingSelf(_ condition: @escaping (XText) -> Bool, while whileCondition: @escaping (XText) -> Bool) -> XTextSequence {
+        return XTextSequenceWithConditionAndWhileCondition(sequence: XNextTextsIncludingSelfSequence(text: self), condition: condition, while: whileCondition)
+    }
+    
     func nextTextsIncludingSelf(_ condition: @escaping (XText) -> Bool, until untilCondition: @escaping (XText) -> Bool) -> XTextSequence {
         return XTextSequenceWithConditionAndUntilCondition(sequence: XNextTextsIncludingSelfSequence(text: self), condition: condition, until: untilCondition)
     }
@@ -841,6 +1049,10 @@ public extension XText {
     
     func previousTextsIncludingSelf(_ condition: @escaping (XText) -> Bool) -> XTextSequence {
         return XTextSequenceWithCondition(sequence: XPreviousTextsIncludingSelfSequence(text: self), condition: condition)
+    }
+    
+    func previousTextsIncludingSelf(_ condition: @escaping (XText) -> Bool, while whileCondition: @escaping (XText) -> Bool) -> XTextSequence {
+        return XTextSequenceWithConditionAndWhileCondition(sequence: XPreviousTextsIncludingSelfSequence(text: self), condition: condition, while: whileCondition)
     }
     
     func previousTextsIncludingSelf(_ condition: @escaping (XText) -> Bool, until untilCondition: @escaping (XText) -> Bool) -> XTextSequence {
@@ -871,12 +1083,20 @@ public extension XElement {
         return XElementSequenceWithCondition(sequence: XNextElementsIncludingSelfSequence(element: self), condition: condition)
     }
     
+    func nextElementsIncludingSelf(_ condition: @escaping (XElement) -> Bool, while whileCondition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWithConditionAndWhileCondition(sequence: XNextElementsIncludingSelfSequence(element: self), condition: condition, while: whileCondition)
+    }
+    
     func nextElementsIncludingSelf(_ condition: @escaping (XElement) -> Bool, until untilCondition: @escaping (XElement) -> Bool) -> XElementSequence {
         return XElementSequenceWithConditionAndUntilCondition(sequence: XNextElementsIncludingSelfSequence(element: self), condition: condition, until: untilCondition)
     }
     
     func nextElementsIncludingSelf(prefix: String? = nil, _ name: String) -> XElementSequence {
         return XElementSequenceWithCondition(sequence: XNextElementsIncludingSelfSequence(element: self), prefix: prefix, elementName: name)
+    }
+    
+    func nextElementsIncludingSelf(prefix: String? = nil, _ name: String, while whileCondition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWithConditionAndWhileCondition(sequence: XNextElementsIncludingSelfSequence(element: self), prefix: prefix, elementName: name, while: whileCondition)
     }
     
     func nextElementsIncludingSelf(prefix: String? = nil, _ name: String, until untilCondition: @escaping (XElement) -> Bool) -> XElementSequence {
@@ -887,12 +1107,20 @@ public extension XElement {
         return XElementSequenceWithCondition(sequence: XNextElementsIncludingSelfSequence(element: self), condition: { $0.prefix == prefix && names.contains($0.name) })
     }
     
+    func nextElementsIncludingSelf(prefix: String? = nil, _ names: [String], while whileCondition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWithConditionAndWhileCondition(sequence: XNextElementsIncludingSelfSequence(element: self), condition: { $0.prefix == prefix && names.contains($0.name) }, while: whileCondition)
+    }
+    
     func nextElementsIncludingSelf(prefix: String? = nil, _ names: [String], until untilCondition: @escaping (XElement) -> Bool) -> XElementSequence {
         return XElementSequenceWithConditionAndUntilCondition(sequence: XNextElementsIncludingSelfSequence(element: self), condition: { $0.prefix == prefix && names.contains($0.name) }, until: untilCondition)
     }
     
     func nextElementsIncludingSelf(prefix: String? = nil, _ names: String...) -> XElementSequence {
         return XElementSequenceWithCondition(sequence: XNextElementsIncludingSelfSequence(element: self), condition: { $0.prefix == prefix && (names.isEmpty || names.contains($0.name)) })
+    }
+    
+    func nextElementsIncludingSelf(prefix: String? = nil, _ names: String..., while whileCondition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWithConditionAndWhileCondition(sequence: XNextElementsIncludingSelfSequence(element: self), condition: { $0.prefix == prefix && (names.isEmpty || names.contains($0.name)) }, while: whileCondition)
     }
     
     func nextElementsIncludingSelf(prefix: String? = nil, _ names: String..., until untilCondition: @escaping (XElement) -> Bool) -> XElementSequence {
@@ -919,12 +1147,20 @@ public extension XElement {
         return XElementSequenceWithCondition(sequence: XPreviousElementsIncludingSelfSequence(element: self), condition: condition)
     }
     
+    func previousElementsIncludingSelf(_ condition: @escaping (XElement) -> Bool, while whileCondition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWithConditionAndWhileCondition(sequence: XPreviousElementsIncludingSelfSequence(element: self), condition: condition, while: whileCondition)
+    }
+    
     func previousElementsIncludingSelf(_ condition: @escaping (XElement) -> Bool, until untilCondition: @escaping (XElement) -> Bool) -> XElementSequence {
         return XElementSequenceWithConditionAndUntilCondition(sequence: XPreviousElementsIncludingSelfSequence(element: self), condition: condition, until: untilCondition)
     }
     
     func previousElementsIncludingSelf(prefix: String? = nil, _ name: String) -> XElementSequence {
         return XElementSequenceWithCondition(sequence: XPreviousElementsIncludingSelfSequence(element: self), prefix: prefix, elementName: name)
+    }
+    
+    func previousElementsIncludingSelf(prefix: String? = nil, _ name: String, while whileCondition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWithConditionAndWhileCondition(sequence: XPreviousElementsIncludingSelfSequence(element: self), prefix: prefix, elementName: name, while: whileCondition)
     }
     
     func previousElementsIncludingSelf(prefix: String? = nil, _ name: String, until untilCondition: @escaping (XElement) -> Bool) -> XElementSequence {
@@ -935,12 +1171,20 @@ public extension XElement {
         return XElementSequenceWithCondition(sequence: XPreviousElementsIncludingSelfSequence(element: self), condition: { $0.prefix == prefix && names.contains($0.name) })
     }
     
+    func previousElementsIncludingSelf(prefix: String? = nil, _ names: [String], while whileCondition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWithConditionAndWhileCondition(sequence: XPreviousElementsIncludingSelfSequence(element: self), condition: { $0.prefix == prefix && names.contains($0.name) }, while: whileCondition)
+    }
+    
     func previousElementsIncludingSelf(prefix: String? = nil, _ names: [String], until untilCondition: @escaping (XElement) -> Bool) -> XElementSequence {
         return XElementSequenceWithConditionAndUntilCondition(sequence: XPreviousElementsIncludingSelfSequence(element: self), condition: { $0.prefix == prefix && names.contains($0.name) }, until: untilCondition)
     }
     
     func previousElementsIncludingSelf(prefix: String? = nil, _ names: String...) -> XElementSequence {
         return XElementSequenceWithCondition(sequence: XPreviousElementsIncludingSelfSequence(element: self), condition: { $0.prefix == prefix && (names.isEmpty || names.contains($0.name)) })
+    }
+    
+    func previousElementsIncludingSelf(prefix: String? = nil, _ names: String..., while whileCondition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWithConditionAndWhileCondition(sequence: XPreviousElementsIncludingSelfSequence(element: self), condition: { $0.prefix == prefix && (names.isEmpty || names.contains($0.name)) }, while: whileCondition)
     }
     
     func previousElementsIncludingSelf(prefix: String? = nil, _ names: String..., until untilCondition: @escaping (XElement) -> Bool) -> XElementSequence {
@@ -971,6 +1215,10 @@ public extension XElement {
         return XElementSequenceWithCondition(sequence: XNextCloseElementsIncludingSelfSequence(element: self), prefix: prefix, elementName: name)
     }
     
+    func nextCloseElementsIncludingSelf(prefix: String? = nil, _ name: String, while whileCondition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWithConditionAndWhileCondition(sequence: XNextCloseElementsIncludingSelfSequence(element: self), prefix: prefix, elementName: name, while: whileCondition)
+    }
+    
     func nextCloseElementsIncludingSelf(prefix: String? = nil, _ name: String, until untilCondition: @escaping (XElement) -> Bool) -> XElementSequence {
         return XElementSequenceWithConditionAndUntilCondition(sequence: XNextCloseElementsIncludingSelfSequence(element: self), prefix: prefix, elementName: name, until: untilCondition)
     }
@@ -979,12 +1227,20 @@ public extension XElement {
         return XElementSequenceWithCondition(sequence: XNextCloseElementsIncludingSelfSequence(element: self), condition: { $0.prefix == prefix && names.contains($0.name) })
     }
     
+    func nextCloseElementsIncludingSelf(prefix: String? = nil, _ names: [String], while whileCondition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWithConditionAndWhileCondition(sequence: XNextCloseElementsIncludingSelfSequence(element: self), condition: { $0.prefix == prefix && names.contains($0.name) }, while: whileCondition)
+    }
+    
     func nextCloseElementsIncludingSelf(prefix: String? = nil, _ names: [String], until untilCondition: @escaping (XElement) -> Bool) -> XElementSequence {
         return XElementSequenceWithConditionAndUntilCondition(sequence: XNextCloseElementsIncludingSelfSequence(element: self), condition: { $0.prefix == prefix && names.contains($0.name) }, until: untilCondition)
     }
     
     func nextCloseElementsIncludingSelf(prefix: String? = nil, _ names: String...) -> XElementSequence {
         return XElementSequenceWithCondition(sequence: XNextCloseElementsIncludingSelfSequence(element: self), condition: { $0.prefix == prefix && (names.isEmpty || names.contains($0.name)) })
+    }
+    
+    func nextCloseElementsIncludingSelf(prefix: String? = nil, _ names: String..., while whileCondition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWithConditionAndWhileCondition(sequence: XNextCloseElementsIncludingSelfSequence(element: self), condition: { $0.prefix == prefix && (names.isEmpty || names.contains($0.name)) }, while: whileCondition)
     }
     
     func nextCloseElementsIncludingSelf(prefix: String? = nil, _ names: String..., until untilCondition: @escaping (XElement) -> Bool) -> XElementSequence {
@@ -1011,12 +1267,20 @@ public extension XElement {
         return XElementSequenceWithCondition(sequence: XPreviousCloseElementsIncludingSelfSequence(element: self), condition: condition)
     }
     
+    func previousCloseElementsIncludingSelf(_ condition: @escaping (XElement) -> Bool, while whileCondition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWithConditionAndWhileCondition(sequence: XPreviousCloseElementsIncludingSelfSequence(element: self), condition: condition, while: whileCondition)
+    }
+    
     func previousCloseElementsIncludingSelf(_ condition: @escaping (XElement) -> Bool, until untilCondition: @escaping (XElement) -> Bool) -> XElementSequence {
         return XElementSequenceWithConditionAndUntilCondition(sequence: XPreviousCloseElementsIncludingSelfSequence(element: self), condition: condition, until: untilCondition)
     }
     
     func previousCloseElementsIncludingSelf(prefix: String? = nil, _ name: String) -> XElementSequence {
         return XElementSequenceWithCondition(sequence: XPreviousCloseElementsIncludingSelfSequence(element: self), prefix: prefix, elementName: name)
+    }
+    
+    func previousCloseElementsIncludingSelf(prefix: String? = nil, _ name: String, while whileCondition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWithConditionAndWhileCondition(sequence: XPreviousCloseElementsIncludingSelfSequence(element: self), prefix: prefix, elementName: name, while: whileCondition)
     }
     
     func previousCloseElementsIncludingSelf(prefix: String? = nil, _ name: String, until untilCondition: @escaping (XElement) -> Bool) -> XElementSequence {
@@ -1027,12 +1291,20 @@ public extension XElement {
         return XElementSequenceWithCondition(sequence: XPreviousCloseElementsIncludingSelfSequence(element: self), condition: { $0.prefix == prefix && names.contains($0.name) })
     }
     
+    func previousCloseElementsIncludingSelf(prefix: String? = nil, _ names: [String], while whileCondition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWithConditionAndWhileCondition(sequence: XPreviousCloseElementsIncludingSelfSequence(element: self), condition: { $0.prefix == prefix && names.contains($0.name) }, while: whileCondition)
+    }
+    
     func previousCloseElementsIncludingSelf(prefix: String? = nil, _ names: [String], until untilCondition: @escaping (XElement) -> Bool) -> XElementSequence {
         return XElementSequenceWithConditionAndUntilCondition(sequence: XPreviousCloseElementsIncludingSelfSequence(element: self), condition: { $0.prefix == prefix && names.contains($0.name) }, until: untilCondition)
     }
     
     func previousCloseElementsIncludingSelf(prefix: String? = nil, _ names: String...) -> XElementSequence {
         return XElementSequenceWithCondition(sequence: XPreviousCloseElementsIncludingSelfSequence(element: self), condition: { $0.prefix == prefix && (names.isEmpty || names.contains($0.name)) })
+    }
+    
+    func previousCloseElementsIncludingSelf(prefix: String? = nil, _ names: String..., while whileCondition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWithConditionAndWhileCondition(sequence: XPreviousCloseElementsIncludingSelfSequence(element: self), condition: { $0.prefix == prefix && (names.isEmpty || names.contains($0.name)) }, while: whileCondition)
     }
     
     func previousCloseElementsIncludingSelf(prefix: String? = nil, _ names: String..., until untilCondition: @escaping (XElement) -> Bool) -> XElementSequence {
@@ -1057,12 +1329,20 @@ public extension XElement {
         return XElementSequenceWithCondition(sequence: XDescendantsIncludingSelfSequence(element: self), condition: condition)
     }
     
+    func descendantsIncludingSelf(_ condition: @escaping (XElement) -> Bool, while whileCondition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWithConditionAndWhileCondition(sequence: XDescendantsIncludingSelfSequence(element: self), condition: condition, while: whileCondition)
+    }
+    
     func descendantsIncludingSelf(_ condition: @escaping (XElement) -> Bool, until untilCondition: @escaping (XElement) -> Bool) -> XElementSequence {
         return XElementSequenceWithConditionAndUntilCondition(sequence: XDescendantsIncludingSelfSequence(element: self), condition: condition, until: untilCondition)
     }
     
     func descendantsIncludingSelf(prefix: String? = nil, _ name: String) -> XElementSequence {
         return XElementSequenceWithCondition(sequence: XDescendantsIncludingSelfSequence(element: self), prefix: prefix, elementName: name)
+    }
+    
+    func descendantsIncludingSelf(prefix: String? = nil, _ name: String, while whileCondition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWithConditionAndWhileCondition(sequence: XDescendantsIncludingSelfSequence(element: self), prefix: prefix, elementName: name, while: whileCondition)
     }
     
     func descendantsIncludingSelf(prefix: String? = nil, _ name: String, until untilCondition: @escaping (XElement) -> Bool) -> XElementSequence {
@@ -1073,12 +1353,20 @@ public extension XElement {
         return XElementSequenceWithCondition(sequence: XDescendantsIncludingSelfSequence(element: self), condition: { $0.prefix == prefix && names.contains($0.name) })
     }
     
+    func descendantsIncludingSelf(prefix: String? = nil, _ names: [String], while whileCondition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWithConditionAndWhileCondition(sequence: XDescendantsIncludingSelfSequence(element: self), condition: { $0.prefix == prefix && names.contains($0.name) }, while: whileCondition)
+    }
+    
     func descendantsIncludingSelf(prefix: String? = nil, _ names: [String], until untilCondition: @escaping (XElement) -> Bool) -> XElementSequence {
         return XElementSequenceWithConditionAndUntilCondition(sequence: XDescendantsIncludingSelfSequence(element: self), condition: { $0.prefix == prefix && names.contains($0.name) }, until: untilCondition)
     }
     
     func descendantsIncludingSelf(prefix: String? = nil, _ names: String...) -> XElementSequence {
         return XElementSequenceWithCondition(sequence: XDescendantsIncludingSelfSequence(element: self), condition: { $0.prefix == prefix && (names.isEmpty || names.contains($0.name)) })
+    }
+    
+    func descendantsIncludingSelf(prefix: String? = nil, _ names: String..., while whileCondition: @escaping (XElement) -> Bool) -> XElementSequence {
+        return XElementSequenceWithConditionAndWhileCondition(sequence: XDescendantsIncludingSelfSequence(element: self), condition: { $0.prefix == prefix && (names.isEmpty || names.contains($0.name)) }, while: whileCondition)
     }
     
     func descendantsIncludingSelf(prefix: String? = nil, _ names: String..., until untilCondition: @escaping (XElement) -> Bool) -> XElementSequence {
