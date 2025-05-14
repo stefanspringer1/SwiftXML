@@ -1014,7 +1014,7 @@ var asElementSequence: XElementSequence
 
 ## Finding related nodes with filters
 
-Besides methods like `filter(_:)` and `prefix(while:)` that always come with Swift and that can be applied to the sequences defined by SwiftXML, the methods from SwiftXML for finding related nodes like `descendants` offer arguments for filtering and stop conditions that allow a short and consise notation.
+Besides methods like `filter(_:)` and `prefix(while:)` that always come with Swift and that can be applied to the sequences defined by SwiftXML, the methods from SwiftXML for finding related nodes like `descendants` offer arguments for filtering and stop conditions that allow a short and concise notation.
 
 In principle, we distinguish between the case of all items of the sequence fullfilling a condition, the case of all items while a condition is fullfilled, and the case of all items until a condition is fullfilled (excluding the found item where the condition fullfilled:
 
