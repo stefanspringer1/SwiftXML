@@ -1014,7 +1014,7 @@ var asElementSequence: XElementSequence
 
 ## Finding related nodes with filters
 
-Besides methods like `filter(_:)` and `prefix(while:)` that always come with Swift and that can be applied to the sequences defined by SwiftXML, the methods from SwiftXML for finding related nodes like `descendants` offer arguments for filtering and stop conditions that allow a short and concise notation.
+Besides methods like `filter(_:)` and `prefix(while:)` that always come with Swift and that can be applied to the sequences defined by SwiftXML, the methods from SwiftXML for finding related nodes like `descendants` offer arguments for filtering and stop conditions that allow a short and concise notation, especially when a filter and a stop condition is combined.
 
 In principle, we distinguish between the case of all items of the sequence fullfilling a condition, the case of all items while a condition is fullfilled, and the case of all items until a condition is fullfilled (excluding the found item where the condition fullfilled:
 
@@ -1025,7 +1025,7 @@ func content(until: (XContent) -> Bool) -> XContentSequence
 func content(untilAndIncluding: (XContent) -> Bool) -> XContentSequence
 ```
 
-Sequences of a more specific type are returned in sensible cases. The `untilAndIncluding` version also stops where the condition is fullfilled, but _includes_ the according item. Later in this section, we show how you might use several conditions to define a filter and a stop condition at once.
+Sequences of a more specific type are returned in sensible cases. The `untilAndIncluding` version also stops where the condition is fullfilled, but _includes_ the according item.
 
 Example:
 
@@ -1047,7 +1047,7 @@ Output:
 
 Note that the round parentheses “(...)” around the condition in the example is needed to distinguish it from the `while:` and `until:` versions. (There is no `where:` argument name, because without it the less common case `while:` – and to a lesser degree `until:` – is more easily visually distinguished from it, the more common case being syntactically the shortest. This plays out well in actual code.)
 
-There also exist a shortcut for the common of filtering elements according to a name:
+There exist a shortcut for the common of filtering elements according to a name:
 
 ```swift
 for _ in document.descendants("paragraph") {
