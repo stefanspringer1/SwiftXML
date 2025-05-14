@@ -1014,7 +1014,9 @@ var asElementSequence: XElementSequence
 
 ## Finding related nodes with filters
 
-All of the methods in the previous section that return a sequence also allow a condition as a first argument for filtering. We distinguish between the case of all items of the sequence fullfilling a condition, the case of all items while a condition is fullfilled, and the case of all items until a condition is fullfilled (excluding the found item where the condition fullfilled):
+Besides methods like `filter(_:)` and `prefix(while:)` that always come with Swift and that can be applied to the sequences defined by SwiftXML, the methods from SwiftXML for finding related nodes like `descendants` offer arguments for filtering and stop conditions that allow a short and consise notation.
+
+In principle, we distinguish between the case of all items of the sequence fullfilling a condition, the case of all items while a condition is fullfilled, and the case of all items until a condition is fullfilled (excluding the found item where the condition fullfilled:
 
 ```swift
 func content((XContent) -> Bool) -> XContentSequence
@@ -1023,9 +1025,7 @@ func content(until: (XContent) -> Bool) -> XContentSequence
 func content(untilAndIncluding: (XContent) -> Bool) -> XContentSequence
 ```
 
-The `untilAndIncluding` version also stops where the condition is fullfilled, but _includes_ the according item.
-
-Sequences of a more specific type are returned in sensible cases.
+Sequences of a more specific type are returned in sensible cases. The `untilAndIncluding` version also stops where the condition is fullfilled, but _includes_ the according item. Later in this section, we show how you might use several conditions to define a filter and a stop condition at once.
 
 Example:
 
@@ -1057,7 +1057,7 @@ for _ in document.descendants("paragraph") {
 
 You can also use multiple names (e.g. `myElement.descendants("paragraph", "table")`).
 
-The filtering of nodes can be stopped according to a condition: `myElement.ancestors("x", until: { $0 === stop })`. There are also the `while: ...` versions.
+In some cases, the filtering of nodes can be stopped according to an additional condition: e.g. `myElement.ancestors("x", until: { $0 === stop })` which is equivalent to `myElement.ancestors(until: { $0 === stop }).filter({ $0.name == "x" })`.  There are then also exist a `while: ...` version.
 
 If you do not list any element names in methods like `descendants()` or `children()`, it lists elements independently of their names, but other than e.g. `descendants`, it only lists elements without prefix (cf. the section about the handling of namespaces).
 
