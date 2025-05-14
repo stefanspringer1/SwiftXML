@@ -298,6 +298,7 @@ public class XElementIteratorUntilCondition: XElementIterator {
     
     public override func next() -> XElement? {
         if let element = iterator.next(), !condition(element) {
+            print("$$$ \(element), \(condition(element))")
             return element
         }
         else {
@@ -331,6 +332,87 @@ public class XElementIteratorIncludingCondition: XElementIterator {
         } else {
             return nil
         }
+    }
+}
+
+public class XElementIteratorWithConditionAndUntilCondition: XElementIterator {
+    
+    let iterator: XElementIterator
+    let condition: (XElement) -> Bool
+    let untilCondition: (XElement) -> Bool
+    
+    init(iterator: XElementIterator, condition: @escaping (XElement) -> Bool, until untilCondition: @escaping (XElement) -> Bool) {
+        self.iterator = iterator
+        self.condition = condition
+        self.untilCondition = untilCondition
+    }
+    
+    init(iterator: XElementIterator, elementName: String, until untilCondition: @escaping (XElement) -> Bool) {
+        self.iterator = iterator
+        self.condition = { $0.name == elementName }
+        self.untilCondition = untilCondition
+    }
+    
+    public override func next() -> XElement? {
+        while let element = iterator.next() {
+            if untilCondition(element) {
+                return nil
+            } else if !condition(element) {
+                continue
+            }
+            return element
+        }
+        return nil
+    }
+}
+
+public class XContentIteratorWithConditionAndUntilCondition: XContentIterator {
+    
+    let iterator: XContentIterator
+    let condition: (XContent) -> Bool
+    let untilCondition: (XContent) -> Bool
+    
+    init(iterator: XContentIterator, condition: @escaping (XContent) -> Bool, until untilCondition: @escaping (XContent) -> Bool) {
+        self.iterator = iterator
+        self.condition = condition
+        self.untilCondition = untilCondition
+    }
+    
+    public override func next() -> XContent? {
+        while let content = iterator.next() {
+            if untilCondition(content) {
+                return nil
+            } else if !condition(content) {
+                continue
+            }
+            return content
+        }
+        return nil
+    }
+}
+
+public class XTextIteratorWithConditionAndUntilCondition: XTextIterator {
+    
+    let iterator: XTextIterator
+    let condition: (XText) -> Bool
+    let untilCondition: (XText) -> Bool
+    
+    init(iterator: XTextIterator, condition: @escaping (XText) -> Bool, until untilCondition: @escaping (XText) -> Bool) {
+        self.iterator = iterator
+        self.condition = condition
+        self.untilCondition = untilCondition
+    }
+    
+    public override func next() -> XText? {
+        while let content = iterator.next() {
+            if untilCondition(content) {
+                return nil
+            } else if !condition(content) {
+                continue
+            }
+            return content
+        }
+        return nil
     }
 }
 

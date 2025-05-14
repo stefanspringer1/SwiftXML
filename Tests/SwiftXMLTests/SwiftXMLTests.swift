@@ -1357,4 +1357,79 @@ final class SwiftXMLTests: XCTestCase {
         )
     }
     
+    func testAncestorScope() throws {
+        
+        let start = XElement("start")
+        
+        let middle = XElement("middle") {
+            start
+        }
+        
+        let stop = XElement("stop") {
+            middle
+        }
+        
+        let tree = XElement("tree") {
+            XElement("target") {
+                stop
+            }
+        }
+        
+        // --------------------
+        // Looking for <a>, #1:
+        // --------------------
+        
+        XCTAssertEqual(tree.serialized(pretty: true), """
+            <tree>
+              <target>
+                <stop>
+                  <middle>
+                    <start/>
+                  </middle>
+                </stop>
+              </target>
+            </tree>
+            """)
+        
+        XCTAssertEqual(start.ancestors("target").exist, true)
+        
+        // ...but stop at <stop>
+        XCTAssertEqual(start.ancestors(until: { $0 === stop }).filter{ $0.name == "target" }.exist, false)
+        
+        // easier notation:
+        XCTAssertEqual(start.ancestors("target", until: { $0 === stop }).exist, false)
+        
+        // --------------------
+        // Looking for <a>, #2:
+        // --------------------
+        
+        middle.setContent {
+            XElement("target") {
+                middle.content
+            }
+        }
+        
+        XCTAssertEqual(tree.serialized(pretty: true), """
+            <tree>
+              <target>
+                <stop>
+                  <middle>
+                    <target>
+                      <start/>
+                    </target>
+                  </middle>
+                </stop>
+              </target>
+            </tree>
+            """)
+        
+        XCTAssertEqual(start.ancestors("target").exist, true)
+        
+        // ...but stop at <stop>
+        XCTAssertEqual(start.ancestors(until: { $0 === stop }).filter{ $0.name == "target" }.exist, true)
+        
+        // easier notation:
+        XCTAssertEqual(start.ancestors("target", until: { $0 === stop }).exist, true)
+        
+    }
 }

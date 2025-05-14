@@ -239,6 +239,75 @@ public final class XElementSequenceUntilCondition: XElementSequence {
     }
 }
 
+public final class XElementSequenceWithConditionAndUntilCondition: XElementSequence {
+    
+    let sequence: XElementSequence
+    let condition: (XElement) -> Bool
+    let untilCondition: (XElement) -> Bool
+    
+    public init(sequence: XElementSequence, condition: @escaping (XElement) -> Bool, until untilCondition: @escaping (XElement) -> Bool) {
+        self.sequence = sequence
+        self.condition = condition
+        self.untilCondition = untilCondition
+    }
+    
+    public init(sequence: XElementSequence, prefix: String?, elementName: String, until untilCondition: @escaping (XElement) -> Bool) {
+        self.sequence = sequence
+        self.condition = { $0.prefix == prefix && $0.name == elementName }
+        self.untilCondition = untilCondition
+    }
+    
+    public override func makeIterator() -> XElementIterator {
+        return XElementIteratorWithConditionAndUntilCondition(
+            iterator: sequence.makeIterator(),
+            condition: condition,
+            until: untilCondition
+        )
+    }
+}
+
+public final class XContentSequenceWithConditionAndUntilCondition: XContentSequence {
+    
+    let sequence: XContentSequence
+    let condition: (XContent) -> Bool
+    let untilCondition: (XContent) -> Bool
+    
+    public init(sequence: XContentSequence, condition: @escaping (XContent) -> Bool, until untilCondition: @escaping (XContent) -> Bool) {
+        self.sequence = sequence
+        self.condition = condition
+        self.untilCondition = untilCondition
+    }
+    
+    public override func makeIterator() -> XContentIterator {
+        return XContentIteratorWithConditionAndUntilCondition(
+            iterator: sequence.makeIterator(),
+            condition: condition,
+            until: untilCondition
+        )
+    }
+}
+
+public final class XTextSequenceWithConditionAndUntilCondition: XTextSequence {
+    
+    let sequence: XTextSequence
+    let condition: (XText) -> Bool
+    let untilCondition: (XText) -> Bool
+    
+    public init(sequence: XTextSequence, condition: @escaping (XText) -> Bool, until untilCondition: @escaping (XText) -> Bool) {
+        self.sequence = sequence
+        self.condition = condition
+        self.untilCondition = untilCondition
+    }
+    
+    public override func makeIterator() -> XTextIterator {
+        return XTextIteratorWithConditionAndUntilCondition(
+            iterator: sequence.makeIterator(),
+            condition: condition,
+            until: untilCondition
+        )
+    }
+}
+
 public final class XElementSequenceIncludingCondition: XElementSequence {
     
     let sequence: XElementSequence
