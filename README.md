@@ -110,7 +110,7 @@ let transformation = XTransformation {
 
 **UPDATE 35 (April 2025):** New: `XDocument.clone(keepAttachments:registeringAttributes:registeringValuesForAttributes:)`, `XElement.clone(keepAttachments:)`; added those arguments also to `makeVersion()`.
 
-**UPDATE 35 (May 2025):** New additional argument `until: ...` or `until: ...` e.g. in `myElement.ancestors("x", until: { $0 === stop }`.
+**UPDATE 35 (May 2025):** New additional second (!) argument `until: ...` or `while: ...` e.g. in `myElement.ancestors("x", until: { $0 === stop }`.
 
 ---
 
@@ -1057,7 +1057,7 @@ for _ in document.descendants("paragraph") {
 
 You can also use multiple names (e.g. `myElement.descendants("paragraph", "table")`).
 
-In some cases, the filtering of nodes can be stopped according to an additional condition: e.g. `myElement.ancestors("x", until: { $0 === stop })` which is equivalent to `myElement.ancestors(until: { $0 === stop }).filter({ $0.name == "x" })`.  There are then also exist a `while: ...` version.
+In some cases, the filtering of nodes can be stopped according to an additional condition: e.g. `myElement.ancestors("x", until: { $0 === stop })` which is equivalent to `myElement.ancestors(until: { $0 === stop }).filter({ $0.name == "x" })`.  There also exist the according `while: ...` versions.
 
 If you do not list any element names in methods like `descendants()` or `children()`, it lists elements independently of their names, but other than e.g. `descendants`, it only lists elements without prefix (cf. the section about the handling of namespaces).
 
