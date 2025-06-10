@@ -2134,6 +2134,7 @@ let transformation = XTransformation {
 ---
 **NOTE**
 
+- For namespace definitons of the form `xmlns="..."` in the input, a namespace prefix is set (if not already defined for the URI, the name of the element is used, maybe with a number added).
 - When searching for elements by only using a name and not a prefix, only elements with this name _without_ a prefix will be found. E.g. `children("mo")` will not (!) find children which have the name `"mo"` but e.g. the prefix `"math"`. The reason for this is that we want to keep the searching for elements without prefixes be at the same time precise and simple, we do not want to demand writing `children(prefix: nil, "p")` for precision, and this also aligns with direct access to elements like `document.elements("p")` or rules like `XRule(forElements: "p")` that should always be precise in what elements are meant.
 - On the other hand, the direct comparison with the name of an element just compares the name and disregards the prefix. You might want to write e.g. `(element.prefix, element.name) == (prefix, name)` or `(element.prefix, element.name) == (nil, name)` in some cases to be more precise. (A qualified name is not introduced because we want to avoid exhaustive composing of names with prefixes in code which uses this library.)
 - You can also search only by prefix e.g. by `descendant(prefix: myPrefix)`.
