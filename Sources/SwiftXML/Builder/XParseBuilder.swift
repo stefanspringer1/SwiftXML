@@ -104,6 +104,8 @@ public final class XParseBuilder: XEventHandler {
         
         let element = XElement(name)
         
+        var calculatedNamespacePrefix: String? = nil
+        
         if recognizeNamespaces {
             var namespaceDefinitionCount = 0
             for attributeName in attributes.keys {
@@ -138,6 +140,7 @@ public final class XParseBuilder: XEventHandler {
                         }
                         resultingNamespaceURIToPrefix[uri] = resultingPrefix
                         namespacePrefixes.insert(resultingPrefix)
+                        calculatedNamespacePrefix = resultingPrefix
                     }
                     namespaceURIAndPrefixDuringBuild.append((uri,originalPrefix))
                     attributes[attributeName] = nil
@@ -155,17 +158,24 @@ public final class XParseBuilder: XEventHandler {
                 prefixOfElement = ""
             }
             if let prefixOfElement {
-                var i = namespaceURIAndPrefixDuringBuild.count - 1
-                while i >= 0 {
-                    let (uri,prefix) = namespaceURIAndPrefixDuringBuild[i]
-                    if prefix == prefixOfElement {
-                        element.prefix = resultingNamespaceURIToPrefix[uri]!
-                        if let colon {
-                            element.name = String(name[colon...].dropFirst())
-                        }
-                        break
+                if let calculatedNamespacePrefix {
+                    element.prefix = calculatedNamespacePrefix
+                    if let colon {
+                        element.name = String(name[colon...].dropFirst())
                     }
-                    i -= 1
+                } else {
+                    var i = namespaceURIAndPrefixDuringBuild.count - 1
+                    while i >= 0 {
+                        let (uri,prefix) = namespaceURIAndPrefixDuringBuild[i]
+                        if prefix == prefixOfElement {
+                            element.prefix = resultingNamespaceURIToPrefix[uri]!
+                            if let colon {
+                                element.name = String(name[colon...].dropFirst())
+                            }
+                            break
+                        }
+                        i -= 1
+                    }
                 }
             }
         }
