@@ -2140,7 +2140,7 @@ let transformation = XTransformation {
 - If you use these methods without any arguments e.g. `descendants()` note that _only elements without prefix are found,_ this is different from using the according property e.g. `descendants`.
 - You might change prefix and name at the same time by using `XElement.set(prefix:name:)` or compare both prefix and name via `XElement.has(prefix:name:)`.
 - You can freely use prefixes that are not defined, e.g. to allow rules to only apply to certain parts. Example: Duplicate formulas using different prefixes to transform them into two different outputs according to the prefixes inside the same document.
-- As all namespace prefix definitions are being set at the root element, this may silently change the meaning of some element names with according prefixes that before had been outside the sections of those definitions.
+- As all namespace prefix definitions are being set at the root element, this may silently change, as soons as the document is serialized, the meaning of some element names with according literal prefixes that before had been outside the sections of those definitions.
 - In the current state of the library, no namespace handling is being applied for attributes.
 
 ---
