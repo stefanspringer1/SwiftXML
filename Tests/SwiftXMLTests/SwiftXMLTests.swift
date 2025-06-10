@@ -1079,7 +1079,6 @@ final class SwiftXMLTests: XCTestCase {
         
         let document = try parseXML(fromText: source, recognizeNamespaces: true)
         
-        
         XCTAssertEqual(Array(document.descendants(prefix: "math", "mi").map{ $0.name }), ["mi"])
         XCTAssertEqual(Array(document.descendants(prefix: "math").map{ $0.name }), ["math", "mi"])
         // but when explicitely telling "no name":
@@ -1245,6 +1244,134 @@ final class SwiftXMLTests: XCTestCase {
         XCTAssertEqual(document.serialized(), #"<a><math:math><math:mi>a</math:mi><math:mo>+</math:mo><math:mi style="italic">b</math:mi></math:math></a>"#)
         XCTAssertEqual(element.description, #"<math:mi style="italic">"#)
         XCTAssertEqual(element.xPath, "/a[1]/math:math[1]/math:mi[2]")
+    }
+    
+    func testNamespacesWithConflictingPrefixes() throws {
+        
+        let source = """
+            <a>
+                <math:math xmlns:math="http://www.w3.org/1998/Math/MathML"><math:mi>x</math:mi></math:math>
+                <!-- conflicting prefixes (note the changed URL): -->
+                <math:math xmlns:math="http://www.w3.org/1998/Math/MathML2"><math:mi>x</math:mi></math:math>
+            </a>
+            """
+
+        let document = try parseXML(fromText: source, recognizeNamespaces: true, keepComments: true)
+        
+        XCTAssertEqual(
+            document.serialized(),
+            """
+            <a xmlns:math="http://www.w3.org/1998/Math/MathML" xmlns:math2="http://www.w3.org/1998/Math/MathML2">
+                <math:math><math:mi>x</math:mi></math:math>
+                <!-- conflicting prefixes (note the changed URL): -->
+                <math2:math><math2:mi>x</math2:mi></math2:math>
+            </a>
+            """
+        )
+    }
+    
+    func testNamespacesWithEmptyPrefixes() throws {
+        
+        let source = """
+            <a>
+                <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>x</mi>
+                    <non-math xmlns="http://nonmath">This is no math.</non-math>
+                </math>
+                <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>x</mi>
+                    <non-math xmlns="http://nonmath">This is again no math.</non-math>
+                </math>
+                <!-- conflicting prefixes (note the changed URLs): -->
+                <math xmlns="http://www.w3.org/1998/Math/MathML2"><mi>x</mi>
+                    <non-math xmlns="http://nonmath2">This is again, again no math.</non-math>
+                </math>
+            </a>
+            """
+
+        let document = try parseXML(fromText: source, recognizeNamespaces: true, keepComments: true)
+        
+        XCTAssertEqual(
+            document.serialized(),
+            """
+            <a xmlns:math="http://www.w3.org/1998/Math/MathML" xmlns:math2="http://www.w3.org/1998/Math/MathML2" xmlns:non-math="http://nonmath" xmlns:non-math2="http://nonmath2">
+                <math:math><math:mi>x</math:mi>
+                    <non-math:non-math>This is no math.</non-math:non-math>
+                </math:math>
+                <math:math><math:mi>x</math:mi>
+                    <non-math:non-math>This is again no math.</non-math:non-math>
+                </math:math>
+                <!-- conflicting prefixes (note the changed URLs): -->
+                <math2:math><math2:mi>x</math2:mi>
+                    <non-math2:non-math>This is again, again no math.</non-math2:non-math>
+                </math2:math>
+            </a>
+            """
+        )
+    }
+    
+    func testNamespacesWithAndWithoutEmptyPrefixes() throws {
+        
+        let source = """
+            <a xmlns:math="http://www.w3.org/1998/Math/MathML">
+                <math:math><math:mi>x</math:mi></math:math>
+                <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>y</mi></math>
+            </a>
+            """
+
+        let document = try parseXML(fromText: source, recognizeNamespaces: true, keepComments: true)
+        
+        XCTAssertEqual(
+            document.serialized(),
+            """
+            <a xmlns:math="http://www.w3.org/1998/Math/MathML">
+                <math:math><math:mi>x</math:mi></math:math>
+                <math:math><math:mi>y</math:mi></math:math>
+            </a>
+            """
+        )
+    }
+    
+    func testNamespacesSameURLDifferentPrefixes() throws {
+        
+        let source = """
+            <a xmlns:math="http://www.w3.org/1998/Math/MathML">
+                <math:math><math:mi>x</math:mi></math:math>
+                <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>y</mi></math>
+                <math2:math xmlns:math2="http://www.w3.org/1998/Math/MathML"><math2:mi>z</math2:mi></math2:math>
+            </a>
+            """
+        
+        let document = try parseXML(fromText: source, recognizeNamespaces: true, keepComments: true)
+        
+        XCTAssertEqual(
+            document.serialized(),
+            """
+            <a xmlns:math="http://www.w3.org/1998/Math/MathML">
+                <math:math><math:mi>x</math:mi></math:math>
+                <math:math><math:mi>y</math:mi></math:math>
+                <math:math><math:mi>z</math:mi></math:math>
+            </a>
+            """
+        )
+    }
+    
+    func testNestedNamespacesWithEmptyPrefixes() throws {
+        
+        let source = """
+            <a>
+                <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>x</mi><non-math xmlns="http://nonmath">This is <emphasis>no</emphasis> math.</non-math></math>
+            </a>
+            """
+        
+        let document = try parseXML(fromText: source, recognizeNamespaces: true, keepComments: true)
+        
+        XCTAssertEqual(
+            document.serialized(),
+            """
+            <a xmlns:math="http://www.w3.org/1998/Math/MathML" xmlns:non-math="http://nonmath">
+                <math:math><math:mi>x</math:mi><non-math:non-math>This is <non-math:emphasis>no</non-math:emphasis> math.</non-math:non-math></math:math>
+            </a>
+            """
+        )
     }
     
     func testNamespacesFromReadme() throws {

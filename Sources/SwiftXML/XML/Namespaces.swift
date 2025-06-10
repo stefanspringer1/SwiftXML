@@ -77,6 +77,9 @@ extension XElement {
             if attributeName.hasPrefix("xmlns:"), let value = self[attributeName], value == namespace {
                 foundPrefix = String(attributeName.dropFirst(6))
                 break
+            } else if attributeName == "xmlns" {
+                foundPrefix = ""
+                break
             }
         }
         return foundPrefix
@@ -86,7 +89,7 @@ extension XElement {
     /// "Full" means that a closing ":" is added automatically.
     /// If no prefix is defined, an empty string is returned.
     public func fullPrefix(forNamespace namespace: String) -> String {
-        if let foundPrefix = prefix(forNamespace: namespace) {
+        if let foundPrefix = prefix(forNamespace: namespace), prefix != "" {
             return "\(foundPrefix):"
         } else {
             return ""
@@ -109,7 +112,9 @@ extension XElement {
         var result = [String:String]()
         let namespaceDeclarationPrefix = "xmlns:"
         for attributeName in attributeNames {
-            if attributeName.hasPrefix(namespaceDeclarationPrefix), let value = self[attributeName] {
+            if attributeName == "xmlns", let value = self[attributeName] {
+                result[value] = ""
+            } else if attributeName.hasPrefix(namespaceDeclarationPrefix), let value = self[attributeName] {
                 result[value] = String(attributeName.dropFirst(namespaceDeclarationPrefix.count)) + ":"
             }
         }
@@ -120,7 +125,9 @@ extension XElement {
     /// The prefix might be a "full" prefix, i.e. it could contain a closing ":".
     /// An existing namespace declaration for the same namespace but with another prefix is not (!) removed.
     public func setNamespace(_ namespace: String, withPossiblyFullPrefix possiblyFullPrefix: String) {
-        if !possiblyFullPrefix.isEmpty {
+        if possiblyFullPrefix == "" {
+            self["xmlns"] = namespace
+        } else {
             self["xmlns:\(possiblyFullPrefix.hasSuffix(":") ? String(possiblyFullPrefix.dropLast()) : possiblyFullPrefix)"] = namespace
         }
     }

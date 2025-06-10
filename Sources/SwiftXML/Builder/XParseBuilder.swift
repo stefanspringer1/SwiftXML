@@ -25,8 +25,10 @@ public final class XParseBuilder: XEventHandler {
     
     var currentBranch: XBranchInternal
     
+    var namespacePrefixes = Set<String>()
     var resultingNamespaceURIToPrefix = [String:String]()
     var namespaceURIAndPrefixDuringBuild = [(String,String)]()
+    var prefixFreeNamespaceURIsCount = 0
     
     public init(
         document: XDocument,
@@ -99,18 +101,40 @@ public final class XParseBuilder: XEventHandler {
     }
     
     public func elementStart(name: String, attributes: inout [String:String], textRange: XTextRange?, dataRange _: XDataRange?) {
+        
         let element = XElement(name)
         
         if recognizeNamespaces {
             var namespaceDefinitionCount = 0
             for attributeName in attributes.keys {
-                if attributeName.hasPrefix("xmlns:"), let uri = attributes[attributeName] {
+                
+                var originalPrefix: String? = nil
+                var proposedPrefix: String? = nil
+                
+                if attributeName.hasPrefix("xmlns:") {
+                    originalPrefix = String(attributeName.dropFirst(6))
+                    proposedPrefix = originalPrefix
+                } else if attributeName == "xmlns" {
+                    print("NEW ELEMENT \(name): attributeName == \"xmlns\"")
+                    originalPrefix = ""
+                    proposedPrefix = name
+                    element.attached["prefixFreeNamespace"] = true
+                    prefixFreeNamespaceURIsCount += 1
+                }
+                
+                if let originalPrefix, let proposedPrefix, let uri = attributes[attributeName] {
                     namespaceDefinitionCount += 1
-                    let prefix = String(attributeName.dropFirst(6))
+                    var resultingPrefix = proposedPrefix
                     if resultingNamespaceURIToPrefix[uri] == nil {
-                        resultingNamespaceURIToPrefix[uri] = prefix
+                        var avoidPrefixClashCount = 1
+                        while namespacePrefixes.contains(resultingPrefix) {
+                            avoidPrefixClashCount += 1
+                            resultingPrefix = "\(proposedPrefix)\(avoidPrefixClashCount)"
+                        }
+                        resultingNamespaceURIToPrefix[uri] = resultingPrefix
                     }
-                    namespaceURIAndPrefixDuringBuild.append((uri,prefix))
+                    namespacePrefixes.insert(resultingPrefix)
+                    namespaceURIAndPrefixDuringBuild.append((uri,originalPrefix))
                     attributes[attributeName] = nil
                 }
             }
@@ -118,14 +142,29 @@ public final class XParseBuilder: XEventHandler {
                 element.attached["nsCount"] = namespaceDefinitionCount
             }
             
-            if let colon = name.firstIndex(of: ":") {
-                let prefixOfElement = String(name[..<colon])
+            var prefixOfElement: String? = nil
+            let colon = name.firstIndex(of: ":")
+            print("CHECK NEW ELEMENT \(name): prefixFreeNamespaceURIsCount=\(prefixFreeNamespaceURIsCount)")
+            if let colon {
+                prefixOfElement = String(name[..<colon])
+            } else if prefixFreeNamespaceURIsCount > 0 {
+                prefixOfElement = ""
+            }
+            print("prefixOfElement = \(prefixOfElement ?? "-")")
+            if let prefixOfElement {
                 var i = namespaceURIAndPrefixDuringBuild.count - 1
                 while i >= 0 {
                     let (uri,prefix) = namespaceURIAndPrefixDuringBuild[i]
-                    if prefix == prefixOfElement, let resultingPrefix = resultingNamespaceURIToPrefix[uri] {
-                        element.prefix = resultingPrefix
-                        element.name = String(name[colon...].dropFirst())
+                    print("CECK pair \((uri,prefix))")
+                    if prefix == prefixOfElement {
+                        print("found \((uri,prefix))")
+                        if let resultingPrefix = resultingNamespaceURIToPrefix[uri] {
+                            element.prefix = resultingPrefix
+                            if let colon {
+                                element.name = String(name[colon...].dropFirst())
+                            }
+                            break
+                        }
                         break
                     }
                     i -= 1
@@ -144,6 +183,10 @@ public final class XParseBuilder: XEventHandler {
         if recognizeNamespaces, let element = currentBranch as? XElement, let namespaceDefinitionCount = element.attached["nsCount"] as? Int {
             namespaceURIAndPrefixDuringBuild.removeLast(namespaceDefinitionCount)
             element.attached["nsCount"] = nil
+            if element.attached["prefixFreeNamespace"] as? Bool == true {
+                prefixFreeNamespaceURIsCount -= 1
+                element.attached["prefixFreeNamespace"] = nil
+            }
         }
         
         if let endTagTextRange = textRange, let element = currentBranch as? XElement, let startTagTextRange = element._sourceRange {
