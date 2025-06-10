@@ -28,7 +28,7 @@ public final class XParseBuilder: XEventHandler {
     var namespacePrefixes = Set<String>()
     var resultingNamespaceURIToPrefix = [String:String]()
     var namespaceURIAndPrefixDuringBuild = [(String,String)]()
-    var prefixFreeNamespaceURIsCount = 0
+    var prefixFreeNSURIsCount = 0
     
     public init(
         document: XDocument,
@@ -108,31 +108,37 @@ public final class XParseBuilder: XEventHandler {
             var namespaceDefinitionCount = 0
             for attributeName in attributes.keys {
                 
+                var uri: String? = nil
                 var originalPrefix: String? = nil
                 var proposedPrefix: String? = nil
+                var existingPrefix: String? = nil
                 
                 if attributeName.hasPrefix("xmlns:") {
+                    uri = attributes[attributeName]
+                    existingPrefix = resultingNamespaceURIToPrefix[uri!]
                     originalPrefix = String(attributeName.dropFirst(6))
-                    proposedPrefix = originalPrefix
+                    proposedPrefix = existingPrefix ?? originalPrefix
                 } else if attributeName == "xmlns" {
+                    uri = attributes[attributeName]
+                    existingPrefix = resultingNamespaceURIToPrefix[uri!]
                     originalPrefix = ""
-                    proposedPrefix = name
-                    element.attached["prefixFreeNamespace"] = true
-                    prefixFreeNamespaceURIsCount += 1
+                    proposedPrefix = existingPrefix ?? name
+                    element.attached["prefixFreeNS"] = true
+                    prefixFreeNSURIsCount += 1
                 }
                 
-                if let originalPrefix, let proposedPrefix, let uri = attributes[attributeName] {
+                if let uri, let originalPrefix, let proposedPrefix {
                     namespaceDefinitionCount += 1
-                    var resultingPrefix = proposedPrefix
-                    if resultingNamespaceURIToPrefix[uri] == nil {
+                    if existingPrefix == nil {
+                        var resultingPrefix = proposedPrefix
                         var avoidPrefixClashCount = 1
                         while namespacePrefixes.contains(resultingPrefix) {
                             avoidPrefixClashCount += 1
                             resultingPrefix = "\(proposedPrefix)\(avoidPrefixClashCount)"
                         }
                         resultingNamespaceURIToPrefix[uri] = resultingPrefix
+                        namespacePrefixes.insert(resultingPrefix)
                     }
-                    namespacePrefixes.insert(resultingPrefix)
                     namespaceURIAndPrefixDuringBuild.append((uri,originalPrefix))
                     attributes[attributeName] = nil
                 }
@@ -145,7 +151,7 @@ public final class XParseBuilder: XEventHandler {
             let colon = name.firstIndex(of: ":")
             if let colon {
                 prefixOfElement = String(name[..<colon])
-            } else if prefixFreeNamespaceURIsCount > 0 {
+            } else if prefixFreeNSURIsCount > 0 {
                 prefixOfElement = ""
             }
             if let prefixOfElement {
@@ -175,9 +181,9 @@ public final class XParseBuilder: XEventHandler {
         if recognizeNamespaces, let element = currentBranch as? XElement, let namespaceDefinitionCount = element.attached["nsCount"] as? Int {
             namespaceURIAndPrefixDuringBuild.removeLast(namespaceDefinitionCount)
             element.attached["nsCount"] = nil
-            if element.attached["prefixFreeNamespace"] as? Bool == true {
-                prefixFreeNamespaceURIsCount -= 1
-                element.attached["prefixFreeNamespace"] = nil
+            if element.attached["prefixFreeNS"] as? Bool == true {
+                prefixFreeNSURIsCount -= 1
+                element.attached["prefixFreeNS"] = nil
             }
         }
         
