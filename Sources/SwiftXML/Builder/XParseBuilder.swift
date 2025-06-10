@@ -25,7 +25,7 @@ public final class XParseBuilder: XEventHandler {
     
     var currentBranch: XBranchInternal
     
-    var namespacePrefixes = Set<String>()
+    var prefixes = Set<String>()
     var resultingNamespaceURIToPrefix = [String:String]()
     var namespaceURIAndPrefixDuringBuild = [(String,String)]()
     var prefixFreeNSURIsCount = 0
@@ -134,12 +134,12 @@ public final class XParseBuilder: XEventHandler {
                     if existingPrefix == nil {
                         var resultingPrefix = proposedPrefix
                         var avoidPrefixClashCount = 1
-                        while namespacePrefixes.contains(resultingPrefix) {
+                        while prefixes.contains(resultingPrefix) {
                             avoidPrefixClashCount += 1
                             resultingPrefix = "\(proposedPrefix)\(avoidPrefixClashCount)"
                         }
                         resultingNamespaceURIToPrefix[uri] = resultingPrefix
-                        namespacePrefixes.insert(resultingPrefix)
+                        prefixes.insert(resultingPrefix)
                         calculatedNamespacePrefix = resultingPrefix
                     }
                     namespaceURIAndPrefixDuringBuild.append((uri,originalPrefix))
@@ -175,6 +175,9 @@ public final class XParseBuilder: XEventHandler {
                             break
                         }
                         i -= 1
+                    }
+                    if i < 0 { // no namespace found
+                        prefixes.insert(prefixOfElement) // this prefix cannot be used for namespaces ("dead prefix")!
                     }
                 }
             }

@@ -1308,6 +1308,28 @@ final class SwiftXMLTests: XCTestCase {
         )
     }
     
+    func testNamespacesWithDeadPrefix() throws {
+        
+        // The "math"-prefix at the root is "dead" because there is no declared namespace for it.
+        // Because of it, this prefix cannot be used for "http://www.w3.org/1998/Math/MathML".
+        let source = """
+            <math:math>
+                <math:math xmlns:math="http://www.w3.org/1998/Math/MathML"><math:mi>x</math:mi></math:math>
+            </math:math>
+            """
+
+        let document = try parseXML(fromText: source, recognizeNamespaces: true, keepComments: true)
+        
+        XCTAssertEqual(
+            document.serialized(),
+            """
+            <math:math xmlns:math2="http://www.w3.org/1998/Math/MathML">
+                <math2:math><math2:mi>x</math2:mi></math2:math>
+            </math:math>
+            """
+        )
+    }
+    
     func testNamespacesWithAndWithoutEmptyPrefixes() throws {
         
         let source = """
