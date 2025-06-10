@@ -1308,7 +1308,7 @@ final class SwiftXMLTests: XCTestCase {
         )
     }
     
-    func testNamespacesWithDeadPrefix() throws {
+    func testNamespacesWithOuterDeadPrefix() throws {
         
         // The "math" prefix at the root is "dead" because there is no declared namespace for it.
         // For this reason, this prefix cannot be used for "http://www.w3.org/1998/Math/MathML".
@@ -1327,6 +1327,54 @@ final class SwiftXMLTests: XCTestCase {
                 <math2:math><math2:mi>x</math2:mi></math2:math>
             </math:math>
             """
+        )
+        
+        XCTAssertEqual(
+            document.elements(prefix: "math2", "math").first?.serialized(),
+            "<math2:math><math2:mi>x</math2:mi></math2:math>"
+        )
+        
+        XCTAssertEqual(
+            document.elements("math:math").first?.serialized(),
+            """
+            <math:math xmlns:math2="http://www.w3.org/1998/Math/MathML">
+                <math2:math><math2:mi>x</math2:mi></math2:math>
+            </math:math>
+            """
+        )
+    }
+    
+    func testNamespacesWithInnerDeadPrefix() throws {
+        
+        // The following pathological case (note the inner element with the prefix that we would like to set for <math>)
+        // is handled as a correction after the document has already been built:
+        let source = """
+            <a>
+                <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>x</mi><math:math/></math>
+                <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>x</mi><math:math/></math>
+            </a>
+            """
+        
+        let document = try parseXML(fromText: source, recognizeNamespaces: true, keepComments: true)
+        
+        XCTAssertEqual(
+            document.serialized(),
+            """
+            <a xmlns:math2="http://www.w3.org/1998/Math/MathML">
+                <math2:math><math2:mi>x</math2:mi><math:math/></math2:math>
+                <math2:math><math2:mi>x</math2:mi><math:math/></math2:math>
+            </a>
+            """
+        )
+        
+        XCTAssertEqual(
+            document.elements(prefix: "math2", "math").first?.serialized(),
+            "<math2:math><math2:mi>x</math2:mi><math:math/></math2:math>"
+        )
+        
+        XCTAssertEqual(
+            document.elements("math:math").first?.serialized(),
+            "<math:math/>"
         )
     }
     

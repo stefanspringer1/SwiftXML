@@ -26,6 +26,7 @@ public final class XParseBuilder: XEventHandler {
     var currentBranch: XBranchInternal
     
     var prefixes = Set<String>()
+    var prefixCorrections = [String:String]()
     var resultingNamespaceURIToPrefix = [String:String]()
     var namespaceURIAndPrefixDuringBuild = [(String,String)]()
     var prefixFreeNSURIsCount = 0
@@ -176,8 +177,24 @@ public final class XParseBuilder: XEventHandler {
                         }
                         i -= 1
                     }
-                    if i < 0 { // no namespace found
-                        prefixes.insert(prefixOfElement) // this prefix cannot be used for namespaces ("dead prefix")!
+                    if i < 0 { // no namespace found:
+                        // this prefix cannot be used for namespaces ("dead prefix")!
+                        if prefixes.contains(prefixOfElement) {
+                            // too late, we have to correct later:
+                            if prefixCorrections[prefixOfElement] == nil {
+                                var avoidPrefixClashCount = 2
+                                var corrected = "\(prefixOfElement)\(avoidPrefixClashCount)"
+                                while prefixes.contains(corrected) {
+                                    avoidPrefixClashCount += 1
+                                    corrected = "\(prefixOfElement)\(avoidPrefixClashCount)"
+                                }
+                                prefixCorrections[prefixOfElement] = corrected
+                                prefixes.insert(corrected)
+                            }
+                        } else {
+                            // we just avoid this prefix:
+                            prefixes.insert(prefixOfElement)
+                        }
                     }
                 }
             }
@@ -297,11 +314,28 @@ public final class XParseBuilder: XEventHandler {
     }
     
     public func documentEnd() {
-        if let root = document.firstChild {
-            for (uri,prefix) in resultingNamespaceURIToPrefix {
-                root["xmlns:\(prefix)"] = uri
+        
+        if recognizeNamespaces {
+            if prefixCorrections.isEmpty {
+                if let root = document.firstChild {
+                    for (uri,prefix) in resultingNamespaceURIToPrefix {
+                        root["xmlns:\(prefix)"] = uri
+                    }
+                }
+            } else {
+                if let root = document.firstChild {
+                    for (uri,prefix) in resultingNamespaceURIToPrefix {
+                        root["xmlns:\(prefixCorrections[prefix] ?? prefix)"] = uri
+                    }
+                }
+                for element in document.descendants {
+                    if let prefix = element.prefix, let correctedPrefix = prefixCorrections[prefix] {
+                        element.prefix = correctedPrefix
+                    }
+                }
             }
         }
+        
     }
     
 }
