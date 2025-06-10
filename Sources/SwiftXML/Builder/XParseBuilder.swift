@@ -115,7 +115,6 @@ public final class XParseBuilder: XEventHandler {
                     originalPrefix = String(attributeName.dropFirst(6))
                     proposedPrefix = originalPrefix
                 } else if attributeName == "xmlns" {
-                    print("NEW ELEMENT \(name): attributeName == \"xmlns\"")
                     originalPrefix = ""
                     proposedPrefix = name
                     element.attached["prefixFreeNamespace"] = true
@@ -144,26 +143,19 @@ public final class XParseBuilder: XEventHandler {
             
             var prefixOfElement: String? = nil
             let colon = name.firstIndex(of: ":")
-            print("CHECK NEW ELEMENT \(name): prefixFreeNamespaceURIsCount=\(prefixFreeNamespaceURIsCount)")
             if let colon {
                 prefixOfElement = String(name[..<colon])
             } else if prefixFreeNamespaceURIsCount > 0 {
                 prefixOfElement = ""
             }
-            print("prefixOfElement = \(prefixOfElement ?? "-")")
             if let prefixOfElement {
                 var i = namespaceURIAndPrefixDuringBuild.count - 1
                 while i >= 0 {
                     let (uri,prefix) = namespaceURIAndPrefixDuringBuild[i]
-                    print("CECK pair \((uri,prefix))")
                     if prefix == prefixOfElement {
-                        print("found \((uri,prefix))")
-                        if let resultingPrefix = resultingNamespaceURIToPrefix[uri] {
-                            element.prefix = resultingPrefix
-                            if let colon {
-                                element.name = String(name[colon...].dropFirst())
-                            }
-                            break
+                        element.prefix = resultingNamespaceURIToPrefix[uri]!
+                        if let colon {
+                            element.name = String(name[colon...].dropFirst())
                         }
                         break
                     }
