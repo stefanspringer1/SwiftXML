@@ -84,9 +84,11 @@ final class SwiftXMLTests: XCTestCase {
                 <b id="3"/>
             </a>
             """)
-        for element in document.children {
-            print(element.name)
+        var names = [String]()
+        for element in document.descendants {
+            names.append(element.name)
         }
+        XCTAssertEqual(names.joined(separator: ", "), "a, b, b")
     }
     
     func testAttributeFromDocument() throws {
@@ -480,39 +482,85 @@ final class SwiftXMLTests: XCTestCase {
         // traversal:
         // --------------------------------------------------------------------
         
-        document.traverse { node in
-            print("down: \(node)")
-        } up: { node in
-            print("up: \(node)")
-        }
-        await document.traverse { node in
-            await a.f()
-        } up: { node in
-            await a.f()
-        }
-        try await document.traverse { node in
-            try await a.g()
-        } up: { node in
-            try await a.g()
-        }
-        // "mixed":
-        await document.traverse { node in
-            print(node)
-        } up: { node in
-            await a.f()
+        do {
+            var messages = [String]()
+            
+            document.traverse { node in
+                messages.append("down: \(node)")
+            } up: { node in
+                messages.append("up: \(node)")
+            }
+            await document.traverse { node in
+                await a.f()
+            } up: { node in
+                await a.f()
+            }
+            try await document.traverse { node in
+                try await a.g()
+            } up: { node in
+                try await a.g()
+            }
+            // "mixed":
+            await document.traverse { node in
+                messages.append(node.description)
+            } up: { node in
+                await a.f()
+            }
+            
+            XCTAssertEqual(messages.joined(separator: "\n"), """
+                down: <test>
+                down: "
+                  "
+                down: <b id="1">
+                up: <b id="1">
+                down: "
+                  "
+                down: <b id="2">
+                up: <b id="2">
+                down: "
+                  "
+                down: <b id="3">
+                up: <b id="3">
+                down: "
+                "
+                up: <test>
+                <test>
+                "
+                  "
+                <b id="1">
+                "
+                  "
+                <b id="2">
+                "
+                  "
+                <b id="3">
+                "
+                "
+                """)
+            
         }
         
         // --------------------------------------------------------------------
         // forEach:
         // --------------------------------------------------------------------
         
-        document.children.forEach { child in
-            print(child)
+        do {
+            var messages = [String]()
+            document.descendants.forEach { descendant in
+                messages.append(descendant.description)
+            }
+            XCTAssertEqual(messages.joined(separator: ", "), #"<test>, <b id="1">, <b id="2">, <b id="3">"#)
         }
+        
         // alternative:
-        for child in document.children {
-            print(child)
+        do {
+            var messages = [String]()
+            for descendant in document.descendants {
+                messages.append(descendant.description)
+            }
+            XCTAssertEqual(messages.joined(separator: ", "), #"<test>, <b id="1">, <b id="2">, <b id="3">"#)
         }
+        
         await document.children.forEachAsync { child in
             await a.f()
         }
@@ -569,45 +617,47 @@ final class SwiftXMLTests: XCTestCase {
 
         var collectedAttributeValues = [String]()
 
-        document.registeredAttributes("b").forEach { attribute in print(attribute) }
-
+        do {
+            var messages = [String]()
+            document.registeredAttributes("b").forEach { attribute in
+                messages.append("\(attribute.name)=\"\(attribute.value)\"")
+            }
+            XCTAssertEqual(messages.joined(separator: ", "), #"b="b1", b="b2""#)
+        }
+        
         document.registeredAttributes("b", "c", "d").forEach { attribute in
            collectedAttributeValues.append(attribute.value)
            if attribute.value == "c1" {
                attribute.element.insertPrevious { XElement("x", ["b": "bInserted1"]) }
            }
         }
-
-        let _ = XTransformation {
-           
-           XRule(forElements: "table") { table in
-               table.insertNext {
-                   XElement("caption") {
-                       "Table: "
-                       table.children({ $0.name.contains("title") }).content
-                   }
-               }
-           }
-           
-           XRule(forElements: "tbody", "tfoot") { tablePart in
-               tablePart
-                   .children("tr")
-                   .children("th")
-                   .forEach { cell in
-                       cell.name = "td"
-                   }
-           }
-           
-           XRule(forRegisteredAttributes: "id") { id in
-               print("\n----- Rule for attribute \"id\" -----\n")
-               print("  \(id.element) --> ", terminator: "")
-               id.element["id"] = "done-" + id.value
-               print(id.element)
-           }
-           
-        }
-
+        
         XCTAssertEqual(collectedAttributeValues.joined(separator: ", "), "b1, b2, c1, c2, d1, d2, bInserted1")
+        
+        do {
+            var messages = [String]()
+            
+            let transformation = XTransformation {
+                
+                XRule(forRegisteredAttributes: "b") { b in
+                    messages.append("rule for b=\"\(b.value)\" in \(b.element)")
+                    if b.value == "bInserted1" {
+                        document.firstChild!.addFirst { XElement("x", ["b": "bInserted2"]) }
+                    }
+                }
+                
+            }
+            
+            transformation.execute(inDocument: document)
+            
+            XCTAssertEqual(messages.joined(separator: "\n"), """
+                rule for b="b1" in <x b="b1">
+                rule for b="b2" in <x b="b2">
+                rule for b="bInserted1" in <x b="bInserted1">
+                rule for b="bInserted2" in <x b="bInserted2">
+                """)
+        }
+        
     }
     
     func testSequencePart() {

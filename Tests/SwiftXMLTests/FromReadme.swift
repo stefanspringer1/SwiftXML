@@ -216,7 +216,7 @@ final class FromReadmeTests: XCTestCase {
 
         XCTAssertEqual(element.serialized(), "<top><a1><a2/></a1><b1><b2/></b1><c1><c2/></c1></top>")
         
-        print("\n---- 1 ----\n")
+        // ---- 1 ----
 
         for content in element.content {
             content.replace(.skipping) {
@@ -226,7 +226,7 @@ final class FromReadmeTests: XCTestCase {
 
         XCTAssertEqual(element.serialized(), "<top><a2/><b2/><c2/></top>")
         
-        print("\n---- 2 ----\n")
+        // ---- 2 ----
 
         for content in element.contentReversed {
             content.insertPrevious(.skipping) {

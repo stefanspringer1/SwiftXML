@@ -105,7 +105,7 @@ final class ToolsTests: XCTestCase {
             """#)
         
         let copyOfStructure = copyXStructure(from: start!, to: end!, upTo: start!.ancestors({ $0.name == "sec" }).first!)?.content
-        copyOfStructure?.echo(pretty: true)
+        
         XCTAssertEqual(copyOfStructure?.map{ $0.serialized() }.joined(), #"""
             <p>Das folgende</p>
                     <p>ist</p>
