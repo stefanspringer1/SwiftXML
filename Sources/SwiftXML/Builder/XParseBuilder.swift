@@ -105,8 +105,22 @@ public final class XParseBuilder: XEventHandler {
         
         let element = XElement(name)
         
+        func makePrefix(forName name: String, andURI uri: String) -> String {
+            if !name.contains(":"), !name.isEmpty {
+                name
+            } else if let lastURIComponent = uri.split(separator: "/", omittingEmptySubsequences: true).last?.lowercased(),
+                      let prefix = lastURIComponent.split(separator: ":").last, !prefix.isEmpty {
+                String(prefix)
+            } else if let prefix = name.split(separator: ":").last, !prefix.isEmpty {
+                String(prefix)
+            } else {
+                "a"
+            }
+        }
+        
         if recognizeNamespaces {
             var namespaceDefinitionCount = 0
+            
             for attributeName in attributes.keys {
                 
                 var uri: String? = nil
@@ -123,7 +137,7 @@ public final class XParseBuilder: XEventHandler {
                     uri = attributes[attributeName]
                     existingPrefix = resultingNamespaceURIToPrefix[uri!]
                     originalPrefix = ""
-                    proposedPrefix = existingPrefix ?? name
+                    proposedPrefix = existingPrefix ?? makePrefix(forName: name, andURI: uri!)
                     element.attached["prefixFreeNS"] = true
                     prefixFreeNSURIsCount += 1
                 }
@@ -155,6 +169,7 @@ public final class XParseBuilder: XEventHandler {
             } else if prefixFreeNSURIsCount > 0 {
                 prefixOfElement = ""
             }
+            
             if let prefixOfElement {
                 var i = namespaceURIAndPrefixDuringBuild.count - 1
                 while i >= 0 {

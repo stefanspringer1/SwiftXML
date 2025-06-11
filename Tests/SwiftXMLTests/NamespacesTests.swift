@@ -468,6 +468,28 @@ final class NamespacesTests: XCTestCase {
         )
     }
     
+    func testNestedNamespacesWithShiftedDefinitions() throws {
+        
+        // Here, the defintions of the namespaces are not "at the right place",
+        // and the algorithm has to be careful not to choose a prefix which contains the colon:
+        let source = """
+            <base:a xmlns:base="http://base" xmlns="http://www.w3.org/1998/Math/MathML">
+                <math xmlns:nonmath="http://nonmath"><mi>x</mi><nonmath:non-math>This is <nonmath:emphasis>no</nonmath:emphasis> math.</nonmath:non-math></math>
+            </base:a>
+            """
+        
+        let document = try parseXML(fromText: source, recognizeNamespaces: true, keepComments: true)
+        
+        XCTAssertEqual(
+            document.serialized(),
+            """
+            <base:a xmlns:base="http://base" xmlns:mathml="http://www.w3.org/1998/Math/MathML" xmlns:nonmath="http://nonmath">
+                <mathml:math><mathml:mi>x</mathml:mi><nonmath:non-math>This is <nonmath:emphasis>no</nonmath:emphasis> math.</nonmath:non-math></mathml:math>
+            </base:a>
+            """
+        )
+    }
+    
     func testNamespacesFromReadme() throws {
         
         let source = """
