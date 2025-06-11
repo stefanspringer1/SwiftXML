@@ -112,6 +112,8 @@ let transformation = XTransformation {
 
 **UPDATE 35 (May 2025):** New additional second (!) argument `until: ...` or `while: ...` e.g. in `myElement.ancestors("x", until: { $0 === stop }`.
 
+**UPDATE 36 (June 2025):** Namespaces at elements should now be completely handled. In particular, when elements have prefixes which do not reference a defined namespace (we call them “dead” prefixes), those prefixes are preserved in the name without notice and possible conflicts with defined prefixes avoided. (Namespaces at attributes are still not processed, this should be implemented in an upcoming version.)
+
 ---
 
 ## Related packages
