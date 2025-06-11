@@ -298,7 +298,6 @@ public class XElementIteratorUntilCondition: XElementIterator {
     
     public override func next() -> XElement? {
         if let element = iterator.next(), !condition(element) {
-            print("$$$ \(element), \(condition(element))")
             return element
         }
         else {
