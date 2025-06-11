@@ -15,6 +15,33 @@ import SwiftXMLInterfaces
 
 final class SwiftXMLTests: XCTestCase {
     
+    func testSerialized() throws {
+        let source = """
+            <a id="1"><b id="2"/><b id="3"/></a>
+            """
+        let document = try parseXML(fromText: source)
+        
+        XCTAssertEqual(document.serialized, """
+            <a id="1"><b id="2"/><b id="3"/></a>
+            """)
+        
+        XCTAssertEqual(document.serialized(pretty: true, indentation: "        "), """
+            <a id="1">
+                    <b id="2"/>
+                    <b id="3"/>
+            </a>
+            """)
+        
+        // referencing the function:
+        let f = document.serialized(pretty:indentation:)
+        XCTAssertEqual(f(true, "  "), """
+            <a id="1">
+              <b id="2"/>
+              <b id="3"/>
+            </a>
+            """)
+    }
+    
     func testRemovalInTransformation() throws {
         let document = try parseXML(fromText: """
             <a>

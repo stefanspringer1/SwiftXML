@@ -492,6 +492,10 @@ public class XNode {
         return writer.description
     }
     
+    public var serialized: String {
+        serialized(usingProductionTemplate: DefaultProductionTemplate())
+    }
+    
     public func serialized(pretty: Bool = false, indentation: String = X_DEFAULT_INDENTATION) -> String {
         serialized(usingProductionTemplate: pretty ? PrettyPrintProductionTemplate(indentation: indentation) : DefaultProductionTemplate())
     }
