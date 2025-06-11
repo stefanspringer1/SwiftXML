@@ -1444,6 +1444,27 @@ final class SwiftXMLTests: XCTestCase {
         )
     }
     
+    func testNestedNamespacesDefineForeignNamespace() throws {
+        
+        // Here, a namespace is defined at an element which actually has another namespace:
+        let source = """
+            <a xmlns:math="http://www.w3.org/1998/Math/MathML">
+                <math:math xmlns:nonmath="http://nonmath"><math:mi>x</math:mi><nonmath:non-math>This is <nonmath:emphasis>no</nonmath:emphasis> math.</nonmath:non-math></math:math>
+            </a>
+            """
+        
+        let document = try parseXML(fromText: source, recognizeNamespaces: true, keepComments: true)
+        
+        XCTAssertEqual(
+            document.serialized(),
+            """
+            <a xmlns:math="http://www.w3.org/1998/Math/MathML" xmlns:nonmath="http://nonmath">
+                <math:math><math:mi>x</math:mi><nonmath:non-math>This is <nonmath:emphasis>no</nonmath:emphasis> math.</nonmath:non-math></math:math>
+            </a>
+            """
+        )
+    }
+    
     func testNamespacesFromReadme() throws {
         
         let source = """
