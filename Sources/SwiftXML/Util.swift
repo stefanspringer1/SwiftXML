@@ -11,6 +11,19 @@
 import Foundation
 import AutoreleasepoolShim
 
+public struct SwiftXMLError: LocalizedError, CustomStringConvertible {
+
+    private let message: String
+
+    public init(_ message: String) {
+        self.message = message
+    }
+    
+    public var description: String { message }
+    
+    public var errorDescription: String? { message }
+}
+
 public extension String {
     
     var escapingAllForXML: String {

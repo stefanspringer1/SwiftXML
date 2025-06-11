@@ -447,7 +447,7 @@ public class XNode {
             fileHandle.closeFile()
         }
         else {
-            print("ERROR: cannot write to [\(path)]");
+            throw SwiftXMLError("cannot write to [\(path)]");
         }
         
     }
