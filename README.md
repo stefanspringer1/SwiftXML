@@ -2066,7 +2066,7 @@ When transforming elements, it might be convenient to keep the identity of trans
 
 ## Handling of namespaces
 
-The handling of namespaces differs from other libraries in that the prefix plays a more prominent role than the actual namespace URI.
+The handling of namespaces differs from other libraries for XML in that the prefix plays a more prominent role than the actual namespace URI.
 
 Elements can have prefixes, which are not only useful for referencing namespaces, but can also be used independently of namespaces to distinguish between elements with the same name during the processing of a document. Prefixes are crucial for direct access to elements and thus also differentiate the rules accordingly.
 
