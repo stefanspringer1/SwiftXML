@@ -242,8 +242,6 @@ This library gives full control of how to handle entities. Named entity referenc
 
 Automated inclusion of the content external parsed entities can be configurated, the content might then be wrapped by elements with according information of the enities.
 
-Namespaces definitions and their prefixes are only recognized if the attribute `recognizeNamespaces` is set to `true` in the call of the parse functions. See the section on handling of namespaces about how to namespaces are handled.
-
 For any error during parsing an error is thrown and no document is then provided.
 
 An XML tree (e.g. a document) must not be examined or changed concurrently.
@@ -2068,11 +2066,17 @@ When transforming elements, it might be convenient to keep the identity of trans
 
 ## Handling of namespaces
 
-Namespaces prefix definitions are only recognized if the argument `recognizeNamespaces` is set to `true` in the call of the parse functions. An element that uses a defined namespace prefix then gets then name _without_ the prefix (and without the seprating colon), the prefix is separately stored in the `prefix` property of the element (which by defaut is `nil`).
+The handling of namespaces differs from other libraries in that the prefix plays a more prominent role than the actual namespace URL.
 
-Prefixes that are being recognized in this manner might be referred to as “recognized prefixes”. Prefixes can also be set explicitly, which does not require the presence of corresponding prefix definitions, those prefixes might be referred to as “explicit prefixes”.
+Elements can have prefixes, which are not only useful for referencing namespaces, but can also be used independently of namespaces to distinguish between elements with the same name. Prefixes are crucial for direct access to elements and thus also differentiate the rules accordingly.
 
-Note that when `recognizeNamespaces` is activated, the namespace definitions are set at the root element of the document, and prefixes are changed if necessary (note the prefix `math2` at the second formula in the following example):
+When reading a document, namespace prefix definitions are only recognized if the argument `recognizeNamespaces` is set to `true` in the call of the parse function used. An element that uses a namespace prefix defined in its context then gets the name _without_ the prefix (and without the separating colon), the prefix is separately stored in the `prefix` property of the element (which by default is `nil`), and all namespace prefix definitions are moved to the root of the document. The actual prefixes might get changed during this process.
+
+On the other hand, an element with a colon in its orginal name whose literal prefix does not match a defined namespace prefix in its context keeps the full name and gets the prefix value `null`. But such a literal prefix might cause the actual prefix of a defined namespace prefix to change, so that in a serialization of the document the element does not get a different meaning.
+
+A namespace definition in a document is just an attribute with a name of the form `xmlns:prefix`. When looking for the prefix of a namespace URL for the document e.g. via `XDocument.prefix(forNamespace:)`, only the root of the document is being looked up for accordings definitions. So when namespace prefix definitions are later set by explicit code, those definitions should also be set at the root of the document (e.g. via `XDocument.setNamespace(_:withPossiblyFullPrefix:)`). This also ensures the uniqueness of namespace prefixes, which is important as no according corrections are being made during a serialization. So as a guideline, consider the attributes of the root element as being the “database” for the namespace prefix definitions and be careful when transforming the root element.
+
+Example:
 
 ```swift
 let source = """
@@ -2100,7 +2104,7 @@ The resulting output is:
 </a>
 ```
 
-In rules and when searching for content, the according prefixes the have to be used:
+In rules and when searching for content, the according prefixes have to be used:
 
 ```swift
 for element in document.descendants(prefix: document.prefix(forNamespace: "http://www.w3.org/1998/Math/MathML"), "math", "mo", "mi") {
