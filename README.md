@@ -2068,7 +2068,7 @@ When transforming elements, it might be convenient to keep the identity of trans
 
 The handling of namespaces differs from other libraries in that the prefix plays a more prominent role than the actual namespace URL.
 
-Elements can have prefixes, which are not only useful for referencing namespaces, but can also be used independently of namespaces to distinguish between elements with the same name. Prefixes are crucial for direct access to elements and thus also differentiate the rules accordingly.
+Elements can have prefixes, which are not only useful for referencing namespaces, but can also be used independently of namespaces to distinguish between elements with the same name during the processing of a document. Prefixes are crucial for direct access to elements and thus also differentiate the rules accordingly.
 
 When reading a document, namespace prefix definitions are only recognized if the argument `recognizeNamespaces` is set to `true` in the call of the parse function used. An element that uses a namespace prefix defined in its context then gets the name _without_ the prefix (and without the separating colon), the prefix is separately stored in the `prefix` property of the element (which by default is `nil`), and all namespace prefix definitions are moved to the root of the document. The actual prefixes might get changed during this process to avoid multiple prefix definitions for the same namespace or collisions.
 
