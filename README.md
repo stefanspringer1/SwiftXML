@@ -161,10 +161,11 @@ The library reads XML from a source into an XML document instance, and provides 
 
 The library should be efficient and applications that use it should be very intelligible.
 
-### Limitations of the XML input
+### Limitations
 
 - The encoding of the source must be UTF-8 (ASCII is considered as a subset of it). The parser checks for correct UTF-8 encoding and also checks (according to the data available to the currently used Swift implementation) if a found codepoint is a valid Unicode codepoint.
-- For easier processing, if `recognizeNamespaces:` is not set to `true` in the call of the parse function, declarations of namespace prefixes via `xmlns:...` attributes should only be at the root element.
+- In the current state of the library, no namespace handling of attributes is available.
+- Validation of an XML tree against an XML schema is not available yet (you might use [Libxml2Validation](https://github.com/stefanspringer1/Libxml2Validation) instead).
 
 ### Manipulation of an XML document
 
@@ -2144,7 +2145,7 @@ let transformation = XTransformation {
 - You might change prefix and name at the same time by using `XElement.set(prefix:name:)` or compare both prefix and name via `XElement.has(prefix:name:)`.
 - You can freely use prefixes that are not defined, e.g. to allow rules to only apply to certain parts. Example: Duplicate formulas using different prefixes to transform them into two different outputs according to the prefixes inside the same document.
 - Literal prefixes not having a defined namespace (“dead” prefixes) are being reserved without notice and kept different from prefixes with defined namespaces, so an unintentional change of meaning of those elements is avoided.
-- In the current state of the library, no namespace handling is being applied for attributes.
+- In the current state of the library, no namespace handling of attributes is available.
 
 ---
 
