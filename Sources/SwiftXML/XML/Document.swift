@@ -294,6 +294,46 @@ public final class XDocument: XNode, XBranchInternal {
     var _elementsOfPrefixAndName_first = TieredDictionary<String,String,XElement>()
     var _elementsOfPrefixAndName_last = TieredDictionary<String,String,XElement>()
     
+    var _namespaceURIToPrefix = [String:String]()
+    var _prefixToNamespaceURI = [String:String]()
+    
+    func prefix(forNamespaceURI namespaceURI: String) -> String? { _namespaceURIToPrefix[namespaceURI] }
+    func namespaceURI(forPrefix prefix: String) -> String? { _prefixToNamespaceURI[prefix] }
+    var namespacePrefixesAndURIs: [(String,String)] { _namespaceURIToPrefix.sorted(by: <) }
+    
+    // returns the actual prefix
+    func register(namespaceURI: String, withPrefixSuggestion suggstedPrefix: String) -> String {
+        let prefix: String
+        if let existingPrefix = _namespaceURIToPrefix[namespaceURI] {
+            prefix = existingPrefix
+        } else {
+            var maybePrefix = suggstedPrefix
+            var postfix = 1
+            while _prefixToNamespaceURI[maybePrefix] != nil {
+                postfix += 1
+                maybePrefix = "\(suggstedPrefix)\(postfix)"
+            }
+            prefix = maybePrefix
+            _namespaceURIToPrefix[namespaceURI] = prefix
+            _prefixToNamespaceURI[prefix] = namespaceURI
+        }
+        return prefix
+    }
+    
+    func unregister(namespaceURI: String) {
+        if let prefix = _namespaceURIToPrefix[namespaceURI] {
+            _namespaceURIToPrefix[namespaceURI] = nil
+            _prefixToNamespaceURI[prefix] = nil
+        }
+    }
+    
+    func unregister(namespacePrefix: String) {
+        if let namespaceURI = _prefixToNamespaceURI[namespacePrefix] {
+            _namespaceURIToPrefix[namespaceURI] = nil
+            _prefixToNamespaceURI[namespacePrefix] = nil
+        }
+    }
+    
     func registerElement(element: XElement) {
         
         // register via name:

@@ -429,7 +429,7 @@ public class XNode {
     }
     
     public func write(toWriter writer: Writer, usingProductionTemplate productionTemplate: XProductionTemplate = DefaultProductionTemplate()) throws {
-        let activeProduction = productionTemplate.activeProduction(for: writer, atNode: self)
+        let activeProduction = productionTemplate.activeProduction(for: writer, withStartElement: self as? XElement ?? (self as? XDocument)?.firstChild)
         try self.applyProduction(activeProduction: activeProduction)
     }
     

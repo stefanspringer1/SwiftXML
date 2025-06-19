@@ -72,6 +72,38 @@ final class NamespacesTests: XCTestCase {
         XCTAssertEqual(Array(document.descendants(prefix: nil, "mi", "mo").map{ $0.immediateTextsCombined }), ["a", "+", "b"])
     }
     
+    func testNamespacesInSerialization() throws {
+        
+        let source = """
+            <a xmlns:math="http://www.w3.org/1998/Math/MathML" some-attribute="blabla1" z-some-attribute="blabla2">
+                <math:math><math:mi>x</math:mi><nonmath:a xmlns:nonmath="http://nonmath"/></math:math>
+            </a>
+            """
+        
+        let document = try parseXML(fromText: source, recognizeNamespaces: true)
+        
+        XCTAssertEqual(document.serialized(pretty: true), """
+            <a some-attribute="blabla1" z-some-attribute="blabla2" xmlns:math="http://www.w3.org/1998/Math/MathML" xmlns:nonmath="http://nonmath">
+                <math:math><math:mi>x</math:mi><nonmath:a/></math:math>
+            </a>
+            """)
+    }
+    
+    func testNamespacesInPartialSerialization() throws {
+        
+        let source = """
+            <a xmlns:math="http://www.w3.org/1998/Math/MathML" some-attribute="blabla1" z-some-attribute="blabla2">
+                <math:math><math:mi>x</math:mi><nonmath:a xmlns:nonmath="http://nonmath"/></math:math>
+            </a>
+            """
+        
+        let document = try parseXML(fromText: source, recognizeNamespaces: true)
+        
+        XCTAssertEqual(document.elements(prefix: "nonmath", "a").first?.serialized(pretty: true), """
+            <nonmath:a xmlns:math="http://www.w3.org/1998/Math/MathML" xmlns:nonmath="http://nonmath"/>
+            """)
+    }
+        
     func testNamespaceSearchVariations() throws {
     
         let source = """
@@ -334,7 +366,9 @@ final class NamespacesTests: XCTestCase {
         
         XCTAssertEqual(
             document.elements(prefix: "math2", "math").first?.serialized(),
-            "<math2:math><math2:mi>x</math2:mi></math2:math>"
+            """
+            <math2:math xmlns:math2="http://www.w3.org/1998/Math/MathML"><math2:mi>x</math2:mi></math2:math>
+            """
         )
         
         XCTAssertEqual(
@@ -372,12 +406,16 @@ final class NamespacesTests: XCTestCase {
         
         XCTAssertEqual(
             document.elements(prefix: "math2", "math").first?.serialized(),
-            "<math2:math><math2:mi>x</math2:mi><math:math/></math2:math>"
+            """
+            <math2:math xmlns:math2="http://www.w3.org/1998/Math/MathML"><math2:mi>x</math2:mi><math:math/></math2:math>
+            """
         )
         
         XCTAssertEqual(
             document.elements("math:math").first?.serialized(),
-            "<math:math/>"
+            """
+            <math:math xmlns:math2="http://www.w3.org/1998/Math/MathML"/>
+            """
         )
     }
     
@@ -516,7 +554,7 @@ final class NamespacesTests: XCTestCase {
         )
         
         XCTAssertEqual(
-            document.descendants(prefix: document.prefix(forNamespace: "http://www.w3.org/1998/Math/MathML"), "math", "mo", "mi").map {
+            document.descendants(prefix: document.prefix(forNamespaceURI: "http://www.w3.org/1998/Math/MathML"), "math", "mo", "mi").map {
                 "element \"\($0.name)\" with prefix \"\($0.prefix ?? "")\""
             }.joined(separator: "\n"),
             """

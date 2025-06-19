@@ -56,7 +56,7 @@ public class CollectingWriter: Writer, CustomStringConvertible {
 }
 
 public protocol XProductionTemplate {
-    func activeProduction(for writer: Writer, atNode node: XNode) -> XActiveProduction
+    func activeProduction(for writer: Writer, withStartElement startElement: XElement?) -> XActiveProduction
 }
 
 public protocol XActiveProduction {
@@ -142,8 +142,9 @@ public class DefaultProductionTemplate: XProductionTemplate {
         self.escapeAll = escapeAll
     }
     
-    public func activeProduction(for writer: Writer, atNode node: XNode) -> XActiveProduction {
+    public func activeProduction(for writer: Writer, withStartElement startElement: XElement?) -> XActiveProduction {
         ActiveDefaultProduction(
+            withStartElement: startElement,
             writer: writer,
             writeEmptyTags: writeEmptyTags,
             escapeGreaterThan: escapeGreaterThan,
@@ -174,7 +175,10 @@ open class ActiveDefaultProduction: XActiveProduction {
         get { _linebreak }
     }
     
+    let startElement: XElement?
+    
     public init(
+        withStartElement startElement: XElement?,
         writer: Writer,
         writeEmptyTags: Bool = true,
         escapeGreaterThan: Bool = false,
@@ -182,6 +186,7 @@ open class ActiveDefaultProduction: XActiveProduction {
         escapeAll: Bool = false,
         linebreak: String = X_DEFAULT_LINEBREAK
     ) {
+        self.startElement = startElement
         self.writer = writer
         self.writeEmptyTags = writeEmptyTags
         self.escapeGreaterThan = escapeGreaterThan
@@ -292,6 +297,14 @@ open class ActiveDefaultProduction: XActiveProduction {
     }
     
     open func writeElementStartAfterAttributes(element: XElement) throws {
+        if element === startElement, let document = element.document, !document._prefixToNamespaceURI.isEmpty {
+            for (prefix, uri) in document._prefixToNamespaceURI.sorted(by: < ) {
+                let attributeName = "xmlns:\(prefix)"
+                try write(" \(attributeName)=\"")
+                try writeAttributeValue(name: attributeName, value: uri, element: element)
+                try write("\"")
+            }
+        }
         if element.isEmpty && writeAsEmptyTagIfEmpty(element: element) {
             try write("/>")
         }
@@ -386,8 +399,8 @@ public class PrettyPrintProductionTemplate: XProductionTemplate {
         self.linebreak = linebreak
     }
     
-    public func activeProduction(for writer: Writer, atNode node: XNode) -> XActiveProduction {
-        ActivePrettyPrintProduction(writer: writer, writeEmptyTags: writeEmptyTags, indentation: indentation, linebreak: linebreak)
+    public func activeProduction(for writer: Writer, withStartElement startElement: XElement?) -> XActiveProduction {
+        ActivePrettyPrintProduction(withStartElement: startElement, writer: writer, writeEmptyTags: writeEmptyTags, indentation: indentation, linebreak: linebreak)
     }
     
 }
@@ -397,6 +410,7 @@ open class ActivePrettyPrintProduction: ActiveDefaultProduction {
     private var indentation: String
     
     public init(
+        withStartElement startElement: XElement?,
         writer: Writer,
         writeEmptyTags: Bool = true,
         indentation: String = X_DEFAULT_INDENTATION,
@@ -407,6 +421,7 @@ open class ActivePrettyPrintProduction: ActiveDefaultProduction {
     ) {
         self.indentation = indentation
         super.init(
+            withStartElement: startElement,
             writer: writer,
             writeEmptyTags: writeEmptyTags,
             escapeGreaterThan: escapeGreaterThan,
@@ -471,7 +486,7 @@ public class HTMLProductionTemplate: XProductionTemplate {
     
     public let indentation: String
     public let linebreak: String
-    public let htmlNamespaceReference: NamespaceReference
+    public let htmlNamespaceReference: NamespaceReference?
     public let suppressDocumentTypeDeclaration: Bool
     public let writeAsASCII: Bool
     public let escapeGreaterThan: Bool
@@ -482,7 +497,7 @@ public class HTMLProductionTemplate: XProductionTemplate {
     public init(
         indentation: String = X_DEFAULT_INDENTATION,
         linebreak: String = X_DEFAULT_LINEBREAK,
-        withHTMLNamespaceReference htmlNamespaceReference: NamespaceReference = .fullPrefix(""),
+        withHTMLNamespaceReference htmlNamespaceReference: NamespaceReference? = nil,
         suppressDocumentTypeDeclaration: Bool = false,
         writeAsASCII: Bool = false,
         escapeGreaterThan: Bool = false,
@@ -501,12 +516,12 @@ public class HTMLProductionTemplate: XProductionTemplate {
         self.suppressUncessaryPrettyPrintAtAnchors = suppressUncessaryPrettyPrintAtAnchors
     }
     
-    open func activeProduction(for writer: Writer, atNode node: XNode) -> XActiveProduction {
+    open func activeProduction(for writer: Writer, withStartElement startElement: XElement?) -> XActiveProduction {
         ActiveHTMLProduction(
+            withStartElement: startElement,
             writer: writer,
             indentation: indentation,
             linebreak: linebreak,
-            atNode: node,
             withHTMLNamespaceReference: htmlNamespaceReference,
             suppressDocumentTypeDeclaration: suppressDocumentTypeDeclaration,
             writeAsASCII: writeAsASCII,
@@ -531,11 +546,11 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
     public let suppressUncessaryPrettyPrintAtAnchors: Bool
     
     public init(
+        withStartElement startElement: XElement?,
         writer: Writer,
         indentation: String = X_DEFAULT_INDENTATION,
         linebreak: String = X_DEFAULT_LINEBREAK,
-        atNode node: XNode,
-        withHTMLNamespaceReference htmlNamespaceReference: NamespaceReference,
+        withHTMLNamespaceReference htmlNamespaceReference: NamespaceReference?,
         suppressDocumentTypeDeclaration: Bool = false,
         writeAsASCII: Bool = false,
         escapeGreaterThan: Bool = false,
@@ -543,7 +558,16 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
         escapeAll: Bool = false,
         suppressUncessaryPrettyPrintAtAnchors: Bool = false
     ) {
-        fullHTMLPrefix = ((node as? XDocument ?? node.top) as XBranch?)?.fullPrefix(forNamespaceReference: htmlNamespaceReference) ?? ""
+        if let htmlNamespaceReference {
+            switch htmlNamespaceReference {
+            case .uri(let uri):
+                fullHTMLPrefix = startElement?.document?.prefix(forNamespaceURI: uri)?.appending(":") ?? ""
+            case .prefix(let prefix):
+                fullHTMLPrefix = prefix.appending(":")
+            }
+        } else {
+            fullHTMLPrefix = ""
+        }
         htmlEmptyTags = [
             "\(fullHTMLPrefix)area",
             "\(fullHTMLPrefix)base",
@@ -604,6 +628,7 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
         self.writeAsASCII = writeAsASCII
         self.suppressUncessaryPrettyPrintAtAnchors = suppressUncessaryPrettyPrintAtAnchors
         super.init(
+            withStartElement: startElement,
             writer: writer,
             writeEmptyTags: false,
             indentation: indentation,

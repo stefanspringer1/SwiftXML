@@ -11,6 +11,19 @@
 import Foundation
 import SwiftXMLInterfaces
 
+fileprivate func makePrefix(forName name: String, andURI uri: String) -> String {
+    if !name.contains(":"), !name.isEmpty {
+        name
+    } else if let lastURIComponent = uri.split(separator: "/", omittingEmptySubsequences: true).last?.lowercased(),
+              let prefix = lastURIComponent.split(separator: ":").last, !prefix.isEmpty {
+        String(prefix)
+    } else if let prefix = name.split(separator: ":").last, !prefix.isEmpty {
+        String(prefix)
+    } else {
+        "a"
+    }
+}
+
 public final class XParseBuilder: XEventHandler {
     
     public func parsingTime(seconds: Double) {
@@ -104,19 +117,6 @@ public final class XParseBuilder: XEventHandler {
     public func elementStart(name: String, attributes: inout [String:String], textRange: XTextRange?, dataRange _: XDataRange?) {
         
         let element = XElement(name)
-        
-        func makePrefix(forName name: String, andURI uri: String) -> String {
-            if !name.contains(":"), !name.isEmpty {
-                name
-            } else if let lastURIComponent = uri.split(separator: "/", omittingEmptySubsequences: true).last?.lowercased(),
-                      let prefix = lastURIComponent.split(separator: ":").last, !prefix.isEmpty {
-                String(prefix)
-            } else if let prefix = name.split(separator: ":").last, !prefix.isEmpty {
-                String(prefix)
-            } else {
-                "a"
-            }
-        }
         
         if recognizeNamespaces {
             var namespaceDefinitionCount = 0
@@ -319,19 +319,17 @@ public final class XParseBuilder: XEventHandler {
     }
     
     public func documentEnd() {
-        
         if recognizeNamespaces {
             if prefixCorrections.isEmpty {
-                if let root = document.firstChild {
-                    for (uri,prefix) in resultingNamespaceURIToPrefix {
-                        root["xmlns:\(prefix)"] = uri
-                    }
+                for (uri,prefix) in resultingNamespaceURIToPrefix {
+                    document._namespaceURIToPrefix[uri] = prefix
+                    document._prefixToNamespaceURI[prefix] = uri
                 }
             } else {
-                if let root = document.firstChild {
-                    for (uri,prefix) in resultingNamespaceURIToPrefix {
-                        root["xmlns:\(prefixCorrections[prefix] ?? prefix)"] = uri
-                    }
+                for (uri,prefix) in resultingNamespaceURIToPrefix {
+                    let correctedPrefix = prefixCorrections[prefix] ?? prefix
+                    document._namespaceURIToPrefix[uri] = correctedPrefix
+                    document._prefixToNamespaceURI[correctedPrefix] = uri
                 }
                 for element in document.descendants {
                     if let prefix = element.prefix, let correctedPrefix = prefixCorrections[prefix] {
