@@ -298,9 +298,9 @@ public final class XDocument: XNode, XBranchInternal {
     var _prefixToNamespaceURI = [String:String]()
     var _prefixes = Set<String>()
     
-    func prefix(forNamespaceURI namespaceURI: String) -> String? { _namespaceURIToPrefix[namespaceURI] }
-    func namespaceURI(forPrefix prefix: String) -> String? { _prefixToNamespaceURI[prefix] }
-    var namespacePrefixesAndURIs: [(String,String)] { _namespaceURIToPrefix.sorted(by: <) }
+    public func prefix(forNamespaceURI namespaceURI: String) -> String? { _namespaceURIToPrefix[namespaceURI] }
+    public func namespaceURI(forPrefix prefix: String) -> String? { _prefixToNamespaceURI[prefix] }
+    public var namespacePrefixesAndURIs: [(String,String)] { _namespaceURIToPrefix.sorted(by: <) }
     
     func registerIndependentPrefix(withPrefixSuggestion suggstedPrefix: String) -> String {
         var postfix = 1
