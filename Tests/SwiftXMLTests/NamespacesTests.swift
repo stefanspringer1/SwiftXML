@@ -103,7 +103,63 @@ final class NamespacesTests: XCTestCase {
             <nonmath:a xmlns:math="http://www.w3.org/1998/Math/MathML" xmlns:nonmath="http://nonmath"/>
             """)
     }
+    
+    func testEmptyPrefixesAndPrefixTranslations() throws {
         
+        let source = """
+            <a xmlns="http://a">
+                <b>
+                    <c xmlns="http://c">
+                        <d/>
+                    </c>
+                </b>
+            </a>
+            """
+        
+        let document = try parseXML(fromText: source, recognizeNamespaces: true)
+        document.firstChild?.addFirst { XElement(prefix: "x", "x") }
+        
+        XCTAssertEqual(document.serialized(pretty: true), """
+            <a:a xmlns:a="http://a" xmlns:c="http://c"><x:x/>
+                <a:b>
+                    <c:c>
+                        <c:d/>
+                    </c:c>
+                </a:b>
+            </a:a>
+            """)
+        
+        XCTAssertEqual(document.serialized(pretty: true, prefixTranslations: ["a": ""]), """
+            <a xmlns="http://a" xmlns:c="http://c"><x:x/>
+                <b>
+                    <c:c>
+                        <c:d/>
+                    </c:c>
+                </b>
+            </a>
+            """)
+        
+        XCTAssertEqual(document.serialized(pretty: true, prefixesForNamespaceURIs: ["http://a": ""]), """
+            <a xmlns="http://a" xmlns:c="http://c"><x:x/>
+                <b>
+                    <c:c>
+                        <c:d/>
+                    </c:c>
+                </b>
+            </a>
+            """)
+        
+        XCTAssertEqual(document.serialized(pretty: true, prefixesForNamespaceURIs: ["http://a": ""], prefixTranslations: ["x": ""]), """
+            <a xmlns="http://a" xmlns:c="http://c"><x/>
+                <b>
+                    <c:c>
+                        <c:d/>
+                    </c:c>
+                </b>
+            </a>
+            """)
+    }
+    
     func testNamespaceSearchVariations() throws {
     
         let source = """
@@ -526,6 +582,41 @@ final class NamespacesTests: XCTestCase {
             </base:a>
             """
         )
+    }
+    
+    func testInsertWithNamespaces() throws {
+        
+        let source1 = """
+            <document xmlns:math="http://www.w3.org/1998/Math/MathML">
+                <math:math><math:mi>x</math:mi></math:math>
+            </document>
+            """
+        
+        let document1 = try parseXML(fromText: source1, recognizeNamespaces: true, keepComments: true)
+        
+        let source2 = """
+            <document xmlns:math2="http://www.w3.org/1998/Math/MathML">
+                <math2:math><math2:mi>y</math2:mi></math2:math>
+            </document>
+            """
+        
+        let document2 = try parseXML(fromText: source2, recognizeNamespaces: true, keepComments: true)
+        
+        let clone = document2.elements(prefix: document2.prefix(forNamespaceURI: "http://www.w3.org/1998/Math/MathML"), "math").first?.clone
+        
+        document1.elements(prefix: document1.prefix(forNamespaceURI: "http://www.w3.org/1998/Math/MathML"), "math").first?.insertNext {
+            document2.elements(prefix: document2.prefix(forNamespaceURI: "http://www.w3.org/1998/Math/MathML"), "math").clone
+            clone
+        }
+        
+        XCTAssertEqual(
+            document1.serialized, """
+            <document xmlns:math="http://www.w3.org/1998/Math/MathML">
+                <math:math><math:mi>x</math:mi></math:math><math:math><math:mi>y</math:mi></math:math><math:math><math:mi>y</math:mi></math:math>
+            </document>
+            """
+        )
+        
     }
     
     func testNamespacesFromReadme() throws {

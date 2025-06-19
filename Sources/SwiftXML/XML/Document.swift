@@ -296,10 +296,28 @@ public final class XDocument: XNode, XBranchInternal {
     
     var _namespaceURIToPrefix = [String:String]()
     var _prefixToNamespaceURI = [String:String]()
+    var _prefixes = Set<String>()
     
     func prefix(forNamespaceURI namespaceURI: String) -> String? { _namespaceURIToPrefix[namespaceURI] }
     func namespaceURI(forPrefix prefix: String) -> String? { _prefixToNamespaceURI[prefix] }
     var namespacePrefixesAndURIs: [(String,String)] { _namespaceURIToPrefix.sorted(by: <) }
+    
+    func registerIndependentPrefix(withPrefixSuggestion suggstedPrefix: String) -> String {
+        var postfix = 1
+        var prefix = suggstedPrefix
+        while _prefixes.contains(prefix) {
+            postfix += 1
+            prefix = "\(suggstedPrefix)\(postfix)"
+        }
+        _prefixes.insert(prefix)
+        return prefix
+    }
+    
+    func unregister(independentPrefix prefix: String) {
+        if _prefixToNamespaceURI[prefix] == nil {
+            _prefixes.remove(prefix)
+        }
+    }
     
     // returns the actual prefix
     func register(namespaceURI: String, withPrefixSuggestion suggstedPrefix: String) -> String {
@@ -309,11 +327,12 @@ public final class XDocument: XNode, XBranchInternal {
         } else {
             var maybePrefix = suggstedPrefix
             var postfix = 1
-            while _prefixToNamespaceURI[maybePrefix] != nil {
+            while _prefixes.contains(maybePrefix) {
                 postfix += 1
                 maybePrefix = "\(suggstedPrefix)\(postfix)"
             }
             prefix = maybePrefix
+            _prefixes.insert(prefix)
             _namespaceURIToPrefix[namespaceURI] = prefix
             _prefixToNamespaceURI[prefix] = namespaceURI
         }
@@ -324,13 +343,15 @@ public final class XDocument: XNode, XBranchInternal {
         if let prefix = _namespaceURIToPrefix[namespaceURI] {
             _namespaceURIToPrefix[namespaceURI] = nil
             _prefixToNamespaceURI[prefix] = nil
+            _prefixes.remove(prefix)
         }
     }
     
-    func unregister(namespacePrefix: String) {
-        if let namespaceURI = _prefixToNamespaceURI[namespacePrefix] {
+    func unregister(namespacePrefix prefix: String) {
+        if let namespaceURI = _prefixToNamespaceURI[prefix] {
             _namespaceURIToPrefix[namespaceURI] = nil
-            _prefixToNamespaceURI[namespacePrefix] = nil
+            _prefixToNamespaceURI[prefix] = nil
+            _prefixes.remove(prefix)
         }
     }
     
@@ -415,6 +436,7 @@ public final class XDocument: XNode, XBranchInternal {
         }
         element._registeredAttributes.removeAll()
         
+        element._orginalDocument = _document
         element._document = nil
     }
     

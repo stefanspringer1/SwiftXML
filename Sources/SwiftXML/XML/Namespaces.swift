@@ -14,3 +14,34 @@ public enum NamespaceReference {
     case uri(_ uri: String)
     case prefix(_ fullPrefix: String)
 }
+
+func getPrefixTranslations(fromPrefixesForNamespaceURIs prefixesForNamespaceURIs: [String:String]?, forNode node: XNode) -> [String:String]? {
+    if let prefixesForNamespaceURIs, let document = node.document {
+        print("HURRA")
+        var prefixTranslations = [String:String]()
+        for (namespace,newPrefix) in prefixesForNamespaceURIs {
+            print(namespace)
+            print(newPrefix)
+            if let prefix = document._namespaceURIToPrefix[namespace] {
+                prefixTranslations[prefix] = newPrefix
+            }
+        }
+        return prefixTranslations
+    } else {
+        return nil
+    }
+}
+
+func getCompletePrefixTranslations(prefixTranslations: [String:String]? = nil, prefixesForNamespaceURIs: [String:String]? = nil, forNode node: XNode) -> [String:String]? {
+    let completePrefixTranslations: [String:String]?
+    if let prefixTranslationsFromPrefixesForNamespaceURIs = getPrefixTranslations(fromPrefixesForNamespaceURIs: prefixesForNamespaceURIs, forNode: node) {
+        if let prefixTranslations {
+            completePrefixTranslations = prefixTranslationsFromPrefixesForNamespaceURIs.merging(prefixTranslations) { (current, _) in current }
+        } else {
+            completePrefixTranslations = prefixTranslationsFromPrefixesForNamespaceURIs
+        }
+    } else {
+        completePrefixTranslations = prefixTranslations
+    }
+    return completePrefixTranslations
+}

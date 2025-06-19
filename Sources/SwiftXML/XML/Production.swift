@@ -127,19 +127,22 @@ public class DefaultProductionTemplate: XProductionTemplate {
     public let escapeGreaterThan: Bool
     public let escapeAllInText: Bool
     public let escapeAll: Bool
+    public let prefixTranslations: [String:String]?
     
     public init(
         writeEmptyTags: Bool = true,
         escapeGreaterThan: Bool = false,
         escapeAllInText: Bool = false,
         escapeAll: Bool = false,
-        linebreak: String = X_DEFAULT_LINEBREAK
+        linebreak: String = X_DEFAULT_LINEBREAK,
+        prefixTranslations: [String:String]? = nil
     ) {
         self.writeEmptyTags = writeEmptyTags
         self.linebreak = linebreak
         self.escapeGreaterThan = escapeGreaterThan
         self.escapeAllInText = escapeAllInText
         self.escapeAll = escapeAll
+        self.prefixTranslations = prefixTranslations
     }
     
     public func activeProduction(for writer: Writer, withStartElement startElement: XElement?) -> XActiveProduction {
@@ -150,7 +153,8 @@ public class DefaultProductionTemplate: XProductionTemplate {
             escapeGreaterThan: escapeGreaterThan,
             escapeAllInText: escapeAllInText,
             escapeAll: escapeAll,
-            linebreak: linebreak
+            linebreak: linebreak,
+            prefixTranslations: prefixTranslations
         )
     }
     
@@ -177,6 +181,8 @@ open class ActiveDefaultProduction: XActiveProduction {
     
     let startElement: XElement?
     
+    public let prefixTranslations: [String:String]?
+    
     public init(
         withStartElement startElement: XElement?,
         writer: Writer,
@@ -184,7 +190,8 @@ open class ActiveDefaultProduction: XActiveProduction {
         escapeGreaterThan: Bool = false,
         escapeAllInText: Bool = false,
         escapeAll: Bool = false,
-        linebreak: String = X_DEFAULT_LINEBREAK
+        linebreak: String = X_DEFAULT_LINEBREAK,
+        prefixTranslations: [String:String]?
     ) {
         self.startElement = startElement
         self.writer = writer
@@ -193,6 +200,7 @@ open class ActiveDefaultProduction: XActiveProduction {
         self.escapeAllInText = escapeAllInText
         self.escapeAll = escapeAll
         self._linebreak = linebreak
+        self.prefixTranslations = prefixTranslations
     }
     
     private var _declarationInInternalSubsetIndentation = " "
@@ -266,7 +274,15 @@ open class ActiveDefaultProduction: XActiveProduction {
     
     open func writeElementStartBeforeAttributes(element: XElement) throws {
         if let prefix = element.prefix {
-            try write("<\(prefix):\(element.name)")
+            if let prefixTranslations, let translatedPrefix = prefixTranslations[prefix] {
+                if translatedPrefix.isEmpty {
+                    try write("<\(element.name)")
+                } else {
+                    try write("<\(translatedPrefix):\(element.name)")
+                }
+            } else {
+                try write("<\(prefix):\(element.name)")
+            }
         } else {
             try write("<\(element.name)")
         }
@@ -299,7 +315,16 @@ open class ActiveDefaultProduction: XActiveProduction {
     open func writeElementStartAfterAttributes(element: XElement) throws {
         if element === startElement, let document = element.document, !document._prefixToNamespaceURI.isEmpty {
             for (prefix, uri) in document._prefixToNamespaceURI.sorted(by: < ) {
-                let attributeName = "xmlns:\(prefix)"
+                let attributeName: String
+                if let prefixTranslations, let translatedPrefix = prefixTranslations[prefix] {
+                    if translatedPrefix.isEmpty {
+                        attributeName = "xmlns"
+                    } else {
+                        attributeName = "xmlns:\(translatedPrefix)"
+                    }
+                } else {
+                    attributeName = "xmlns:\(prefix)"
+                }
                 try write(" \(attributeName)=\"")
                 try writeAttributeValue(name: attributeName, value: uri, element: element)
                 try write("\"")
@@ -316,7 +341,15 @@ open class ActiveDefaultProduction: XActiveProduction {
     open func writeElementEnd(element: XElement) throws {
         if !(element.isEmpty && writeAsEmptyTagIfEmpty(element: element)) {
             if let prefix = element.prefix {
-                try write("</\(prefix):\(element.name)>")
+                if let prefixTranslations, let translatedPrefix = prefixTranslations[prefix] {
+                    if translatedPrefix.isEmpty {
+                        try write("</\(element.name)>")
+                    } else {
+                        try write("</\(translatedPrefix):\(element.name)>")
+                    }
+                } else {
+                    try write("</\(prefix):\(element.name)>")
+                }
             } else {
                 try write("</\(element.name)>")
             }
@@ -392,15 +425,29 @@ public class PrettyPrintProductionTemplate: XProductionTemplate {
     public let writeEmptyTags: Bool
     public let indentation: String
     public let linebreak: String
+    public let prefixTranslations: [String:String]?
     
-    public init(writeEmptyTags: Bool = true, indentation: String = X_DEFAULT_INDENTATION, linebreak: String = X_DEFAULT_LINEBREAK) {
+    public init(
+        writeEmptyTags: Bool = true,
+        indentation: String = X_DEFAULT_INDENTATION,
+        linebreak: String = X_DEFAULT_LINEBREAK,
+        prefixTranslations: [String:String]? = nil
+    ) {
         self.writeEmptyTags = writeEmptyTags
         self.indentation = indentation
         self.linebreak = linebreak
+        self.prefixTranslations = prefixTranslations
     }
     
     public func activeProduction(for writer: Writer, withStartElement startElement: XElement?) -> XActiveProduction {
-        ActivePrettyPrintProduction(withStartElement: startElement, writer: writer, writeEmptyTags: writeEmptyTags, indentation: indentation, linebreak: linebreak)
+        ActivePrettyPrintProduction(
+            withStartElement: startElement,
+            writer: writer,
+            writeEmptyTags: writeEmptyTags,
+            indentation: indentation,
+            linebreak: linebreak,
+            prefixTranslations: prefixTranslations
+        )
     }
     
 }
@@ -417,7 +464,8 @@ open class ActivePrettyPrintProduction: ActiveDefaultProduction {
         escapeGreaterThan: Bool = false,
         escapeAllInText: Bool = false,
         escapeAll: Bool = false,
-        linebreak: String = X_DEFAULT_LINEBREAK
+        linebreak: String = X_DEFAULT_LINEBREAK,
+        prefixTranslations: [String:String]?
     ) {
         self.indentation = indentation
         super.init(
@@ -427,7 +475,8 @@ open class ActivePrettyPrintProduction: ActiveDefaultProduction {
             escapeGreaterThan: escapeGreaterThan,
             escapeAllInText: escapeAllInText,
             escapeAll: escapeAll,
-            linebreak: linebreak
+            linebreak: linebreak,
+            prefixTranslations: prefixTranslations
         )
     }
     
@@ -493,6 +542,7 @@ public class HTMLProductionTemplate: XProductionTemplate {
     public let escapeAllInText: Bool
     public let escapeAll: Bool
     public let suppressUncessaryPrettyPrintAtAnchors: Bool
+    public let prefixTranslations: [String:String]?
     
     public init(
         indentation: String = X_DEFAULT_INDENTATION,
@@ -503,7 +553,8 @@ public class HTMLProductionTemplate: XProductionTemplate {
         escapeGreaterThan: Bool = false,
         escapeAllInText: Bool = false,
         escapeAll: Bool = false,
-        suppressUncessaryPrettyPrintAtAnchors: Bool = false
+        suppressUncessaryPrettyPrintAtAnchors: Bool = false,
+        prefixTranslations: [String:String]? = nil
     ) {
         self.indentation = indentation
         self.linebreak = linebreak
@@ -514,6 +565,7 @@ public class HTMLProductionTemplate: XProductionTemplate {
         self.escapeAllInText = escapeAllInText
         self.escapeAll = escapeAll
         self.suppressUncessaryPrettyPrintAtAnchors = suppressUncessaryPrettyPrintAtAnchors
+        self.prefixTranslations = prefixTranslations
     }
     
     open func activeProduction(for writer: Writer, withStartElement startElement: XElement?) -> XActiveProduction {
@@ -528,7 +580,8 @@ public class HTMLProductionTemplate: XProductionTemplate {
             escapeGreaterThan: escapeGreaterThan,
             escapeAllInText: escapeAllInText,
             escapeAll: escapeAll,
-            suppressUncessaryPrettyPrintAtAnchors: suppressUncessaryPrettyPrintAtAnchors
+            suppressUncessaryPrettyPrintAtAnchors: suppressUncessaryPrettyPrintAtAnchors,
+            prefixTranslations: prefixTranslations
         )
     }
     
@@ -556,7 +609,8 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
         escapeGreaterThan: Bool = false,
         escapeAllInText: Bool = false,
         escapeAll: Bool = false,
-        suppressUncessaryPrettyPrintAtAnchors: Bool = false
+        suppressUncessaryPrettyPrintAtAnchors: Bool = false,
+        prefixTranslations: [String:String]?
     ) {
         if let htmlNamespaceReference {
             switch htmlNamespaceReference {
@@ -635,7 +689,8 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
             escapeGreaterThan: escapeGreaterThan,
             escapeAllInText: escapeAllInText,
             escapeAll: escapeAll,
-            linebreak: linebreak
+            linebreak: linebreak,
+            prefixTranslations: prefixTranslations
         )
     }
     

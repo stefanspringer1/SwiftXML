@@ -428,16 +428,37 @@ public class XNode {
         try (self as? XDocument)?.produceLeaving(activeProduction: activeProduction)
     }
     
-    public func write(toWriter writer: Writer, usingProductionTemplate productionTemplate: XProductionTemplate = DefaultProductionTemplate()) throws {
+    public func write(
+        toWriter writer: Writer,
+        usingProductionTemplate productionTemplate: XProductionTemplate? = nil,
+        prefixesForNamespaceURIs: [String:String]? = nil,
+        prefixTranslations: [String:String]? = nil
+    ) throws {
+        let completePrefixTranslations = getCompletePrefixTranslations(prefixTranslations: prefixTranslations, prefixesForNamespaceURIs: prefixesForNamespaceURIs, forNode: self)
+        let productionTemplate = productionTemplate ?? DefaultProductionTemplate(prefixTranslations: completePrefixTranslations)
         let activeProduction = productionTemplate.activeProduction(for: writer, withStartElement: self as? XElement ?? (self as? XDocument)?.firstChild)
         try self.applyProduction(activeProduction: activeProduction)
     }
     
-    public func write(toFile fileHandle: FileHandle, usingProductionTemplate productionTemplate: XProductionTemplate = DefaultProductionTemplate()) throws {
+    public func write(
+        toFile fileHandle: FileHandle,
+        usingProductionTemplate productionTemplate: XProductionTemplate? = nil,
+        prefixesForNamespaceURIs: [String:String]? = nil,
+        prefixTranslations: [String:String]? = nil
+    ) throws {
+        let completePrefixTranslations = getCompletePrefixTranslations(prefixTranslations: prefixTranslations, prefixesForNamespaceURIs: prefixesForNamespaceURIs, forNode: self)
+        let productionTemplate = productionTemplate ?? DefaultProductionTemplate(prefixTranslations: completePrefixTranslations)
         try write(toWriter: FileWriter(fileHandle), usingProductionTemplate: productionTemplate)
     }
     
-    public func write(toPath path: String, usingProductionTemplate productionTemplate: XProductionTemplate = DefaultProductionTemplate()) throws {
+    public func write(
+        toPath path: String,
+        usingProductionTemplate productionTemplate: XProductionTemplate? = nil,
+        prefixesForNamespaceURIs: [String:String]? = nil,
+        prefixTranslations: [String:String]? = nil
+    ) throws {
+        let completePrefixTranslations = getCompletePrefixTranslations(prefixTranslations: prefixTranslations, prefixesForNamespaceURIs: prefixesForNamespaceURIs, forNode: self)
+        let productionTemplate = productionTemplate ?? DefaultProductionTemplate(prefixTranslations: completePrefixTranslations)
         let fileManager = FileManager.default
         
         fileManager.createFile(atPath: path,  contents:Data("".utf8), attributes: nil)
@@ -452,11 +473,25 @@ public class XNode {
         
     }
     
-    public func write(toURL url: URL, usingProductionTemplate productionTemplate: XProductionTemplate = DefaultProductionTemplate()) throws {
+    public func write(
+        toURL url: URL,
+        usingProductionTemplate productionTemplate: XProductionTemplate? = nil,
+        prefixesForNamespaceURIs: [String:String]? = nil,
+        prefixTranslations: [String:String]? = nil
+    ) throws {
+        let completePrefixTranslations = getCompletePrefixTranslations(prefixTranslations: prefixTranslations, prefixesForNamespaceURIs: prefixesForNamespaceURIs, forNode: self)
+        let productionTemplate = productionTemplate ?? DefaultProductionTemplate(prefixTranslations: completePrefixTranslations)
         try write(toPath: url.path, usingProductionTemplate: productionTemplate)
     }
     
-    public func write(to writeTarget: WriteTarget, usingProductionTemplate productionTemplate: XProductionTemplate = DefaultProductionTemplate()) throws {
+    public func write(
+        to writeTarget: WriteTarget,
+        usingProductionTemplate productionTemplate: XProductionTemplate? = nil,
+        prefixesForNamespaceURIs: [String:String]? = nil,
+        prefixTranslations: [String:String]? = nil
+    ) throws {
+        let completePrefixTranslations = getCompletePrefixTranslations(prefixTranslations: prefixTranslations, prefixesForNamespaceURIs: prefixesForNamespaceURIs, forNode: self)
+        let productionTemplate = productionTemplate ?? DefaultProductionTemplate(prefixTranslations: completePrefixTranslations)
         switch writeTarget {case .url(let url):
             try write(toURL: url, usingProductionTemplate: productionTemplate)
         case .path(let path):
@@ -477,8 +512,15 @@ public class XNode {
         }
     }
     
-    public func echo(pretty: Bool = false, indentation: String = X_DEFAULT_INDENTATION, terminator: String = "\n") {
-        echo(usingProductionTemplate: pretty ? PrettyPrintProductionTemplate(indentation: indentation) : DefaultProductionTemplate(), terminator: terminator)
+    public func echo(
+        pretty: Bool = false,
+        indentation: String = X_DEFAULT_INDENTATION,
+        terminator: String = "\n",
+        prefixesForNamespaceURIs: [String:String]? = nil,
+        prefixTranslations: [String:String]? = nil
+    ) {
+        let completePrefixTranslations = getCompletePrefixTranslations(prefixTranslations: prefixTranslations, prefixesForNamespaceURIs: prefixesForNamespaceURIs, forNode: self)
+        echo(usingProductionTemplate: pretty ? PrettyPrintProductionTemplate(indentation: indentation, prefixTranslations: completePrefixTranslations) : DefaultProductionTemplate(prefixTranslations: completePrefixTranslations), terminator: terminator)
     }
     
     public func serialized(usingProductionTemplate productionTemplate: XProductionTemplate) -> String {
@@ -496,8 +538,14 @@ public class XNode {
         serialized(usingProductionTemplate: DefaultProductionTemplate())
     }
     
-    public func serialized(pretty: Bool = false, indentation: String = X_DEFAULT_INDENTATION) -> String {
-        serialized(usingProductionTemplate: pretty ? PrettyPrintProductionTemplate(indentation: indentation) : DefaultProductionTemplate())
+    public func serialized(
+        pretty: Bool = false,
+        indentation: String = X_DEFAULT_INDENTATION,
+        prefixesForNamespaceURIs: [String:String]? = nil,
+        prefixTranslations: [String:String]? = nil
+    ) -> String {
+        let completePrefixTranslations = getCompletePrefixTranslations(prefixTranslations: prefixTranslations, prefixesForNamespaceURIs: prefixesForNamespaceURIs, forNode: self)
+        return serialized(usingProductionTemplate: pretty ? PrettyPrintProductionTemplate(indentation: indentation, prefixTranslations: completePrefixTranslations) : DefaultProductionTemplate(prefixTranslations: completePrefixTranslations))
     }
     
     public var immediateTextsCombined: String {
@@ -1634,8 +1682,14 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         repeat {
             if let element = node as? XElement {
                 if !(newDocument === element._document) {
+                    let namespaceURI = element.namespaceURI
                     element._document?.unregisterElement(element: element)
                     element._document = newDocument
+                    element._orginalDocument = nil
+                    if let namespaceURI, let prefix = element._prefix,
+                       let newPrefix = newDocument?.register(namespaceURI: namespaceURI, withPrefixSuggestion: prefix) {
+                        element.prefix = newPrefix
+                    }
                     newDocument?.registerElement(element: element)
                 }
             }
@@ -1747,8 +1801,11 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         shallowClone()
     }
     
+    weak var _orginalDocument: XDocument? = nil
+    
     public func shallowClone(keepAttachments: Bool = false) -> XElement {
         let theClone = XElement(prefix: _prefix, _name)
+        theClone._orginalDocument = _document
         theClone._backlink = self
         theClone._sourceRange = self._sourceRange
         theClone.copyAttributes(from: self)
@@ -1789,6 +1846,14 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
                     _prefix = newPrefix
                 }
             }
+        }
+    }
+    
+    public var namespaceURI: String? {
+        if let prefix = _prefix {
+            (_document ?? _orginalDocument)?._prefixToNamespaceURI[prefix]
+        } else {
+            nil
         }
     }
     
