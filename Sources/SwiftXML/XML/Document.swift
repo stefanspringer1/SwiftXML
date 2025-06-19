@@ -308,7 +308,7 @@ public final class XDocument: XNode, XBranchInternal {
     public func namespaceURI(forPrefix prefix: String) -> String? { _prefixToNamespaceURI[prefix] }
     public var namespacePrefixesAndURIs: [(String,String)] { _namespaceURIToPrefix.sorted(by: <) }
     
-    func registerIndependentPrefix(withPrefixSuggestion suggstedPrefix: String) -> String {
+    public func registerIndependentPrefix(withPrefixSuggestion suggstedPrefix: String) -> String {
         var postfix = 1
         var prefix = suggstedPrefix
         while _prefixes.contains(prefix) {
@@ -319,14 +319,14 @@ public final class XDocument: XNode, XBranchInternal {
         return prefix
     }
     
-    func unregister(independentPrefix prefix: String) {
+    public func unregister(independentPrefix prefix: String) {
         if _prefixToNamespaceURI[prefix] == nil {
             _prefixes.remove(prefix)
         }
     }
     
     // returns the actual prefix
-    func register(namespaceURI: String, withPrefixSuggestion suggstedPrefix: String) -> String {
+    public func register(namespaceURI: String, withPrefixSuggestion suggstedPrefix: String) -> String {
         let prefix: String
         if let existingPrefix = _namespaceURIToPrefix[namespaceURI] {
             prefix = existingPrefix
@@ -345,7 +345,7 @@ public final class XDocument: XNode, XBranchInternal {
         return prefix
     }
     
-    func unregister(namespaceURI: String) {
+    public func unregister(namespaceURI: String) {
         if let prefix = _namespaceURIToPrefix[namespaceURI] {
             _namespaceURIToPrefix[namespaceURI] = nil
             _prefixToNamespaceURI[prefix] = nil
@@ -353,7 +353,7 @@ public final class XDocument: XNode, XBranchInternal {
         }
     }
     
-    func unregister(namespacePrefix prefix: String) {
+    public func unregister(namespacePrefix prefix: String) {
         if let namespaceURI = _prefixToNamespaceURI[prefix] {
             _namespaceURIToPrefix[namespaceURI] = nil
             _prefixToNamespaceURI[prefix] = nil
