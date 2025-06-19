@@ -2078,7 +2078,7 @@ The namespaces with their prefixes are registerd at the document, according attr
 
 During serialization, every prefix value which is not `null` is written as the prefix of the name (with a separating colon). Use the arguments `prefixesForNamespaceURIs:` and `prefixTranslations:` of the serialization and output methods to change prefixes in the serialization, where an empty String value means not outputting a prefix. (Be careful with those settings as there is no validation for those changes to the output.)
 
-When moving elements between documents, missing namespaces with their prefixes are added to the target document, and prefixes of the moved elements are adjusted if necessary. For a removed or cloned element, the according namespace URI can still be found as long as the orginal document still exists and has not changed this value, so the element then behaves the same when inserted into a document as an element that are directly moved between documents.
+When moving elements between documents, missing namespaces with their prefixes are added to the target document, and prefixes of the moved elements are adjusted if necessary. For a removed or cloned element, the according namespace URI can still be found as long as the orginal document still exists and has not changed this value, so the element then behaves the same as being directly moved between documents.
 
 Example:
 
