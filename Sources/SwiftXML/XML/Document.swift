@@ -219,6 +219,7 @@ public final class XDocument: XNode, XBranchInternal {
             registeringAttributes: attributeRegisterMode ?? _attributeRegisterMode,
             registeringValuesForAttributes: attributeValueRegisterMode ?? _attributeValueRegisterMode
         )
+        
         if pointingToClone {
             self._backlink = theClone
         } else {
@@ -231,6 +232,11 @@ public final class XDocument: XNode, XBranchInternal {
         theClone.publicID = publicID
         theClone.systemID = systemID
         theClone._sourcePath = _sourcePath
+        
+        theClone._prefixToNamespaceURI = _prefixToNamespaceURI
+        theClone._namespaceURIToPrefix = _namespaceURIToPrefix
+        theClone._prefixes = _prefixes
+        
         if keepAttachments { theClone.attached = attached }
         for (name, declaration) in internalEntityDeclarations { theClone.internalEntityDeclarations[name] = declaration.clone }
         for (name, declaration) in parameterEntityDeclarations { theClone.parameterEntityDeclarations[name] = declaration.clone }
