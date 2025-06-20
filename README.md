@@ -2144,9 +2144,12 @@ let transformation = XTransformation {
 }
 ```
 
+In the examples above, if the namespace URI is not declared in the source (and no according prefixes set at the elements), then `XDocument.prefix(forNamespaceURI:)` returns `null`, and the code is still valid.
+
 ---
 **NOTE**
 
+- Some XML documents declare a namespace at the top of the document in the form `xmlns="..."` i.e. without a prefix to define the schema to be used for the document. When reading such a document with `recognizeNamespaces: true`, a prefix is created for this namespace and used for all according elements. Be sure to then use this prefix in your code accordingly, see the examples above.
 - If you add an element to a document with a `prefix` property for which a namespace URI is registered, you supposedly want to reference this namespace.
 - If you add an element to a document with a literal prefix (not using the `prefix` property), this prefix will not be used as prefixes by subsequent uses of `register(namespaceURI:withPrefixSuggestion:)` or `registerIndependentPrefix(withPrefixSuggestion:)`, but nothing prevents collisions with previously registered prefixes.
 - When searching for elements by only using a name and not a prefix, only elements with this name _without_ a prefix will be found. E.g. `children("mo")` will not (!) find children which have the name `"mo"` but e.g. the prefix `"math"`. The reason for this is that we want to keep the searching for elements without prefixes be at the same time precise and simple, we do not want to demand writing `children(prefix: nil, "p")` for precision, and this also aligns with direct access to elements like `document.elements("p")` or rules like `XRule(forElements: "p")` that should always be precise in what elements are meant.
