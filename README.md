@@ -2108,15 +2108,15 @@ The resulting output is:
 </a>
 ```
 
-In rules and when searching for content, the according prefixes have to be used:
+When searching for elements with prefixes, those prefixes have to be used:
 
 ```swift
-for element in document.descendants(prefix: document.prefix(forNamespace: "http://www.w3.org/1998/Math/MathML"), "math", "mo", "mi") {
+let mathMLPrefix = myDocument.prefix(forNamespaceURI: "http://www.w3.org/1998/Math/MathML")
+
+for element in document.descendants(prefix: mathMLPrefix, "math", "mo", "mi") {
     print("element \"\(element.name)\" with prefix \"\(element.prefix ?? "")\"")
 }
 ```
-
-There, the method `XDocument.fullPrefix(forNamespace:) -> String` to get the according prefix from the document root.
 
 The resulting output:
 
@@ -2131,7 +2131,7 @@ element "mo" with prefix "math"
 A rule for one of those elements then could be formulated as follows:
 
 ```swift
-let mathMLPrefix = myDocument.prefix(forNamespace: "http://www.w3.org/1998/Math/MathML")
+let mathMLPrefix = myDocument.prefix(forNamespaceURI: "http://www.w3.org/1998/Math/MathML")
 
 let transformation = XTransformation {
 
