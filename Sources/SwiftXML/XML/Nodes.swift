@@ -1676,7 +1676,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     }
 
     func setDocument(document newDocument: XDocument?) {
-
+        
         // set document:
         var node: XNode? = self
         repeat {
@@ -1684,13 +1684,15 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
                 if !(newDocument === element._document) {
                     let namespaceURI = element.namespaceURI
                     element._document?.unregisterElement(element: element)
-                    element._document = newDocument
-                    element._orginalDocument = nil
-                    if let prefix = element._prefix {
-                        if let namespaceURI {
-                            element.prefix = newDocument?.register(namespaceURI: namespaceURI, withPrefixSuggestion: prefix)
+                    if let newDocument {
+                        element._orginalDocument = nil
+                        if let namespaceURI, let prefix = element._prefix {
+                            element.prefix = newDocument.register(namespaceURI: namespaceURI, withPrefixSuggestion: prefix)
                         }
+                    } else if let document {
+                        element._orginalDocument = document
                     }
+                    element._document = newDocument
                     newDocument?.registerElement(element: element)
                 }
             }
