@@ -2157,30 +2157,6 @@ let transformation = XTransformation {
 
 ---
 
-You could also work with namespaces without letting the parse function recognize them (i.e. when `recognizeNamespaces` has the default value `false`):
-
-```swift
-let fullMathMLPrefix = myDocument.fullPrefix(forNamespace: "http://www.w3.org/1998/Math/MathML")
-
-let transformation = XTransformation {
-
-    XRule(forElements: "\(fullMathMLPrefix)mo") { mo in
-        ...
-    }
-
-    ...
-```
-
-If you would like to add a namespace declaration at the root element, use the following method:
-
-```swift
-XDocument.setNamespace(:withPossiblyFullPrefix:)
-```
-
-Here the prefix might be a “full” prefix, i.e. it could contain a closing `:`. An existing namespace declaration for the same namespace but with another prefix is not (!) removed.
-
-Note these helper methods for getting and setting namespace prefix definitions are also avalaible for an element.
-
 ### Using async/await
 
 You can use `traverse` with closures using `await`. And you can use the `async` property of the [Swift Async Algorithms package](https://github.com/apple/swift-async-algorithms) (giving a `AsyncLazySequence`) to apply `map` etc. with closures using `await` (e.g. `element.children.async.map { await a.f($0) }`).
