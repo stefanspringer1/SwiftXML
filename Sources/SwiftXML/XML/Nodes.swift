@@ -1808,7 +1808,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     
     public func shallowClone(keepAttachments: Bool = false) -> XElement {
         let theClone = XElement(prefix: _prefix, _name)
-        theClone._orginalDocument = _document
+        theClone._orginalDocument = _document ?? _orginalDocument
         theClone._backlink = self
         theClone._sourceRange = self._sourceRange
         theClone.copyAttributes(from: self)

@@ -684,6 +684,55 @@ final class NamespacesTests: XCTestCase {
         
     }
     
+    func testNamespaceOfRemovedElementOrClone() throws {
+        
+        let mathMLNamespaceURI = "http://www.w3.org/1998/Math/MathML"
+        
+        let source = """
+            <document xmlns:math="\(mathMLNamespaceURI)">
+                <math:math><math:mi>x</math:mi></math:math>
+            </document>
+            """
+        
+        var document: XDocument? = try parseXML(fromText: source, recognizeNamespaces: true, keepComments: true)
+        
+        let math = document?.descendants(prefix: "math").first
+        XCTAssertNotNil(math)
+        
+        XCTAssertEqual(math?.prefix, "math")
+        XCTAssertEqual(math?.namespaceURI, mathMLNamespaceURI)
+        
+        let cloneBeforeRemoval = math?.clone
+        
+        // remove:
+        math?.remove(); math?.remove() // even calling it twice
+        
+        let cloneAfterRemoval = math?.clone
+        let cloneOfCloneAfterRemoval = cloneAfterRemoval?.clone
+        
+        // prefix is kept and still knowing the namespace:
+        XCTAssertEqual(math?.prefix, "math")
+        XCTAssertEqual(cloneBeforeRemoval?.prefix, "math")
+        XCTAssertEqual(cloneAfterRemoval?.prefix, "math")
+        XCTAssertEqual(cloneOfCloneAfterRemoval?.prefix, "math")
+        XCTAssertEqual(math?.namespaceURI, mathMLNamespaceURI)
+        XCTAssertEqual(cloneBeforeRemoval?.namespaceURI, mathMLNamespaceURI)
+        XCTAssertEqual(cloneAfterRemoval?.namespaceURI, mathMLNamespaceURI)
+        XCTAssertEqual(cloneOfCloneAfterRemoval?.namespaceURI, mathMLNamespaceURI)
+        
+        // discarding the document:
+        document = nil
+        // now, the prefix is still there, but the namespace is unknwon:
+        XCTAssertEqual(math?.prefix, "math")
+        XCTAssertEqual(cloneBeforeRemoval?.prefix, "math")
+        XCTAssertEqual(cloneAfterRemoval?.prefix, "math")
+        XCTAssertEqual(cloneOfCloneAfterRemoval?.prefix, "math")
+        XCTAssertEqual(math?.namespaceURI, nil)
+        XCTAssertEqual(cloneBeforeRemoval?.namespaceURI, nil)
+        XCTAssertEqual(cloneAfterRemoval?.namespaceURI, nil)
+        XCTAssertEqual(cloneOfCloneAfterRemoval?.namespaceURI, nil)
+    }
+    
     func testAvoidingLiteralPrefixes1() throws {
         
         let root = XElement("math:a") // element starts with a name with a literal prefix
