@@ -129,7 +129,7 @@ final class NamespacesTests: XCTestCase {
             </a:a>
             """)
         
-        XCTAssertEqual(document.serialized(pretty: true, prefixTranslations: ["a": ""]), """
+        XCTAssertEqual(document.serialized(pretty: true, usingPrefixTranslations: ["a": ""]), """
             <a xmlns="http://a" xmlns:c="http://c"><x:x/>
                 <b>
                     <c:c>
@@ -139,7 +139,7 @@ final class NamespacesTests: XCTestCase {
             </a>
             """)
         
-        XCTAssertEqual(document.serialized(pretty: true, prefixesForNamespaceURIs: ["http://a": ""]), """
+        XCTAssertEqual(document.serialized(pretty: true, usingPrefixesForNamespaceURIs: ["http://a": ""]), """
             <a xmlns="http://a" xmlns:c="http://c"><x:x/>
                 <b>
                     <c:c>
@@ -149,7 +149,7 @@ final class NamespacesTests: XCTestCase {
             </a>
             """)
         
-        XCTAssertEqual(document.serialized(pretty: true, prefixesForNamespaceURIs: ["http://a": ""], prefixTranslations: ["x": ""]), """
+        XCTAssertEqual(document.serialized(pretty: true, usingPrefixesForNamespaceURIs: ["http://a": ""], usingPrefixTranslations: ["x": ""]), """
             <a xmlns="http://a" xmlns:c="http://c"><x/>
                 <b>
                     <c:c>

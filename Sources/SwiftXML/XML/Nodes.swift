@@ -431,8 +431,8 @@ public class XNode {
     public func write(
         toWriter writer: Writer,
         usingProductionTemplate productionTemplate: XProductionTemplate? = nil,
-        prefixesForNamespaceURIs: [String:String]? = nil,
-        prefixTranslations: [String:String]? = nil
+        usingPrefixesForNamespaceURIs prefixesForNamespaceURIs: [String:String]? = nil,
+        usingPrefixTranslations prefixTranslations: [String:String]? = nil
     ) throws {
         let completePrefixTranslations = getCompletePrefixTranslations(prefixTranslations: prefixTranslations, prefixesForNamespaceURIs: prefixesForNamespaceURIs, forNode: self)
         let productionTemplate = productionTemplate ?? DefaultProductionTemplate(prefixTranslations: completePrefixTranslations)
@@ -443,8 +443,8 @@ public class XNode {
     public func write(
         toFile fileHandle: FileHandle,
         usingProductionTemplate productionTemplate: XProductionTemplate? = nil,
-        prefixesForNamespaceURIs: [String:String]? = nil,
-        prefixTranslations: [String:String]? = nil
+        usingPrefixesForNamespaceURIs prefixesForNamespaceURIs: [String:String]? = nil,
+        usingPrefixTranslations prefixTranslations: [String:String]? = nil
     ) throws {
         let completePrefixTranslations = getCompletePrefixTranslations(prefixTranslations: prefixTranslations, prefixesForNamespaceURIs: prefixesForNamespaceURIs, forNode: self)
         let productionTemplate = productionTemplate ?? DefaultProductionTemplate(prefixTranslations: completePrefixTranslations)
@@ -454,8 +454,8 @@ public class XNode {
     public func write(
         toPath path: String,
         usingProductionTemplate productionTemplate: XProductionTemplate? = nil,
-        prefixesForNamespaceURIs: [String:String]? = nil,
-        prefixTranslations: [String:String]? = nil
+        usingPrefixesForNamespaceURIs prefixesForNamespaceURIs: [String:String]? = nil,
+        usingPrefixTranslations prefixTranslations: [String:String]? = nil
     ) throws {
         let completePrefixTranslations = getCompletePrefixTranslations(prefixTranslations: prefixTranslations, prefixesForNamespaceURIs: prefixesForNamespaceURIs, forNode: self)
         let productionTemplate = productionTemplate ?? DefaultProductionTemplate(prefixTranslations: completePrefixTranslations)
@@ -476,8 +476,8 @@ public class XNode {
     public func write(
         toURL url: URL,
         usingProductionTemplate productionTemplate: XProductionTemplate? = nil,
-        prefixesForNamespaceURIs: [String:String]? = nil,
-        prefixTranslations: [String:String]? = nil
+        usingPrefixesForNamespaceURIs prefixesForNamespaceURIs: [String:String]? = nil,
+        usinPrefixTranslations prefixTranslations: [String:String]? = nil
     ) throws {
         let completePrefixTranslations = getCompletePrefixTranslations(prefixTranslations: prefixTranslations, prefixesForNamespaceURIs: prefixesForNamespaceURIs, forNode: self)
         let productionTemplate = productionTemplate ?? DefaultProductionTemplate(prefixTranslations: completePrefixTranslations)
@@ -487,8 +487,8 @@ public class XNode {
     public func write(
         to writeTarget: WriteTarget,
         usingProductionTemplate productionTemplate: XProductionTemplate? = nil,
-        prefixesForNamespaceURIs: [String:String]? = nil,
-        prefixTranslations: [String:String]? = nil
+        usingPrefixesForNamespaceURIs prefixesForNamespaceURIs: [String:String]? = nil,
+        usingPrefixTranslations prefixTranslations: [String:String]? = nil
     ) throws {
         let completePrefixTranslations = getCompletePrefixTranslations(prefixTranslations: prefixTranslations, prefixesForNamespaceURIs: prefixesForNamespaceURIs, forNode: self)
         let productionTemplate = productionTemplate ?? DefaultProductionTemplate(prefixTranslations: completePrefixTranslations)
@@ -516,8 +516,8 @@ public class XNode {
         pretty: Bool = false,
         indentation: String = X_DEFAULT_INDENTATION,
         terminator: String = "\n",
-        prefixesForNamespaceURIs: [String:String]? = nil,
-        prefixTranslations: [String:String]? = nil
+        usingPrefixesForNamespaceURIs prefixesForNamespaceURIs: [String:String]? = nil,
+        usingPrefixTranslations prefixTranslations: [String:String]? = nil
     ) {
         let completePrefixTranslations = getCompletePrefixTranslations(prefixTranslations: prefixTranslations, prefixesForNamespaceURIs: prefixesForNamespaceURIs, forNode: self)
         echo(usingProductionTemplate: pretty ? PrettyPrintProductionTemplate(indentation: indentation, prefixTranslations: completePrefixTranslations) : DefaultProductionTemplate(prefixTranslations: completePrefixTranslations), terminator: terminator)
@@ -541,8 +541,8 @@ public class XNode {
     public func serialized(
         pretty: Bool = false,
         indentation: String = X_DEFAULT_INDENTATION,
-        prefixesForNamespaceURIs: [String:String]? = nil,
-        prefixTranslations: [String:String]? = nil
+        usingPrefixesForNamespaceURIs prefixesForNamespaceURIs: [String:String]? = nil,
+        usingPrefixTranslations prefixTranslations: [String:String]? = nil
     ) -> String {
         let completePrefixTranslations = getCompletePrefixTranslations(prefixTranslations: prefixTranslations, prefixesForNamespaceURIs: prefixesForNamespaceURIs, forNode: self)
         return serialized(usingProductionTemplate: pretty ? PrettyPrintProductionTemplate(indentation: indentation, prefixTranslations: completePrefixTranslations) : DefaultProductionTemplate(prefixTranslations: completePrefixTranslations))
