@@ -263,6 +263,7 @@ Reading from a URL which references a local file:
 func parseXML(
     fromURL: URL,
     recognizeNamespaces: Bool = false,
+    noPrefixForPrefixlessNamespaceAtRoot: Bool = false,
     registeringAttributes attributeRegisterMode: AttributeRegisterMode = .none,
     sourceInfo: String? = nil,
     textAllowedInElementWithName: ((String) -> Bool)? = nil,
