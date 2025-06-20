@@ -2076,7 +2076,7 @@ On the other hand, an element with a colon in its orginal name whose literal pre
 
 The namespaces with their prefixes are registerd at the document, according namespace attributes are not (!) set in the tree and only appear in a serialization of the document or parts of it (they appear after every other attribute at the top element of the serialization). To register a new namespace with its prefix, use the method `XDocument.register(namespaceURI:withPrefixSuggestion:)` which returns the actual prefix being used.
 
-During serialization, every prefix value which is not `null` is written as the prefix of the name (with a separating colon). Use the arguments `prefixesForNamespaceURIs:` and `prefixTranslations:` of the serialization and output methods to change prefixes in the serialization, where an empty String value means not outputting a prefix. (Be careful with those settings as there is no check for consistency.)
+During serialization, every prefix value which is not `null` is written as the prefix of the name (with a separating colon). Use the arguments `usingPrefixesForNamespaceURIs:` and `usingPrefixTranslations:` of the serialization and output methods to change prefixes in the serialization, where an empty String value means not outputting a prefix. (Be careful with those settings as there is no check for consistency.)
 
 When moving elements between documents, missing namespaces with their prefixes are added to the target document, and prefixes of the moved elements are adjusted if necessary. For a removed or cloned element, the according namespace URI can still be found as long as the orginal document still exists and has not changed this value, so the element then behaves the same as being directly moved between documents.
 
