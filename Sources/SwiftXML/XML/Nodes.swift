@@ -1686,9 +1686,12 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
                     element._document?.unregisterElement(element: element)
                     element._document = newDocument
                     element._orginalDocument = nil
-                    if let namespaceURI, let prefix = element._prefix,
-                       let newPrefix = newDocument?.register(namespaceURI: namespaceURI, withPrefixSuggestion: prefix) {
-                        element.prefix = newPrefix
+                    if let prefix = element._prefix {
+                        if let namespaceURI {
+                            element.prefix = newDocument?.register(namespaceURI: namespaceURI, withPrefixSuggestion: prefix)
+                        } else {
+                            newDocument?.register(fixedPrefix: prefix)
+                        }
                     }
                     newDocument?.registerElement(element: element)
                 }

@@ -308,6 +308,14 @@ public final class XDocument: XNode, XBranchInternal {
     public func namespaceURI(forPrefix prefix: String) -> String? { _prefixToNamespaceURI[prefix] }
     public var namespacePrefixesAndURIs: [(String,String)] { _namespaceURIToPrefix.sorted(by: <) }
     
+    /// This method can be used to force-register a fixed prefix.
+    /// Whenever possible, use `registerIndependentPrefix(withPrefixSuggestion:)` instead to avoid collisions.
+    public func register(fixedPrefix prefix: String) {
+        _prefixes.insert(prefix)
+    }
+    
+    /// The function returns the actual prefix to be used to avoid collisions.
+    /// This should be used whenever you need an independent prefix and you are not fixed on a specific value.
     public func registerIndependentPrefix(withPrefixSuggestion suggstedPrefix: String) -> String {
         var postfix = 1
         var prefix = suggstedPrefix
@@ -327,10 +335,10 @@ public final class XDocument: XNode, XBranchInternal {
     
     // returns the actual prefix
     public func register(namespaceURI: String, withPrefixSuggestion suggstedPrefix: String) -> String {
-        let prefix: String
         if let existingPrefix = _namespaceURIToPrefix[namespaceURI] {
-            prefix = existingPrefix
+            return existingPrefix
         } else {
+            let prefix: String
             var maybePrefix = suggstedPrefix
             var postfix = 1
             while _prefixes.contains(maybePrefix) {
@@ -341,8 +349,8 @@ public final class XDocument: XNode, XBranchInternal {
             _prefixes.insert(prefix)
             _namespaceURIToPrefix[namespaceURI] = prefix
             _prefixToNamespaceURI[prefix] = namespaceURI
+            return prefix
         }
-        return prefix
     }
     
     public func unregister(namespaceURI: String) {
