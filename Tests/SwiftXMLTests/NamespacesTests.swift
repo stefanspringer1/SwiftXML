@@ -160,6 +160,51 @@ final class NamespacesTests: XCTestCase {
             """)
     }
     
+    func testIgnorePrefixlessNamespaceAtRoot() throws {
+        
+        let source = """
+            <a xmlns="http://a">
+                <b>
+                    <c xmlns="http://c">
+                        <d/>
+                    </c>
+                </b>
+            </a>
+            """
+        
+        do {
+            let document = try parseXML(fromText: source, recognizeNamespaces: true)
+            XCTAssertEqual(document.namespacePrefixesAndURIs.map{ "\"\($0.0)\" -> \"\($0.1)\"" }.joined(separator: ", "), #""a" -> "http://a", "c" -> "http://c""#)
+            XCTAssertEqual(document.firstChild?["xmlns"], nil)
+            XCTAssertEqual(document.firstChild?.prefix, "a")
+            XCTAssertEqual(document.serialized, """
+            <a:a xmlns:a="http://a" xmlns:c="http://c">
+                <a:b>
+                    <c:c>
+                        <c:d/>
+                    </c:c>
+                </a:b>
+            </a:a>
+            """)
+        }
+        
+        do {
+            let document = try parseXML(fromText: source, recognizeNamespaces: true, ignorePrefixlessNamespaceAtRoot: true)
+            XCTAssertEqual(document.namespacePrefixesAndURIs.map{ "\"\($0.0)\" -> \"\($0.1)\"" }.joined(separator: ", "), #""" -> "http://a", "c" -> "http://c""#)
+            XCTAssertEqual(document.firstChild?["xmlns"], nil)
+            XCTAssertEqual(document.firstChild?.prefix, nil)
+            XCTAssertEqual(document.serialized, """
+            <a xmlns="http://a" xmlns:c="http://c">
+                <b>
+                    <c:c>
+                        <c:d/>
+                    </c:c>
+                </b>
+            </a>
+            """)
+        }
+    }
+    
     func testNamespaceSearchVariations() throws {
     
         let source = """

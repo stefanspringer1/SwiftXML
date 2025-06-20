@@ -32,6 +32,7 @@ public final class XParseBuilder: XEventHandler {
 
     let document: XDocument
     let recognizeNamespaces: Bool
+    let ignorePrefixlessNamespaceAtRoot: Bool
     let keepComments: Bool
     let keepCDATASections: Bool
     let externalWrapperElement: String?
@@ -47,6 +48,7 @@ public final class XParseBuilder: XEventHandler {
     public init(
         document: XDocument,
         recognizeNamespaces: Bool = false,
+        ignorePrefixlessNamespaceAtRoot: Bool = false,
         keepComments: Bool = false,
         keepCDATASections: Bool = false,
         externalWrapperElement: String? = nil
@@ -54,6 +56,7 @@ public final class XParseBuilder: XEventHandler {
         
         self.document = document
         self.recognizeNamespaces = recognizeNamespaces
+        self.ignorePrefixlessNamespaceAtRoot = ignorePrefixlessNamespaceAtRoot
         self.keepComments = keepComments
         self.keepCDATASections = keepCDATASections
         self.externalWrapperElement = externalWrapperElement
@@ -135,11 +138,16 @@ public final class XParseBuilder: XEventHandler {
                     proposedPrefix = existingPrefix ?? originalPrefix
                 } else if attributeName == "xmlns" {
                     uri = attributes[attributeName]
-                    existingPrefix = resultingNamespaceURIToPrefix[uri!]
-                    originalPrefix = ""
-                    proposedPrefix = existingPrefix ?? makePrefix(forName: name, andURI: uri!)
-                    element.attached["prefixFreeNS"] = true
-                    prefixFreeNSURIsCount += 1
+                    if ignorePrefixlessNamespaceAtRoot && currentBranch is XDocument {
+                        resultingNamespaceURIToPrefix[uri!] = ""
+                        attributes[attributeName] = nil
+                    } else {
+                        existingPrefix = resultingNamespaceURIToPrefix[uri!]
+                        originalPrefix = ""
+                        proposedPrefix = existingPrefix ?? makePrefix(forName: name, andURI: uri!)
+                        element.attached["prefixFreeNS"] = true
+                        prefixFreeNSURIsCount += 1
+                    }
                 }
                 
                 if let uri, let originalPrefix, let proposedPrefix {
@@ -148,6 +156,7 @@ public final class XParseBuilder: XEventHandler {
                         var resultingPrefix = proposedPrefix
                         var avoidPrefixClashCount = 1
                         while prefixes.contains(resultingPrefix) {
+                            print("prefixes.contains [\(resultingPrefix)]")
                             avoidPrefixClashCount += 1
                             resultingPrefix = "\(proposedPrefix)\(avoidPrefixClashCount)"
                         }

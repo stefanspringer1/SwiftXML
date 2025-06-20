@@ -1837,16 +1837,17 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     public var prefix: String? {
         get { _prefix }
         set(newPrefix) {
-            if newPrefix != _prefix {
+            let actualPrefix = newPrefix?.isEmpty == true ? nil : newPrefix
+            if actualPrefix != _prefix {
                 if let theDocument = _document {
                     gotoPreviousOnNameIterators()
                     for nameIterator in nameIterators { _ = nameIterator.previous() }
                     theDocument.unregisterElement(element: self)
-                    _prefix = newPrefix
+                    _prefix = actualPrefix
                     theDocument.registerElement(element: self)
                 }
                 else {
-                    _prefix = newPrefix
+                    _prefix = actualPrefix
                 }
             }
         }
@@ -1881,17 +1882,18 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     }
     
     public func set(prefix: String?, name: String) {
-        if prefix != _prefix || name != _name {
+        let actualPrefix = prefix?.isEmpty == true ? nil : prefix
+        if actualPrefix != _prefix || name != _name {
             if let theDocument = _document {
                 gotoPreviousOnNameIterators()
                 for nameIterator in nameIterators { _ = nameIterator.previous() }
                 theDocument.unregisterElement(element: self)
-                _prefix = prefix
+                _prefix = actualPrefix
                 _name = name
                 theDocument.registerElement(element: self)
             }
             else {
-                _prefix = prefix
+                _prefix = actualPrefix
                 _name = name
             }
         }

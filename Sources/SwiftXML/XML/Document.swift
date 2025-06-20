@@ -306,7 +306,7 @@ public final class XDocument: XNode, XBranchInternal {
     
     public func prefix(forNamespaceURI namespaceURI: String) -> String? { _namespaceURIToPrefix[namespaceURI] }
     public func namespaceURI(forPrefix prefix: String) -> String? { _prefixToNamespaceURI[prefix] }
-    public var namespacePrefixesAndURIs: [(String,String)] { _namespaceURIToPrefix.sorted(by: <) }
+    public var namespacePrefixesAndURIs: [(String,String)] { _prefixToNamespaceURI.sorted(by: <) }
     
     /// This method can be used to force-register a fixed prefix.
     /// Whenever possible, use `registerIndependentPrefix(withPrefixSuggestion:)` instead to avoid collisions.

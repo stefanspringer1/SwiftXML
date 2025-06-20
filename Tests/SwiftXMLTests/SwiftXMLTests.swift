@@ -796,7 +796,7 @@ final class SwiftXMLTests: XCTestCase {
                 .joined(separator: ", "),
             "\"\(document.prefix(forNamespaceURI: "http://b") ?? "")\""
         ].joined(separator: "\n"), """
-        prefix "http://a" for namespace "a", prefix "http://b" for namespace "b"
+        prefix "a" for namespace "http://a", prefix "b" for namespace "http://b"
         "b"
         """)
     }

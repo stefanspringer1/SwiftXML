@@ -322,6 +322,8 @@ open class ActiveDefaultProduction: XActiveProduction {
                     } else {
                         attributeName = "xmlns:\(translatedPrefix)"
                     }
+                } else if prefix.isEmpty {
+                    attributeName = "xmlns"
                 } else {
                     attributeName = "xmlns:\(prefix)"
                 }
