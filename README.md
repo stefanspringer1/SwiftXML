@@ -2068,7 +2068,7 @@ When transforming elements, it might be convenient to keep the identity of trans
 
 The handling of namespaces differs from other libraries for XML in that the prefix plays a more prominent role.
 
-Elements can have prefixes, which are not only useful for referencing namespaces, but can also be used independently of namespaces to distinguish between elements with the same name during the processing of a document. (If you need some prefix independently of namespaces, use `registerIndependentPrefix(withPrefixSuggestion:)` which returns an actual prefix to be used.) Prefixes are crucial for direct access to elements and thus also differentiate the rules accordingly.
+Elements can have prefixes, which are not only useful for referencing namespaces, but can also be used independently of namespaces to distinguish between elements with the same name during the processing of a document. (If you need some prefix independently of namespaces, use `XDocument.registerIndependentPrefix(withPrefixSuggestion:)` which returns an actual prefix to be used.) Prefixes are crucial for direct access to elements and thus also differentiate the rules accordingly.
 
 When reading a document, namespace prefix definitions are only recognized if the argument `recognizeNamespaces` is set to `true` in the call of the parse function used. An element that uses a namespace prefix defined in its context then gets the name _without_ the prefix (and without the separating colon), the prefix is separately stored in the `prefix` property of the element (which by default is `nil`). The actual prefixes might get changed during this process to avoid multiple prefix definitions for the same namespace URI or collisions.
 
@@ -2145,14 +2145,13 @@ let transformation = XTransformation {
 ---
 **NOTE**
 
-- For namespace definitons of the form `xmlns="..."` in the input, a namespace prefix is set (if not already defined for the URI, the name of the element is used, maybe with a number added).
+- If you add elements with literal prefixes (not using the `prefix` property) or with actual prefixes (using the `prefix` property), those prefixes will not be used as prefixes by subsequent uses of `register(namespaceURI:,withPrefixSuggestion:)` or `registerIndependentPrefix(withPrefixSuggestion:)`, but nothing prevents collisions with previously registered prefixes.
 - When searching for elements by only using a name and not a prefix, only elements with this name _without_ a prefix will be found. E.g. `children("mo")` will not (!) find children which have the name `"mo"` but e.g. the prefix `"math"`. The reason for this is that we want to keep the searching for elements without prefixes be at the same time precise and simple, we do not want to demand writing `children(prefix: nil, "p")` for precision, and this also aligns with direct access to elements like `document.elements("p")` or rules like `XRule(forElements: "p")` that should always be precise in what elements are meant.
 - On the other hand, the direct comparison with the name of an element just compares the name and disregards the prefix. You might want to write e.g. `(element.prefix, element.name) == (prefix, name)` or `(element.prefix, element.name) == (nil, name)` in some cases to be more precise. (A qualified name is not introduced because we want to avoid exhaustive composing of names with prefixes in code which uses this library.)
 - You can also search only by prefix e.g. by `descendant(prefix: myPrefix)`.
 - If you use these methods without any arguments e.g. `descendants()` note that _only elements without prefix are found,_ this is different from using the according property e.g. `descendants`.
 - You might change prefix and name at the same time by using `XElement.set(prefix:name:)` or compare both prefix and name via `XElement.has(prefix:name:)`.
 - You can freely use prefixes that are not defined, e.g. to allow rules to only apply to certain parts. Example: Duplicate formulas using different prefixes to transform them into two different outputs according to the prefixes inside the same document.
-- Literal prefixes not having a defined namespace (“dead” prefixes) are being reserved without notice and kept different from prefixes with defined namespaces, so an unintentional change of meaning of those elements is avoided.
 - In the current state of the library, no namespace handling of attributes is available.
 
 ---

@@ -1689,8 +1689,6 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
                     if let prefix = element._prefix {
                         if let namespaceURI {
                             element.prefix = newDocument?.register(namespaceURI: namespaceURI, withPrefixSuggestion: prefix)
-                        } else {
-                            newDocument?.register(fixedPrefix: prefix)
                         }
                     }
                     newDocument?.registerElement(element: element)

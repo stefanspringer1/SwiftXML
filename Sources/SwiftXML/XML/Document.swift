@@ -374,6 +374,7 @@ public final class XDocument: XNode, XBranchInternal {
         // register via name:
         let name = element.name
         if let prefix = element.prefix {
+            register(fixedPrefix: prefix)
             if let theLast = _elementsOfPrefixAndName_last[prefix,name] {
                 theLast.nextWithSameName = element
                 element.previousWithSameName = theLast
@@ -383,6 +384,9 @@ public final class XDocument: XNode, XBranchInternal {
             }
             _elementsOfPrefixAndName_last[prefix,name] = element
         } else {
+            if let colon = name.firstIndex(of: ":") {
+                register(fixedPrefix: String(name[..<colon]))
+            }
             if let theLast = _elementsOfName_last[name] {
                 theLast.nextWithSameName = element
                 element.previousWithSameName = theLast

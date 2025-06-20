@@ -619,6 +619,55 @@ final class NamespacesTests: XCTestCase {
         
     }
     
+    func testAvoidingLiteralPrefixes1() throws {
+        
+        let root = XElement("math:a") // element starts with a name with a literal prefix
+        let document = XDocument {
+            root
+        }
+        
+        // The registered prefix will not (!) be "math" to avoid the collision with the literal prefix "math":
+        let mathMLPrefix = document.register(namespaceURI: "http://www.w3.org/1998/Math/MathML", withPrefixSuggestion: "math")
+        
+        root.add {
+            XElement(prefix: mathMLPrefix, "math")
+        }
+        
+        XCTAssertEqual(
+            document.serialized(pretty: true), """
+            <math:a xmlns:math2="http://www.w3.org/1998/Math/MathML">
+              <math2:math/>
+            </math:a>
+            """
+        )
+        
+    }
+    
+    func testAvoidingLiteralPrefixes2() throws {
+        
+        let root = XElement("a") // element starts with a name without a literal prefix
+        let document = XDocument {
+            root
+        }
+        root.name = "math:a" // the literal prefix is set when the element is already in the document
+        
+        // The registered prefix will not (!) be "math" to avoid the collision with the literal prefix "math":
+        let mathMLPrefix = document.register(namespaceURI: "http://www.w3.org/1998/Math/MathML", withPrefixSuggestion: "math")
+        
+        root.add {
+            XElement(prefix: mathMLPrefix, "math")
+        }
+        
+        XCTAssertEqual(
+            document.serialized(pretty: true), """
+            <math:a xmlns:math2="http://www.w3.org/1998/Math/MathML">
+              <math2:math/>
+            </math:a>
+            """
+        )
+        
+    }
+    
     func testNamespacesFromReadme() throws {
         
         let source = """
