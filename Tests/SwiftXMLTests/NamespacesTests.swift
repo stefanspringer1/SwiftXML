@@ -160,7 +160,7 @@ final class NamespacesTests: XCTestCase {
             """)
     }
     
-    func testIgnorePrefixlessNamespaceAtRoot() throws {
+    func testNoPrefixForPrefixlessNamespaceAtRoot() throws {
         
         let source = """
             <a xmlns="http://a">
@@ -173,35 +173,55 @@ final class NamespacesTests: XCTestCase {
             """
         
         do {
+            // normal reading while recognizing namespaces:
             let document = try parseXML(fromText: source, recognizeNamespaces: true)
             XCTAssertEqual(document.namespacePrefixesAndURIs.map{ "\"\($0.0)\" -> \"\($0.1)\"" }.joined(separator: ", "), #""a" -> "http://a", "c" -> "http://c""#)
             XCTAssertEqual(document.firstChild?["xmlns"], nil)
             XCTAssertEqual(document.firstChild?.prefix, "a")
             XCTAssertEqual(document.serialized, """
-            <a:a xmlns:a="http://a" xmlns:c="http://c">
-                <a:b>
-                    <c:c>
-                        <c:d/>
-                    </c:c>
-                </a:b>
-            </a:a>
-            """)
+                <a:a xmlns:a="http://a" xmlns:c="http://c">
+                    <a:b>
+                        <c:c>
+                            <c:d/>
+                        </c:c>
+                    </a:b>
+                </a:a>
+                """)
+            // just manipulating the output:
+            XCTAssertEqual(document.serialized(usingPrefixesForNamespaceURIs: ["http://a": ""]), """
+                <a xmlns="http://a" xmlns:c="http://c">
+                    <b>
+                        <c:c>
+                            <c:d/>
+                        </c:c>
+                    </b>
+                </a>
+                """)
         }
         
         do {
-            let document = try parseXML(fromText: source, recognizeNamespaces: true, ignorePrefixlessNamespaceAtRoot: true)
+            // no prefix for prefixless namespace at root:
+            let document = try parseXML(fromText: source, recognizeNamespaces: true, noPrefixForPrefixlessNamespaceAtRoot: true)
             XCTAssertEqual(document.namespacePrefixesAndURIs.map{ "\"\($0.0)\" -> \"\($0.1)\"" }.joined(separator: ", "), #""" -> "http://a", "c" -> "http://c""#)
             XCTAssertEqual(document.firstChild?["xmlns"], nil)
             XCTAssertEqual(document.firstChild?.prefix, nil)
             XCTAssertEqual(document.serialized, """
-            <a xmlns="http://a" xmlns:c="http://c">
-                <b>
-                    <c:c>
-                        <c:d/>
-                    </c:c>
-                </b>
-            </a>
-            """)
+                <a xmlns="http://a" xmlns:c="http://c">
+                    <b>
+                        <c:c>
+                            <c:d/>
+                        </c:c>
+                    </b>
+                </a>
+                """)
+            // writing just <b>:
+            XCTAssertEqual(document.firstChild?.firstChild?.serialized, """
+                <b xmlns="http://a" xmlns:c="http://c">
+                        <c:c>
+                            <c:d/>
+                        </c:c>
+                    </b>
+                """)
         }
     }
     
