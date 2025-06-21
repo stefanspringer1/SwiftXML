@@ -129,7 +129,7 @@ final class NamespacesTests: XCTestCase {
             </a:a>
             """)
         
-        XCTAssertEqual(document.serialized(pretty: true, usingPrefixTranslations: ["a": ""]), """
+        XCTAssertEqual(document.serialized(pretty: true, overwritingPrefixes: ["a": ""]), """
             <a xmlns="http://a" xmlns:c="http://c"><x:x/>
                 <b>
                     <c:c>
@@ -139,7 +139,7 @@ final class NamespacesTests: XCTestCase {
             </a>
             """)
         
-        XCTAssertEqual(document.serialized(pretty: true, usingPrefixesForNamespaceURIs: ["http://a": ""]), """
+        XCTAssertEqual(document.serialized(pretty: true, overwritingPrefixesForNamespaceURIs: ["http://a": ""]), """
             <a xmlns="http://a" xmlns:c="http://c"><x:x/>
                 <b>
                     <c:c>
@@ -149,7 +149,7 @@ final class NamespacesTests: XCTestCase {
             </a>
             """)
         
-        XCTAssertEqual(document.serialized(pretty: true, usingPrefixesForNamespaceURIs: ["http://a": ""], usingPrefixTranslations: ["x": ""]), """
+        XCTAssertEqual(document.serialized(pretty: true, overwritingPrefixesForNamespaceURIs: ["http://a": ""], overwritingPrefixes: ["x": ""]), """
             <a xmlns="http://a" xmlns:c="http://c"><x/>
                 <b>
                     <c:c>
@@ -188,7 +188,7 @@ final class NamespacesTests: XCTestCase {
                 </a:a>
                 """)
             // just manipulating the output:
-            XCTAssertEqual(document.serialized(usingPrefixesForNamespaceURIs: ["http://a": ""]), """
+            XCTAssertEqual(document.serialized(overwritingPrefixesForNamespaceURIs: ["http://a": ""]), """
                 <a xmlns="http://a" xmlns:c="http://c">
                     <b>
                         <c:c>

@@ -431,40 +431,48 @@ public class XNode {
     public func write(
         toWriter writer: Writer,
         usingProductionTemplate productionTemplate: XProductionTemplate? = nil,
-        usingPrefixesForNamespaceURIs prefixesForNamespaceURIs: [String:String]? = nil,
-        usingPrefixTranslations prefixTranslations: [String:String]? = nil
+        overwritingPrefixesForNamespaceURIs prefixesForNamespaceURIs: [String:String]? = nil,
+        overwritingPrefixes prefixTranslations: [String:String]? = nil,
     ) throws {
         let completePrefixTranslations = getCompletePrefixTranslations(prefixTranslations: prefixTranslations, prefixesForNamespaceURIs: prefixesForNamespaceURIs, forNode: self)
-        let productionTemplate = productionTemplate ?? DefaultProductionTemplate(prefixTranslations: completePrefixTranslations)
-        let activeProduction = productionTemplate.activeProduction(for: writer, withStartElement: self as? XElement ?? (self as? XDocument)?.firstChild)
+        let productionTemplate = productionTemplate ?? DefaultProductionTemplate()
+        let activeProduction = productionTemplate.activeProduction(for: writer, withStartElement: self as? XElement ?? (self as? XDocument)?.firstChild, prefixTranslations: completePrefixTranslations)
         try self.applyProduction(activeProduction: activeProduction)
     }
     
     public func write(
         toFile fileHandle: FileHandle,
         usingProductionTemplate productionTemplate: XProductionTemplate? = nil,
-        usingPrefixesForNamespaceURIs prefixesForNamespaceURIs: [String:String]? = nil,
-        usingPrefixTranslations prefixTranslations: [String:String]? = nil
+        overwritingPrefixesForNamespaceURIs prefixesForNamespaceURIs: [String:String]? = nil,
+        overwritingPrefixes prefixTranslations: [String:String]? = nil
     ) throws {
-        let completePrefixTranslations = getCompletePrefixTranslations(prefixTranslations: prefixTranslations, prefixesForNamespaceURIs: prefixesForNamespaceURIs, forNode: self)
-        let productionTemplate = productionTemplate ?? DefaultProductionTemplate(prefixTranslations: completePrefixTranslations)
-        try write(toWriter: FileWriter(fileHandle), usingProductionTemplate: productionTemplate)
+        let productionTemplate = productionTemplate ?? DefaultProductionTemplate()
+        try write(
+            toWriter: FileWriter(fileHandle),
+            usingProductionTemplate: productionTemplate,
+            overwritingPrefixesForNamespaceURIs: prefixesForNamespaceURIs,
+            overwritingPrefixes: prefixTranslations
+        )
     }
     
     public func write(
         toPath path: String,
         usingProductionTemplate productionTemplate: XProductionTemplate? = nil,
-        usingPrefixesForNamespaceURIs prefixesForNamespaceURIs: [String:String]? = nil,
-        usingPrefixTranslations prefixTranslations: [String:String]? = nil
+        overwritingPrefixesForNamespaceURIs prefixesForNamespaceURIs: [String:String]? = nil,
+        overwritingPrefixes prefixTranslations: [String:String]? = nil
     ) throws {
-        let completePrefixTranslations = getCompletePrefixTranslations(prefixTranslations: prefixTranslations, prefixesForNamespaceURIs: prefixesForNamespaceURIs, forNode: self)
-        let productionTemplate = productionTemplate ?? DefaultProductionTemplate(prefixTranslations: completePrefixTranslations)
+        let productionTemplate = productionTemplate ?? DefaultProductionTemplate()
         let fileManager = FileManager.default
         
         fileManager.createFile(atPath: path,  contents:Data("".utf8), attributes: nil)
         
         if let fileHandle = FileHandle(forWritingAtPath: path) {
-            try write(toFile: fileHandle, usingProductionTemplate: productionTemplate)
+            try write(
+                toFile: fileHandle,
+                usingProductionTemplate: productionTemplate,
+                overwritingPrefixesForNamespaceURIs: prefixesForNamespaceURIs,
+                overwritingPrefixes: prefixTranslations
+            )
             fileHandle.closeFile()
         }
         else {
@@ -476,36 +484,69 @@ public class XNode {
     public func write(
         toURL url: URL,
         usingProductionTemplate productionTemplate: XProductionTemplate? = nil,
-        usingPrefixesForNamespaceURIs prefixesForNamespaceURIs: [String:String]? = nil,
-        usinPrefixTranslations prefixTranslations: [String:String]? = nil
+        overwritingPrefixesForNamespaceURIs prefixesForNamespaceURIs: [String:String]? = nil,
+        overwritingPrefixes prefixTranslations: [String:String]? = nil
     ) throws {
-        let completePrefixTranslations = getCompletePrefixTranslations(prefixTranslations: prefixTranslations, prefixesForNamespaceURIs: prefixesForNamespaceURIs, forNode: self)
-        let productionTemplate = productionTemplate ?? DefaultProductionTemplate(prefixTranslations: completePrefixTranslations)
-        try write(toPath: url.path, usingProductionTemplate: productionTemplate)
+        try write(
+            toPath: url.path,
+            usingProductionTemplate: productionTemplate ?? DefaultProductionTemplate(),
+            overwritingPrefixesForNamespaceURIs: prefixesForNamespaceURIs,
+            overwritingPrefixes: prefixTranslations
+        )
     }
     
     public func write(
         to writeTarget: WriteTarget,
         usingProductionTemplate productionTemplate: XProductionTemplate? = nil,
-        usingPrefixesForNamespaceURIs prefixesForNamespaceURIs: [String:String]? = nil,
-        usingPrefixTranslations prefixTranslations: [String:String]? = nil
+        overwritingPrefixesForNamespaceURIs prefixesForNamespaceURIs: [String:String]? = nil,
+        overwritingPrefixes prefixTranslations: [String:String]? = nil
     ) throws {
-        let completePrefixTranslations = getCompletePrefixTranslations(prefixTranslations: prefixTranslations, prefixesForNamespaceURIs: prefixesForNamespaceURIs, forNode: self)
-        let productionTemplate = productionTemplate ?? DefaultProductionTemplate(prefixTranslations: completePrefixTranslations)
+        let productionTemplate = productionTemplate ?? DefaultProductionTemplate()
         switch writeTarget {case .url(let url):
-            try write(toURL: url, usingProductionTemplate: productionTemplate)
+            try write(
+                toURL: url,
+                usingProductionTemplate: productionTemplate,
+                overwritingPrefixesForNamespaceURIs: prefixesForNamespaceURIs,
+                overwritingPrefixes: prefixTranslations
+            )
         case .path(let path):
-            try write(toPath: path, usingProductionTemplate: productionTemplate)
+            try write(
+                toPath: path,
+                usingProductionTemplate: productionTemplate,
+                overwritingPrefixesForNamespaceURIs: prefixesForNamespaceURIs,
+                overwritingPrefixes: prefixTranslations
+            )
         case .file(let fileHandle):
-            try write(toFile: fileHandle, usingProductionTemplate: productionTemplate)
+            try write(
+                toFile: fileHandle,
+                usingProductionTemplate: productionTemplate,
+                overwritingPrefixesForNamespaceURIs: prefixesForNamespaceURIs,
+                overwritingPrefixes: prefixTranslations
+            )
         case .writer(let writer):
-            try write(toWriter: writer, usingProductionTemplate: productionTemplate)
+            try write(
+                toWriter: writer,
+                usingProductionTemplate: productionTemplate,
+                overwritingPrefixesForNamespaceURIs: prefixesForNamespaceURIs,
+                overwritingPrefixes: prefixTranslations
+            )
         }
     }
     
-    public func echo(usingProductionTemplate productionTemplate: XProductionTemplate, terminator: String = "\n") {
+    public func echo(
+        usingProductionTemplate productionTemplate: XProductionTemplate,
+        overwritingPrefixesForNamespaceURIs prefixesForNamespaceURIs: [String:String]? = nil,
+        overwritingPrefixes prefixTranslations: [String:String]? = nil,
+        terminator: String = "\n"
+    ) {
         do {
-            try write(toFile: FileHandle.standardOutput, usingProductionTemplate: productionTemplate); print(terminator, terminator: "")
+            try write(
+                toFile: FileHandle.standardOutput,
+                usingProductionTemplate: productionTemplate,
+                overwritingPrefixesForNamespaceURIs: prefixesForNamespaceURIs,
+                overwritingPrefixes: prefixTranslations
+            )
+            print(terminator, terminator: "")
         }
         catch {
             // writing to standard output does not really throw
@@ -515,18 +556,31 @@ public class XNode {
     public func echo(
         pretty: Bool = false,
         indentation: String = X_DEFAULT_INDENTATION,
-        terminator: String = "\n",
-        usingPrefixesForNamespaceURIs prefixesForNamespaceURIs: [String:String]? = nil,
-        usingPrefixTranslations prefixTranslations: [String:String]? = nil
+        overwritingPrefixesForNamespaceURIs prefixesForNamespaceURIs: [String:String]? = nil,
+        overwritingPrefixes prefixTranslations: [String:String]? = nil,
+        terminator: String = "\n"
     ) {
-        let completePrefixTranslations = getCompletePrefixTranslations(prefixTranslations: prefixTranslations, prefixesForNamespaceURIs: prefixesForNamespaceURIs, forNode: self)
-        echo(usingProductionTemplate: pretty ? PrettyPrintProductionTemplate(indentation: indentation, prefixTranslations: completePrefixTranslations) : DefaultProductionTemplate(prefixTranslations: completePrefixTranslations), terminator: terminator)
+        echo(
+            usingProductionTemplate: pretty ? PrettyPrintProductionTemplate(indentation: indentation) : DefaultProductionTemplate(),
+            overwritingPrefixesForNamespaceURIs: prefixesForNamespaceURIs,
+            overwritingPrefixes: prefixTranslations,
+            terminator: terminator
+        )
     }
     
-    public func serialized(usingProductionTemplate productionTemplate: XProductionTemplate) -> String {
+    public func serialized(
+        usingProductionTemplate productionTemplate: XProductionTemplate,
+        overwritingPrefixesForNamespaceURIs prefixesForNamespaceURIs: [String:String]? = nil,
+        overwritingPrefixes prefixTranslations: [String:String]? = nil
+    ) -> String {
         let writer = CollectingWriter()
         do {
-            try write(toWriter: writer, usingProductionTemplate: productionTemplate)
+            try write(
+                toWriter: writer,
+                usingProductionTemplate: productionTemplate,
+                overwritingPrefixesForNamespaceURIs: prefixesForNamespaceURIs,
+                overwritingPrefixes: prefixTranslations
+            )
         }
         catch {
             // CollectingWriter does not really throw
@@ -541,11 +595,14 @@ public class XNode {
     public func serialized(
         pretty: Bool = false,
         indentation: String = X_DEFAULT_INDENTATION,
-        usingPrefixesForNamespaceURIs prefixesForNamespaceURIs: [String:String]? = nil,
-        usingPrefixTranslations prefixTranslations: [String:String]? = nil
+        overwritingPrefixesForNamespaceURIs prefixesForNamespaceURIs: [String:String]? = nil,
+        overwritingPrefixes prefixTranslations: [String:String]? = nil
     ) -> String {
-        let completePrefixTranslations = getCompletePrefixTranslations(prefixTranslations: prefixTranslations, prefixesForNamespaceURIs: prefixesForNamespaceURIs, forNode: self)
-        return serialized(usingProductionTemplate: pretty ? PrettyPrintProductionTemplate(indentation: indentation, prefixTranslations: completePrefixTranslations) : DefaultProductionTemplate(prefixTranslations: completePrefixTranslations))
+        return serialized(
+            usingProductionTemplate: pretty ? PrettyPrintProductionTemplate(indentation: indentation) : DefaultProductionTemplate(),
+            overwritingPrefixesForNamespaceURIs: prefixesForNamespaceURIs,
+            overwritingPrefixes: prefixTranslations
+        )
     }
     
     public var immediateTextsCombined: String {

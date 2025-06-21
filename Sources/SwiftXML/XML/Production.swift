@@ -56,7 +56,7 @@ public class CollectingWriter: Writer, CustomStringConvertible {
 }
 
 public protocol XProductionTemplate {
-    func activeProduction(for writer: Writer, withStartElement startElement: XElement?) -> XActiveProduction
+    func activeProduction(for writer: Writer, withStartElement startElement: XElement?, prefixTranslations: [String:String]?) -> XActiveProduction
 }
 
 public protocol XActiveProduction {
@@ -127,7 +127,7 @@ public class DefaultProductionTemplate: XProductionTemplate {
     public let escapeGreaterThan: Bool
     public let escapeAllInText: Bool
     public let escapeAll: Bool
-    public let prefixTranslations: [String:String]?
+    
     
     public init(
         writeEmptyTags: Bool = true,
@@ -135,17 +135,16 @@ public class DefaultProductionTemplate: XProductionTemplate {
         escapeAllInText: Bool = false,
         escapeAll: Bool = false,
         linebreak: String = X_DEFAULT_LINEBREAK,
-        prefixTranslations: [String:String]? = nil
+        
     ) {
         self.writeEmptyTags = writeEmptyTags
         self.linebreak = linebreak
         self.escapeGreaterThan = escapeGreaterThan
         self.escapeAllInText = escapeAllInText
         self.escapeAll = escapeAll
-        self.prefixTranslations = prefixTranslations
     }
     
-    public func activeProduction(for writer: Writer, withStartElement startElement: XElement?) -> XActiveProduction {
+    public func activeProduction(for writer: Writer, withStartElement startElement: XElement?, prefixTranslations: [String:String]?) -> XActiveProduction {
         ActiveDefaultProduction(
             withStartElement: startElement,
             writer: writer,
@@ -427,21 +426,18 @@ public class PrettyPrintProductionTemplate: XProductionTemplate {
     public let writeEmptyTags: Bool
     public let indentation: String
     public let linebreak: String
-    public let prefixTranslations: [String:String]?
     
     public init(
         writeEmptyTags: Bool = true,
         indentation: String = X_DEFAULT_INDENTATION,
         linebreak: String = X_DEFAULT_LINEBREAK,
-        prefixTranslations: [String:String]? = nil
     ) {
         self.writeEmptyTags = writeEmptyTags
         self.indentation = indentation
         self.linebreak = linebreak
-        self.prefixTranslations = prefixTranslations
     }
     
-    public func activeProduction(for writer: Writer, withStartElement startElement: XElement?) -> XActiveProduction {
+    public func activeProduction(for writer: Writer, withStartElement startElement: XElement?, prefixTranslations: [String:String]?) -> XActiveProduction {
         ActivePrettyPrintProduction(
             withStartElement: startElement,
             writer: writer,
@@ -544,7 +540,6 @@ public class HTMLProductionTemplate: XProductionTemplate {
     public let escapeAllInText: Bool
     public let escapeAll: Bool
     public let suppressUncessaryPrettyPrintAtAnchors: Bool
-    public let prefixTranslations: [String:String]?
     
     public init(
         indentation: String = X_DEFAULT_INDENTATION,
@@ -555,8 +550,7 @@ public class HTMLProductionTemplate: XProductionTemplate {
         escapeGreaterThan: Bool = false,
         escapeAllInText: Bool = false,
         escapeAll: Bool = false,
-        suppressUncessaryPrettyPrintAtAnchors: Bool = false,
-        prefixTranslations: [String:String]? = nil
+        suppressUncessaryPrettyPrintAtAnchors: Bool = false
     ) {
         self.indentation = indentation
         self.linebreak = linebreak
@@ -567,10 +561,9 @@ public class HTMLProductionTemplate: XProductionTemplate {
         self.escapeAllInText = escapeAllInText
         self.escapeAll = escapeAll
         self.suppressUncessaryPrettyPrintAtAnchors = suppressUncessaryPrettyPrintAtAnchors
-        self.prefixTranslations = prefixTranslations
     }
     
-    open func activeProduction(for writer: Writer, withStartElement startElement: XElement?) -> XActiveProduction {
+    open func activeProduction(for writer: Writer, withStartElement startElement: XElement?, prefixTranslations: [String:String]?) -> XActiveProduction {
         ActiveHTMLProduction(
             withStartElement: startElement,
             writer: writer,
