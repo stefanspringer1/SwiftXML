@@ -190,7 +190,7 @@ open class ActiveDefaultProduction: XActiveProduction {
         escapeAllInText: Bool = false,
         escapeAll: Bool = false,
         linebreak: String = X_DEFAULT_LINEBREAK,
-        prefixTranslations: [String:String]? = nil
+        prefixTranslations: [String:String]?
     ) {
         self.startElement = startElement
         self.writer = writer
@@ -463,7 +463,7 @@ open class ActivePrettyPrintProduction: ActiveDefaultProduction {
         escapeAllInText: Bool = false,
         escapeAll: Bool = false,
         linebreak: String = X_DEFAULT_LINEBREAK,
-        prefixTranslations: [String:String]? = nil
+        prefixTranslations: [String:String]?
     ) {
         self.indentation = indentation
         super.init(
@@ -605,7 +605,7 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
         escapeAllInText: Bool = false,
         escapeAll: Bool = false,
         suppressUncessaryPrettyPrintAtAnchors: Bool = false,
-        prefixTranslations: [String:String]? = nil
+        prefixTranslations: [String:String]?
     ) {
         if let htmlNamespaceReference {
             switch htmlNamespaceReference {
