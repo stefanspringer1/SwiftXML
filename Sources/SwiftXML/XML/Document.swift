@@ -403,7 +403,7 @@ public final class XDocument: XNode, XBranchInternal {
         
         // register according attributes:
         for (attributeName,attributeValue) in element._attributes {
-            if _registeringDocument?.attributeToBeRegistered(withName: attributeName) == true {
+            if attributeToBeRegistered(withName: attributeName) == true {
                 let attributeProperties = AttributeProperties(value: attributeValue, element: element)
                 element._registeredAttributes[attributeName] = attributeProperties
                 registerAttribute(attributeProperties: attributeProperties, withName: attributeName)
@@ -412,7 +412,7 @@ public final class XDocument: XNode, XBranchInternal {
         
         // register according attributes values:
         for (attributeName,attributeValue) in element._attributes {
-            if _registeringDocument?.attributeValueToBeRegistered(forAttributeName: attributeName) == true {
+            if attributeValueToBeRegistered(forAttributeName: attributeName) == true {
                 let attributeProperties = AttributeProperties(value: attributeValue, element: element)
                 element._registeredAttributeValues[attributeName] = attributeProperties
                 registerAttributeValue(attributeProperties: attributeProperties, withName: attributeName)
