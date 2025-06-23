@@ -60,7 +60,7 @@ public final class XDocument: XNode, XBranchInternal {
     
     var __lastContent: XContent? = nil
     
-    weak var _document: XDocument?
+    var _registeringDocument: XDocument? { self }
     
     var _lastInTree: XNode!
     
@@ -399,7 +399,7 @@ public final class XDocument: XNode, XBranchInternal {
         
         // register according attributes:
         for (attributeName,attributeValue) in element._attributes {
-            if _document?.attributeToBeRegistered(withName: attributeName) == true {
+            if _registeringDocument?.attributeToBeRegistered(withName: attributeName) == true {
                 let attributeProperties = AttributeProperties(value: attributeValue, element: element)
                 element._registeredAttributes[attributeName] = attributeProperties
                 registerAttribute(attributeProperties: attributeProperties, withName: attributeName)
@@ -408,7 +408,7 @@ public final class XDocument: XNode, XBranchInternal {
         
         // register according attributes values:
         for (attributeName,attributeValue) in element._attributes {
-            if _document?.attributeValueToBeRegistered(forAttributeName: attributeName) == true {
+            if _registeringDocument?.attributeValueToBeRegistered(forAttributeName: attributeName) == true {
                 let attributeProperties = AttributeProperties(value: attributeValue, element: element)
                 element._registeredAttributeValues[attributeName] = attributeProperties
                 registerAttributeValue(attributeProperties: attributeProperties, withName: attributeName)
@@ -416,6 +416,7 @@ public final class XDocument: XNode, XBranchInternal {
         }
         
         element._document = self
+        element._registered = true
     }
     
     func unregisterElement(element: XElement) {
@@ -454,8 +455,7 @@ public final class XDocument: XNode, XBranchInternal {
         }
         element._registeredAttributes.removeAll()
         
-        element._orginalDocument = _document
-        element._document = nil
+        element._registered = false // but keep element._document
     }
     
     public func elements(prefix: String? = nil, _ name: String) -> XElementSequence {
@@ -593,7 +593,6 @@ public final class XDocument: XNode, XBranchInternal {
         self._attributeRegisterMode = attributeRegisterMode
         self._attributeValueRegisterMode = attributeValueRegisterMode
         super.init()
-        _document = self
         self._lastInTree = self
         if let attached {
             for (key,value) in attached {

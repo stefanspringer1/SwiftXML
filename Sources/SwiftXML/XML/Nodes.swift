@@ -143,7 +143,7 @@ public class XNode {
     /// Return the document that the node belongs to if it exists.
     public weak var document: XDocument? {
         get {
-            return (self as? XBranchInternal)?._document ?? self._parent?._document
+            return (self as? XBranchInternal)?._registeringDocument ?? self._parent?._registeringDocument
         }
     }
     
@@ -816,7 +816,7 @@ public class XContent: XNode {
             
             // set document:
             let document = document
-            if let element = node as? XElement, !(element._document === document) {
+            if let element = node as? XElement, !(element._registeringDocument === document) {
                 for insertedElement in element.descendantsIncludingSelf {
                     insertedElement.setDocument(document: document)
                 }
@@ -910,7 +910,7 @@ public class XContent: XNode {
             
             // set document:
             let document = document
-            if let element = node as? XElement, !(element._document === document) {
+            if let element = node as? XElement, !(element._registeringDocument === document) {
                 for insertedElement in element.descendantsIncludingSelf {
                     insertedElement.setDocument(document: document)
                 }
@@ -1061,7 +1061,7 @@ public protocol XBranch: XNode {
 protocol XBranchInternal: XBranch {
     var __firstContent: XContent? { get set }
     var __lastContent: XContent? { get set }
-    var _document: XDocument? { get set }
+    var _registeringDocument: XDocument? { get }
     //var _lastInTree: XNode! { get set }
 }
 
@@ -1278,9 +1278,9 @@ extension XBranchInternal {
         node.setTreeOrderWhenInserting()
 
         // set document:
-        if _document != nil, let element = node as? XElement, !(element._document === _document) {
+        if _registeringDocument != nil, let element = node as? XElement, !(element._registeringDocument === _registeringDocument) {
             for insertedElement in element.descendantsIncludingSelf {
-                insertedElement.setDocument(document: _document)
+                insertedElement.setDocument(document: _registeringDocument)
             }
         }
     }
@@ -1352,9 +1352,9 @@ extension XBranchInternal {
         node.setTreeOrderWhenInserting()
         
         // set document:
-        if _document != nil, let element = node as? XElement, !(element._document === _document) {
+        if _registeringDocument != nil, let element = node as? XElement, !(element._registeringDocument === _registeringDocument) {
             for insertedElement in element.descendantsIncludingSelf {
-                insertedElement.setDocument(document: _document)
+                insertedElement.setDocument(document: _registeringDocument)
             }
         }
     }
@@ -1738,18 +1738,14 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         var node: XNode? = self
         repeat {
             if let element = node as? XElement {
-                if !(newDocument === element._document) {
+                if !(newDocument === element._registeringDocument) {
                     let namespaceURI = element.namespaceURI
-                    element._document?.unregisterElement(element: element)
+                    element._registeringDocument?.unregisterElement(element: element)
                     if let newDocument {
-                        element._orginalDocument = nil
                         if let namespaceURI, let prefix = element._prefix {
                             element.prefix = newDocument.register(namespaceURI: namespaceURI, withPrefixSuggestion: prefix)
                         }
-                    } else if let document {
-                        element._orginalDocument = document
                     }
-                    element._document = newDocument
                     newDocument?.registerElement(element: element)
                 }
             }
@@ -1775,6 +1771,8 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     }
     
     weak var _document: XDocument? = nil
+    var _registered: Bool = false
+    var _registeringDocument: XDocument? { _registered ? _document : nil }
     
     private var elementIterators = WeakList<XBidirectionalElementIterator>()
     
@@ -1861,11 +1859,9 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         shallowClone()
     }
     
-    weak var _orginalDocument: XDocument? = nil
-    
     public func shallowClone(keepAttachments: Bool = false) -> XElement {
         let theClone = XElement(prefix: _prefix, _name)
-        theClone._orginalDocument = _document ?? _orginalDocument
+        theClone._document = _document // but theClone._registered is false
         theClone._backlink = self
         theClone._sourceRange = self._sourceRange
         theClone.copyAttributes(from: self)
@@ -1896,7 +1892,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         set(newPrefix) {
             let actualPrefix = newPrefix?.isEmpty == true ? nil : newPrefix
             if actualPrefix != _prefix {
-                if let theDocument = _document {
+                if let theDocument = _registeringDocument {
                     gotoPreviousOnNameIterators()
                     for nameIterator in nameIterators { _ = nameIterator.previous() }
                     theDocument.unregisterElement(element: self)
@@ -1912,7 +1908,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     
     public var namespaceURI: String? {
         if let prefix = _prefix {
-            (_document ?? _orginalDocument)?._prefixToNamespaceURI[prefix]
+            _document?._prefixToNamespaceURI[prefix]
         } else {
             nil
         }
@@ -1924,7 +1920,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         get { _name }
         set(newName) {
             if newName != _name {
-                if let theDocument = _document {
+                if let theDocument = _registeringDocument {
                     gotoPreviousOnNameIterators()
                     for nameIterator in nameIterators { _ = nameIterator.previous() }
                     theDocument.unregisterElement(element: self)
@@ -1941,7 +1937,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     public func set(prefix: String?, name: String) {
         let actualPrefix = prefix?.isEmpty == true ? nil : prefix
         if actualPrefix != _prefix || name != _name {
-            if let theDocument = _document {
+            if let theDocument = _registeringDocument {
                 gotoPreviousOnNameIterators()
                 for nameIterator in nameIterators { _ = nameIterator.previous() }
                 theDocument.unregisterElement(element: self)
@@ -2078,7 +2074,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
             let oldValue = _attributes[attributeName]
             guard newValue != oldValue else { return }
             
-            if let theDocument = _document, theDocument.attributeToBeRegistered(withName: attributeName) {
+            if let theDocument = _registeringDocument, theDocument.attributeToBeRegistered(withName: attributeName) {
                 if let newValue {
                     if let existingAttribute = _registeredAttributes[attributeName] {
                         existingAttribute.value = newValue
@@ -2095,7 +2091,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
                 }
             }
             
-            if let theDocument = _document, theDocument.attributeValueToBeRegistered(forAttributeName: attributeName) {
+            if let theDocument = _registeringDocument, theDocument.attributeValueToBeRegistered(forAttributeName: attributeName) {
                 if let existingAttribute = _registeredAttributeValues[attributeName]  {
                     theDocument.unregisterAttributeValue(attributeProperties: existingAttribute, withName: attributeName)
                 }
@@ -2168,7 +2164,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         self._prefix = prefix
         self._name = name
         super.init()
-        setDocument(document: _document)
+        setDocument(document: _registeringDocument)
     }
     
     public override func _removeKeep() {
@@ -2188,7 +2184,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     }
     
     public func adjustDocument() {
-        setDocument(document: _document)
+        setDocument(document: _registeringDocument)
     }
     
     override func produceEntering(activeProduction: XActiveProduction) throws {
