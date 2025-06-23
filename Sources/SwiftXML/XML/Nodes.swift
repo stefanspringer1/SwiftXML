@@ -815,7 +815,7 @@ public class XContent: XNode {
             node.setTreeOrderWhenInserting()
             
             // set document:
-            if let element = node as? XElement, let receivingDocument = document, element._registeringDocument !== receivingDocument {
+            if let element = node as? XElement, let receivingDocument = document {
                 for insertedElement in element.descendantsIncludingSelf {
                     insertedElement.setDocument(document: receivingDocument)
                 }
@@ -908,7 +908,7 @@ public class XContent: XNode {
             node.setTreeOrderWhenInserting()
             
             // set document:
-            if let element = node as? XElement, let receivingDocument = document, element._registeringDocument !== receivingDocument {
+            if let element = node as? XElement, let receivingDocument = document {
                 for insertedElement in element.descendantsIncludingSelf {
                     insertedElement.setDocument(document: receivingDocument)
                 }
@@ -1275,7 +1275,7 @@ extension XBranchInternal {
         node.setTreeOrderWhenInserting()
         
         // set document:
-        if let element = node as? XElement, let receivingDocument = _registeringDocument, element._registeringDocument !== receivingDocument {
+        if let element = node as? XElement, let receivingDocument = _registeringDocument {
             for insertedElement in element.descendantsIncludingSelf {
                 insertedElement.setDocument(document: receivingDocument)
             }
@@ -1349,7 +1349,7 @@ extension XBranchInternal {
         node.setTreeOrderWhenInserting()
         
         // set document:
-        if let element = node as? XElement, let receivingDocument = _registeringDocument, element._registeringDocument !== receivingDocument {
+        if let element = node as? XElement, let receivingDocument = _registeringDocument {
             for insertedElement in element.descendantsIncludingSelf {
                 insertedElement.setDocument(document: receivingDocument)
             }
