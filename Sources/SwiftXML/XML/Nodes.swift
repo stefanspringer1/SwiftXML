@@ -816,9 +816,7 @@ public class XContent: XNode {
             
             // set document:
             if let element = node as? XElement, let receivingDocument = document {
-                for insertedElement in element.descendantsIncludingSelf {
-                    insertedElement.setDocument(document: receivingDocument)
-                }
+                element.setDocument(document: receivingDocument)
             }
         }
         
@@ -909,9 +907,7 @@ public class XContent: XNode {
             
             // set document:
             if let element = node as? XElement, let receivingDocument = document {
-                for insertedElement in element.descendantsIncludingSelf {
-                    insertedElement.setDocument(document: receivingDocument)
-                }
+                element.setDocument(document: receivingDocument)
             }
         }
         
@@ -1276,9 +1272,7 @@ extension XBranchInternal {
         
         // set document:
         if let element = node as? XElement, let receivingDocument = _registeringDocument {
-            for insertedElement in element.descendantsIncludingSelf {
-                insertedElement.setDocument(document: receivingDocument)
-            }
+            element.setDocument(document: receivingDocument)
         }
     }
     
@@ -1350,9 +1344,7 @@ extension XBranchInternal {
         
         // set document:
         if let element = node as? XElement, let receivingDocument = _registeringDocument {
-            for insertedElement in element.descendantsIncludingSelf {
-                insertedElement.setDocument(document: receivingDocument)
-            }
+            element.setDocument(document: receivingDocument)
         }
     }
     
@@ -2153,7 +2145,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         self._prefix = prefix
         self._name = name
         super.init()
-        setDocument(document: document)
+        document.registerElement(element: self)
     }
     
     public override func _removeKeep() {
