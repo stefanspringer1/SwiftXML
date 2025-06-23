@@ -1759,9 +1759,9 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         super.top ?? self
     }
     
-    weak var _document: XDocument? = nil
-    var _registered: Bool = false
-    var _registeringDocument: XDocument? { _registered ? _document : nil }
+    weak var _document: XDocument? = nil // the associated document, be it only for namespaces
+    var _registered: Bool = false // is it registered as part of the document?
+    var _registeringDocument: XDocument? { _registered ? _document : nil } // the document the element is considered to be part of
     
     private var elementIterators = WeakList<XBidirectionalElementIterator>()
     
