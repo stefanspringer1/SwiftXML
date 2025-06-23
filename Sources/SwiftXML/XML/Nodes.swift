@@ -143,7 +143,7 @@ public class XNode {
     /// Return the document that the node belongs to if it exists.
     public weak var document: XDocument? {
         get {
-            return (self as? XBranchInternal)?._registeringDocument ?? self._parent?._registeringDocument
+            return (self as? XBranchInternal ?? self._parent)?._registeringDocument
         }
     }
     
@@ -815,10 +815,9 @@ public class XContent: XNode {
             node.setTreeOrderWhenInserting()
             
             // set document:
-            let document = document
-            if let element = node as? XElement, !(element._registeringDocument === document) {
+            if let element = node as? XElement, let receivingDocument = document, element._registeringDocument !== receivingDocument {
                 for insertedElement in element.descendantsIncludingSelf {
-                    insertedElement.setDocument(document: document)
+                    insertedElement.setDocument(document: receivingDocument)
                 }
             }
         }
@@ -909,10 +908,9 @@ public class XContent: XNode {
             node.setTreeOrderWhenInserting()
             
             // set document:
-            let document = document
-            if let element = node as? XElement, !(element._registeringDocument === document) {
+            if let element = node as? XElement, let receivingDocument = document, element._registeringDocument !== receivingDocument {
                 for insertedElement in element.descendantsIncludingSelf {
-                    insertedElement.setDocument(document: document)
+                    insertedElement.setDocument(document: receivingDocument)
                 }
             }
         }
@@ -1062,7 +1060,6 @@ protocol XBranchInternal: XBranch {
     var __firstContent: XContent? { get set }
     var __lastContent: XContent? { get set }
     var _registeringDocument: XDocument? { get }
-    //var _lastInTree: XNode! { get set }
 }
 
 extension XBranchInternal {
@@ -1276,11 +1273,11 @@ extension XBranchInternal {
 
         // set tree order:
         node.setTreeOrderWhenInserting()
-
+        
         // set document:
-        if _registeringDocument != nil, let element = node as? XElement, !(element._registeringDocument === _registeringDocument) {
+        if let element = node as? XElement, let receivingDocument = _registeringDocument, element._registeringDocument !== receivingDocument {
             for insertedElement in element.descendantsIncludingSelf {
-                insertedElement.setDocument(document: _registeringDocument)
+                insertedElement.setDocument(document: receivingDocument)
             }
         }
     }
@@ -1352,9 +1349,9 @@ extension XBranchInternal {
         node.setTreeOrderWhenInserting()
         
         // set document:
-        if _registeringDocument != nil, let element = node as? XElement, !(element._registeringDocument === _registeringDocument) {
+        if let element = node as? XElement, let receivingDocument = _registeringDocument, element._registeringDocument !== receivingDocument {
             for insertedElement in element.descendantsIncludingSelf {
-                insertedElement.setDocument(document: _registeringDocument)
+                insertedElement.setDocument(document: receivingDocument)
             }
         }
     }
