@@ -459,7 +459,7 @@ public final class XDocument: XNode, XBranchInternal {
         }
         element._registeredAttributes.removeAll()
         
-        element._registered = false // but keep element._document
+        element._registered = false // but keep element._document for namespaces
     }
     
     public func elements(prefix: String? = nil, _ name: String) -> XElementSequence {

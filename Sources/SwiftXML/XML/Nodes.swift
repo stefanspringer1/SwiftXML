@@ -1728,14 +1728,13 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     public func firstChild(_ condition: (XElement) -> Bool) -> XElement? {
         _firstChild(condition)
     }
-
+    
     func setDocument(document newDocument: XDocument?) {
-        
-        // set document:
         var node: XNode? = self
         repeat {
             if let element = node as? XElement {
-                if !(newDocument === element._registeringDocument) {
+                if newDocument !== element._registeringDocument {
+                    element._registeringDocument?.unregisterElement(element: element)
                     newDocument?.registerElement(element: element)
                 }
             }
