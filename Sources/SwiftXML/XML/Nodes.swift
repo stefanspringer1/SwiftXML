@@ -1739,13 +1739,6 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         repeat {
             if let element = node as? XElement {
                 if !(newDocument === element._registeringDocument) {
-                    let namespaceURI = element.namespaceURI
-                    element._registeringDocument?.unregisterElement(element: element)
-                    if let newDocument {
-                        if let namespaceURI, let prefix = element._prefix {
-                            element.prefix = newDocument.register(namespaceURI: namespaceURI, withPrefixSuggestion: prefix)
-                        }
-                    }
                     newDocument?.registerElement(element: element)
                 }
             }
@@ -1783,11 +1776,11 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     func removeElementIterator(_ elementIterator: XBidirectionalElementIterator) {
         elementIterators.remove(elementIterator)
     }
-
+    
     func gotoPreviousOnElementIterators() {
         for node in elementIterators { _ = node.previous() }
     }
-
+    
     func prefetchOnElementIterators() {
         for node in elementIterators { node.prefetch() }
     }
@@ -2164,7 +2157,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         self._prefix = prefix
         self._name = name
         super.init()
-        setDocument(document: _registeringDocument)
+        setDocument(document: document)
     }
     
     public override func _removeKeep() {

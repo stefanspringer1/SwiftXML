@@ -374,7 +374,11 @@ public final class XDocument: XNode, XBranchInternal {
         // register via name:
         let name = element.name
         if let prefix = element.prefix {
-            register(fixedPrefix: prefix)
+            if let namespaceURI = element.namespaceURI {
+                element._prefix = register(namespaceURI: namespaceURI, withPrefixSuggestion: prefix)
+            } else {
+                register(fixedPrefix: prefix)
+            }
             if let theLast = _elementsOfPrefixAndName_last[prefix,name] {
                 theLast.nextWithSameName = element
                 element.previousWithSameName = theLast
