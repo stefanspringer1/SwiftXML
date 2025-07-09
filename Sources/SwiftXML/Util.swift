@@ -276,6 +276,8 @@ extension StringProtocol {
 
 extension String {
     
+    var nonEmpty: String? { self.isEmpty ? nil : self }
+    
     var avoidingDoubleHyphens: String {
         
         var result  = if self.contains("--") {

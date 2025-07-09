@@ -304,8 +304,17 @@ public final class XDocument: XNode, XBranchInternal {
     var _prefixToNamespaceURI = [String:String]()
     var _prefixes = Set<String>()
     
-    public func prefix(forNamespaceURI namespaceURI: String) -> String? { _namespaceURIToPrefix[namespaceURI] }
+    /// Checks if the namespace URI is registered fro the document.
+    public func isRegistered(namespaceURI: String) -> Bool { _namespaceURIToPrefix[namespaceURI] != nil }
+    
+    /// Get the prefix for a namespecae URI. In case of a silent namespace, `nil` is returned.
+    /// You then might want to check is the URI belongs to the silent namespace by calling `isRegistered(namespaceURI:)`.
+    public func prefix(forNamespaceURI namespaceURI: String) -> String? { _namespaceURIToPrefix[namespaceURI]?.nonEmpty }
+    
+    /// Get the URI for a prefix. Get the URI if the silent namespace by using the prefix value `""`.
     public func namespaceURI(forPrefix prefix: String) -> String? { _prefixToNamespaceURI[prefix] }
+    
+    /// Get a list of tuples of the form `(prefix, namespace URI)` including the prefix value `""` for the silent namespace.
     public var namespacePrefixesAndURIs: [(String,String)] { _prefixToNamespaceURI.sorted(by: <) }
     
     /// This method can be used to force-register a fixed prefix.
@@ -316,27 +325,30 @@ public final class XDocument: XNode, XBranchInternal {
     
     /// The function returns the actual prefix to be used to avoid collisions.
     /// This should be used whenever you need an independent prefix and you are not fixed on a specific value.
-    public func registerIndependentPrefix(withPrefixSuggestion suggstedPrefix: String) -> String {
+    public func registerIndependentPrefix(withPrefixSuggestion suggestedPrefix: String) -> String {
+        let suggestedPrefix = suggestedPrefix.nonEmpty ?? "a"
         var postfix = 1
-        var prefix = suggstedPrefix
+        var prefix = suggestedPrefix
         while _prefixes.contains(prefix) {
             postfix += 1
-            prefix = "\(suggstedPrefix)\(postfix)"
+            prefix = "\(suggestedPrefix)\(postfix)"
         }
         _prefixes.insert(prefix)
         return prefix
     }
     
+    /// Unregister a prefix that is not part of a registered namespace.
     public func unregister(independentPrefix prefix: String) {
         if _prefixToNamespaceURI[prefix] == nil {
             _prefixes.remove(prefix)
         }
     }
     
-    // returns the actual prefix
-    public func register(namespaceURI: String, withPrefixSuggestion suggstedPrefix: String) -> String {
+    /// Register a namspace with a prefix suggestion. Returns the actual prefix.
+    /// When the URI is the URI of the silent namespace, the prefix `nil` is being returned.
+    public func register(namespaceURI: String, withPrefixSuggestion suggstedPrefix: String) -> String? {
         if let existingPrefix = _namespaceURIToPrefix[namespaceURI] {
-            return existingPrefix
+            return existingPrefix.nonEmpty
         } else {
             let prefix: String
             var maybePrefix = suggstedPrefix
@@ -353,6 +365,7 @@ public final class XDocument: XNode, XBranchInternal {
         }
     }
     
+    /// Unregister a namespace by its URI.
     public func unregister(namespaceURI: String) {
         if let prefix = _namespaceURIToPrefix[namespaceURI] {
             _namespaceURIToPrefix[namespaceURI] = nil
@@ -361,6 +374,7 @@ public final class XDocument: XNode, XBranchInternal {
         }
     }
     
+    /// Unregister a namespace by its prefix.
     public func unregister(namespacePrefix prefix: String) {
         if let namespaceURI = _prefixToNamespaceURI[prefix] {
             _namespaceURIToPrefix[namespaceURI] = nil
