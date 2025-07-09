@@ -98,7 +98,7 @@ let transformation = XTransformation {
 
 **UPDATE 29 (January 2025):** New: `backlinkOrSelf`.
 
-**UPDATE 30 (February 2025):** New `recognizeNamespaces:` in call to parse functions (default value is `false`).
+**UPDATE 30 (February 2025):** New `namespaceAware:` in call to parse functions (default value is `false`).
 
 **UPDATE 31 (March 2025):** You can now use the builder notation for CDATA sections and comments.
 
@@ -113,6 +113,10 @@ let transformation = XTransformation {
 **UPDATE 35 (May 2025):** New additional second (!) argument `until: ...` or `while: ...` e.g. in `myElement.ancestors("x", until: { $0 === stop }`.
 
 **UPDATE 36 (June 2025):** Namespaces at elements should now be completely handled. In particular, when elements have prefixes which do not reference a defined namespace (we call them “dead” prefixes), those prefixes are preserved in the name without notice and possible conflicts with defined prefixes avoided. (Namespaces at attributes are still not processed, this should be implemented in an upcoming version.)
+
+**UPDATE 37 (July 2025):** Removed the `NamespaceReference` enumeration, dispense with the according argument for the HTZML production (use namespace awareness instead if nevcessary).
+
+**UPDATE 38 (July 2025):** Renamed `recognizeNamespaces` to `namespaceAware`.
 
 ---
 
@@ -263,7 +267,7 @@ Reading from a URL which references a local file:
 ```swift
 func parseXML(
     fromURL: URL,
-    recognizeNamespaces: Bool = false,
+    namespaceAware: Bool = false,
     noPrefixForPrefixlessNamespaceAtRoot: Bool = false,
     registeringAttributes attributeRegisterMode: AttributeRegisterMode = .none,
     sourceInfo: String? = nil,
@@ -2072,7 +2076,7 @@ The handling of namespaces differs from other libraries for XML in that the pref
 
 Elements can have prefixes, which are not only useful for referencing namespaces, but can also be used independently of namespaces to distinguish between elements with the same name during the processing of a document. (If you need a new prefix different from already registered prefixes, use the method `registerIndependentPrefix(withPrefixSuggestion:)` of the document which returns an actual prefix to be used.) Prefixes are crucial for direct access to elements and thus also differentiate the rules accordingly. For elements with a prefix, rules or a searches based on the element names like `children("someName")` have to use the additional `prefix:` argument.
 
-When reading a document, namespace prefix definitions are only recognized if the argument `recognizeNamespaces` is set to `true` in the call of the parse function used. An element that uses a namespace prefix defined in its context then gets the name _without_ the prefix (and without the separating colon), a prefix is separately stored in the `prefix` property of the element (which by default is `nil`). The actual prefixes might get changed during this process to avoid multiple prefix definitions for the same namespace URI or collisions. Use the method `prefix(forNamespaceURI:)` of the document to get the actual prefix.
+When reading a document, namespace prefix definitions are only recognized if the argument `namespaceAware` is set to `true` in the call of the parse function used. An element that uses a namespace prefix defined in its context then gets the name _without_ the prefix (and without the separating colon), a prefix is separately stored in the `prefix` property of the element (which by default is `nil`). The actual prefixes might get changed during this process to avoid multiple prefix definitions for the same namespace URI or collisions. Use the method `prefix(forNamespaceURI:)` of the document to get the actual prefix.
 
 On the other hand, an element with a colon in its orginal name whose literal prefix does not match a defined namespace prefix in its context always keeps the full name and gets the prefix value `null`. But such a literal prefix might cause the actual value of a namespace prefix to change, so that in a serialization of the document the element does not get a different meaning.
 
@@ -2080,7 +2084,7 @@ The namespaces with their prefixes are registerd at the document, according name
 
 During serialization, every prefix value which is not `null` is written as the prefix of the name (with a separating colon). Use the arguments `overwritingPrefixesForNamespaceURIs:` and `overwritingPrefixes:` of the serialization and output methods (each with an according map with prefixes for the serialization as values) to change prefixes in the serialization, where an empty String value means not outputting a prefix. (Be careful with those settings as there is no check for consistency.)
 
-Some XML documents declare a namespace at the top of the document in the form `xmlns="..."` i.e. without a prefix to define the schema to be used for the document. When reading such a document with `recognizeNamespaces: true`, consequently a prefix is created for this namespace and used for all according elements to conserve the affiliation to the namespace. Rules and the usual name based searches then have to take that prefix into account. If want to avoid this, use the setting `noPrefixForPrefixlessNamespaceAtRoot: true` when parsing. The according namespace URI is then still registered at the document, but with prefix value `""`, and the according elements then have no prefix value set (their prefix value is `null`), so e.g. no prefix value has to be considered in rules.
+Some XML documents declare a namespace at the top of the document in the form `xmlns="..."` i.e. without a prefix to define the schema to be used for the document. When reading such a document with `namespaceAware: true`, consequently a prefix is created for this namespace and used for all according elements to conserve the affiliation to the namespace. Rules and the usual name based searches then have to take that prefix into account. If want to avoid this, use the setting `noPrefixForPrefixlessNamespaceAtRoot: true` when parsing. The according namespace URI is then still registered at the document, but with prefix value `""`, and the according elements then have no prefix value set (their prefix value is `null`), so e.g. no prefix value has to be considered in rules.
 
 When moving elements between documents, missing namespaces with their prefixes are added to the target document, and prefixes of the moved elements are adjusted if necessary. For a removed or cloned element, the according namespace URI can still be found as long as the orginal document still exists and has not changed this value, so the element then behaves the same as being directly moved between documents.
 
@@ -2096,7 +2100,7 @@ let source = """
     </a>
     """
 
-let document = try parseXML(fromText: source, recognizeNamespaces: true)
+let document = try parseXML(fromText: source, namespaceAware: true)
 
 document.echo()
 ```

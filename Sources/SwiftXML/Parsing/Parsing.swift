@@ -14,7 +14,7 @@ import SwiftXMLParser
 
 public func parseXML(
     from documentSource: XDocumentSource,
-    recognizeNamespaces: Bool = false,
+    namespaceAware: Bool = false,
     noPrefixForPrefixlessNamespaceAtRoot: Bool = false,
     registeringAttributes attributeRegisterMode: AttributeRegisterMode = .none,
     registeringValuesForAttributes attributeValueRegisterMode: AttributeRegisterMode = .none,
@@ -56,7 +56,7 @@ public func parseXML(
         ),
         mainEventHandler: XParseBuilder(
             document: document,
-            recognizeNamespaces: recognizeNamespaces,
+            namespaceAware: namespaceAware,
             noPrefixForPrefixlessNamespaceAtRoot: noPrefixForPrefixlessNamespaceAtRoot,
             keepComments: keepComments,
             keepCDATASections: keepCDATASections,
@@ -71,7 +71,7 @@ public func parseXML(
 
 public func parseXML(
     fromPath path: String,
-    recognizeNamespaces: Bool = false,
+    namespaceAware: Bool = false,
     noPrefixForPrefixlessNamespaceAtRoot: Bool = false,
     registeringAttributes attributeRegisterMode: AttributeRegisterMode = .none,
     registeringValuesForAttributes attributeValueRegisterMode: AttributeRegisterMode = .none,
@@ -91,7 +91,7 @@ public func parseXML(
 ) throws -> XDocument {
     try parseXML(
         from: .path(path),
-        recognizeNamespaces: recognizeNamespaces,
+        namespaceAware: namespaceAware,
         noPrefixForPrefixlessNamespaceAtRoot: noPrefixForPrefixlessNamespaceAtRoot,
         registeringAttributes: attributeRegisterMode,
         registeringValuesForAttributes: attributeValueRegisterMode,
@@ -113,7 +113,7 @@ public func parseXML(
 
 public func parseXML(
     fromURL url: URL,
-    recognizeNamespaces: Bool = false,
+    namespaceAware: Bool = false,
     noPrefixForPrefixlessNamespaceAtRoot: Bool = false,
     registeringAttributes attributeRegisterMode: AttributeRegisterMode = .none,
     registeringValuesForAttributes attributeValueRegisterMode: AttributeRegisterMode = .none,
@@ -133,7 +133,7 @@ public func parseXML(
 ) throws -> XDocument {
     try parseXML(
         from: .url(url),
-        recognizeNamespaces: recognizeNamespaces,
+        namespaceAware: namespaceAware,
         noPrefixForPrefixlessNamespaceAtRoot: noPrefixForPrefixlessNamespaceAtRoot,
         registeringAttributes: attributeRegisterMode,
         registeringValuesForAttributes: attributeValueRegisterMode,
@@ -155,7 +155,7 @@ public func parseXML(
 
 public func parseXML(
     fromText text: String,
-    recognizeNamespaces: Bool = false,
+    namespaceAware: Bool = false,
     noPrefixForPrefixlessNamespaceAtRoot: Bool = false,
     registeringAttributes attributeRegisterMode: AttributeRegisterMode = .none,
     registeringValuesForAttributes attributeValueRegisterMode: AttributeRegisterMode = .none,
@@ -175,7 +175,7 @@ public func parseXML(
 ) throws -> XDocument {
     try parseXML(
         from: .text(text),
-        recognizeNamespaces: recognizeNamespaces,
+        namespaceAware: namespaceAware,
         noPrefixForPrefixlessNamespaceAtRoot: noPrefixForPrefixlessNamespaceAtRoot,
         registeringAttributes: attributeRegisterMode,
         registeringValuesForAttributes: attributeValueRegisterMode,
@@ -197,7 +197,7 @@ public func parseXML(
 
 public func parseXML(
     fromData data: Data,
-    recognizeNamespaces: Bool = false,
+    namespaceAware: Bool = false,
     noPrefixForPrefixlessNamespaceAtRoot: Bool = false,
     registeringAttributes attributeRegisterMode: AttributeRegisterMode = .none,
     registeringValuesForAttributes attributeValueRegisterMode: AttributeRegisterMode = .none,
@@ -219,7 +219,7 @@ public func parseXML(
 ) throws -> XDocument {
     try parseXML(
         from: .data(data),
-        recognizeNamespaces: recognizeNamespaces,
+        namespaceAware: namespaceAware,
         noPrefixForPrefixlessNamespaceAtRoot: noPrefixForPrefixlessNamespaceAtRoot,
         registeringAttributes: attributeRegisterMode,
         registeringValuesForAttributes: attributeValueRegisterMode,

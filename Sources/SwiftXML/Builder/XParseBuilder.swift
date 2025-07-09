@@ -31,7 +31,7 @@ public final class XParseBuilder: XEventHandler {
     }
 
     let document: XDocument
-    let recognizeNamespaces: Bool
+    let namespaceAware: Bool
     let noPrefixForPrefixlessNamespaceAtRoot: Bool
     let keepComments: Bool
     let keepCDATASections: Bool
@@ -47,7 +47,7 @@ public final class XParseBuilder: XEventHandler {
     
     public init(
         document: XDocument,
-        recognizeNamespaces: Bool = false,
+        namespaceAware: Bool = false,
         noPrefixForPrefixlessNamespaceAtRoot: Bool = false,
         keepComments: Bool = false,
         keepCDATASections: Bool = false,
@@ -55,7 +55,7 @@ public final class XParseBuilder: XEventHandler {
     ) {
         
         self.document = document
-        self.recognizeNamespaces = recognizeNamespaces
+        self.namespaceAware = namespaceAware
         self.noPrefixForPrefixlessNamespaceAtRoot = noPrefixForPrefixlessNamespaceAtRoot
         self.keepComments = keepComments
         self.keepCDATASections = keepCDATASections
@@ -121,7 +121,7 @@ public final class XParseBuilder: XEventHandler {
         
         let element = XElement(name)
         
-        if recognizeNamespaces {
+        if namespaceAware {
             var namespaceDefinitionCount = 0
             
             for attributeName in attributes.keys {
@@ -222,7 +222,7 @@ public final class XParseBuilder: XEventHandler {
     
     public func elementEnd(name: String, textRange: XTextRange?, dataRange _: XDataRange?) {
         
-        if recognizeNamespaces, let element = currentBranch as? XElement, let namespaceDefinitionCount = element.attached["nsCount"] as? Int {
+        if namespaceAware, let element = currentBranch as? XElement, let namespaceDefinitionCount = element.attached["nsCount"] as? Int {
             namespaceURIAndPrefixDuringBuild.removeLast(namespaceDefinitionCount)
             element.attached["nsCount"] = nil
             if element.attached["prefixFreeNS"] as? Bool == true {
@@ -328,7 +328,7 @@ public final class XParseBuilder: XEventHandler {
     }
     
     public func documentEnd() {
-        if recognizeNamespaces {
+        if namespaceAware {
             if prefixCorrections.isEmpty {
                 for (uri,prefix) in resultingNamespaceURIToPrefix {
                     document._namespaceURIToPrefix[uri] = prefix

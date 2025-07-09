@@ -788,7 +788,7 @@ final class SwiftXMLTests: XCTestCase {
     func testNamespacePrefixes() throws {
         let document = try parseXML(fromText: """
             <a xmlns:a="http://a" xmlns:b="http://b"/>
-            """, recognizeNamespaces: true)
+            """, namespaceAware: true)
         print(document.namespacePrefixesAndURIs)
         XCTAssertEqual([
             document.namespacePrefixesAndURIs
