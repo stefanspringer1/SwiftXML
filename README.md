@@ -118,6 +118,8 @@ let transformation = XTransformation {
 
 **UPDATE 38 (July 2025):** Renamed `recognizeNamespaces` to `namespaceAware` and renamed `noPrefixForPrefixlessNamespaceAtRoot` to `silentEmptyRootPrefix`.
 
+**UPDATE 39 (July 2025):** New argument `suppressDeclarationForNamespaceURIs:` in the output methods. (An `XProductionTemplate` has to offer the according argument `declarationSupressingNamespaceURIs:` in its `activeProduction` method.)
+
 ---
 
 ## Related packages
@@ -2082,7 +2084,7 @@ On the other hand, an element with a colon in its orginal name whose literal pre
 
 The namespaces with their prefixes are registerd at the document, according namespace attributes are not (!) set in the tree and only appear in a serialization of the document or parts of it (they appear after every other attribute at the top element of the serialization). To register a new namespace with its prefix, use the method `register(namespaceURI:withPrefixSuggestion:)` of the document which returns the actual prefix to be used.
 
-During serialization, every prefix value which is not `null` is written as the prefix of the name (with a separating colon). Use the arguments `overwritingPrefixesForNamespaceURIs:` and `overwritingPrefixes:` of the serialization and output methods (each with an according map with prefixes for the serialization as values) to change prefixes in the serialization, where an empty String value means not outputting a prefix. (Be careful with those settings as there is no check for consistency.)
+During serialization, every prefix value which is not `null` is written as the prefix of the name (with a separating colon). Use the arguments `overwritingPrefixesForNamespaceURIs:` and `overwritingPrefixes:` of the serialization and output methods (each with an according map with prefixes for the serialization as values) to change prefixes in the serialization, where an empty String value means not outputting a prefix. Undependantly from those two arguments, use the argument `suppressDeclarationForNamespaceURIs:` to suppress the according namespace declarations in the output. (Be careful with those settings as there is no check for consistency.)
 
 Some XML documents declare a namespace at the top of the document in the form `xmlns="..."` i.e. without a prefix to define the schema to be used for the document. When reading such a document with `namespaceAware: true`, consequently a prefix is created for this namespace and used for all according elements to conserve the affiliation to the namespace. Rules and the usual name based searches then have to take that prefix into account. If want to avoid this, use the setting `silentEmptyRootPrefix: true` when parsing (we then call the according namespace a “silent” namespace). The according namespace URI is then still registered at the document, but with prefix value `""`, and the according elements then have no prefix value set (their prefix value is `null`), so e.g. no prefix value has to be considered in rules. Note that `prefix(forNamespaceURI:)` returns `nil` for such a namespace, so you can always use the prefix returned by that function call to search for elements.
 

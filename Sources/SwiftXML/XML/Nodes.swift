@@ -433,10 +433,20 @@ public class XNode {
         usingProductionTemplate productionTemplate: XProductionTemplate? = nil,
         overwritingPrefixesForNamespaceURIs prefixesForNamespaceURIs: [String:String]? = nil,
         overwritingPrefixes prefixTranslations: [String:String]? = nil,
+        suppressDeclarationForNamespaceURIs declarationSupressingNamespaceURIs: [String]? = nil
     ) throws {
-        let completePrefixTranslations = getCompletePrefixTranslations(prefixTranslations: prefixTranslations, prefixesForNamespaceURIs: prefixesForNamespaceURIs, forNode: self)
+        let completePrefixTranslations = getCompletePrefixTranslations(
+            prefixTranslations: prefixTranslations,
+            prefixesForNamespaceURIs: prefixesForNamespaceURIs,
+            forNode: self
+        )
         let productionTemplate = productionTemplate ?? DefaultProductionTemplate()
-        let activeProduction = productionTemplate.activeProduction(for: writer, withStartElement: self as? XElement ?? (self as? XDocument)?.firstChild, prefixTranslations: completePrefixTranslations)
+        let activeProduction = productionTemplate.activeProduction(
+            for: writer,
+            withStartElement: self as? XElement ?? (self as? XDocument)?.firstChild,
+            prefixTranslations: completePrefixTranslations,
+            declarationSupressingNamespaceURIs: declarationSupressingNamespaceURIs
+        )
         try self.applyProduction(activeProduction: activeProduction)
     }
     
@@ -444,14 +454,16 @@ public class XNode {
         toFile fileHandle: FileHandle,
         usingProductionTemplate productionTemplate: XProductionTemplate? = nil,
         overwritingPrefixesForNamespaceURIs prefixesForNamespaceURIs: [String:String]? = nil,
-        overwritingPrefixes prefixTranslations: [String:String]? = nil
+        overwritingPrefixes prefixTranslations: [String:String]? = nil,
+        suppressDeclarationForNamespaceURIs declarationSupressingNamespaceURIs: [String]? = nil
     ) throws {
         let productionTemplate = productionTemplate ?? DefaultProductionTemplate()
         try write(
             toWriter: FileWriter(fileHandle),
             usingProductionTemplate: productionTemplate,
             overwritingPrefixesForNamespaceURIs: prefixesForNamespaceURIs,
-            overwritingPrefixes: prefixTranslations
+            overwritingPrefixes: prefixTranslations,
+            suppressDeclarationForNamespaceURIs: declarationSupressingNamespaceURIs
         )
     }
     
@@ -459,7 +471,8 @@ public class XNode {
         toPath path: String,
         usingProductionTemplate productionTemplate: XProductionTemplate? = nil,
         overwritingPrefixesForNamespaceURIs prefixesForNamespaceURIs: [String:String]? = nil,
-        overwritingPrefixes prefixTranslations: [String:String]? = nil
+        overwritingPrefixes prefixTranslations: [String:String]? = nil,
+        suppressDeclarationForNamespaceURIs declarationSupressingNamespaceURIs: [String]? = nil
     ) throws {
         let productionTemplate = productionTemplate ?? DefaultProductionTemplate()
         let fileManager = FileManager.default
@@ -471,7 +484,8 @@ public class XNode {
                 toFile: fileHandle,
                 usingProductionTemplate: productionTemplate,
                 overwritingPrefixesForNamespaceURIs: prefixesForNamespaceURIs,
-                overwritingPrefixes: prefixTranslations
+                overwritingPrefixes: prefixTranslations,
+                suppressDeclarationForNamespaceURIs: declarationSupressingNamespaceURIs
             )
             fileHandle.closeFile()
         }
@@ -485,13 +499,15 @@ public class XNode {
         toURL url: URL,
         usingProductionTemplate productionTemplate: XProductionTemplate? = nil,
         overwritingPrefixesForNamespaceURIs prefixesForNamespaceURIs: [String:String]? = nil,
-        overwritingPrefixes prefixTranslations: [String:String]? = nil
+        overwritingPrefixes prefixTranslations: [String:String]? = nil,
+        suppressDeclarationForNamespaceURIs declarationSupressingNamespaceURIs: [String]? = nil
     ) throws {
         try write(
             toPath: url.path,
             usingProductionTemplate: productionTemplate ?? DefaultProductionTemplate(),
             overwritingPrefixesForNamespaceURIs: prefixesForNamespaceURIs,
-            overwritingPrefixes: prefixTranslations
+            overwritingPrefixes: prefixTranslations,
+            suppressDeclarationForNamespaceURIs: declarationSupressingNamespaceURIs
         )
     }
     
@@ -499,7 +515,8 @@ public class XNode {
         to writeTarget: WriteTarget,
         usingProductionTemplate productionTemplate: XProductionTemplate? = nil,
         overwritingPrefixesForNamespaceURIs prefixesForNamespaceURIs: [String:String]? = nil,
-        overwritingPrefixes prefixTranslations: [String:String]? = nil
+        overwritingPrefixes prefixTranslations: [String:String]? = nil,
+        suppressDeclarationForNamespaceURIs declarationSupressingNamespaceURIs: [String]? = nil
     ) throws {
         let productionTemplate = productionTemplate ?? DefaultProductionTemplate()
         switch writeTarget {case .url(let url):
@@ -507,28 +524,32 @@ public class XNode {
                 toURL: url,
                 usingProductionTemplate: productionTemplate,
                 overwritingPrefixesForNamespaceURIs: prefixesForNamespaceURIs,
-                overwritingPrefixes: prefixTranslations
+                overwritingPrefixes: prefixTranslations,
+                suppressDeclarationForNamespaceURIs: declarationSupressingNamespaceURIs
             )
         case .path(let path):
             try write(
                 toPath: path,
                 usingProductionTemplate: productionTemplate,
                 overwritingPrefixesForNamespaceURIs: prefixesForNamespaceURIs,
-                overwritingPrefixes: prefixTranslations
+                overwritingPrefixes: prefixTranslations,
+                suppressDeclarationForNamespaceURIs: declarationSupressingNamespaceURIs
             )
         case .file(let fileHandle):
             try write(
                 toFile: fileHandle,
                 usingProductionTemplate: productionTemplate,
                 overwritingPrefixesForNamespaceURIs: prefixesForNamespaceURIs,
-                overwritingPrefixes: prefixTranslations
+                overwritingPrefixes: prefixTranslations,
+                suppressDeclarationForNamespaceURIs: declarationSupressingNamespaceURIs
             )
         case .writer(let writer):
             try write(
                 toWriter: writer,
                 usingProductionTemplate: productionTemplate,
                 overwritingPrefixesForNamespaceURIs: prefixesForNamespaceURIs,
-                overwritingPrefixes: prefixTranslations
+                overwritingPrefixes: prefixTranslations,
+                suppressDeclarationForNamespaceURIs: declarationSupressingNamespaceURIs
             )
         }
     }
@@ -537,6 +558,7 @@ public class XNode {
         usingProductionTemplate productionTemplate: XProductionTemplate,
         overwritingPrefixesForNamespaceURIs prefixesForNamespaceURIs: [String:String]? = nil,
         overwritingPrefixes prefixTranslations: [String:String]? = nil,
+        suppressDeclarationForNamespaceURIs declarationSupressingNamespaceURIs: [String]? = nil,
         terminator: String = "\n"
     ) {
         do {
@@ -544,7 +566,8 @@ public class XNode {
                 toFile: FileHandle.standardOutput,
                 usingProductionTemplate: productionTemplate,
                 overwritingPrefixesForNamespaceURIs: prefixesForNamespaceURIs,
-                overwritingPrefixes: prefixTranslations
+                overwritingPrefixes: prefixTranslations,
+                suppressDeclarationForNamespaceURIs: declarationSupressingNamespaceURIs
             )
             print(terminator, terminator: "")
         }
@@ -558,12 +581,14 @@ public class XNode {
         indentation: String = X_DEFAULT_INDENTATION,
         overwritingPrefixesForNamespaceURIs prefixesForNamespaceURIs: [String:String]? = nil,
         overwritingPrefixes prefixTranslations: [String:String]? = nil,
+        suppressDeclarationForNamespaceURIs declarationSupressingNamespaceURIs: [String]? = nil,
         terminator: String = "\n"
     ) {
         echo(
             usingProductionTemplate: pretty ? PrettyPrintProductionTemplate(indentation: indentation) : DefaultProductionTemplate(),
             overwritingPrefixesForNamespaceURIs: prefixesForNamespaceURIs,
             overwritingPrefixes: prefixTranslations,
+            suppressDeclarationForNamespaceURIs: declarationSupressingNamespaceURIs,
             terminator: terminator
         )
     }
@@ -571,7 +596,8 @@ public class XNode {
     public func serialized(
         usingProductionTemplate productionTemplate: XProductionTemplate,
         overwritingPrefixesForNamespaceURIs prefixesForNamespaceURIs: [String:String]? = nil,
-        overwritingPrefixes prefixTranslations: [String:String]? = nil
+        overwritingPrefixes prefixTranslations: [String:String]? = nil,
+        suppressDeclarationForNamespaceURIs declarationSupressingNamespaceURIs: [String]? = nil
     ) -> String {
         let writer = CollectingWriter()
         do {
@@ -579,7 +605,8 @@ public class XNode {
                 toWriter: writer,
                 usingProductionTemplate: productionTemplate,
                 overwritingPrefixesForNamespaceURIs: prefixesForNamespaceURIs,
-                overwritingPrefixes: prefixTranslations
+                overwritingPrefixes: prefixTranslations,
+                suppressDeclarationForNamespaceURIs: declarationSupressingNamespaceURIs
             )
         }
         catch {
@@ -596,12 +623,14 @@ public class XNode {
         pretty: Bool = false,
         indentation: String = X_DEFAULT_INDENTATION,
         overwritingPrefixesForNamespaceURIs prefixesForNamespaceURIs: [String:String]? = nil,
-        overwritingPrefixes prefixTranslations: [String:String]? = nil
+        overwritingPrefixes prefixTranslations: [String:String]? = nil,
+        suppressDeclarationForNamespaceURIs declarationSupressingNamespaceURIs: [String]? = nil
     ) -> String {
         return serialized(
             usingProductionTemplate: pretty ? PrettyPrintProductionTemplate(indentation: indentation) : DefaultProductionTemplate(),
             overwritingPrefixesForNamespaceURIs: prefixesForNamespaceURIs,
-            overwritingPrefixes: prefixTranslations
+            overwritingPrefixes: prefixTranslations,
+            suppressDeclarationForNamespaceURIs: declarationSupressingNamespaceURIs
         )
     }
     

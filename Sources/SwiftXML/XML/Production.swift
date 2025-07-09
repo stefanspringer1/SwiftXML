@@ -56,7 +56,12 @@ public class CollectingWriter: Writer, CustomStringConvertible {
 }
 
 public protocol XProductionTemplate {
-    func activeProduction(for writer: Writer, withStartElement startElement: XElement?, prefixTranslations: [String:String]?) -> XActiveProduction
+    func activeProduction(
+        for writer: Writer,
+        withStartElement startElement: XElement?,
+        prefixTranslations: [String:String]?,
+        declarationSupressingNamespaceURIs: [String]?
+    ) -> XActiveProduction
 }
 
 public protocol XActiveProduction {
@@ -144,7 +149,12 @@ public class DefaultProductionTemplate: XProductionTemplate {
         self.escapeAll = escapeAll
     }
     
-    public func activeProduction(for writer: Writer, withStartElement startElement: XElement?, prefixTranslations: [String:String]?) -> XActiveProduction {
+    public func activeProduction(
+        for writer: Writer,
+        withStartElement startElement: XElement?,
+        prefixTranslations: [String:String]?,
+        declarationSupressingNamespaceURIs: [String]? = nil
+    ) -> XActiveProduction {
         ActiveDefaultProduction(
             withStartElement: startElement,
             writer: writer,
@@ -153,7 +163,8 @@ public class DefaultProductionTemplate: XProductionTemplate {
             escapeAllInText: escapeAllInText,
             escapeAll: escapeAll,
             linebreak: linebreak,
-            prefixTranslations: prefixTranslations
+            prefixTranslations: prefixTranslations,
+            suppressDeclarationForNamespaceURIs: declarationSupressingNamespaceURIs
         )
     }
     
@@ -181,6 +192,7 @@ open class ActiveDefaultProduction: XActiveProduction {
     let startElement: XElement?
     
     public let prefixTranslations: [String:String]?
+    public let declarationSupressingNamespaceURIs: [String]?
     
     public init(
         withStartElement startElement: XElement?,
@@ -190,7 +202,8 @@ open class ActiveDefaultProduction: XActiveProduction {
         escapeAllInText: Bool = false,
         escapeAll: Bool = false,
         linebreak: String = X_DEFAULT_LINEBREAK,
-        prefixTranslations: [String:String]?
+        prefixTranslations: [String:String]?,
+        suppressDeclarationForNamespaceURIs declarationSupressingNamespaceURIs: [String]? = nil
     ) {
         self.startElement = startElement
         self.writer = writer
@@ -200,6 +213,7 @@ open class ActiveDefaultProduction: XActiveProduction {
         self.escapeAll = escapeAll
         self._linebreak = linebreak
         self.prefixTranslations = prefixTranslations
+        self.declarationSupressingNamespaceURIs = declarationSupressingNamespaceURIs
     }
     
     private var _declarationInInternalSubsetIndentation = " "
@@ -314,6 +328,7 @@ open class ActiveDefaultProduction: XActiveProduction {
     open func writeElementStartAfterAttributes(element: XElement) throws {
         if element === startElement, let document = element.document, !document._prefixToNamespaceURI.isEmpty {
             for (prefix, uri) in document._prefixToNamespaceURI.sorted(by: < ) {
+                if let declarationSupressingNamespaceURIs, declarationSupressingNamespaceURIs.contains(uri) { continue }
                 let attributeName: String
                 if let prefixTranslations, let translatedPrefix = prefixTranslations[prefix] {
                     if translatedPrefix.isEmpty {
@@ -437,14 +452,20 @@ public class PrettyPrintProductionTemplate: XProductionTemplate {
         self.linebreak = linebreak
     }
     
-    public func activeProduction(for writer: Writer, withStartElement startElement: XElement?, prefixTranslations: [String:String]?) -> XActiveProduction {
+    public func activeProduction(
+        for writer: Writer,
+        withStartElement startElement: XElement?,
+        prefixTranslations: [String:String]?,
+        declarationSupressingNamespaceURIs: [String]?
+    ) -> XActiveProduction {
         ActivePrettyPrintProduction(
             withStartElement: startElement,
             writer: writer,
             writeEmptyTags: writeEmptyTags,
             indentation: indentation,
             linebreak: linebreak,
-            prefixTranslations: prefixTranslations
+            prefixTranslations: prefixTranslations,
+            suppressDeclarationForNamespaceURIs: declarationSupressingNamespaceURIs
         )
     }
     
@@ -463,7 +484,8 @@ open class ActivePrettyPrintProduction: ActiveDefaultProduction {
         escapeAllInText: Bool = false,
         escapeAll: Bool = false,
         linebreak: String = X_DEFAULT_LINEBREAK,
-        prefixTranslations: [String:String]?
+        prefixTranslations: [String:String]?,
+        suppressDeclarationForNamespaceURIs declarationSupressingNamespaceURIs: [String]?
     ) {
         self.indentation = indentation
         super.init(
@@ -474,7 +496,8 @@ open class ActivePrettyPrintProduction: ActiveDefaultProduction {
             escapeAllInText: escapeAllInText,
             escapeAll: escapeAll,
             linebreak: linebreak,
-            prefixTranslations: prefixTranslations
+            prefixTranslations: prefixTranslations,
+            suppressDeclarationForNamespaceURIs: declarationSupressingNamespaceURIs
         )
     }
     
@@ -560,7 +583,12 @@ public class HTMLProductionTemplate: XProductionTemplate {
         self.suppressUncessaryPrettyPrintAtAnchors = suppressUncessaryPrettyPrintAtAnchors
     }
     
-    open func activeProduction(for writer: Writer, withStartElement startElement: XElement?, prefixTranslations: [String:String]?) -> XActiveProduction {
+    open func activeProduction(
+        for writer: Writer,
+        withStartElement startElement: XElement?,
+        prefixTranslations: [String:String]?,
+        declarationSupressingNamespaceURIs: [String]?
+    ) -> XActiveProduction {
         ActiveHTMLProduction(
             withStartElement: startElement,
             writer: writer,
@@ -572,7 +600,8 @@ public class HTMLProductionTemplate: XProductionTemplate {
             escapeAllInText: escapeAllInText,
             escapeAll: escapeAll,
             suppressUncessaryPrettyPrintAtAnchors: suppressUncessaryPrettyPrintAtAnchors,
-            prefixTranslations: prefixTranslations
+            prefixTranslations: prefixTranslations,
+            suppressDeclarationForNamespaceURIs: declarationSupressingNamespaceURIs
         )
     }
     
@@ -599,7 +628,8 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
         escapeAllInText: Bool = false,
         escapeAll: Bool = false,
         suppressUncessaryPrettyPrintAtAnchors: Bool = false,
-        prefixTranslations: [String:String]?
+        prefixTranslations: [String:String]?,
+        suppressDeclarationForNamespaceURIs declarationSupressingNamespaceURIs: [String]?
     ) {
         htmlEmptyTags = [
             "area",
@@ -669,7 +699,8 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
             escapeAllInText: escapeAllInText,
             escapeAll: escapeAll,
             linebreak: linebreak,
-            prefixTranslations: prefixTranslations
+            prefixTranslations: prefixTranslations,
+            suppressDeclarationForNamespaceURIs: declarationSupressingNamespaceURIs
         )
     }
     

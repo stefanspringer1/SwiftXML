@@ -26,8 +26,12 @@ func getPrefixTranslations(fromPrefixesForNamespaceURIs prefixesForNamespaceURIs
     }
 }
 
-func getCompletePrefixTranslations(prefixTranslations: [String:String]? = nil, prefixesForNamespaceURIs: [String:String]? = nil, forNode node: XNode) -> [String:String]? {
-    let completePrefixTranslations: [String:String]?
+func getCompletePrefixTranslations(
+    prefixTranslations: [String:String]? = nil,
+    prefixesForNamespaceURIs: [String:String]? = nil,
+    forNode node: XNode
+) -> [String:String]? {
+    var completePrefixTranslations: [String:String]?
     if let prefixTranslationsFromPrefixesForNamespaceURIs = getPrefixTranslations(fromPrefixesForNamespaceURIs: prefixesForNamespaceURIs, forNode: node) {
         if let prefixTranslations {
             completePrefixTranslations = prefixTranslationsFromPrefixesForNamespaceURIs.merging(prefixTranslations) { (current, _) in current }

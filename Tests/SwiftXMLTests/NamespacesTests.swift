@@ -158,9 +158,19 @@ final class NamespacesTests: XCTestCase {
                 </b>
             </a>
             """)
+        
+        XCTAssertEqual(document.serialized(pretty: true, overwritingPrefixesForNamespaceURIs: ["http://a": ""], overwritingPrefixes: ["x": ""], suppressDeclarationForNamespaceURIs: ["http://a"]), """
+            <a xmlns:c="http://c"><x/>
+                <b>
+                    <c:c>
+                        <c:d/>
+                    </c:c>
+                </b>
+            </a>
+            """)
     }
     
-    func testsilentEmptyRootPrefix() throws {
+    func testSilentEmptyRootPrefix() throws {
         
         let source = """
             <a xmlns="http://a">
@@ -197,6 +207,14 @@ final class NamespacesTests: XCTestCase {
                     </b>
                 </a>
                 """)
+            // do not write the declaration for the silent namespace:
+            XCTAssertEqual(document.firstChild?.firstChild?.serialized(overwritingPrefixesForNamespaceURIs: ["http://a": ""], suppressDeclarationForNamespaceURIs: ["http://a"]), """
+                <b xmlns:c="http://c">
+                        <c:c>
+                            <c:d/>
+                        </c:c>
+                    </b>
+                """)
         }
         
         do {
@@ -217,6 +235,14 @@ final class NamespacesTests: XCTestCase {
             // writing just <b>:
             XCTAssertEqual(document.firstChild?.firstChild?.serialized, """
                 <b xmlns="http://a" xmlns:c="http://c">
+                        <c:c>
+                            <c:d/>
+                        </c:c>
+                    </b>
+                """)
+            // do not write the declaration for the silent namespace:
+            XCTAssertEqual(document.firstChild?.firstChild?.serialized(suppressDeclarationForNamespaceURIs: ["http://a"]), """
+                <b xmlns:c="http://c">
                         <c:c>
                             <c:d/>
                         </c:c>
