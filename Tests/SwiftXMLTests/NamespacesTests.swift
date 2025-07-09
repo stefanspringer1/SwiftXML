@@ -160,7 +160,7 @@ final class NamespacesTests: XCTestCase {
             """)
     }
     
-    func testNoPrefixForPrefixlessNamespaceAtRoot() throws {
+    func testsilentEmptyRootPrefix() throws {
         
         let source = """
             <a xmlns="http://a">
@@ -201,7 +201,7 @@ final class NamespacesTests: XCTestCase {
         
         do {
             // no prefix for prefixless namespace at root:
-            let document = try parseXML(fromText: source, namespaceAware: true, noPrefixForPrefixlessNamespaceAtRoot: true)
+            let document = try parseXML(fromText: source, namespaceAware: true, silentEmptyRootPrefix: true)
             XCTAssertEqual(document.namespacePrefixesAndURIs.map{ "\"\($0.0)\" -> \"\($0.1)\"" }.joined(separator: ", "), #""" -> "http://a", "c" -> "http://c""#)
             XCTAssertEqual(document.firstChild?["xmlns"], nil)
             XCTAssertEqual(document.firstChild?.prefix, nil)

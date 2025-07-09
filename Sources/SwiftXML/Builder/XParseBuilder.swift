@@ -32,7 +32,7 @@ public final class XParseBuilder: XEventHandler {
 
     let document: XDocument
     let namespaceAware: Bool
-    let noPrefixForPrefixlessNamespaceAtRoot: Bool
+    let silentEmptyRootPrefix: Bool
     let keepComments: Bool
     let keepCDATASections: Bool
     let externalWrapperElement: String?
@@ -48,7 +48,7 @@ public final class XParseBuilder: XEventHandler {
     public init(
         document: XDocument,
         namespaceAware: Bool = false,
-        noPrefixForPrefixlessNamespaceAtRoot: Bool = false,
+        silentEmptyRootPrefix: Bool = false,
         keepComments: Bool = false,
         keepCDATASections: Bool = false,
         externalWrapperElement: String? = nil
@@ -56,7 +56,7 @@ public final class XParseBuilder: XEventHandler {
         
         self.document = document
         self.namespaceAware = namespaceAware
-        self.noPrefixForPrefixlessNamespaceAtRoot = noPrefixForPrefixlessNamespaceAtRoot
+        self.silentEmptyRootPrefix = silentEmptyRootPrefix
         self.keepComments = keepComments
         self.keepCDATASections = keepCDATASections
         self.externalWrapperElement = externalWrapperElement
@@ -138,7 +138,7 @@ public final class XParseBuilder: XEventHandler {
                     proposedPrefix = existingPrefix ?? originalPrefix
                 } else if attributeName == "xmlns" {
                     uri = attributes[attributeName]
-                    if noPrefixForPrefixlessNamespaceAtRoot && currentBranch is XDocument {
+                    if silentEmptyRootPrefix && currentBranch is XDocument {
                         resultingNamespaceURIToPrefix[uri!] = ""
                         attributes[attributeName] = nil
                     } else {

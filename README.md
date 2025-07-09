@@ -116,7 +116,7 @@ let transformation = XTransformation {
 
 **UPDATE 37 (July 2025):** Removed the `NamespaceReference` enumeration, dispense with the according argument for the HTZML production (use namespace awareness instead if nevcessary).
 
-**UPDATE 38 (July 2025):** Renamed `recognizeNamespaces` to `namespaceAware`.
+**UPDATE 38 (July 2025):** Renamed `recognizeNamespaces` to `namespaceAware` and renamed `noPrefixForPrefixlessNamespaceAtRoot` to `silentEmptyRootPrefix`.
 
 ---
 
@@ -268,7 +268,7 @@ Reading from a URL which references a local file:
 func parseXML(
     fromURL: URL,
     namespaceAware: Bool = false,
-    noPrefixForPrefixlessNamespaceAtRoot: Bool = false,
+    silentEmptyRootPrefix: Bool = false,
     registeringAttributes attributeRegisterMode: AttributeRegisterMode = .none,
     sourceInfo: String? = nil,
     textAllowedInElementWithName: ((String) -> Bool)? = nil,
@@ -2084,7 +2084,7 @@ The namespaces with their prefixes are registerd at the document, according name
 
 During serialization, every prefix value which is not `null` is written as the prefix of the name (with a separating colon). Use the arguments `overwritingPrefixesForNamespaceURIs:` and `overwritingPrefixes:` of the serialization and output methods (each with an according map with prefixes for the serialization as values) to change prefixes in the serialization, where an empty String value means not outputting a prefix. (Be careful with those settings as there is no check for consistency.)
 
-Some XML documents declare a namespace at the top of the document in the form `xmlns="..."` i.e. without a prefix to define the schema to be used for the document. When reading such a document with `namespaceAware: true`, consequently a prefix is created for this namespace and used for all according elements to conserve the affiliation to the namespace. Rules and the usual name based searches then have to take that prefix into account. If want to avoid this, use the setting `noPrefixForPrefixlessNamespaceAtRoot: true` when parsing. The according namespace URI is then still registered at the document, but with prefix value `""`, and the according elements then have no prefix value set (their prefix value is `null`), so e.g. no prefix value has to be considered in rules.
+Some XML documents declare a namespace at the top of the document in the form `xmlns="..."` i.e. without a prefix to define the schema to be used for the document. When reading such a document with `namespaceAware: true`, consequently a prefix is created for this namespace and used for all according elements to conserve the affiliation to the namespace. Rules and the usual name based searches then have to take that prefix into account. If want to avoid this, use the setting `silentEmptyRootPrefix: true` when parsing. The according namespace URI is then still registered at the document, but with prefix value `""`, and the according elements then have no prefix value set (their prefix value is `null`), so e.g. no prefix value has to be considered in rules.
 
 When moving elements between documents, missing namespaces with their prefixes are added to the target document, and prefixes of the moved elements are adjusted if necessary. For a removed or cloned element, the according namespace URI can still be found as long as the orginal document still exists and has not changed this value, so the element then behaves the same as being directly moved between documents.
 

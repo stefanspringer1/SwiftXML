@@ -15,7 +15,7 @@ import SwiftXMLParser
 public func parseXML(
     from documentSource: XDocumentSource,
     namespaceAware: Bool = false,
-    noPrefixForPrefixlessNamespaceAtRoot: Bool = false,
+    silentEmptyRootPrefix: Bool = false,
     registeringAttributes attributeRegisterMode: AttributeRegisterMode = .none,
     registeringValuesForAttributes attributeValueRegisterMode: AttributeRegisterMode = .none,
     sourceInfo: String? = nil,
@@ -57,7 +57,7 @@ public func parseXML(
         mainEventHandler: XParseBuilder(
             document: document,
             namespaceAware: namespaceAware,
-            noPrefixForPrefixlessNamespaceAtRoot: noPrefixForPrefixlessNamespaceAtRoot,
+            silentEmptyRootPrefix: silentEmptyRootPrefix,
             keepComments: keepComments,
             keepCDATASections: keepCDATASections,
             externalWrapperElement: externalWrapperElement
@@ -72,7 +72,7 @@ public func parseXML(
 public func parseXML(
     fromPath path: String,
     namespaceAware: Bool = false,
-    noPrefixForPrefixlessNamespaceAtRoot: Bool = false,
+    silentEmptyRootPrefix: Bool = false,
     registeringAttributes attributeRegisterMode: AttributeRegisterMode = .none,
     registeringValuesForAttributes attributeValueRegisterMode: AttributeRegisterMode = .none,
     sourceInfo: String? = nil,
@@ -92,7 +92,7 @@ public func parseXML(
     try parseXML(
         from: .path(path),
         namespaceAware: namespaceAware,
-        noPrefixForPrefixlessNamespaceAtRoot: noPrefixForPrefixlessNamespaceAtRoot,
+        silentEmptyRootPrefix: silentEmptyRootPrefix,
         registeringAttributes: attributeRegisterMode,
         registeringValuesForAttributes: attributeValueRegisterMode,
         sourceInfo: sourceInfo,
@@ -114,7 +114,7 @@ public func parseXML(
 public func parseXML(
     fromURL url: URL,
     namespaceAware: Bool = false,
-    noPrefixForPrefixlessNamespaceAtRoot: Bool = false,
+    silentEmptyRootPrefix: Bool = false,
     registeringAttributes attributeRegisterMode: AttributeRegisterMode = .none,
     registeringValuesForAttributes attributeValueRegisterMode: AttributeRegisterMode = .none,
     sourceInfo: String? = nil,
@@ -134,7 +134,7 @@ public func parseXML(
     try parseXML(
         from: .url(url),
         namespaceAware: namespaceAware,
-        noPrefixForPrefixlessNamespaceAtRoot: noPrefixForPrefixlessNamespaceAtRoot,
+        silentEmptyRootPrefix: silentEmptyRootPrefix,
         registeringAttributes: attributeRegisterMode,
         registeringValuesForAttributes: attributeValueRegisterMode,
         sourceInfo: sourceInfo,
@@ -156,7 +156,7 @@ public func parseXML(
 public func parseXML(
     fromText text: String,
     namespaceAware: Bool = false,
-    noPrefixForPrefixlessNamespaceAtRoot: Bool = false,
+    silentEmptyRootPrefix: Bool = false,
     registeringAttributes attributeRegisterMode: AttributeRegisterMode = .none,
     registeringValuesForAttributes attributeValueRegisterMode: AttributeRegisterMode = .none,
     sourceInfo: String? = nil,
@@ -176,7 +176,7 @@ public func parseXML(
     try parseXML(
         from: .text(text),
         namespaceAware: namespaceAware,
-        noPrefixForPrefixlessNamespaceAtRoot: noPrefixForPrefixlessNamespaceAtRoot,
+        silentEmptyRootPrefix: silentEmptyRootPrefix,
         registeringAttributes: attributeRegisterMode,
         registeringValuesForAttributes: attributeValueRegisterMode,
         sourceInfo: sourceInfo,
@@ -198,7 +198,7 @@ public func parseXML(
 public func parseXML(
     fromData data: Data,
     namespaceAware: Bool = false,
-    noPrefixForPrefixlessNamespaceAtRoot: Bool = false,
+    silentEmptyRootPrefix: Bool = false,
     registeringAttributes attributeRegisterMode: AttributeRegisterMode = .none,
     registeringValuesForAttributes attributeValueRegisterMode: AttributeRegisterMode = .none,
     sourceInfo: String? = nil,
@@ -220,7 +220,7 @@ public func parseXML(
     try parseXML(
         from: .data(data),
         namespaceAware: namespaceAware,
-        noPrefixForPrefixlessNamespaceAtRoot: noPrefixForPrefixlessNamespaceAtRoot,
+        silentEmptyRootPrefix: silentEmptyRootPrefix,
         registeringAttributes: attributeRegisterMode,
         registeringValuesForAttributes: attributeValueRegisterMode,
         sourceInfo: sourceInfo,
