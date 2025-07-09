@@ -533,7 +533,6 @@ public class HTMLProductionTemplate: XProductionTemplate {
     
     public let indentation: String
     public let linebreak: String
-    public let htmlNamespaceReference: NamespaceReference?
     public let suppressDocumentTypeDeclaration: Bool
     public let writeAsASCII: Bool
     public let escapeGreaterThan: Bool
@@ -544,7 +543,6 @@ public class HTMLProductionTemplate: XProductionTemplate {
     public init(
         indentation: String = X_DEFAULT_INDENTATION,
         linebreak: String = X_DEFAULT_LINEBREAK,
-        withHTMLNamespaceReference htmlNamespaceReference: NamespaceReference? = nil,
         suppressDocumentTypeDeclaration: Bool = false,
         writeAsASCII: Bool = false,
         escapeGreaterThan: Bool = false,
@@ -554,7 +552,6 @@ public class HTMLProductionTemplate: XProductionTemplate {
     ) {
         self.indentation = indentation
         self.linebreak = linebreak
-        self.htmlNamespaceReference = htmlNamespaceReference
         self.suppressDocumentTypeDeclaration = suppressDocumentTypeDeclaration
         self.writeAsASCII = writeAsASCII
         self.escapeGreaterThan = escapeGreaterThan
@@ -569,7 +566,6 @@ public class HTMLProductionTemplate: XProductionTemplate {
             writer: writer,
             indentation: indentation,
             linebreak: linebreak,
-            withHTMLNamespaceReference: htmlNamespaceReference,
             suppressDocumentTypeDeclaration: suppressDocumentTypeDeclaration,
             writeAsASCII: writeAsASCII,
             escapeGreaterThan: escapeGreaterThan,
@@ -589,7 +585,6 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
     public var htmlStrictInlines: [String]
     public var blockOrInline: [String]
     public var suppressDocumentTypeDeclaration: Bool
-    public let fullHTMLPrefix: String
     public let writeAsASCII: Bool
     public let suppressUncessaryPrettyPrintAtAnchors: Bool
     
@@ -598,7 +593,6 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
         writer: Writer,
         indentation: String = X_DEFAULT_INDENTATION,
         linebreak: String = X_DEFAULT_LINEBREAK,
-        withHTMLNamespaceReference htmlNamespaceReference: NamespaceReference?,
         suppressDocumentTypeDeclaration: Bool = false,
         writeAsASCII: Bool = false,
         escapeGreaterThan: Bool = false,
@@ -607,71 +601,61 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
         suppressUncessaryPrettyPrintAtAnchors: Bool = false,
         prefixTranslations: [String:String]?
     ) {
-        if let htmlNamespaceReference {
-            switch htmlNamespaceReference {
-            case .uri(let uri):
-                fullHTMLPrefix = startElement?.document?.prefix(forNamespaceURI: uri)?.appending(":") ?? ""
-            case .prefix(let prefix):
-                fullHTMLPrefix = prefix.appending(":")
-            }
-        } else {
-            fullHTMLPrefix = ""
-        }
         htmlEmptyTags = [
-            "\(fullHTMLPrefix)area",
-            "\(fullHTMLPrefix)base",
-            "\(fullHTMLPrefix)br",
-            "\(fullHTMLPrefix)col",
-            "\(fullHTMLPrefix)embed",
-            "\(fullHTMLPrefix)hr",
-            "\(fullHTMLPrefix)img",
-            "\(fullHTMLPrefix)input",
-            "\(fullHTMLPrefix)link",
-            "\(fullHTMLPrefix)meta",
-            "\(fullHTMLPrefix)param",
-            "\(fullHTMLPrefix)source",
-            "\(fullHTMLPrefix)track",
-            "\(fullHTMLPrefix)wbr",
+            "area",
+            "base",
+            "br",
+            "col",
+            "embed",
+            "hr",
+            "img",
+            "input",
+            "link",
+            "meta",
+            "param",
+            "source",
+            "track",
+            "wbr",
         ]
         htmlStrictBlocks = [
-            "\(fullHTMLPrefix)div",
-            "\(fullHTMLPrefix)p",
-            "\(fullHTMLPrefix)table",
-            "\(fullHTMLPrefix)thead",
-            "\(fullHTMLPrefix)tbody",
-            "\(fullHTMLPrefix)tfoot",
-            "\(fullHTMLPrefix)tr",
-            "\(fullHTMLPrefix)th",
-            "\(fullHTMLPrefix)td",
+            "div",
+            "p",
+            "table",
+            "thead",
+            "tbody",
+            "tfoot",
+            "tr",
+            "th",
+            "td",
         ]
         htmlStrictInlines = [
-            "\(fullHTMLPrefix)abbr",
-            "\(fullHTMLPrefix)acronym",
-            "\(fullHTMLPrefix)b",
-            "\(fullHTMLPrefix)bdo",
-            "\(fullHTMLPrefix)big",
-            "\(fullHTMLPrefix)br",
-            "\(fullHTMLPrefix)cite",
-            "\(fullHTMLPrefix)code",
-            "\(fullHTMLPrefix)dfn",
-            "\(fullHTMLPrefix)em",
-            "\(fullHTMLPrefix)i",
-            "\(fullHTMLPrefix)input",
-            "\(fullHTMLPrefix)kbd",
-            "\(fullHTMLPrefix)output",
-            "\(fullHTMLPrefix)q",
-            "\(fullHTMLPrefix)samp",
-            "\(fullHTMLPrefix)small",
-            "\(fullHTMLPrefix)span",
-            "\(fullHTMLPrefix)strong",
-            "\(fullHTMLPrefix)sub",
-            "\(fullHTMLPrefix)sup",
-            "\(fullHTMLPrefix)time",
-            "\(fullHTMLPrefix)var",
+            "abbr",
+            "acronym",
+            "b",
+            "bdo",
+            "big",
+            "br",
+            "cite",
+            "code",
+            "dfn",
+            "em",
+            "i",
+            "input",
+            "kbd",
+            "output",
+            "q",
+            "samp",
+            "small",
+            "span",
+            "strong",
+            "sub",
+            "sup",
+            "time",
+            "var",
         ]
         blockOrInline = [
-            "\(fullHTMLPrefix)a",
-            "\(fullHTMLPrefix)img",
+            "a",
+            "img",
         ]
         self.suppressDocumentTypeDeclaration = suppressDocumentTypeDeclaration
         self.writeAsASCII = writeAsASCII

@@ -10,11 +10,6 @@
 
 import Foundation
 
-public enum NamespaceReference {
-    case uri(_ uri: String)
-    case prefix(_ prefix: String?)
-}
-
 func getPrefixTranslations(fromPrefixesForNamespaceURIs prefixesForNamespaceURIs: [String:String]?, forNode node: XNode) -> [String:String]? {
     if let prefixesForNamespaceURIs, let document = node.document {
         var prefixTranslations = [String:String]()
