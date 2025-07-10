@@ -2096,7 +2096,7 @@ When writing code that takes a possible prefix into account (i.e. the code shoul
 
 When moving elements between documents, missing namespaces with their prefixes are added to the target document, and prefixes of the moved elements are adjusted if necessary. For a removed or cloned element, the according namespace URI can still be found as long as the orginal document still exists and has not changed this value, so the element then behaves the same as being directly moved between documents.
 
-Generally, there is no a need to change any prefix for a registered namespace during processing, just use the prefix returned by `prefix(forNamespaceURI:)` and, if necessary, define prefixes for a serialization.
+Generally, there is no a need to change any prefix for a registered namespace during processing (there are also no tools added that would simplify this), just use the prefix returned by `prefix(forNamespaceURI:)` and, if necessary, define prefixes for a serialization.
 
 In the current state of the library, no namespace handling of attributes is available.
 
