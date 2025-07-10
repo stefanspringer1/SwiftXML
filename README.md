@@ -655,7 +655,7 @@ As mentioned and the general description, the library allows to efficiently find
 Finding the elements of a certain name:
 
 ```swift
-func elements(_: String) -> XElementsOfSameNameSequence
+func elements(prefix:_: String...) -> XElementsOfSameNameSequence
 ```
 
 Example:
@@ -668,7 +668,9 @@ for paragraph in myDocument.elements("paragraph") {
 }
 ```
 
-Find the elements of several name alternatives by using several names in `elements(_:)`. Note that just like the methods for single names, what you add during the iteration will then also be considered.
+Find the elements of several name alternatives by using several names in the according argument. Note that just like the methods for single names, what you add during the iteration will then also be considered.
+
+You can also use a prefix in the first (optional) argument for direct access to elements having a certain prefix (if you use `nil` as the value of this argument, the according elements that do not have a prefix are found). See more about prefixes in the section “Prefixes and namespaces” below.
 
 ## Direct access to attributes
 
