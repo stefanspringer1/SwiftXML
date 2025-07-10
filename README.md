@@ -2129,7 +2129,7 @@ When searching for elements with prefixes, those prefixes have to be used:
 ```swift
 let mathMLPrefix = myDocument.prefix(forNamespaceURI: "http://www.w3.org/1998/Math/MathML")
 
-for element in document.descendants(prefix: mathMLPrefix, "math", "mo", "mi") {
+for element in document.elements(prefix: mathMLPrefix, "math", "mo", "mi") {
     print("element \"\(element.name)\" with prefix \"\(element.prefix ?? "")\"")
 }
 ```
