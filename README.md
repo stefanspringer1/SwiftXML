@@ -2158,7 +2158,7 @@ let transformation = XTransformation {
 
 In the examples above, if the namespace URI is not declared in the source (and no according prefixes set at the elements), then `XDocument.prefix(forNamespaceURI:)` returns `nil`, and the code is still valid.
 
-Use the methods `has(prefix:name:)` and `set(prefix:name:)` for elements to check respectively set the values of the proprties `prefix` and `name` in an easy way.
+Use the methods `has(prefix:name:)` and `set(prefix:name:)` of elements to check respectively set the values of the proprties `prefix` and `name` in an easy way.
 
 ---
 **NOTE**
