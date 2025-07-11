@@ -368,6 +368,23 @@ final class ToolsTests: XCTestCase {
         )
     }
     
+    func testHTMLOutput11() throws {
+        let source = """
+            <div><object data="tables/1.html" type="txt/html"><object data="tables/tablePlaceHolder.png" type="image/png">Picture missing. No alternative text available.</object></object></div>
+            """
+        XCTAssertEqual(
+            try parseXML(fromText: source).serialized(
+                usingProductionTemplate: HTMLProductionTemplate(
+                    suppressUncessaryPrettyPrintAtAnchors: true
+                )
+            ),
+            """
+            <!DOCTYPE html>
+            <div><object data="tables/1.html" type="txt/html"><object data="tables/tablePlaceHolder.png" type="image/png">Picture missing. No alternative text available.</object></object></div>
+            """
+        )
+    }
+    
 }
 
 /// An error with a description.

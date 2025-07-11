@@ -686,6 +686,7 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
         blockOrInline = [
             "a",
             "img",
+            "object",
         ]
         self.suppressDocumentTypeDeclaration = suppressDocumentTypeDeclaration
         self.writeAsASCII = writeAsASCII
