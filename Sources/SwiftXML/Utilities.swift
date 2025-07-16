@@ -55,6 +55,10 @@ public extension String {
             .replacingOccurrences(of: "'", with: "&apos;")
     }
     
+}
+
+extension String {
+    
     func appending(_ string: String?) -> String {
         if let string { self + string } else { self }
     }
