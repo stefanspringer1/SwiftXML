@@ -931,10 +931,12 @@ public final class XElementsOfSameNameSequence: XElementSequence {
 public final class XAttributesOfSameNameSequence: XAttributeSequence {
     
     let document: XDocument
+    let attributePrefix: String?
     let attributeName: String
     
-    public init(document: XDocument, attributeName: String) {
+    public init(document: XDocument, attributePrefix: String?, attributeName: String) {
         self.document = document
+        self.attributePrefix = attributePrefix
         self.attributeName = attributeName
     }
     
@@ -942,6 +944,7 @@ public final class XAttributesOfSameNameSequence: XAttributeSequence {
         return XBidirectionalAttributeIterator(
             forAttributeName: attributeName, attributeIterator: XAttributesOfSameNameIterator(
                 document: document,
+                attributePrefix: attributePrefix,
                 attributeName: attributeName
             )
         )
@@ -951,11 +954,13 @@ public final class XAttributesOfSameNameSequence: XAttributeSequence {
 public final class XAttributesOfSameValueSequence: XAttributeSequence {
     
     let document: XDocument
+    let attributePrefix: String?
     let attributeName: String
     let attributeValue: String
     
-    public init(document: XDocument, attributeName: String, attributeValue: String) {
+    public init(document: XDocument, attributePrefix: String?, attributeName: String, attributeValue: String) {
         self.document = document
+        self.attributePrefix = attributePrefix
         self.attributeName = attributeName
         self.attributeValue = attributeValue
     }
@@ -964,6 +969,7 @@ public final class XAttributesOfSameValueSequence: XAttributeSequence {
         return XBidirectionalAttributeIterator(
             forAttributeName: attributeName, attributeIterator: XAttributesOfSameValueIterator(
                 document: document,
+                attributePrefix: attributePrefix,
                 attributeName: attributeName,
                 attributeValue: attributeValue
             )

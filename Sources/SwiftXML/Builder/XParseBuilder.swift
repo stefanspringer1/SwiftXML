@@ -42,8 +42,14 @@ public final class XParseBuilder: XEventHandler {
     var prefixes = Set<String>()
     var prefixCorrections = [String:String]()
     var resultingNamespaceURIToPrefix = [String:String]()
+    var resultingPrefixToNamespaceURI = [String:String]()
     var namespaceURIAndPrefixDuringBuild = [(String,String)]()
     var prefixFreeNSURIsCount = 0
+    
+    let registeringAttributes: AttributeRegisterMode
+    let registeringAttributeValuesFor: AttributeRegisterMode
+    let registeringAttributesForNamespaces: AttributeWithNamespaceURIRegisterMode
+    let registeringAttributeValuesForForNamespaces: AttributeWithNamespaceURIRegisterMode
     
     public init(
         document: XDocument,
@@ -51,7 +57,11 @@ public final class XParseBuilder: XEventHandler {
         silentEmptyRootPrefix: Bool = false,
         keepComments: Bool = false,
         keepCDATASections: Bool = false,
-        externalWrapperElement: String? = nil
+        externalWrapperElement: String? = nil,
+        registeringAttributes: AttributeRegisterMode = .none,
+        registeringAttributeValuesFor: AttributeRegisterMode = .none,
+        registeringAttributesForNamespaces: AttributeWithNamespaceURIRegisterMode = .none,
+        registeringAttributeValuesForForNamespaces: AttributeWithNamespaceURIRegisterMode = .none
     ) {
         
         self.document = document
@@ -61,8 +71,15 @@ public final class XParseBuilder: XEventHandler {
         self.keepCDATASections = keepCDATASections
         self.externalWrapperElement = externalWrapperElement
         
+        self.registeringAttributes = registeringAttributes
+        self.registeringAttributeValuesFor = registeringAttributeValuesFor
+        self.registeringAttributesForNamespaces = registeringAttributesForNamespaces
+        self.registeringAttributeValuesForForNamespaces = registeringAttributeValuesForForNamespaces
+        
         self.currentBranch = document
         
+        document._attributeRegisterMode = registeringAttributes
+        document._attributeValueRegisterMode = registeringAttributeValuesFor
     }
     
     public func documentStart() {}
@@ -160,6 +177,7 @@ public final class XParseBuilder: XEventHandler {
                             resultingPrefix = "\(proposedPrefix)\(avoidPrefixClashCount)"
                         }
                         resultingNamespaceURIToPrefix[uri] = resultingPrefix
+                        resultingPrefixToNamespaceURI[resultingPrefix] = uri
                         prefixes.insert(resultingPrefix)
                     }
                     namespaceURIAndPrefixDuringBuild.append((uri,originalPrefix))
@@ -216,14 +234,14 @@ public final class XParseBuilder: XEventHandler {
         currentBranch._add(element)
         
         if namespaceAware {
-            for (attributName,attributeValue) in attributes {
+            for (attributeName,attributeValue) in attributes {
                 var prefixOfAttribute: String? = nil
                 var attributeNameIfPrefix: String? = nil
                 
                 var literalPrefixOfAttribute: String? = nil
-                let colon = attributName.firstIndex(of: ":")
+                let colon = attributeName.firstIndex(of: ":")
                 if let colon {
-                    literalPrefixOfAttribute = String(attributName[..<colon])
+                    literalPrefixOfAttribute = String(attributeName[..<colon])
                 }
                 if let literalPrefixOfAttribute {
                     var i = namespaceURIAndPrefixDuringBuild.count - 1
@@ -231,7 +249,7 @@ public final class XParseBuilder: XEventHandler {
                         let (uri,prefix) = namespaceURIAndPrefixDuringBuild[i]
                         if prefix == literalPrefixOfAttribute {
                             prefixOfAttribute = resultingNamespaceURIToPrefix[uri]!
-                            attributeNameIfPrefix = String(attributName[colon!...].dropFirst())
+                            attributeNameIfPrefix = String(attributeName[colon!...].dropFirst())
                             break
                         }
                         i -= 1
@@ -256,10 +274,45 @@ public final class XParseBuilder: XEventHandler {
                         }
                     }
                 }
+                
                 if let prefixOfAttribute {
-                    element[prefixOfAttribute,attributeNameIfPrefix!] = attributeValue
+                    let attributeNameIfPrefix = attributeNameIfPrefix!
+                    element[prefixOfAttribute,attributeNameIfPrefix] = attributeValue
+                    
+                    do {
+                        let registerUsingNamespaceURIsAndName = switch registeringAttributesForNamespaces {
+                        case .none:
+                            false
+                        case .selected(let selection):
+                            selection.contains(where: { $0.namespaceURI == resultingPrefixToNamespaceURI[prefixOfAttribute] && $0.name == attributeNameIfPrefix})
+                        case .all:
+                            true
+                        }
+                        if registerUsingNamespaceURIsAndName {
+                            let attributeProperties = AttributeProperties(value: attributeValue, element: element)
+                            element._registeredAttributesWithPrefix[prefixOfAttribute,attributeNameIfPrefix] = attributeProperties
+                            document.registerAttributeWithPrefix(attributeProperties: attributeProperties, withPrefix: prefixOfAttribute, withName: attributeNameIfPrefix)
+                        }
+                    }
+                    
+                    do {
+                        let registerForValue = switch registeringAttributeValuesForForNamespaces {
+                        case .none:
+                            false
+                        case .selected(let selection):
+                            selection.contains(where: { $0.namespaceURI == resultingPrefixToNamespaceURI[prefixOfAttribute] && $0.name == attributeNameIfPrefix})
+                        case .all:
+                            true
+                        }
+                        if registerForValue {
+                            let attributeProperties = AttributeProperties(value: attributeValue, element: element)
+                            element._registeredAttributeWithPrefixValues[prefixOfAttribute,attributeNameIfPrefix] = attributeProperties
+                            document.registerAttributeWithPrefixValue(attributeProperties: attributeProperties, withPrefix: prefixOfAttribute, withName: attributeNameIfPrefix)
+                        }
+                    }
+                    
                 } else {
-                    element[attributName] = attributeValue
+                    element[attributeName] = attributeValue
                 }
             }
         } else {
@@ -378,6 +431,27 @@ public final class XParseBuilder: XEventHandler {
     }
     
     public func documentEnd() {
+        
+        document._attributeWithPrefixRegisterMode =
+            switch registeringAttributesForNamespaces {
+            case .none:
+                .none
+            case .selected(let selection):
+                .selected(selection.map{ PrefixedName.make(fromPrefix: resultingNamespaceURIToPrefix[$0.namespaceURI], andName: $0.name) }.compactMap{ $0 })
+            case .all:
+                .all
+            }
+        
+        document._attributeWithPrefixValueRegisterMode =
+            switch registeringAttributeValuesForForNamespaces {
+            case .none:
+                .none
+            case .selected(let selection):
+                    .selected(selection.map{ PrefixedName.make(fromPrefix: resultingNamespaceURIToPrefix[$0.namespaceURI], andName: $0.name) }.compactMap{ $0 })
+            case .all:
+                .all
+            }
+        
         if namespaceAware {
             if prefixCorrections.isEmpty {
                 for (uri,prefix) in resultingNamespaceURIToPrefix {

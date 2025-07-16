@@ -133,11 +133,23 @@ final class SwiftXMLTests: XCTestCase {
         let element = document.children.first!
         element.attached["test"] = "hello"
         
-        let clone = document.clone(keepAttachments: true, registeringAttributes: AttributeRegisterMode.none, registeringValuesForAttributes: AttributeRegisterMode.none)
-        let elementInClone = clone.children.first!
-        XCTAssertEqual(elementInClone.attached["test"] as? String, "hello")
-        XCTAssertEqual(elementInClone["id"], "1")
-        XCTAssertEqual(clone.registeredAttributes("id").map { attributeSpot in attributeSpot.value }.joined(separator: ", "), "")
+        do {
+            // the registering of attributes is the same by default:
+            let clone = document.clone(keepAttachments: true)
+            let elementInClone = clone.children.first!
+            XCTAssertEqual(elementInClone.attached["test"] as? String, "hello")
+            XCTAssertEqual(elementInClone["id"], "1")
+            XCTAssertEqual(clone.registeredAttributes("id").map { attributeSpot in attributeSpot.value }.joined(separator: ", "), "1, 2, 3")
+        }
+        
+        do {
+            // the registering of attributes is changed by argument:
+            let clone = document.clone(keepAttachments: true, registeringAttributes: AttributeRegisterMode.none)
+            let elementInClone = clone.children.first!
+            XCTAssertEqual(elementInClone.attached["test"] as? String, "hello")
+            XCTAssertEqual(elementInClone["id"], "1")
+            XCTAssertEqual(clone.registeredAttributes("id").map { attributeSpot in attributeSpot.value }.joined(separator: ", "), "")
+        }
     }
     
     func testClone() throws {
@@ -1100,7 +1112,7 @@ final class SwiftXMLTests: XCTestCase {
             </a>
             """
 
-        let document = try parseXML(fromText: source, registeringValuesForAttributes: .selected(["id", "refid"]))
+        let document = try parseXML(fromText: source, registeringAttributeValuesFor: .selected(["id", "refid"]))
         
         // cannot find them by name only:
         XCTAssertEqual(

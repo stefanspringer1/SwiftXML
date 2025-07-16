@@ -721,7 +721,7 @@ final class FromReadmeTests: XCTestCase {
             </a>
             """
 
-        let document = try parseXML(fromText: source, registeringValuesForAttributes: .selected(["id", "refid"]))
+        let document = try parseXML(fromText: source, registeringAttributeValuesFor: .selected([ "id", "refid"]))
         
         XCTAssertEqual(
             """

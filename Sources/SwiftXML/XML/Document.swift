@@ -18,12 +18,36 @@ final class XValue {
     }
 }
 
+public struct NamespaceURIAndName {
+    let namespaceURI: String; let name: String
+}
+
+public struct NamespaceURIAndNameAndValue {
+    let namespaceURI: String; let name: String; let value: String
+}
+
 public enum AttributeRegisterMode {
     case none; case selected(_ attributeNames: [String]); case all
 }
 
+public enum AttributeWithNamespaceURIRegisterMode {
+    case none; case selected(_ namesWithNamespaceURI: [NamespaceURIAndName]); case all
+}
+
+public struct PrefixedName {
+    let prefix: String; let name: String
+    
+    /// If prefix is `nil`, this returns `nil`.
+    public static func make(fromPrefix prefix: String?, andName name: String) -> Self? {
+        guard let prefix else { return nil }
+        return Self(prefix: prefix, name: name)
+    }
+}
+
+// registrer modes for docuemnt:
+
 public enum AttributeWithPrefixRegisterMode {
-    case none; case selected(_ prefixesAndAttributeNames: [(String,String)]); case all
+    case none; case selected(_ prefixedNames: [PrefixedName]); case all
 }
 
 public final class XDocument: XNode, XBranchInternal {
@@ -117,16 +141,16 @@ public final class XDocument: XNode, XBranchInternal {
     public func makeVersion(
         keepAttachments: Bool = false,
         registeringAttributes attributeRegisterMode: AttributeRegisterMode? = nil,
-        registeringValuesForAttributes attributeValueRegisterMode: AttributeRegisterMode? = nil,
+        registeringValuesForAttributes AttributeRegisterMode: AttributeRegisterMode? = nil,
         registeringAttributesWithPrefix attributeWithPrefixRegisterMode: AttributeWithPrefixRegisterMode? = nil,
-        registeringValuesForAttributesWithPrefix attributeWithPrefixValueRegisterMode: AttributeWithPrefixRegisterMode? = nil
+        registeringValuesForAttributesWithPrefix AttributeWithPrefixRegisterMode: AttributeWithPrefixRegisterMode? = nil
     ) {
         let clone = _shallowClone(
             keepAttachments: keepAttachments,
             registeringAttributes: attributeRegisterMode,
-            registeringValuesForAttributes: attributeValueRegisterMode,
+            registeringValuesForAttributes: AttributeRegisterMode,
             registeringAttributesWithPrefix: attributeWithPrefixRegisterMode,
-            registeringValuesForAttributesWithPrefix: attributeWithPrefixValueRegisterMode,
+            registeringValuesForAttributesWithPrefix: AttributeWithPrefixRegisterMode,
             pointingToClone: true
         )
         _versions.append(clone)
@@ -212,29 +236,33 @@ public final class XDocument: XNode, XBranchInternal {
     public func shallowClone(
         keepAttachments: Bool = false,
         registeringAttributes attributeRegisterMode: AttributeRegisterMode? = nil,
-        registeringValuesForAttributes attributeValueRegisterMode: AttributeRegisterMode? = nil
+        registeringValuesForAttributes AttributeRegisterMode: AttributeRegisterMode? = nil,
+        registeringAttributesWithPrefix attributeWithPrefixRegisterMode: AttributeWithPrefixRegisterMode? = nil,
+        registeringValuesForAttributesWithPrefix AttributeWithPrefixRegisterMode: AttributeWithPrefixRegisterMode? = nil
     ) -> XDocument {
         _shallowClone(
             keepAttachments: keepAttachments,
             registeringAttributes: attributeRegisterMode,
-            registeringValuesForAttributes: attributeValueRegisterMode,
+            registeringValuesForAttributes: AttributeRegisterMode,
+            registeringAttributesWithPrefix: attributeWithPrefixRegisterMode,
+            registeringValuesForAttributesWithPrefix: AttributeWithPrefixRegisterMode,
             pointingToClone: false
         )
     }
     
     private func _shallowClone(
         keepAttachments: Bool = false,
-        registeringAttributes attributeRegisterMode: AttributeRegisterMode? = nil,
-        registeringValuesForAttributes attributeValueRegisterMode: AttributeRegisterMode? = nil,
-        registeringAttributesWithPrefix attributeWithPrefixRegisterMode: AttributeWithPrefixRegisterMode? = nil,
-        registeringValuesForAttributesWithPrefix attributeWithPrefixValueRegisterMode: AttributeWithPrefixRegisterMode? = nil,
+        registeringAttributes attributeRegisterMode: AttributeRegisterMode?,
+        registeringValuesForAttributes AttributeRegisterMode: AttributeRegisterMode?,
+        registeringAttributesWithPrefix attributeWithPrefixRegisterMode: AttributeWithPrefixRegisterMode?,
+        registeringValuesForAttributesWithPrefix AttributeWithPrefixRegisterMode: AttributeWithPrefixRegisterMode?,
         pointingToClone: Bool
     ) -> XDocument {
         let theClone = XDocument(
-            registeringAttributes: attributeRegisterMode ?? _attributeRegisterMode,
-            registeringValuesForAttributes: attributeValueRegisterMode ?? _attributeValueRegisterMode,
-            registeringAttributesWithPrefix: attributeWithPrefixRegisterMode ?? _attributeWithPrefixRegisterMode,
-            registeringValuesForAttributesWithPrefix: attributeWithPrefixValueRegisterMode ?? _attributeWithPrefixValueRegisterMode
+            registeringAttributes: attributeRegisterMode ?? self._attributeRegisterMode,
+            registeringValuesForAttributes: AttributeRegisterMode ?? self._attributeValueRegisterMode,
+            registeringAttributesWithPrefix: attributeWithPrefixRegisterMode ?? self._attributeWithPrefixRegisterMode,
+            registeringValuesForAttributesWithPrefix: AttributeWithPrefixRegisterMode ?? self._attributeWithPrefixValueRegisterMode
         )
         
         if pointingToClone {
@@ -272,12 +300,16 @@ public final class XDocument: XNode, XBranchInternal {
     public func clone(
         keepAttachments: Bool = false,
         registeringAttributes attributeRegisterMode: AttributeRegisterMode? = nil,
-        registeringValuesForAttributes attributeValueRegisterMode: AttributeRegisterMode? = nil
+        registeringValuesForAttributes AttributeRegisterMode: AttributeRegisterMode? = nil,
+        registeringAttributesWithPrefix attributeWithPrefixRegisterMode: AttributeWithPrefixRegisterMode? = nil,
+        registeringValuesForAttributesWithPrefix AttributeWithPrefixRegisterMode: AttributeWithPrefixRegisterMode? = nil,
     )  -> XDocument {
         _clone(
             keepAttachments: keepAttachments,
             registeringAttributes: attributeRegisterMode,
-            registeringValuesForAttributes: attributeValueRegisterMode,
+            registeringValuesForAttributes: AttributeRegisterMode,
+            registeringAttributesWithPrefix: attributeWithPrefixRegisterMode,
+            registeringValuesForAttributesWithPrefix: AttributeWithPrefixRegisterMode,
             pointingToClone: false
         )
     }
@@ -285,13 +317,17 @@ public final class XDocument: XNode, XBranchInternal {
     private func _clone(
         keepAttachments: Bool = false,
         registeringAttributes attributeRegisterMode: AttributeRegisterMode? = nil,
-        registeringValuesForAttributes attributeValueRegisterMode: AttributeRegisterMode? = nil,
+        registeringValuesForAttributes AttributeRegisterMode: AttributeRegisterMode? = nil,
+        registeringAttributesWithPrefix attributeWithPrefixRegisterMode: AttributeWithPrefixRegisterMode? = nil,
+        registeringValuesForAttributesWithPrefix AttributeWithPrefixRegisterMode: AttributeWithPrefixRegisterMode? = nil,
         pointingToClone: Bool
     ) -> XDocument {
         let theClone = _shallowClone(
             keepAttachments: keepAttachments,
             registeringAttributes: attributeRegisterMode,
-            registeringValuesForAttributes: attributeValueRegisterMode,
+            registeringValuesForAttributes: AttributeRegisterMode,
+            registeringAttributesWithPrefix: attributeWithPrefixRegisterMode,
+            registeringValuesForAttributesWithPrefix: AttributeWithPrefixRegisterMode,
             pointingToClone: pointingToClone
         )
         theClone._addClones(from: self, pointingToClone: pointingToClone, keepAttachments: keepAttachments)
@@ -656,20 +692,20 @@ public final class XDocument: XNode, XBranchInternal {
         attributeProperties.nextWithCondition = nil
     }
     
-    public func registeredAttributes(_ name: String) -> XAttributeSequence {
-        return XAttributesOfSameNameSequence(document: self, attributeName: name)
+    public func registeredAttributes(prefix attributePrefix: String? = nil, _ name: String) -> XAttributeSequence {
+        return XAttributesOfSameNameSequence(document: self, attributePrefix: attributePrefix, attributeName: name)
     }
     
-    public func registeredAttributes(_ names: String...) -> XAttributeSequence {
+    public func registeredAttributes(prefix attributePrefix: String? = nil, _ names: String...) -> XAttributeSequence {
         return registeredAttributes(names)
     }
     
-    public func registeredAttributes(_ names: [String]) -> XAttributeSequence {
-        return XAttributesOfNamesSequence(forNames: names, forDocument: self)
+    public func registeredAttributes(prefix attributePrefix: String? = nil, _ names: [String]) -> XAttributeSequence {
+        return XAttributesOfNamesSequence(withAttributePrefix: attributePrefix, forNames: names, forDocument: self)
     }
     
-    public func registeredValues(_ value: String, forAttribute name: String) -> XAttributeSequence {
-        return XAttributesOfSameValueSequence(document: self, attributeName: name, attributeValue: value)
+    public func registeredValues(_ value: String, forAttribute attributeName: String, withPrefix attributePrefix: String? = nil) -> XAttributeSequence {
+        return XAttributesOfSameValueSequence(document: self, attributePrefix: attributePrefix, attributeName: attributeName, attributeValue: value)
     }
     
     deinit {
@@ -684,10 +720,10 @@ public final class XDocument: XNode, XBranchInternal {
     
     // -------------------------------------------------------------------------
     
-    private let _attributeRegisterMode: AttributeRegisterMode
-    private let _attributeValueRegisterMode: AttributeRegisterMode
-    private let _attributeWithPrefixRegisterMode: AttributeWithPrefixRegisterMode
-    private let _attributeWithPrefixValueRegisterMode: AttributeWithPrefixRegisterMode
+    var _attributeRegisterMode: AttributeRegisterMode
+    var _attributeValueRegisterMode: AttributeRegisterMode
+    var _attributeWithPrefixRegisterMode: AttributeWithPrefixRegisterMode
+    var _attributeWithPrefixValueRegisterMode: AttributeWithPrefixRegisterMode
     
     func attributeToBeRegistered(withName name: String) -> Bool {
         switch _attributeRegisterMode {
@@ -704,8 +740,8 @@ public final class XDocument: XNode, XBranchInternal {
         switch _attributeValueRegisterMode {
         case .none:
             false
-        case .selected(let attributeNames):
-            attributeNames.contains(name)
+        case .selected(let selection):
+            selection.contains(name)
         case .all:
             true
         }
@@ -715,8 +751,8 @@ public final class XDocument: XNode, XBranchInternal {
         switch _attributeWithPrefixRegisterMode {
         case .none:
             false
-        case .selected(let prefixesAndAttributeNames):
-            prefixesAndAttributeNames.contains(where: {$0 == (prefix,name) })
+        case .selected(let selection):
+            selection.contains(where: { $0.prefix == prefix && $0.name == name })
         case .all:
             true
         }
@@ -726,8 +762,8 @@ public final class XDocument: XNode, XBranchInternal {
         switch _attributeWithPrefixValueRegisterMode {
         case .none:
             false
-        case .selected(let prefixesAndAttributeNames):
-            prefixesAndAttributeNames.contains(where: {$0 == (prefix,name) })
+        case .selected(let selection):
+            selection.contains(where: { $0.prefix == prefix && $0.name == name })
         case .all:
             true
         }
@@ -736,14 +772,14 @@ public final class XDocument: XNode, XBranchInternal {
     public init(
         attached: [String:Any?]? = nil,
         registeringAttributes attributeRegisterMode: AttributeRegisterMode = .none,
-        registeringValuesForAttributes attributeValueRegisterMode: AttributeRegisterMode = .none,
+        registeringValuesForAttributes AttributeRegisterMode: AttributeRegisterMode = .none,
         registeringAttributesWithPrefix attributeWithPrefixRegisterMode: AttributeWithPrefixRegisterMode = .none,
-        registeringValuesForAttributesWithPrefix attributeWithPrefixValueRegisterMode: AttributeWithPrefixRegisterMode = .none
+        registeringValuesForAttributesWithPrefix AttributeWithPrefixRegisterMode: AttributeWithPrefixRegisterMode = .none,
     ) {
         self._attributeRegisterMode = attributeRegisterMode
-        self._attributeValueRegisterMode = attributeValueRegisterMode
+        self._attributeValueRegisterMode = AttributeRegisterMode
         self._attributeWithPrefixRegisterMode = attributeWithPrefixRegisterMode
-        self._attributeWithPrefixValueRegisterMode = attributeWithPrefixValueRegisterMode
+        self._attributeWithPrefixValueRegisterMode = AttributeWithPrefixRegisterMode
         super.init()
         self._lastInTree = self
         if let attached {
@@ -758,17 +794,17 @@ public final class XDocument: XNode, XBranchInternal {
     public convenience init(
         attached: [String:Any?]? = nil,
         registeringAttributes attributeRegisterMode: AttributeRegisterMode = .none,
-        registeringValuesForAttributes attributeValueRegisterMode: AttributeRegisterMode = .none,
+        registeringValuesForAttributes AttributeRegisterMode: AttributeRegisterMode = .none,
         registeringAttributesWithPrefix attributeWithPrefixRegisterMode: AttributeWithPrefixRegisterMode = .none,
-        registeringValuesForAttributesWithPrefix attributeWithPrefixValueRegisterMode: AttributeWithPrefixRegisterMode = .none,
+        registeringValuesForAttributesWithPrefix AttributeWithPrefixRegisterMode: AttributeWithPrefixRegisterMode = .none,
         @XContentBuilder builder: () -> [XContent]
     ) {
         self.init(
             attached: attached,
             registeringAttributes: attributeRegisterMode,
-            registeringValuesForAttributes: attributeValueRegisterMode,
-            registeringAttributesWithPrefix: attributeWithPrefixValueRegisterMode,
-            registeringValuesForAttributesWithPrefix: attributeWithPrefixValueRegisterMode
+            registeringValuesForAttributes: AttributeRegisterMode,
+            registeringAttributesWithPrefix: attributeWithPrefixRegisterMode,
+            registeringValuesForAttributesWithPrefix: AttributeWithPrefixRegisterMode
         )
         for node in builder() {
             _add(node)

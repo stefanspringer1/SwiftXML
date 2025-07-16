@@ -41,16 +41,16 @@ public struct XRule {
         self.actionLine = line
     }
     
-    public init(forRegisteredAttributes names: [String], file: String = #file, line: Int = #line, action: @escaping XAttributeAction) {
-        self.prefix = nil
+    public init(forPrefix prefix: String? = nil, forRegisteredAttributes names: [String], file: String = #file, line: Int = #line, action: @escaping XAttributeAction) {
+        self.prefix = prefix
         self.names = names
         self.action = action
         self.actionFile = file
         self.actionLine = line
     }
     
-    public init(forRegisteredAttributes names: String..., file: String = #file, line: Int = #line, action: @escaping XAttributeAction) {
-        self.prefix = nil
+    public init(forPrefix prefix: String? = nil, forRegisteredAttributes names: String..., file: String = #file, line: Int = #line, action: @escaping XAttributeAction) {
+        self.prefix = prefix
         self.names = names
         self.action = action
         self.actionFile = file
@@ -71,14 +71,14 @@ public struct XRule {
         self.action = action
     }
     
-    public init(forRegisteredAttributes names: [String], action: @escaping XAttributeAction) {
-        self.prefix = nil
+    public init(forPrefix prefix: String? = nil, forRegisteredAttributes names: [String], action: @escaping XAttributeAction) {
+        self.prefix = prefix
         self.names = names
         self.action = action
     }
     
-    public init(forRegisteredAttributes names: String..., action: @escaping XAttributeAction) {
-        self.prefix = nil
+    public init(forPrefix prefix: String? = nil, forRegisteredAttributes names: String..., action: @escaping XAttributeAction) {
+        self.prefix = prefix
         self.names = names
         self.action = action
     }
@@ -172,14 +172,14 @@ public class XTransformation {
                 rule.names.forEach { name in
                     #if DEBUG
                     iteratorsWithAppliedActions.append(AppliedAction(
-                        iterator: XBidirectionalAttributeIterator(forAttributeName: name, attributeIterator: XAttributesOfSameNameIterator(document: document, attributeName: name, keepLast: true), keepLast: true),
+                        iterator: XBidirectionalAttributeIterator(forAttributeName: name, attributeIterator: XAttributesOfSameNameIterator(document: document, attributePrefix: rule.prefix, attributeName: name, keepLast: true), keepLast: true),
                         action: attributeAction,
                         actionFile: rule.actionFile,
                         actionLine: rule.actionLine
                     ))
                     #else
                     iteratorsWithAppliedActions.append(AppliedAction(
-                        iterator: XBidirectionalAttributeIterator(forAttributeName: name, attributeIterator: XAttributesOfSameNameIterator(document: document, attributeName: name, keepLast: true), keepLast: true),
+                        iterator: XBidirectionalAttributeIterator(forAttributeName: name, attributeIterator: XAttributesOfSameNameIterator(document: document, attributePrefix: rule.prefix, attributeName: name, keepLast: true), keepLast: true),
                         action: attributeAction
                     ))
                     #endif

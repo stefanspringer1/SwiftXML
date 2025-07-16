@@ -2136,8 +2136,6 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
                         let newAttribute = AttributeProperties(value: newValue, element: self)
                         _registeredAttributeValues[attributeName] = newAttribute
                         theDocument.registerAttributeValue(attributeProperties: newAttribute, withName: attributeName)
-                    } else {
-                        _registeredAttributeValues[attributeName] = nil
                     }
                 }
                 
@@ -2183,8 +2181,6 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
                         let newAttribute = AttributeProperties(value: newValue, element: self)
                         _registeredAttributeValues[attributeName] = newAttribute
                         theDocument.registerAttributeValue(attributeProperties: newAttribute, withName: attributeName)
-                    } else {
-                        _registeredAttributeValues[attributeName] = nil
                     }
                 }
                 

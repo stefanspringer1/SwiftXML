@@ -76,16 +76,18 @@ public final class XElementsOfNamesIterator: XElementIterator {
 
 public final class XAttributesOfNamesSequence: XAttributeSequence {
     
+    private let attributePrefix: String?
     private let names: [String]
     private let document: XDocument
     
-    init(forNames names: [String], forDocument document: XDocument) {
+    init(withAttributePrefix attributePrefix: String?, forNames names: [String], forDocument document: XDocument) {
+        self.attributePrefix = attributePrefix
         self.names = names
         self.document = document
     }
     
     public override func makeIterator() -> XAttributeIterator {
-        return XAttributesOfNamesIterator(forNames: names, forDocument: document)
+        return XAttributesOfNamesIterator(forPrefix: attributePrefix, forNames: names, forDocument: document)
     }
     
 }
@@ -96,11 +98,12 @@ public final class XAttributesOfNamesIterator: XAttributeIterator {
     private var foundElement = false
     private var iteratorIndex = 0
     
-    init(forNames names: [String], forDocument document: XDocument) {
+    init(forPrefix attributePrefix: String?, forNames names: [String], forDocument document: XDocument) {
         iterators = names.map{
             XBidirectionalAttributeIterator(
                 forAttributeName: $0, attributeIterator: XAttributesOfSameNameIterator(
                     document: document,
+                    attributePrefix: attributePrefix,
                     attributeName: $0,
                     keepLast: true
                 )

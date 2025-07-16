@@ -166,6 +166,121 @@ final class AttributeNamespacesTests: XCTestCase {
             """)
     }
     
+    func testRegisteredAttributes() throws {
+        
+        let namespaceURI = "https://z1"
+        
+        let source = """
+            <a xmlns:z="https://z1">
+                <b z:id="123"/>
+                <c z:id="456"/>
+            </a>
+            """
+        
+        let document = try parseXML(
+            fromText: source,
+            namespaceAware: true,
+            registeringAttributesForNamespaces: .selected([NamespaceURIAndName(namespaceURI: namespaceURI, name: "id")])
+        )
+        
+        let prefix = document.prefix(forNamespaceURI: namespaceURI)
+        XCTAssertNotNil(prefix)
+        
+        // cannot be found with the prefix:
+        XCTAssertEqual(
+            document.registeredAttributes("id").map{ $0.element.description }.joined(separator: "\n"),
+            """
+            """
+        )
+        
+        XCTAssertEqual(
+            document.registeredAttributes(prefix: prefix, "id").map{ $0.element.description }.joined(separator: "\n"),
+            """
+            <b z:id="123">
+            <c z:id="456">
+            """
+        )
+        
+        let transformation = XTransformation {
+            
+            XRule(forRegisteredAttributes: "id") { attribute in
+                attribute.element.add { "found attribute in the wrong way!" } // should not happen
+            }
+            
+            XRule(forPrefix: prefix, forRegisteredAttributes: "id") { attribute in
+                attribute.element.add { "found attribute!" }
+            }
+            
+        }
+        
+        transformation.execute(inDocument: document)
+        
+        XCTAssertEqual(
+            document.serialized,
+            """
+            <a xmlns:z="https://z1">
+                <b z:id="123">found attribute!</b>
+                <c z:id="456">found attribute!</c>
+            </a>
+            """
+        )
+    }
+    
+    func testRegisteredAttributeValues() throws {
+        
+        let namespaceURI = "http://z"
+        
+        let source = """
+            <a xmlns:z="\(namespaceURI)">
+                <b z:id="1"/>
+                <b z:id="2"/>
+                <b z:refid="1">First reference to "1".</b>
+                <b z:refid="1">Second reference to "1".</b>
+            </a>
+            """
+        
+        let document = try parseXML(
+            fromText: source,
+            namespaceAware: true,
+            registeringAttributeValuesForForNamespaces: .selected([
+                NamespaceURIAndName(namespaceURI: "http://z", name: "id"),
+                NamespaceURIAndName(namespaceURI: "http://z", name: "refid") ,
+            ])
+        )
+        
+        let prefix = document.prefix(forNamespaceURI: namespaceURI)
+        
+        // cannot find them by name only:
+        XCTAssertEqual(
+            document.registeredAttributes("id").map{ $0.element.description }.joined(separator: "\n"),
+            """
+            """
+        )
+        
+        // cannot find them without the prefix:
+        XCTAssertEqual(
+            document.registeredValues("1", forAttribute: "id").map{ $0.element.description }.joined(separator: "\n"),
+            """
+            """
+        )
+        
+        XCTAssertEqual(
+            document.registeredValues("1", forAttribute: "id", withPrefix: prefix).map{ $0.element.serialized }.joined(separator: "\n"),
+            """
+            <b z:id="1" xmlns:z="http://z"/>
+            """
+        )
+        
+        XCTAssertEqual(
+            document.registeredValues("1", forAttribute: "refid", withPrefix: prefix).map{ $0.element.serialized }.joined(separator: "\n"),
+            """
+            <b z:refid="1" xmlns:z="http://z">First reference to "1".</b>
+            <b z:refid="1" xmlns:z="http://z">Second reference to "1".</b>
+            """
+        )
+        
+    }
+    
 }
 
 fileprivate func areEqual(_ array1: [(String?,String)], _ array2: [(String?,String)]) -> Bool {

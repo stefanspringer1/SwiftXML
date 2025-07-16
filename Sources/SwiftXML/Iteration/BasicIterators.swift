@@ -765,12 +765,14 @@ final class XAttributesOfSameNameIterator: XAttributeIteratorProtocol {
 
     private var started = false
     weak var document: XDocument?
+    let attributePrefix: String?
     let attributeName: String
     weak var currentAttribute: AttributeProperties? = nil
     let keepLast: Bool
     
-    public init(document: XDocument, attributeName: String, keepLast: Bool = false) {
+    public init(document: XDocument, attributePrefix: String?, attributeName: String, keepLast: Bool = false) {
         self.document = document
+        self.attributePrefix = attributePrefix
         self.attributeName = attributeName
         self.keepLast = keepLast
     }
@@ -782,7 +784,11 @@ final class XAttributesOfSameNameIterator: XAttributeIteratorProtocol {
             currentAttribute = currentAttribute?.nextWithCondition
         }
         else {
-            currentAttribute = document?._attributesOfName_first[attributeName]
+            if let attributePrefix {
+                currentAttribute = document?._attributesOfPrefixAndName_first[attributePrefix,attributeName]
+            } else {
+                currentAttribute = document?._attributesOfName_first[attributeName]
+            }
             started = true
         }
         if currentAttribute == nil && keepLast {
@@ -812,13 +818,15 @@ final class XAttributesOfSameValueIterator: XAttributeIteratorProtocol {
 
     private var started = false
     weak var document: XDocument?
+    let attributePrefix: String?
     let attributeName: String
     let attributeValue: String
     weak var currentAttribute: AttributeProperties? = nil
     let keepLast: Bool
     
-    public init(document: XDocument, attributeName: String, attributeValue: String, keepLast: Bool = false) {
+    public init(document: XDocument, attributePrefix: String?, attributeName: String, attributeValue: String, keepLast: Bool = false) {
         self.document = document
+        self.attributePrefix = attributePrefix
         self.attributeName = attributeName
         self.attributeValue = attributeValue
         self.keepLast = keepLast
@@ -831,7 +839,11 @@ final class XAttributesOfSameValueIterator: XAttributeIteratorProtocol {
             currentAttribute = currentAttribute?.nextWithCondition
         }
         else {
-            currentAttribute = document?._attributesOfValue_first[attributeName,attributeValue]
+            if let attributePrefix {
+                currentAttribute = document?._attributesWithPrefixOfValue_first[attributePrefix,attributeName,attributeValue]
+            } else {
+                currentAttribute = document?._attributesOfValue_first[attributeName,attributeValue]
+            }
             started = true
         }
         if currentAttribute == nil && keepLast {
