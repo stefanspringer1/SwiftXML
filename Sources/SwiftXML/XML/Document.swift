@@ -537,7 +537,7 @@ public final class XDocument: XNode, XBranchInternal {
     }
     
     // -------------------------------------------------------------------------
-    // attributes of same name or also same value:
+    // registered attributes of same name or also same value, with or without prefix:
     // -------------------------------------------------------------------------
     
     var _attributesOfName_first = [String:AttributeProperties]()
