@@ -676,7 +676,7 @@ You can also use a prefix in the first (optional) argument for direct access to 
 
 ## Direct access to attributes
 
-To directly find where an attribut with a certain name is set, you can use an analogue to the direct access to elements, but for efficiency reason you have to specify the attribute names which can be used for such a direct access. You specify these attribute names when creating a document (e.g. `XDocument(registeringAttributes: .selected(["id", "label"]))`) or indirecting when using the parse functions (e.g. `try parseXML(fromText: "...", registeringAttributes: .selected(["id", "label"]))`).
+To directly find where an attribut with a certain name is set, you can use an analogue to the direct access to elements, but for efficiency reason you have to specify the attribute names which can be used for such a direct access. You specify these attribute names when creating a document (e.g. `XDocument(registeringAttributes: .selected(["id", "label"]))`) or indirecting when using the parse functions (e.g. `try parseXML(fromText: "...", registeringAttributes: .selected(["id", "label"]))`). You can also register attributes for a certain namespace or a prefix and then list them by additionally using the `prefix:` argument, see the section on prefixes and namespaces.
 
 Example:
 
@@ -1834,6 +1834,8 @@ document.echo()
 <a><formula id="3"/><image id="2"/><formula id="1"/></a>
 ```
 
+You can also formulate rules with the `prefix:` argument, see the section on prefixes and namespaces.
+
 As a side note, for such an `XTransformation` the lengths of the element names do not really matter: apart from the initialization of the transformation before the execution and from what happens inside the rules, the appliance of the rules is not less efficient if the element names are longer.
 
 Instead of using a transformation with a very large number of rules, you should use several transformations, each dedicated to a separate “topic”. E.g. for some document format you might first transform the inline elements and then the block elements. Splitting a transformation into several transformations practically does not hurt performance.
@@ -2102,7 +2104,7 @@ When moving elements between documents, missing namespaces with their prefixes a
 
 Generally, there is no a need to change any prefix for a registered namespace during processing (there are also no tools added that would simplify this), just use the prefix returned by `prefix(forNamespaceURI:)` and, if necessary, define prefixes for a serialization.
 
-Attributes can also have a prefix, set or get an attribute value via `element[prefix,name]`, where `prefix` might be `nil`. With regard to namespaces, the treatment of attributes corresponds to the treatment of elements, and independently of each other. The attributes that do not have an explicit namespace prefix set in the source do not get a namespace prefix during parsing, regardless of whether the corresponding element belongs to a namespace. So e.g. `myElement["id"]` also returns the according attribute value of an element that has a prefix, and `document.registeredAttributes("id")` finds all these attributes if `"id"` is a registered attribute name. Consequently, changing the prefix of an element does not change the prefixes of its attributes.
+Attributes can also have a prefix, set or get an attribute value via `element[prefix,name]`, where `prefix` might be `nil`. With regard to namespaces, the treatment of attributes corresponds to the treatment of elements, and independently of each other. The attributes that do not have an explicit namespace prefix set in the source do not get a namespace prefix during parsing, regardless of whether the corresponding element belongs to a namespace. So e.g. `myElement["id"]` also returns the according attribute value of an element that has a prefix, and `document.registeredAttributes("id")` finds all these attributes if `"id"` is a registered attribute name. Consequently, changing the prefix of an element does not change the prefixes of its attributes. For registering attributes with namespace prefixes or their values during parsing, namespace URIs must be given, and these provisions are translated into the according prefixes when the document has been parsed. When creating a document without parsing, to register attributes with prefixes or their values, the prefixes themselves must be specified.
 
 Example:
 
