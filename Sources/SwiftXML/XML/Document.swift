@@ -22,6 +22,10 @@ public enum AttributeRegisterMode {
     case none; case selected(_ attributeNames: [String]); case all
 }
 
+public enum AttributeWithPrefixRegisterMode {
+    case none; case selected(_ prefixesAndAttributeNames: [(String,String)]); case all
+}
+
 public final class XDocument: XNode, XBranchInternal {
 
     public var firstChild: XElement? { _firstChild }
@@ -113,9 +117,18 @@ public final class XDocument: XNode, XBranchInternal {
     public func makeVersion(
         keepAttachments: Bool = false,
         registeringAttributes attributeRegisterMode: AttributeRegisterMode? = nil,
-        registeringValuesForAttributes attributeValueRegisterMode: AttributeRegisterMode? = nil
+        registeringValuesForAttributes attributeValueRegisterMode: AttributeRegisterMode? = nil,
+        registeringAttributesWithPrefix attributeWithPrefixRegisterMode: AttributeWithPrefixRegisterMode? = nil,
+        registeringValuesForAttributesWithPrefix attributeWithPrefixValueRegisterMode: AttributeWithPrefixRegisterMode? = nil
     ) {
-        let clone = _shallowClone(keepAttachments: keepAttachments, registeringAttributes: attributeRegisterMode, registeringValuesForAttributes: attributeValueRegisterMode, pointingToClone: true)
+        let clone = _shallowClone(
+            keepAttachments: keepAttachments,
+            registeringAttributes: attributeRegisterMode,
+            registeringValuesForAttributes: attributeValueRegisterMode,
+            registeringAttributesWithPrefix: attributeWithPrefixRegisterMode,
+            registeringValuesForAttributesWithPrefix: attributeWithPrefixValueRegisterMode,
+            pointingToClone: true
+        )
         _versions.append(clone)
         clone._addClones(from: self, pointingToClone: true, keepAttachments: keepAttachments)
     }
@@ -213,11 +226,15 @@ public final class XDocument: XNode, XBranchInternal {
         keepAttachments: Bool = false,
         registeringAttributes attributeRegisterMode: AttributeRegisterMode? = nil,
         registeringValuesForAttributes attributeValueRegisterMode: AttributeRegisterMode? = nil,
+        registeringAttributesWithPrefix attributeWithPrefixRegisterMode: AttributeWithPrefixRegisterMode? = nil,
+        registeringValuesForAttributesWithPrefix attributeWithPrefixValueRegisterMode: AttributeWithPrefixRegisterMode? = nil,
         pointingToClone: Bool
     ) -> XDocument {
         let theClone = XDocument(
             registeringAttributes: attributeRegisterMode ?? _attributeRegisterMode,
-            registeringValuesForAttributes: attributeValueRegisterMode ?? _attributeValueRegisterMode
+            registeringValuesForAttributes: attributeValueRegisterMode ?? _attributeValueRegisterMode,
+            registeringAttributesWithPrefix: attributeWithPrefixRegisterMode ?? _attributeWithPrefixRegisterMode,
+            registeringValuesForAttributesWithPrefix: attributeWithPrefixValueRegisterMode ?? _attributeWithPrefixValueRegisterMode
         )
         
         if pointingToClone {
@@ -297,8 +314,8 @@ public final class XDocument: XNode, XBranchInternal {
     var _elementsOfName_first = [String:XElement]()
     var _elementsOfName_last = [String:XElement]()
     
-    var _elementsOfPrefixAndName_first = TieredDictionary<String,String,XElement>()
-    var _elementsOfPrefixAndName_last = TieredDictionary<String,String,XElement>()
+    var _elementsOfPrefixAndName_first = TwoTieredDictionaryWithStringKeys<XElement>()
+    var _elementsOfPrefixAndName_last = TwoTieredDictionaryWithStringKeys<XElement>()
     
     var _namespaceURIToPrefix = [String:String]()
     var _prefixToNamespaceURI = [String:String]()
@@ -418,7 +435,7 @@ public final class XDocument: XNode, XBranchInternal {
         // adjust prefix of attributes:
         if !element._attributesForPrefix.isEmpty {
             var oldAttributePrefixToNew = [String:String]()
-            for oldPrefix in element._attributesForPrefix.leftKeys {
+            for oldPrefix in element._attributesForPrefix.firstKeys {
                 if let namespaceURI = element._document?.namespaceURI(forPrefix: oldPrefix) {
                     let newPrefix = self.register(namespaceURI: namespaceURI, withPrefixSuggestion: oldPrefix)
                     if newPrefix != oldPrefix {
@@ -492,6 +509,18 @@ public final class XDocument: XNode, XBranchInternal {
         }
         element._registeredAttributes.removeAll()
         
+        // unregister registered attributes with prefix:
+        for (prefix,attributeName,attributeProperties) in element._registeredAttributesWithPrefix.all {
+            unregisterAttributeWithPrefix(attributeProperties: attributeProperties, withPrefix: prefix, withName: attributeName)
+        }
+        element._registeredAttributes.removeAll()
+        
+        // unregister registered attribute with prefix values:
+        for (prefix,attributeName,attributeProperties) in element._registeredAttributeWithPrefixValues.all {
+            unregisterAttributeWithPrefixValue(attributeProperties: attributeProperties, withPrefix: prefix, withName: attributeName)
+        }
+        element._registeredAttributes.removeAll()
+        
         element._registered = false // but keep element._document for namespaces
     }
     
@@ -514,8 +543,14 @@ public final class XDocument: XNode, XBranchInternal {
     var _attributesOfName_first = [String:AttributeProperties]()
     var _attributesOfName_last = [String:AttributeProperties]()
     
-    var _attributesOfValue_first = TieredDictionary<String,String,AttributeProperties>()
-    var _attributesOfValue_last = TieredDictionary<String,String,AttributeProperties>()
+    var _attributesOfValue_first = TwoTieredDictionaryWithStringKeys<AttributeProperties>()
+    var _attributesOfValue_last = TwoTieredDictionaryWithStringKeys<AttributeProperties>()
+    
+    var _attributesOfPrefixAndName_first = TwoTieredDictionaryWithStringKeys<AttributeProperties>()
+    var _attributesOfPrefixAndName_last = TwoTieredDictionaryWithStringKeys<AttributeProperties>()
+    
+    var _attributesWithPrefixOfValue_first = ThreeTieredDictionaryWithStringKeys<AttributeProperties>()
+    var _attributesWithPrefixOfValue_last = ThreeTieredDictionaryWithStringKeys<AttributeProperties>()
     
     func registerAttribute(attributeProperties: AttributeProperties, withName name: String) {
         if let theLast = _attributesOfName_last[name] {
@@ -538,6 +573,30 @@ public final class XDocument: XNode, XBranchInternal {
             _attributesOfValue_first[name,attributeProperties.value] = attributeProperties
         }
         _attributesOfValue_last[name,attributeProperties.value] = attributeProperties
+        attributeProperties.nextWithCondition = nil
+    }
+    
+    func registerAttributeWithPrefix(attributeProperties: AttributeProperties, withPrefix prefix: String, withName name: String) {
+        if let theLast = _attributesOfPrefixAndName_last[prefix,name] {
+            theLast.nextWithCondition = attributeProperties
+            attributeProperties.previousWithCondition = theLast
+        }
+        else {
+            _attributesOfPrefixAndName_first[prefix,name] = attributeProperties
+        }
+        _attributesOfPrefixAndName_last[prefix,name] = attributeProperties
+        attributeProperties.nextWithCondition = nil
+    }
+    
+    func registerAttributeWithPrefixValue(attributeProperties: AttributeProperties, withPrefix prefix: String, withName name: String) {
+        if let theLast = _attributesWithPrefixOfValue_last[prefix,name,attributeProperties.value] {
+            theLast.nextWithCondition = attributeProperties
+            attributeProperties.previousWithCondition = theLast
+        }
+        else {
+            _attributesWithPrefixOfValue_first[prefix,name,attributeProperties.value] = attributeProperties
+        }
+        _attributesWithPrefixOfValue_last[prefix,name,attributeProperties.value] = attributeProperties
         attributeProperties.nextWithCondition = nil
     }
     
@@ -564,6 +623,34 @@ public final class XDocument: XNode, XBranchInternal {
         }
         if _attributesOfValue_last[name,attributeProperties.value] === attributeProperties {
             _attributesOfValue_last[name,attributeProperties.value] = attributeProperties.previousWithCondition
+        }
+        attributeProperties.previousWithCondition = nil
+        attributeProperties.nextWithCondition = nil
+    }
+    
+    func unregisterAttributeWithPrefix(attributeProperties: AttributeProperties, withPrefix prefix: String, withName name: String) {
+        attributeProperties.gotoPreviousOnAttributeIterators()
+        attributeProperties.previousWithCondition?.nextWithCondition = attributeProperties.nextWithCondition
+        attributeProperties.nextWithCondition?.previousWithCondition = attributeProperties.previousWithCondition
+        if _attributesOfPrefixAndName_first[prefix,name] === attributeProperties {
+            _attributesOfPrefixAndName_first[prefix,name] = attributeProperties.nextWithCondition
+        }
+        if _attributesOfPrefixAndName_last[prefix,name] === attributeProperties {
+            _attributesOfPrefixAndName_last[prefix,name] = attributeProperties.previousWithCondition
+        }
+        attributeProperties.previousWithCondition = nil
+        attributeProperties.nextWithCondition = nil
+    }
+    
+    func unregisterAttributeWithPrefixValue(attributeProperties: AttributeProperties, withPrefix prefix: String, withName name: String) {
+        attributeProperties.gotoPreviousOnAttributeIterators()
+        attributeProperties.previousWithCondition?.nextWithCondition = attributeProperties.nextWithCondition
+        attributeProperties.nextWithCondition?.previousWithCondition = attributeProperties.previousWithCondition
+        if _attributesWithPrefixOfValue_first[prefix,name,attributeProperties.value] === attributeProperties {
+            _attributesWithPrefixOfValue_first[prefix,name,attributeProperties.value] = attributeProperties.nextWithCondition
+        }
+        if _attributesWithPrefixOfValue_last[prefix,name,attributeProperties.value] === attributeProperties {
+            _attributesWithPrefixOfValue_last[prefix,name,attributeProperties.value] = attributeProperties.previousWithCondition
         }
         attributeProperties.previousWithCondition = nil
         attributeProperties.nextWithCondition = nil
@@ -599,6 +686,8 @@ public final class XDocument: XNode, XBranchInternal {
     
     private let _attributeRegisterMode: AttributeRegisterMode
     private let _attributeValueRegisterMode: AttributeRegisterMode
+    private let _attributeWithPrefixRegisterMode: AttributeWithPrefixRegisterMode
+    private let _attributeWithPrefixValueRegisterMode: AttributeWithPrefixRegisterMode
     
     func attributeToBeRegistered(withName name: String) -> Bool {
         switch _attributeRegisterMode {
@@ -622,13 +711,39 @@ public final class XDocument: XNode, XBranchInternal {
         }
     }
     
+    func attributeWithPrefixToBeRegistered(withPrefix prefix: String, withName name: String) -> Bool {
+        switch _attributeWithPrefixRegisterMode {
+        case .none:
+            false
+        case .selected(let prefixesAndAttributeNames):
+            prefixesAndAttributeNames.contains(where: {$0 == (prefix,name) })
+        case .all:
+            true
+        }
+    }
+    
+    func attributeWithPrefixValueToBeRegistered(forPrefix prefix: String, forAttributeName name: String) -> Bool {
+        switch _attributeWithPrefixValueRegisterMode {
+        case .none:
+            false
+        case .selected(let prefixesAndAttributeNames):
+            prefixesAndAttributeNames.contains(where: {$0 == (prefix,name) })
+        case .all:
+            true
+        }
+    }
+    
     public init(
         attached: [String:Any?]? = nil,
         registeringAttributes attributeRegisterMode: AttributeRegisterMode = .none,
-        registeringValuesForAttributes attributeValueRegisterMode: AttributeRegisterMode = .none
+        registeringValuesForAttributes attributeValueRegisterMode: AttributeRegisterMode = .none,
+        registeringAttributesWithPrefix attributeWithPrefixRegisterMode: AttributeWithPrefixRegisterMode = .none,
+        registeringValuesForAttributesWithPrefix attributeWithPrefixValueRegisterMode: AttributeWithPrefixRegisterMode = .none
     ) {
         self._attributeRegisterMode = attributeRegisterMode
         self._attributeValueRegisterMode = attributeValueRegisterMode
+        self._attributeWithPrefixRegisterMode = attributeWithPrefixRegisterMode
+        self._attributeWithPrefixValueRegisterMode = attributeWithPrefixValueRegisterMode
         super.init()
         self._lastInTree = self
         if let attached {
@@ -644,9 +759,17 @@ public final class XDocument: XNode, XBranchInternal {
         attached: [String:Any?]? = nil,
         registeringAttributes attributeRegisterMode: AttributeRegisterMode = .none,
         registeringValuesForAttributes attributeValueRegisterMode: AttributeRegisterMode = .none,
+        registeringAttributesWithPrefix attributeWithPrefixRegisterMode: AttributeWithPrefixRegisterMode = .none,
+        registeringValuesForAttributesWithPrefix attributeWithPrefixValueRegisterMode: AttributeWithPrefixRegisterMode = .none,
         @XContentBuilder builder: () -> [XContent]
     ) {
-        self.init(attached: attached, registeringAttributes: attributeRegisterMode, registeringValuesForAttributes: attributeValueRegisterMode)
+        self.init(
+            attached: attached,
+            registeringAttributes: attributeRegisterMode,
+            registeringValuesForAttributes: attributeValueRegisterMode,
+            registeringAttributesWithPrefix: attributeWithPrefixValueRegisterMode,
+            registeringValuesForAttributesWithPrefix: attributeWithPrefixValueRegisterMode
+        )
         for node in builder() {
             _add(node)
         }

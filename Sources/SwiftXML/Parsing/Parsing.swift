@@ -18,6 +18,8 @@ public func parseXML(
     silentEmptyRootPrefix: Bool = false,
     registeringAttributes attributeRegisterMode: AttributeRegisterMode = .none,
     registeringValuesForAttributes attributeValueRegisterMode: AttributeRegisterMode = .none,
+    registeringAttributesWithPrefix attributeWithPrefixRegisterMode: AttributeWithPrefixRegisterMode = .none,
+    registeringValuesForAttributesWithPrefix attributeWithPrefixValueRegisterMode: AttributeWithPrefixRegisterMode = .none,
     sourceInfo: String? = nil,
     textAllowedInElementWithName: ((String) -> Bool)? = nil,
     internalEntityAutoResolve: Bool = false,
@@ -33,7 +35,12 @@ public func parseXML(
     immediateTextHandlingNearEntities: ImmediateTextHandlingNearEntities = .atExternalEntities
 ) throws -> XDocument {
     
-    let document = XDocument(registeringAttributes: attributeRegisterMode, registeringValuesForAttributes: attributeValueRegisterMode)
+    let document = XDocument(
+        registeringAttributes: attributeRegisterMode,
+        registeringValuesForAttributes: attributeValueRegisterMode,
+        registeringAttributesWithPrefix: attributeWithPrefixRegisterMode,
+        registeringValuesForAttributesWithPrefix: attributeWithPrefixValueRegisterMode
+    )
     
     switch documentSource {
     case .url(url: let url):
@@ -75,6 +82,8 @@ public func parseXML(
     silentEmptyRootPrefix: Bool = false,
     registeringAttributes attributeRegisterMode: AttributeRegisterMode = .none,
     registeringValuesForAttributes attributeValueRegisterMode: AttributeRegisterMode = .none,
+    registeringAttributesWithPrefix attributeWithPrefixRegisterMode: AttributeWithPrefixRegisterMode = .none,
+    registeringValuesForAttributesWithPrefix attributeWithPrefixValueRegisterMode: AttributeWithPrefixRegisterMode = .none,
     sourceInfo: String? = nil,
     textAllowedInElementWithName: ((String) -> Bool)? = nil,
     internalEntityAutoResolve: Bool = false,
@@ -95,6 +104,8 @@ public func parseXML(
         silentEmptyRootPrefix: silentEmptyRootPrefix,
         registeringAttributes: attributeRegisterMode,
         registeringValuesForAttributes: attributeValueRegisterMode,
+        registeringAttributesWithPrefix: attributeWithPrefixRegisterMode,
+        registeringValuesForAttributesWithPrefix: attributeWithPrefixValueRegisterMode,
         sourceInfo: sourceInfo,
         textAllowedInElementWithName: textAllowedInElementWithName,
         internalEntityAutoResolve: internalEntityAutoResolve,
@@ -117,6 +128,8 @@ public func parseXML(
     silentEmptyRootPrefix: Bool = false,
     registeringAttributes attributeRegisterMode: AttributeRegisterMode = .none,
     registeringValuesForAttributes attributeValueRegisterMode: AttributeRegisterMode = .none,
+    registeringAttributesWithPrefix attributeWithPrefixRegisterMode: AttributeWithPrefixRegisterMode = .none,
+    registeringValuesForAttributesWithPrefix attributeWithPrefixValueRegisterMode: AttributeWithPrefixRegisterMode = .none,
     sourceInfo: String? = nil,
     textAllowedInElementWithName: ((String) -> Bool)? = nil,
     internalEntityAutoResolve: Bool = false,
@@ -137,6 +150,8 @@ public func parseXML(
         silentEmptyRootPrefix: silentEmptyRootPrefix,
         registeringAttributes: attributeRegisterMode,
         registeringValuesForAttributes: attributeValueRegisterMode,
+        registeringAttributesWithPrefix: attributeWithPrefixRegisterMode,
+        registeringValuesForAttributesWithPrefix: attributeWithPrefixValueRegisterMode,
         sourceInfo: sourceInfo,
         textAllowedInElementWithName: textAllowedInElementWithName,
         internalEntityAutoResolve: internalEntityAutoResolve,
@@ -159,6 +174,8 @@ public func parseXML(
     silentEmptyRootPrefix: Bool = false,
     registeringAttributes attributeRegisterMode: AttributeRegisterMode = .none,
     registeringValuesForAttributes attributeValueRegisterMode: AttributeRegisterMode = .none,
+    registeringAttributesWithPrefix attributeWithPrefixRegisterMode: AttributeWithPrefixRegisterMode = .none,
+    registeringValuesForAttributesWithPrefix attributeWithPrefixValueRegisterMode: AttributeWithPrefixRegisterMode = .none,
     sourceInfo: String? = nil,
     textAllowedInElementWithName: ((String) -> Bool)? = nil,
     internalEntityAutoResolve: Bool = false,
@@ -179,6 +196,8 @@ public func parseXML(
         silentEmptyRootPrefix: silentEmptyRootPrefix,
         registeringAttributes: attributeRegisterMode,
         registeringValuesForAttributes: attributeValueRegisterMode,
+        registeringAttributesWithPrefix: attributeWithPrefixRegisterMode,
+        registeringValuesForAttributesWithPrefix: attributeWithPrefixValueRegisterMode,
         sourceInfo: sourceInfo,
         textAllowedInElementWithName: textAllowedInElementWithName,
         internalEntityAutoResolve: internalEntityAutoResolve,
@@ -201,6 +220,8 @@ public func parseXML(
     silentEmptyRootPrefix: Bool = false,
     registeringAttributes attributeRegisterMode: AttributeRegisterMode = .none,
     registeringValuesForAttributes attributeValueRegisterMode: AttributeRegisterMode = .none,
+    registeringAttributesWithPrefix attributeWithPrefixRegisterMode: AttributeWithPrefixRegisterMode = .none,
+    registeringValuesForAttributesWithPrefix attributeWithPrefixValueRegisterMode: AttributeWithPrefixRegisterMode = .none,
     sourceInfo: String? = nil,
     internalEntityAutoResolve: Bool = false,
     internalEntityResolver: InternalEntityResolver? = nil,
@@ -223,6 +244,8 @@ public func parseXML(
         silentEmptyRootPrefix: silentEmptyRootPrefix,
         registeringAttributes: attributeRegisterMode,
         registeringValuesForAttributes: attributeValueRegisterMode,
+        registeringAttributesWithPrefix: attributeWithPrefixRegisterMode,
+        registeringValuesForAttributesWithPrefix: attributeWithPrefixValueRegisterMode,
         sourceInfo: sourceInfo,
         textAllowedInElementWithName: textAllowedInElementWithName,
         internalEntityAutoResolve: internalEntityAutoResolve,

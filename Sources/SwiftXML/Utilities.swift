@@ -1,4 +1,4 @@
-//===--- Util.swift -------------------------------------------------------===//
+//===--- Utilities.swift --------------------------------------------------===//
 //
 // This source file is part of the SwiftXML.org open source project
 //
@@ -318,37 +318,37 @@ class Referenced<T> {
     
 }
 
-class TieredDictionary<K1: Hashable,K2: Hashable,V> {
+class TwoTieredDictionaryWithStringKeys<V> {
     
-    var dictionary = [K1:Referenced<[K2:V]>]()
+    var dictionary = [String:Referenced<[String:V]>]()
     
     init() {}
     
     var isEmpty: Bool { dictionary.isEmpty }
     
-    func put(key1: K1, key2: K2, value: V?) {
-        let indexForKey1 = dictionary[key1] ?? {
-            let newIndex = Referenced([K2:V]())
+    func put(key1: String, key2: String, value: V?) {
+        let indexForKey2 = dictionary[key1] ?? {
+            let newIndex = Referenced([String:V]())
             dictionary[key1] = newIndex
             return newIndex
         }()
-        indexForKey1.referenced[key2] = value
-        if indexForKey1.referenced.isEmpty {
+        indexForKey2.referenced[key2] = value
+        if indexForKey2.referenced.isEmpty {
             dictionary[key1] = nil
         }
     }
     
-    func removeValue(forKey1 key1: K1, andKey2 key2: K2) -> V? {
-        guard let indexForKey1 = dictionary[key1] else { return nil }
-        guard let value = indexForKey1.referenced[key2] else { return nil }
-        indexForKey1.referenced[key2] = nil
-        if indexForKey1.referenced.isEmpty {
+    func removeValue(forKey1 key1: String, andKey2 key2: String) -> V? {
+        guard let indexForKey2 = dictionary[key1] else { return nil }
+        guard let value = indexForKey2.referenced[key2] else { return nil }
+        indexForKey2.referenced[key2] = nil
+        if indexForKey2.referenced.isEmpty {
             dictionary[key1] = nil
         }
         return value
     }
     
-    subscript(key1: K1, key2: K2) -> V? {
+    subscript(key1: String, key2: String) -> V? {
         
         set {
             put(key1: key1, key2: key2, value: newValue)
@@ -360,7 +360,7 @@ class TieredDictionary<K1: Hashable,K2: Hashable,V> {
         
     }
     
-    subscript(key1: K1) -> [K2:V]? {
+    subscript(key1: String) -> [String:V]? {
         
         get {
             return dictionary[key1]?.referenced
@@ -368,27 +368,27 @@ class TieredDictionary<K1: Hashable,K2: Hashable,V> {
         
     }
     
-    var leftKeys: Dictionary<K1, Referenced<Dictionary<K2, V>>>.Keys { dictionary.keys }
+    var firstKeys: Dictionary<String, Referenced<Dictionary<String, V>>>.Keys { dictionary.keys }
     
-    func rightKeys(forLeftKey leftKey: K1) -> Dictionary<K2, V>.Keys? {
+    func secondKeys(forLeftKey leftKey: String) -> Dictionary<String, V>.Keys? {
         return dictionary[leftKey]?.referenced.keys
     }
     
-    var rightKeys: Set<K2> {
-        var keys = Set<K2>()
-        leftKeys.forEach { leftKey in
-            rightKeys(forLeftKey: leftKey)?.forEach { rightKey in
+    var secondKeys: Set<String> {
+        var keys = Set<String>()
+        firstKeys.forEach { leftKey in
+            secondKeys(forLeftKey: leftKey)?.forEach { rightKey in
                 keys.insert(rightKey)
             }
         }
         return keys
     }
     
-    var all: [V] {
-        leftKeys.compactMap { dictionary[$0]?.referenced.values }.flatMap{ $0 }
+    var values: [V] {
+        firstKeys.compactMap { dictionary[$0]?.referenced.values }.flatMap{ $0 }
     }
     
-    func all(forFirstKey key1: K1) -> Dictionary<K2, V>.Values? {
+    func values(forFirstKey key1: String) -> Dictionary<String, V>.Values? {
         dictionary[key1]?.referenced.values
     }
     
@@ -396,28 +396,110 @@ class TieredDictionary<K1: Hashable,K2: Hashable,V> {
         dictionary.removeAll(keepingCapacity: keepCapacity)
     }
     
-}
-
-class SortableTieredDictionary<K1: Hashable,K2: Hashable,V>: TieredDictionary<K1,K2,V> where K1: Comparable, K2: Comparable {
+    var keys: [(String,String)] {
+        firstKeys.flatMap{ key1 in
+            dictionary[key1]!.referenced.keys.map{ (key1, $0) }
+        }
+    }
     
-    override init() {}
+    var all: [(String,String,V)] {
+        firstKeys.flatMap{ key1 in
+            dictionary[key1]!.referenced.map{ (key1, $0.key, $0.value) }
+        }
+    }
     
-    var sorted: [(K1,K2,V)] {
-        leftKeys.sorted().flatMap{ leftKey in
-            dictionary[leftKey]!.referenced.sorted(by: { $0.key < $1.key }).map{ (leftKey, $0.key, $0.value)
-            }
+    var sorted: [(String,String,V)] {
+        firstKeys.sorted().flatMap{ key1 in
+            dictionary[key1]!.referenced.sorted(by: { $0.key < $1.key }).map{ (key1, $0.key, $0.value) }
         }
     }
     
 }
 
-class TieredDictionaryWithStringKeys<V>: TieredDictionary<String,String,V> {
+class ThreeTieredDictionaryWithStringKeys<V> {
+
+    var dictionary = [String:Referenced<[String:Referenced<[String:V]>]>]()
     
-    override init() {}
+    init() {}
     
-    var sorted: [(String,String,V)] {
-        leftKeys.sorted{ $0.caseInsensitiveCompare($1) == .orderedAscending }.flatMap{ leftKey in
-            dictionary[leftKey]!.referenced.sorted(by: { $0.key.caseInsensitiveCompare($1.key) == .orderedAscending }).map{ (leftKey, $0.key, $0.value)
+    var isEmpty: Bool { dictionary.isEmpty }
+    
+    func put(key1: String, key2: String, key3: String, value: V?) {
+        let indexForKey2 = dictionary[key1] ?? {
+            let newIndexForKey2 = Referenced([String:Referenced<[String:V]>]())
+            dictionary[key1] = newIndexForKey2
+            return newIndexForKey2
+        }()
+        let indexForKey3 = indexForKey2.referenced[key2] ?? {
+            let newIndexForKey3 = Referenced([String:V]())
+            indexForKey2.referenced[key2] = newIndexForKey3
+            return newIndexForKey3
+        }()
+        indexForKey3.referenced[key3] = value
+        if indexForKey3.referenced.isEmpty {
+            dictionary[key1]?.referenced[key2] = nil
+            if dictionary[key1]?.referenced.isEmpty == true {
+                dictionary[key1] = nil
+            }
+        }
+    }
+    
+    func removeValue(forKey1 key1: String, andKey2 key2: String, andKey3 key3: String) -> V? {
+        guard let indexForKey2 = dictionary[key1] else { return nil }
+        guard let indexForKey3 = indexForKey2.referenced[key2] else { return nil }
+        guard let value = indexForKey3.referenced[key2] else { return nil }
+        indexForKey3.referenced[key3] = nil
+        if indexForKey3.referenced.isEmpty {
+            indexForKey2.referenced[key2] = nil
+            if indexForKey2.referenced.isEmpty {
+                dictionary[key1] = nil
+            }
+        }
+        return value
+    }
+    
+    subscript(key1: String, key2: String, key3: String) -> V? {
+        
+        set {
+            put(key1: key1, key2: key2, key3: key3, value: newValue)
+        }
+        
+        get {
+            return dictionary[key1]?.referenced[key2]?.referenced[key3]
+        }
+        
+    }
+    
+    subscript(key1: String, key2: String) -> [String:V]? {
+        
+        get {
+            return dictionary[key1]?.referenced[key2]?.referenced
+        }
+        
+    }
+    
+    var firstKeys: Dictionary<String, Referenced<[String : Referenced<[String : V]>]>>.Keys { dictionary.keys }
+    
+    func removeAll(keepingCapacity keepCapacity: Bool = false) {
+        dictionary.removeAll(keepingCapacity: keepCapacity)
+    }
+    
+    var keys: [(String,String,String)] {
+        firstKeys.flatMap{ key1 in
+            dictionary[key1]!.referenced.flatMap{ (key2,indexForKey3) in
+                indexForKey3.referenced.keys.map{ (key3) in
+                    (key1, key2, key3)
+                }
+            }
+        }
+    }
+    
+    var sorted: [(String,String,String,V)] {
+        firstKeys.sorted().flatMap{ key1 in
+            dictionary[key1]!.referenced.sorted(by: { $0.key < $1.key }).flatMap{ (key2,indexForKey3) in
+                indexForKey3.referenced.sorted(by: { $0.key < $1.key }).map{ (key3,value) in
+                    (key1, key2, key3, value)
+                }
             }
         }
     }

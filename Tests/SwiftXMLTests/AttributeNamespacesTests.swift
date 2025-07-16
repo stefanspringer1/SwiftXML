@@ -1,4 +1,4 @@
-//===--- SwiftXMLTests.swift ----------------------------------------------===//
+//===--- AttributeNamespacesTests.swift -----------------------------------===//
 //
 // This source file is part of the SwiftXML.org open source project
 //

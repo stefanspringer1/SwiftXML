@@ -1821,9 +1821,11 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     }
     
     var _attributes = [String:String]() // contains all attributes, including the registered ones
-    var _attributesForPrefix = TieredDictionaryWithStringKeys<String>()
+    var _attributesForPrefix = TwoTieredDictionaryWithStringKeys<String>()
     var _registeredAttributes = [String:AttributeProperties]() // the registered attributes
     var _registeredAttributeValues = [String:AttributeProperties]() // the registered attribute values
+    var _registeredAttributesWithPrefix = TwoTieredDictionaryWithStringKeys<AttributeProperties>() // the registered attributes with prefix
+    var _registeredAttributeWithPrefixValues = TwoTieredDictionaryWithStringKeys<AttributeProperties>() // the registered attribute with prefix values
     
     /// After cloning, this is the reference to the original node or to the cloned node respectively,
     /// acoording to the parameter used when cloning.
@@ -2011,9 +2013,9 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     /// Attribute without prefix get the first value `nil` in the result.
     public var attributeNamesWithPrefix: [(String?,String)] {
         get {
-            let prefixes: [String] = _attributesForPrefix.leftKeys.sorted{ $0.caseInsensitiveCompare($1) == .orderedAscending }
+            let prefixes: [String] = _attributesForPrefix.firstKeys.sorted{ $0.caseInsensitiveCompare($1) == .orderedAscending }
             let prefixesWithNames: [(String,String)] = prefixes
-                .flatMap{ prefix in _attributesForPrefix.rightKeys(forLeftKey: prefix)!.sorted{ $0.caseInsensitiveCompare($1) == .orderedAscending }
+                .flatMap{ prefix in _attributesForPrefix.secondKeys(forLeftKey: prefix)!.sorted{ $0.caseInsensitiveCompare($1) == .orderedAscending }
                 .map{ (prefix,$0) } }
             return attributeNames.map{ (nil,$0) } + prefixesWithNames
         }
@@ -2108,34 +2110,37 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
             let oldValue = _attributes[attributeName]
             guard newValue != oldValue else { return }
             
-            if let theDocument = _registeringDocument, theDocument.attributeToBeRegistered(withName: attributeName) {
-                if let newValue {
-                    if let existingAttribute = _registeredAttributes[attributeName] {
-                        existingAttribute.value = newValue
+            if let theDocument = _registeringDocument {
+               
+                if theDocument.attributeToBeRegistered(withName: attributeName) {
+                    if let newValue {
+                        if let existingAttribute = _registeredAttributes[attributeName] {
+                            existingAttribute.value = newValue
+                        }
+                        else {
+                            let newAttribute = AttributeProperties(value: newValue, element: self)
+                            _registeredAttributes[attributeName] = newAttribute
+                            theDocument.registerAttribute(attributeProperties: newAttribute, withName: attributeName)
+                        }
                     }
-                    else {
+                    else if let existingAttribute = _registeredAttributes.removeValue(forKey: attributeName) {
+                        theDocument.unregisterAttribute(attributeProperties: existingAttribute, withName: attributeName)
+                    }
+                }
+                
+                if theDocument.attributeValueToBeRegistered(forAttributeName: attributeName) {
+                    if let existingAttribute = _registeredAttributeValues[attributeName]  {
+                        theDocument.unregisterAttributeValue(attributeProperties: existingAttribute, withName: attributeName)
+                    }
+                    if let newValue {
                         let newAttribute = AttributeProperties(value: newValue, element: self)
-                        _registeredAttributes[attributeName] = newAttribute
-                        theDocument.registerAttribute(attributeProperties: newAttribute, withName: attributeName)
+                        _registeredAttributeValues[attributeName] = newAttribute
+                        theDocument.registerAttributeValue(attributeProperties: newAttribute, withName: attributeName)
+                    } else {
+                        _registeredAttributeValues[attributeName] = nil
                     }
                 }
-                else if let existingAttribute = _registeredAttributes.removeValue(forKey: attributeName) {
-                    _registeredAttributes[attributeName] = nil
-                    theDocument.unregisterAttribute(attributeProperties: existingAttribute, withName: attributeName)
-                }
-            }
-            
-            if let theDocument = _registeringDocument, theDocument.attributeValueToBeRegistered(forAttributeName: attributeName) {
-                if let existingAttribute = _registeredAttributeValues[attributeName]  {
-                    theDocument.unregisterAttributeValue(attributeProperties: existingAttribute, withName: attributeName)
-                }
-                if let newValue {
-                    let newAttribute = AttributeProperties(value: newValue, element: self)
-                    _registeredAttributeValues[attributeName] = newAttribute
-                    theDocument.registerAttributeValue(attributeProperties: newAttribute, withName: attributeName)
-                } else {
-                    _registeredAttributeValues[attributeName] = nil
-                }
+                
             }
             
             _attributes[attributeName] = newValue
@@ -2152,35 +2157,38 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
             let oldValue = _attributesForPrefix[prefix,attributeName]
             guard newValue != oldValue else { return }
             
-//            if let theDocument = _registeringDocument, theDocument.attributeToBeRegistered(withName: attributeName) {
-//                if let newValue {
-//                    if let existingAttribute = _registeredAttributes[attributeName] {
-//                        existingAttribute.value = newValue
-//                    }
-//                    else {
-//                        let newAttribute = AttributeProperties(value: newValue, element: self)
-//                        _registeredAttributes[attributeName] = newAttribute
-//                        theDocument.registerAttribute(attributeProperties: newAttribute, withName: attributeName)
-//                    }
-//                }
-//                else if let existingAttribute = _registeredAttributes.removeValue(forKey: attributeName) {
-//                    _registeredAttributes[attributeName] = nil
-//                    theDocument.unregisterAttribute(attributeProperties: existingAttribute, withName: attributeName)
-//                }
-//            }
-//            
-//            if let theDocument = _registeringDocument, theDocument.attributeValueToBeRegistered(forAttributeName: attributeName) {
-//                if let existingAttribute = _registeredAttributeValues[attributeName]  {
-//                    theDocument.unregisterAttributeValue(attributeProperties: existingAttribute, withName: attributeName)
-//                }
-//                if let newValue {
-//                    let newAttribute = AttributeProperties(value: newValue, element: self)
-//                    _registeredAttributeValues[attributeName] = newAttribute
-//                    theDocument.registerAttributeValue(attributeProperties: newAttribute, withName: attributeName)
-//                } else {
-//                    _registeredAttributeValues[attributeName] = nil
-//                }
-//            }
+            if let theDocument = _registeringDocument {
+               
+                if theDocument.attributeWithPrefixToBeRegistered(withPrefix: prefix, withName: attributeName) {
+                    if let newValue {
+                        if let existingAttribute = _registeredAttributesWithPrefix[prefix,attributeName] {
+                            existingAttribute.value = newValue
+                        }
+                        else {
+                            let newAttribute = AttributeProperties(value: newValue, element: self)
+                            _registeredAttributesWithPrefix[prefix,attributeName] = newAttribute
+                            theDocument.registerAttributeWithPrefix(attributeProperties: newAttribute, withPrefix: prefix, withName: attributeName)
+                        }
+                    }
+                    else if let existingAttribute = _registeredAttributesWithPrefix.removeValue(forKey1: prefix, andKey2: attributeName) {
+                        theDocument.unregisterAttribute(attributeProperties: existingAttribute, withName: attributeName)
+                    }
+                }
+                
+                if theDocument.attributeWithPrefixValueToBeRegistered(forPrefix: prefix, forAttributeName: attributeName) {
+                    if let existingAttribute = _registeredAttributeValues[attributeName]  {
+                        theDocument.unregisterAttributeValue(attributeProperties: existingAttribute, withName: attributeName)
+                    }
+                    if let newValue {
+                        let newAttribute = AttributeProperties(value: newValue, element: self)
+                        _registeredAttributeValues[attributeName] = newAttribute
+                        theDocument.registerAttributeValue(attributeProperties: newAttribute, withName: attributeName)
+                    } else {
+                        _registeredAttributeValues[attributeName] = nil
+                    }
+                }
+                
+            }
             
             _attributesForPrefix[prefix,attributeName] = newValue
             

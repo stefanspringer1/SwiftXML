@@ -395,7 +395,7 @@ public final class XParseBuilder: XEventHandler {
                 for element in document.descendants {
                     if let prefix = element.prefix, let correctedPrefix = prefixCorrections[prefix] {
                         element.prefix = correctedPrefix
-                        if let attributesForThisPrefix = element._attributesForPrefix.rightKeys(forLeftKey: prefix) {
+                        if let attributesForThisPrefix = element._attributesForPrefix.secondKeys(forLeftKey: prefix) {
                             for attributeName in attributesForThisPrefix {
                                 element[correctedPrefix,attributeName] = element[prefix,attributeName]
                                 element[prefix,attributeName] = nil
