@@ -130,20 +130,38 @@ final class AttributeNamespacesTests: XCTestCase {
             </a>
             """
         
-        let source2 = """
+        let sourceWithSameNamespaceForPrefix = """
+            <c xmlns:z="\(namespaceURI1)"/>
+            """
+        
+        let sourceWithSameNamespaceButDifferentPrefix = """
+            <c xmlns:zz="\(namespaceURI1)"/>
+            """
+        
+        let sourceWithDifferentNamespaceForSamePrefix = """
             <c xmlns:z="\(namespaceURI2)"/>
             """
         
         let document1 = try parseXML(fromText: source1, namespaceAware: true)
-        let document2 = try parseXML(fromText: source2, namespaceAware: true)
+        let documentWithSameNamespaceForPrefix = try parseXML(fromText: sourceWithSameNamespaceForPrefix, namespaceAware: true)
+        let documentWithSameNamespaceButDifferentPrefix = try parseXML(fromText: sourceWithSameNamespaceButDifferentPrefix, namespaceAware: true)
+        let documentWithDifferentNamespaceForSamePrefix = try parseXML(fromText: sourceWithDifferentNamespaceForSamePrefix, namespaceAware: true)
         
         let b = document1.elements("b").first
         XCTAssertNotNil(b)
         
-        b?.remove() // be sure it not only correctly done when directly moving
-        document2.firstChild?.add{ b }
+        b?.remove() // be sure it is also correctly done when first removing
+        documentWithSameNamespaceForPrefix.firstChild?.add{ b?.clone }
+        documentWithSameNamespaceButDifferentPrefix.firstChild?.add{ b?.clone }
+        documentWithDifferentNamespaceForSamePrefix.firstChild?.add{ b?.clone }
         
-        XCTAssertEqual(document2.serialized, """
+        XCTAssertEqual(documentWithSameNamespaceForPrefix.serialized, """
+            <c xmlns:z="https://z1"><b z:id="123"/></c>
+            """)
+        XCTAssertEqual(documentWithSameNamespaceButDifferentPrefix.serialized, """
+            <c xmlns:zz="https://z1"><b zz:id="123"/></c>
+            """)
+        XCTAssertEqual(documentWithDifferentNamespaceForSamePrefix.serialized, """
             <c xmlns:z="https://z2" xmlns:z2="https://z1"><b z2:id="123"/></c>
             """)
     }
