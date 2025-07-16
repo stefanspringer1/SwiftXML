@@ -122,6 +122,8 @@ let transformation = XTransformation {
 
 **UPDATE 40 (July 2025):** Namespaces for attributes are now added (although some more tests should be added), but no registering of such attributes yet.
 
+**UPDATE 41 (July 2025):** Registering of attributes with namespaces are now added, and some more tests.
+
 ---
 
 ## Related packages
