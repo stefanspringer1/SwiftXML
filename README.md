@@ -2102,7 +2102,7 @@ When moving elements between documents, missing namespaces with their prefixes a
 
 Generally, there is no a need to change any prefix for a registered namespace during processing (there are also no tools added that would simplify this), just use the prefix returned by `prefix(forNamespaceURI:)` and, if necessary, define prefixes for a serialization.
 
-The namespace handling for attributes is straightforward: set or get an attribute value via `element[prefix,name]`, where `prefix` might be `nil`. The attributes of an element which do not have an explicit namespace prefix never get a namespace prefix, although the element might belong to a namespace. So e.g. `document.registeredAttributes("refid")` finds all attributes with the name `"refid"` and without a prefix regardless of whether the corresponding element belongs to a namespace.
+Concerning attributes, set or get an attribute value via `element[prefix,name]`, where `prefix` might be `nil`. The attributes that do not have an explicit namespace prefix set in the source do not get a namespace prefix during parsing, regardless of whether the corresponding element belongs to a namespace. So e.g. `myElement["id"]` also returns the according attribute value of an element that has a prefix.
 
 Example:
 
