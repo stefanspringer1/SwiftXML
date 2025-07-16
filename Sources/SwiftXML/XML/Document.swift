@@ -415,6 +415,25 @@ public final class XDocument: XNode, XBranchInternal {
             _elementsOfName_last[name] = element
         }
         
+        // adjust prefix of attributes:
+        if !element._attributesForPrefix.isEmpty {
+            var oldAttributePrefixToNew = [String:String]()
+            for oldPrefix in element._attributesForPrefix.leftKeys {
+                if let namespaceURI = element._document?.namespaceURI(forPrefix: oldPrefix) {
+                    let newPrefix = self.register(namespaceURI: namespaceURI, withPrefixSuggestion: oldPrefix)
+                    if newPrefix != oldPrefix {
+                        oldAttributePrefixToNew[oldPrefix] = newPrefix
+                    }
+                }
+            }
+            for (oldPrefix, newPrefix) in oldAttributePrefixToNew {
+                for (attributeName,attributeValue) in element._attributesForPrefix[oldPrefix]! {
+                    element[newPrefix,attributeName] = attributeValue
+                    element[oldPrefix,attributeName] = nil
+                }
+            }
+        }
+        
         // register according attributes:
         for (attributeName,attributeValue) in element._attributes {
             if attributeToBeRegistered(withName: attributeName) == true {

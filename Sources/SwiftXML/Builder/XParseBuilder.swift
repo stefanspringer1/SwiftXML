@@ -156,7 +156,6 @@ public final class XParseBuilder: XEventHandler {
                         var resultingPrefix = proposedPrefix
                         var avoidPrefixClashCount = 1
                         while prefixes.contains(resultingPrefix) {
-                            print("prefixes.contains [\(resultingPrefix)]")
                             avoidPrefixClashCount += 1
                             resultingPrefix = "\(proposedPrefix)\(avoidPrefixClashCount)"
                         }
@@ -218,7 +217,6 @@ public final class XParseBuilder: XEventHandler {
         
         if namespaceAware {
             for (attributName,attributeValue) in attributes {
-                print("ATTRIBUTE: \(attributName), \(attributeValue)")
                 var prefixOfAttribute: String? = nil
                 var attributeNameIfPrefix: String? = nil
                 
@@ -227,7 +225,6 @@ public final class XParseBuilder: XEventHandler {
                 if let colon {
                     literalPrefixOfAttribute = String(attributName[..<colon])
                 }
-                print("LITERAL PREFIX: \(literalPrefixOfAttribute ?? "")")
                 if let literalPrefixOfAttribute {
                     var i = namespaceURIAndPrefixDuringBuild.count - 1
                     while i >= 0 {
@@ -386,12 +383,14 @@ public final class XParseBuilder: XEventHandler {
                 for (uri,prefix) in resultingNamespaceURIToPrefix {
                     document._namespaceURIToPrefix[uri] = prefix
                     document._prefixToNamespaceURI[prefix] = uri
+                    document._prefixes.insert(prefix)
                 }
             } else {
                 for (uri,prefix) in resultingNamespaceURIToPrefix {
                     let correctedPrefix = prefixCorrections[prefix] ?? prefix
                     document._namespaceURIToPrefix[uri] = correctedPrefix
                     document._prefixToNamespaceURI[correctedPrefix] = uri
+                    document._prefixes.insert(correctedPrefix)
                 }
                 for element in document.descendants {
                     if let prefix = element.prefix, let correctedPrefix = prefixCorrections[prefix] {

@@ -119,6 +119,34 @@ final class AttributeNamespacesTests: XCTestCase {
             """)
     }
     
+    func testMovingIntoOtherDocument() throws {
+        
+        let namespaceURI1 = "https://z1"
+        let namespaceURI2 = "https://z2"
+        
+        let source1 = """
+            <a xmlns:z="\(namespaceURI1)">
+                <b z:id="123"/>
+            </a>
+            """
+        
+        let source2 = """
+            <c xmlns:z="\(namespaceURI2)"/>
+            """
+        
+        let document1 = try parseXML(fromText: source1, namespaceAware: true)
+        let document2 = try parseXML(fromText: source2, namespaceAware: true)
+        
+        let b = document1.elements("b").first
+        XCTAssertNotNil(b)
+        
+        document2.firstChild?.add{ b }
+        
+        XCTAssertEqual(document2.serialized, """
+            <c xmlns:z="https://z2" xmlns:z2="https://z1"><b z2:id="123"/></c>
+            """)
+    }
+    
 }
 
 fileprivate func areEqual(_ array1: [(String?,String)], _ array2: [(String?,String)]) -> Bool {
