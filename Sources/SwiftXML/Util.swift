@@ -55,6 +55,14 @@ public extension String {
             .replacingOccurrences(of: "'", with: "&apos;")
     }
     
+    func appending(_ string: String?) -> String {
+        if let string { self + string } else { self }
+    }
+    
+    func prepending(_ string: String?) -> String {
+        if let string { string + self } else { self }
+    }
+    
 }
 
 public func sortByName(_ declarations: [String:XDeclarationInInternalSubset]) -> [XDeclarationInInternalSubset] {
@@ -302,9 +310,9 @@ extension String {
 /// A wrapper around Set that can passed around by reference.
 class Referenced<T> {
     
-    public var referenced: T
+    var referenced: T
     
-    public init(_ referenced: T) {
+    init(_ referenced: T) {
         self.referenced = referenced
     }
     
@@ -312,13 +320,13 @@ class Referenced<T> {
 
 class TieredDictionary<K1: Hashable,K2: Hashable,V> {
     
-    private var dictionary = [K1:Referenced<[K2:V]>]()
+    var dictionary = [K1:Referenced<[K2:V]>]()
     
-    public init() {}
+    init() {}
     
-    public var isEmpty: Bool { dictionary.isEmpty }
+    var isEmpty: Bool { dictionary.isEmpty }
     
-    public func put(key1: K1, key2: K2, value: V?) {
+    func put(key1: K1, key2: K2, value: V?) {
         let indexForKey1 = dictionary[key1] ?? {
             let newIndex = Referenced([K2:V]())
             dictionary[key1] = newIndex
@@ -330,7 +338,7 @@ class TieredDictionary<K1: Hashable,K2: Hashable,V> {
         }
     }
     
-    public func removeValue(forKey1 key1: K1, andKey2 key2: K2) -> V? {
+    func removeValue(forKey1 key1: K1, andKey2 key2: K2) -> V? {
         guard let indexForKey1 = dictionary[key1] else { return nil }
         guard let value = indexForKey1.referenced[key2] else { return nil }
         indexForKey1.referenced[key2] = nil
@@ -340,7 +348,7 @@ class TieredDictionary<K1: Hashable,K2: Hashable,V> {
         return value
     }
     
-    public subscript(key1: K1, key2: K2) -> V? {
+    subscript(key1: K1, key2: K2) -> V? {
         
         set {
             put(key1: key1, key2: key2, value: newValue)
@@ -352,7 +360,7 @@ class TieredDictionary<K1: Hashable,K2: Hashable,V> {
         
     }
     
-    public subscript(key1: K1) -> [K2:V]? {
+    subscript(key1: K1) -> [K2:V]? {
         
         get {
             return dictionary[key1]?.referenced
@@ -360,13 +368,13 @@ class TieredDictionary<K1: Hashable,K2: Hashable,V> {
         
     }
     
-    public var leftKeys: Dictionary<K1, Referenced<Dictionary<K2, V>>>.Keys { dictionary.keys }
+    var leftKeys: Dictionary<K1, Referenced<Dictionary<K2, V>>>.Keys { dictionary.keys }
     
-    public func rightKeys(forLeftKey leftKey: K1) -> Dictionary<K2, V>.Keys? {
+    func rightKeys(forLeftKey leftKey: K1) -> Dictionary<K2, V>.Keys? {
         return dictionary[leftKey]?.referenced.keys
     }
     
-    public var rightKeys: Set<K2> {
+    var rightKeys: Set<K2> {
         var keys = Set<K2>()
         leftKeys.forEach { leftKey in
             rightKeys(forLeftKey: leftKey)?.forEach { rightKey in
@@ -376,15 +384,42 @@ class TieredDictionary<K1: Hashable,K2: Hashable,V> {
         return keys
     }
     
-    public var all: [V] {
+    var all: [V] {
         leftKeys.compactMap { dictionary[$0]?.referenced.values }.flatMap{ $0 }
     }
     
-    public func all(forFirstKey key1: K1) -> Dictionary<K2, V>.Values? {
+    func all(forFirstKey key1: K1) -> Dictionary<K2, V>.Values? {
         dictionary[key1]?.referenced.values
     }
     
-    public func removeAll(keepingCapacity keepCapacity: Bool = false) {
+    func removeAll(keepingCapacity keepCapacity: Bool = false) {
         dictionary.removeAll(keepingCapacity: keepCapacity)
     }
+    
+}
+
+class SortableTieredDictionary<K1: Hashable,K2: Hashable,V>: TieredDictionary<K1,K2,V> where K1: Comparable, K2: Comparable {
+    
+    override init() {}
+    
+    var sorted: [(K1,K2,V)] {
+        leftKeys.sorted().flatMap{ leftKey in
+            dictionary[leftKey]!.referenced.sorted(by: { $0.key < $1.key }).map{ (leftKey, $0.key, $0.value)
+            }
+        }
+    }
+    
+}
+
+class TieredDictionaryWithStringKeys<V>: TieredDictionary<String,String,V> {
+    
+    override init() {}
+    
+    var sorted: [(String,String,V)] {
+        leftKeys.sorted{ $0.caseInsensitiveCompare($1) == .orderedAscending }.flatMap{ leftKey in
+            dictionary[leftKey]!.referenced.sorted(by: { $0.key.caseInsensitiveCompare($1.key) == .orderedAscending }).map{ (leftKey, $0.key, $0.value)
+            }
+        }
+    }
+    
 }

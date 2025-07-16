@@ -1821,6 +1821,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     }
     
     var _attributes = [String:String]() // contains all attributes, including the registered ones
+    var _attributesForPrefix = TieredDictionaryWithStringKeys<String>()
     var _registeredAttributes = [String:AttributeProperties]() // the registered attributes
     var _registeredAttributeValues = [String:AttributeProperties]() // the registered attribute values
     
@@ -1849,19 +1850,30 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     ///
     /// It is thhe oldest source or furthest target of cloning respectively, so to speak.
     public override var finalBacklink: XElement? { super.finalBacklink as? XElement }
-
+    
+    public var unprefixedAttributesDescription: String? {
+        if _attributes.isEmpty { return nil }
+        return _attributes.sorted{ $0.0.caseInsensitiveCompare($1.0) == .orderedAscending }.map { (attributeName,attributeValue) in "\(attributeName)=\"\(attributeValue.escapingDoubleQuotedValueForXML)\"" }.joined(separator: " ")
+    }
+    
+    public var prefixedAttributesDescription: String? {
+        if _attributesForPrefix.isEmpty { return nil }
+        return _attributesForPrefix.sorted.map{ "\($0.0):\($0.1)=\"\($0.2.escapingDoubleQuotedValueForXML)\"" }.joined(separator: " ")
+    }
+    
     public override var description: String {
         get {
             let displayName = if let prefix = _prefix { "\(prefix):\(_name)" } else { _name }
-            return """
-            <\(displayName)\(_attributes.isEmpty == false ? " " : "")\(_attributes.sorted{ $0.0.caseInsensitiveCompare($1.0) == .orderedAscending }.map { (attributeName,attributeValue) in "\(attributeName)=\"\(attributeValue.escapingDoubleQuotedValueForXML)\"" }.joined(separator: " ") ?? "")>
-            """
+            return "<\(displayName)\(unprefixedAttributesDescription?.prepending(" ") ?? "")\(prefixedAttributesDescription?.prepending(" ") ?? "")>"
         }
     }
     
     public func copyAttributes(from other: XElement) {
         for (attributeName,attributeValue) in other._attributes {
             self[attributeName] = attributeValue
+        }
+        for (prefix,attributeName,attributeValue) in other._attributesForPrefix.sorted {
+            self[prefix,attributeName] = attributeValue
         }
     }
     
@@ -1989,9 +2001,21 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         }
     }
     
+    /// Only attributes without prefix are considered.
     public var attributeNames: [String] {
         get {
-            return _attributes.keys.sorted{ $0.caseInsensitiveCompare($1) == .orderedAscending }
+            _attributes.keys.sorted{ $0.caseInsensitiveCompare($1) == .orderedAscending }
+        }
+    }
+    
+    /// Attribute without prefix get the first value `nil` in the result.
+    public var attributeNamesWithPrefix: [(String?,String)] {
+        get {
+            let prefixes: [String] = _attributesForPrefix.leftKeys.sorted{ $0.caseInsensitiveCompare($1) == .orderedAscending }
+            let prefixesWithNames: [(String,String)] = prefixes
+                .flatMap{ prefix in _attributesForPrefix.rightKeys(forLeftKey: prefix)!.sorted{ $0.caseInsensitiveCompare($1) == .orderedAscending }
+                .map{ (prefix,$0) } }
+            return attributeNames.map{ (nil,$0) } + prefixesWithNames
         }
     }
     
@@ -2119,6 +2143,50 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         }
     }
     
+    public subscript(prefix: String?, attributeName: String) -> String? {
+        get {
+            if let prefix { _attributesForPrefix[prefix,attributeName] } else { _attributes[attributeName] }
+        }
+        set {
+            guard let prefix else { self[attributeName] = newValue; return }
+            let oldValue = _attributesForPrefix[prefix,attributeName]
+            guard newValue != oldValue else { return }
+            
+//            if let theDocument = _registeringDocument, theDocument.attributeToBeRegistered(withName: attributeName) {
+//                if let newValue {
+//                    if let existingAttribute = _registeredAttributes[attributeName] {
+//                        existingAttribute.value = newValue
+//                    }
+//                    else {
+//                        let newAttribute = AttributeProperties(value: newValue, element: self)
+//                        _registeredAttributes[attributeName] = newAttribute
+//                        theDocument.registerAttribute(attributeProperties: newAttribute, withName: attributeName)
+//                    }
+//                }
+//                else if let existingAttribute = _registeredAttributes.removeValue(forKey: attributeName) {
+//                    _registeredAttributes[attributeName] = nil
+//                    theDocument.unregisterAttribute(attributeProperties: existingAttribute, withName: attributeName)
+//                }
+//            }
+//            
+//            if let theDocument = _registeringDocument, theDocument.attributeValueToBeRegistered(forAttributeName: attributeName) {
+//                if let existingAttribute = _registeredAttributeValues[attributeName]  {
+//                    theDocument.unregisterAttributeValue(attributeProperties: existingAttribute, withName: attributeName)
+//                }
+//                if let newValue {
+//                    let newAttribute = AttributeProperties(value: newValue, element: self)
+//                    _registeredAttributeValues[attributeName] = newAttribute
+//                    theDocument.registerAttributeValue(attributeProperties: newAttribute, withName: attributeName)
+//                } else {
+//                    _registeredAttributeValues[attributeName] = nil
+//                }
+//            }
+            
+            _attributesForPrefix[prefix,attributeName] = newValue
+            
+        }
+    }
+    
     public func pullAttribute(_ name: String) -> String? {
         if let value = self[name] {
             self[name] = nil
@@ -2132,6 +2200,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         prefix: String? = nil,
         _ name: String,
         _ attributes: [String:String?]? = nil,
+        _ prefixedAttributes: [String:[String:String?]]? = nil,
         withBackLinkFrom backlinkSource: XElement? = nil,
         attached: [String:Any?]? = nil
     ) {
@@ -2139,8 +2208,11 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         self._name = name
         super.init()
         self._lastInTree = self
-        if let theAttributes = attributes {
-            setAttributes(attributes: theAttributes)
+        if let attributes {
+            setAttributes(attributes: attributes)
+        }
+        if let prefixedAttributes {
+            setPrefixedAttributes(prefixedAttributes: prefixedAttributes)
         }
         if let attached {
             for (key,value) in attached {
@@ -2158,12 +2230,13 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         prefix: String? = nil,
         _ name: String,
         _ attributes: [String:String?]? = nil,
+        _ prefixedAttributes: [String:[String:String?]]? = nil,
         withBackLinkFrom backlinkSource: XElement? = nil,
         attached: [String:Any?]? = nil,
         adjustDocument _adjustDocument: Bool = false,
         @XContentBuilder builder: () -> [XContent]
     ) {
-        self.init(prefix: prefix, name, attributes, withBackLinkFrom: backlinkSource, attached: attached)
+        self.init(prefix: prefix, name, attributes, prefixedAttributes,  withBackLinkFrom: backlinkSource, attached: attached)
         self.add(builder: builder)
         if _adjustDocument {
             adjustDocument()
@@ -2193,6 +2266,16 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         }
     }
     
+    func setPrefixedAttributes(prefixedAttributes newPrefixedAtttributeValues: [String:[String:String?]]? = nil) {
+        if let newPrefixedAtttributeValues {
+            for (prefix,valuesForPrefix) in newPrefixedAtttributeValues {
+                for (attributeName, attributeValue) in valuesForPrefix {
+                    self[prefix,attributeName] = attributeValue
+                }
+            }
+        }
+    }
+    
     public func adjustDocument() {
         setDocument(document: _registeringDocument)
     }
@@ -2201,6 +2284,9 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         try activeProduction.writeElementStartBeforeAttributes(element: self)
         for attributeName in activeProduction.sortAttributeNames(attributeNames: attributeNames, element: self) {
             try activeProduction.writeAttribute(name: attributeName, value: self[attributeName]!, element: self)
+        }
+        for (prefix,name,value) in _attributesForPrefix.sorted {
+            try activeProduction.writeAttribute(name: "\(prefix):\(name)", value: value, element: self)
         }
         try activeProduction.writeElementStartAfterAttributes(element: self)
     }
