@@ -140,6 +140,7 @@ final class AttributeNamespacesTests: XCTestCase {
         let b = document1.elements("b").first
         XCTAssertNotNil(b)
         
+        b?.remove() // be sure it not only correctly done when directly moving
         document2.firstChild?.add{ b }
         
         XCTAssertEqual(document2.serialized, """
