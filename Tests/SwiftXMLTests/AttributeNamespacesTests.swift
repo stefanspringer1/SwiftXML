@@ -20,7 +20,7 @@ final class AttributeNamespacesTests: XCTestCase {
         let element = XElement(
             "test",
             ["attribute1": "value1"],
-            [
+            prefixed: [
                 "prefix1": [
                     "attribute1": "prefix1-attribute1",
                     "attribute2": "prefix1-attribute2",

@@ -2204,7 +2204,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         prefix: String? = nil,
         _ name: String,
         _ attributes: [String:String?]? = nil,
-        _ prefixedAttributes: [String:[String:String?]]? = nil,
+        prefixed prefixedAttributes: [String:[String:String?]]? = nil,
         withBackLinkFrom backlinkSource: XElement? = nil,
         attached: [String:Any?]? = nil
     ) {
@@ -2234,13 +2234,13 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         prefix: String? = nil,
         _ name: String,
         _ attributes: [String:String?]? = nil,
-        _ prefixedAttributes: [String:[String:String?]]? = nil,
+        prefixed prefixedAttributes: [String:[String:String?]]? = nil,
         withBackLinkFrom backlinkSource: XElement? = nil,
         attached: [String:Any?]? = nil,
         adjustDocument _adjustDocument: Bool = false,
         @XContentBuilder builder: () -> [XContent]
     ) {
-        self.init(prefix: prefix, name, attributes, prefixedAttributes,  withBackLinkFrom: backlinkSource, attached: attached)
+        self.init(prefix: prefix, name, attributes, prefixed: prefixedAttributes,  withBackLinkFrom: backlinkSource, attached: attached)
         self.add(builder: builder)
         if _adjustDocument {
             adjustDocument()
