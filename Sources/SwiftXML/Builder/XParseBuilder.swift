@@ -215,7 +215,60 @@ public final class XParseBuilder: XEventHandler {
         }
         
         currentBranch._add(element)
-        element.setAttributes(attributes: attributes)
+        
+        if namespaceAware {
+            for (attributName,attributeValue) in attributes {
+                print("ATTRIBUTE: \(attributName), \(attributeValue)")
+                var prefixOfAttribute: String? = nil
+                var attributeNameIfPrefix: String? = nil
+                
+                var literalPrefixOfAttribute: String? = nil
+                let colon = attributName.firstIndex(of: ":")
+                if let colon {
+                    literalPrefixOfAttribute = String(attributName[..<colon])
+                }
+                print("LITERAL PREFIX: \(literalPrefixOfAttribute ?? "")")
+                if let literalPrefixOfAttribute {
+                    var i = namespaceURIAndPrefixDuringBuild.count - 1
+                    while i >= 0 {
+                        let (uri,prefix) = namespaceURIAndPrefixDuringBuild[i]
+                        if prefix == literalPrefixOfAttribute {
+                            prefixOfAttribute = resultingNamespaceURIToPrefix[uri]!
+                            attributeNameIfPrefix = String(attributName[colon!...].dropFirst())
+                            break
+                        }
+                        i -= 1
+                    }
+                    if i < 0 { // no namespace found:
+                        // this prefix cannot be used for namespaces ("dead prefix")!
+                        if prefixes.contains(literalPrefixOfAttribute) {
+                            // too late, we have to correct later:
+                            if prefixCorrections[literalPrefixOfAttribute] == nil {
+                                var avoidPrefixClashCount = 2
+                                var corrected = "\(literalPrefixOfAttribute)\(avoidPrefixClashCount)"
+                                while prefixes.contains(corrected) {
+                                    avoidPrefixClashCount += 1
+                                    corrected = "\(literalPrefixOfAttribute)\(avoidPrefixClashCount)"
+                                }
+                                prefixCorrections[literalPrefixOfAttribute] = corrected
+                                prefixes.insert(corrected)
+                            }
+                        } else {
+                            // we just avoid this prefix:
+                            prefixes.insert(literalPrefixOfAttribute)
+                        }
+                    }
+                }
+                if let prefixOfAttribute {
+                    element[prefixOfAttribute,attributeNameIfPrefix!] = attributeValue
+                } else {
+                    element[attributName] = attributeValue
+                }
+            }
+        } else {
+            element.setAttributes(attributes: attributes)
+        }
+        
         currentBranch = element
         element._sourceRange = textRange
     }
@@ -343,11 +396,16 @@ public final class XParseBuilder: XEventHandler {
                 for element in document.descendants {
                     if let prefix = element.prefix, let correctedPrefix = prefixCorrections[prefix] {
                         element.prefix = correctedPrefix
+                        if let attributesForThisPrefix = element._attributesForPrefix.rightKeys(forLeftKey: prefix) {
+                            for attributeName in attributesForThisPrefix {
+                                element[correctedPrefix,attributeName] = element[prefix,attributeName]
+                                element[prefix,attributeName] = nil
+                            }
+                        }
                     }
                 }
             }
         }
-        
     }
     
 }

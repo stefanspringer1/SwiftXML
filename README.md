@@ -120,6 +120,8 @@ let transformation = XTransformation {
 
 **UPDATE 39 (July 2025):** New argument `suppressDeclarationForNamespaceURIs:` in the output methods. (An `XProductionTemplate` has to offer the according argument `declarationSupressingNamespaceURIs:` in its `activeProduction` method.)
 
+**UPDATE 40 (July 2025):** Namespaces for attributes are now added (although some more tests should be added), but no registering of such attributes yet.
+
 ---
 
 ## Related packages
@@ -2100,7 +2102,7 @@ When moving elements between documents, missing namespaces with their prefixes a
 
 Generally, there is no a need to change any prefix for a registered namespace during processing (there are also no tools added that would simplify this), just use the prefix returned by `prefix(forNamespaceURI:)` and, if necessary, define prefixes for a serialization.
 
-In the current state of the library, no namespace handling of attributes is available.
+The namespace handling for attributes is straightforward: set or get an attribute value via `element[prefix,name]`, where `prefix might be `nil`.
 
 Example:
 

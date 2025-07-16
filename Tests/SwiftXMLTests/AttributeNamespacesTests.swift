@@ -64,6 +64,61 @@ final class AttributeNamespacesTests: XCTestCase {
         XCTAssertEqual(clone.serialized, #"<test attribute2="value2" prefix1:attribute1="prefix1-attribute1" prefix2:attribute1="prefix2-attribute1" prefix3:attribute1="prefix3-attribute1"/>"#)
     }
     
+    func testParsing() throws {
+        
+        let zNamespaceURI = "https://z"
+        
+        let source = """
+            <a xmlns:z="\(zNamespaceURI)">
+                <b z:id="123"/>
+                <c y:id="456"/>
+            </a>
+            """
+        
+        let document = try parseXML(fromText: source, namespaceAware: true)
+        
+        let b = document.elements("b").first
+        let c = document.elements("c").first
+        
+        XCTAssertNotNil(b)
+        XCTAssertNotNil(c)
+        let zPrefix = document.prefix(forNamespaceURI: zNamespaceURI)
+        
+        // b:
+        XCTAssertEqual(b?["z:id"], nil)
+        XCTAssertEqual(b?[zPrefix,"id"], "123")
+        
+        // c:
+        XCTAssertEqual(c?["y:id"], "456")
+        
+        XCTAssertEqual(document.serialized, """
+            <a xmlns:z="https://z">
+                <b z:id="123"/>
+                <c y:id="456"/>
+            </a>
+            """)
+    }
+    
+    func testParsingWithPrefixCorrection() throws {
+        
+        let z1NamespaceURI = "https://z1"
+        let z2NamespaceURI = "https://z2"
+        
+        let source = """
+            <a xmlns:z="\(z1NamespaceURI)">
+                <b xmlns:z="\(z2NamespaceURI)" z:id="123"/>
+            </a>
+            """
+        
+        let document = try parseXML(fromText: source, namespaceAware: true)
+        
+        XCTAssertEqual(document.serialized, """
+            <a xmlns:z="https://z1" xmlns:z2="https://z2">
+                <b z2:id="123"/>
+            </a>
+            """)
+    }
+    
 }
 
 fileprivate func areEqual(_ array1: [(String?,String)], _ array2: [(String?,String)]) -> Bool {
