@@ -49,6 +49,22 @@ final class UtilitiesTest: XCTestCase {
             )
         )
         
+        let allSorted = dictionary.all.sorted(by: { $0.0 < $1.0 || ($0.0 == $1.0 && $0.1 < $1.1) || ($0.0 == $1.0 && $0.1 == $1.1 && $0.2 < $1.2) })
+        print(allSorted)
+        XCTAssertTrue(
+            areEqual(
+                allSorted,
+                [
+                    ("2", "a", "2a"),
+                    ("2", "u", "2u"),
+                    ("3", "a", "3a"),
+                    ("3", "d", "3d"),
+                    ("3", "z", "3z"),
+                    ("7", "b", "7b"),
+                    ("7", "c", "7c"),
+                ]
+            )
+        )
         let sorted = dictionary.sorted
         print(sorted)
         XCTAssertTrue(
@@ -107,6 +123,26 @@ final class UtilitiesTest: XCTestCase {
                     ("7", "b", "α"),
                     ("7", "c", "α"),
                     ("7", "c", "γ"),
+                ]
+            )
+        )
+        
+        let allSorted = dictionary.all.sorted(by: { $0.0 < $1.0 || ($0.0 == $1.0 && $0.1 < $1.1) || ($0.0 == $1.0 && $0.1 == $1.1 && $0.2 < $1.2) || ($0.0 == $1.0 && $0.1 == $1.1 && $0.2 == $1.2 && $0.3 < $1.3) })
+        print(allSorted)
+        XCTAssertTrue(
+            areEqual(
+                allSorted,
+                [
+                    ("2", "a", "β", "2aβ"),
+                    ("2", "u", "γ", "2uγ"),
+                    ("3", "a", "β", "3aβ"),
+                    ("3", "d", "α", "3dα"),
+                    ("3", "z", "α", "3zα"),
+                    ("3", "z", "β", "3zβ"),
+                    ("3", "z", "γ", "3zγ"),
+                    ("7", "b", "α", "7bα"),
+                    ("7", "c", "α", "7cα"),
+                    ("7", "c", "γ", "7cγ"),
                 ]
             )
         )

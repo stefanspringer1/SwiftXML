@@ -368,7 +368,7 @@ public final class XDocument: XNode, XBranchInternal {
     public func namespaceURI(forPrefix prefix: String) -> String? { _prefixToNamespaceURI[prefix] }
     
     /// Get a list of tuples of the form `(prefix, namespace URI)` including the prefix value `""` for the silent namespace.
-    public var namespacePrefixesAndURIs: [(String,String)] { _prefixToNamespaceURI.sorted(by: <) }
+    public var namespacePrefixesAndURIs: [(String,String)] { _prefixToNamespaceURI.sorted{ $0.0.caseInsensitiveCompare($1.0) == .orderedAscending } }
     
     /// This method can be used to force-register a fixed prefix.
     /// Whenever possible, use `registerIndependentPrefix(withPrefixSuggestion:)` instead to avoid collisions.

@@ -1855,12 +1855,17 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     
     public var unprefixedAttributesDescription: String? {
         if _attributes.isEmpty { return nil }
-        return _attributes.sorted{ $0.0.caseInsensitiveCompare($1.0) == .orderedAscending }.map { (attributeName,attributeValue) in "\(attributeName)=\"\(attributeValue.escapingDoubleQuotedValueForXML)\"" }.joined(separator: " ")
+        return _attributes.sorted{
+            $0.0.caseInsensitiveCompare($1.0) == .orderedAscending
+        }.map { (attributeName,attributeValue) in "\(attributeName)=\"\(attributeValue.escapingDoubleQuotedValueForXML)\"" }.joined(separator: " ")
     }
     
     public var prefixedAttributesDescription: String? {
         if _attributesForPrefix.isEmpty { return nil }
-        return _attributesForPrefix.sorted.map{ "\($0.0):\($0.1)=\"\($0.2.escapingDoubleQuotedValueForXML)\"" }.joined(separator: " ")
+        return _attributesForPrefix.all.sorted{
+            $0.0.caseInsensitiveCompare($1.0) == .orderedAscending ||
+            ($0.0 == $1.0 && $0.1.caseInsensitiveCompare($1.1) == .orderedAscending)
+        }.map{ "\($0.0):\($0.1)=\"\($0.2.escapingDoubleQuotedValueForXML)\"" }.joined(separator: " ")
     }
     
     public override var description: String {
@@ -1874,7 +1879,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         for (attributeName,attributeValue) in other._attributes {
             self[attributeName] = attributeValue
         }
-        for (prefix,attributeName,attributeValue) in other._attributesForPrefix.sorted {
+        for (prefix,attributeName,attributeValue) in other._attributesForPrefix.all {
             self[prefix,attributeName] = attributeValue
         }
     }

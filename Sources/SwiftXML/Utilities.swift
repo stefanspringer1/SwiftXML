@@ -498,6 +498,16 @@ class ThreeTieredDictionaryWithStringKeys<V> {
         }
     }
     
+    var all: [(String,String,String,V)] {
+        firstKeys.flatMap{ key1 in
+            dictionary[key1]!.referenced.flatMap{ (key2,indexForKey3) in
+                indexForKey3.referenced.map{ (key3,value) in
+                    (key1, key2, key3, value)
+                }
+            }
+        }
+    }
+    
     var sorted: [(String,String,String,V)] {
         firstKeys.sorted().flatMap{ key1 in
             dictionary[key1]!.referenced.sorted(by: { $0.key < $1.key }).flatMap{ (key2,indexForKey3) in
