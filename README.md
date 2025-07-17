@@ -271,11 +271,14 @@ The following functions take a source and return an XML document instance (`XDoc
 Reading from a URL which references a local file:
 
 ```swift
-func parseXML(
-    fromURL: URL,
+public func parseXML(
+    fromURL url: URL,
     namespaceAware: Bool = false,
     silentEmptyRootPrefix: Bool = false,
-    registeringAttributes attributeRegisterMode: AttributeRegisterMode = .none,
+    registeringAttributes: AttributeRegisterMode = .none,
+    registeringAttributeValuesFor: AttributeRegisterMode = .none,
+    registeringAttributesForNamespaces: AttributeWithNamespaceURIRegisterMode = .none,
+    registeringAttributeValuesForForNamespaces: AttributeWithNamespaceURIRegisterMode = .none,
     sourceInfo: String? = nil,
     textAllowedInElementWithName: ((String) -> Bool)? = nil,
     internalEntityAutoResolve: Bool = false,
@@ -287,8 +290,9 @@ func parseXML(
     externalWrapperElement: String? = nil,
     keepComments: Bool = false,
     keepCDATASections: Bool = false,
-    eventHandlers: [XEventHandler]? = nil
-) throws -> XDocument
+    eventHandlers: [XEventHandler]? = nil,
+    immediateTextHandlingNearEntities: ImmediateTextHandlingNearEntities = .atExternalEntities
+) throws -> XDocument 
 ```
 
 And accordingly:
