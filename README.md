@@ -271,7 +271,7 @@ The following functions take a source and return an XML document instance (`XDoc
 Reading from a URL which references a local file:
 
 ```swift
-public func parseXML(
+func parseXML(
     fromURL url: URL,
     namespaceAware: Bool = false,
     silentEmptyRootPrefix: Bool = false,
