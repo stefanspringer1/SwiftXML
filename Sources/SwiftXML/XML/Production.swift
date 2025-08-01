@@ -23,9 +23,12 @@ public protocol Writer {
     func write(_ text: String) throws
 }
 
+fileprivate let TEXT_TO_DATA_ERROR_MESSAGE = "could not convert text to data"
+
 extension FileHandle {
     func write(text: String) throws {
-        try self.write(contentsOf: text.data(using: .utf8)!)
+        guard let data = text.data(using: .utf8) else { throw SwiftXMLError(TEXT_TO_DATA_ERROR_MESSAGE) }
+        try self.write(contentsOf: data)
     }
 }
 
@@ -47,7 +50,7 @@ class FileWriter: Writer {
     }
     
     open func write(_ text: String) throws {
-        guard let data = text.data(using: .utf8) else { throw SwiftXMLError("could not convert text to data") }
+        guard let data = text.data(using: .utf8) else { throw SwiftXMLError(TEXT_TO_DATA_ERROR_MESSAGE) }
         buffer.append(data)
         if buffer.count > bufferSize {
             try flush()
