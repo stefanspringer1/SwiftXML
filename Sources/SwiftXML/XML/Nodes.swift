@@ -458,7 +458,7 @@ public class XNode {
         suppressDeclarationForNamespaceURIs declarationSupressingNamespaceURIs: [String]? = nil
     ) throws {
         let productionTemplate = productionTemplate ?? DefaultProductionTemplate()
-        let fileWriter = FileWriter(fileHandle)
+        let fileWriter = BufferedFileWriter(fileHandle)
         try write(
             toWriter: fileWriter,
             usingProductionTemplate: productionTemplate,

@@ -24,7 +24,7 @@ public protocol Writer {
 }
 
 /// Do not forget to finally call `flush()`.
-public class FileWriter: Writer {
+public class BufferedFileWriter: Writer {
     
     private var file: FileHandle = FileHandle.standardOutput
     private var buffer: Data
