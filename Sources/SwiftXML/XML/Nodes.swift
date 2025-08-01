@@ -458,15 +458,15 @@ public class XNode {
         suppressDeclarationForNamespaceURIs declarationSupressingNamespaceURIs: [String]? = nil
     ) throws {
         let productionTemplate = productionTemplate ?? DefaultProductionTemplate()
-        let fileWriter = BufferedFileWriter(fileHandle)
-        try write(
-            toWriter: fileWriter,
-            usingProductionTemplate: productionTemplate,
-            overwritingPrefixesForNamespaceURIs: prefixesForNamespaceURIs,
-            overwritingPrefixes: prefixTranslations,
-            suppressDeclarationForNamespaceURIs: declarationSupressingNamespaceURIs
-        )
-        try fileWriter.flush()
+        try BufferedFileWriter.using(fileHandle) { writer in
+            try write(
+                toWriter: writer,
+                usingProductionTemplate: productionTemplate,
+                overwritingPrefixesForNamespaceURIs: prefixesForNamespaceURIs,
+                overwritingPrefixes: prefixTranslations,
+                suppressDeclarationForNamespaceURIs: declarationSupressingNamespaceURIs
+            )
+        }
     }
     
     public func write(

@@ -30,6 +30,12 @@ public class BufferedFileWriter: Writer {
     private var buffer: Data
     private let bufferSize: Int
     
+    public static func using(_ file: FileHandle, bufferSize: Int = 1024 * 1024, f: (Writer) throws -> ()) throws {
+        let writer = BufferedFileWriter(file, bufferSize: bufferSize)
+        try f(writer)
+        try writer.flush()
+    }
+    
     public init(_ file: FileHandle, bufferSize: Int = 1024 * 1024) {
         self.file = file
         self.bufferSize = bufferSize
