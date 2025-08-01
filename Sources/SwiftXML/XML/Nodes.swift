@@ -466,7 +466,7 @@ public class XNode {
             overwritingPrefixes: prefixTranslations,
             suppressDeclarationForNamespaceURIs: declarationSupressingNamespaceURIs
         )
-        try fileWriter.close()
+        try fileWriter.flush()
     }
     
     public func write(

@@ -124,7 +124,7 @@ let transformation = XTransformation {
 
 **UPDATE 41 (July 2025):** Registering of attributes with namespaces are now added, and some more tests.
 
-**UPDATE 42 (August 2025):** More efficient FileWriter; FileWriter and CollectingWriter not public.
+**UPDATE 42 (August 2025):** More efficient FileWriter; FileWriter needs a final call to `flush()`.
 
 ---
 

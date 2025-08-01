@@ -23,7 +23,8 @@ public protocol Writer {
     func write(_ text: String) throws
 }
 
-class FileWriter: Writer {
+/// Do not forget to finally call `flush()`.
+public class FileWriter: Writer {
     
     private var file: FileHandle = FileHandle.standardOutput
     private var buffer: Data
@@ -35,11 +36,6 @@ class FileWriter: Writer {
         self.buffer = Data(capacity: bufferSize)
     }
     
-    private func flush() throws {
-        try file.write(contentsOf: buffer)
-        buffer.removeAll(keepingCapacity: true)
-    }
-    
     open func write(_ text: String) throws {
         guard let data = text.data(using: .utf8) else { throw SwiftXMLError("could not convert text to data") }
         buffer.append(data)
@@ -48,16 +44,14 @@ class FileWriter: Writer {
         }
     }
     
-    public func close() throws {
-        if buffer.count > 0 {
-            try flush() // we could not throw in `deinit`
-        }
-        // closing `file` is not (!) done here
+    public func flush() throws {
+        try file.write(contentsOf: buffer)
+        buffer.removeAll(keepingCapacity: true)
     }
     
 }
 
-class CollectingWriter: Writer, CustomStringConvertible {
+public class CollectingWriter: Writer, CustomStringConvertible {
     
     public init() {}
     
