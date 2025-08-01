@@ -29,20 +29,41 @@ extension FileHandle {
     }
 }
 
-public class FileWriter: Writer {
+class FileWriter: Writer {
     
-    private var _file: FileHandle = FileHandle.standardOutput
-
-    public init(_ file: FileHandle) {
-        self._file = file
+    private var file: FileHandle = FileHandle.standardOutput
+    private var buffer: Data
+    private let bufferSize: Int
+    
+    public init(_ file: FileHandle, bufferSize: Int = 1024 * 1024) {
+        self.file = file
+        self.bufferSize = bufferSize
+        self.buffer = Data(capacity: bufferSize)
+    }
+    
+    private func flush() throws {
+        try file.write(contentsOf: buffer)
+        buffer.removeAll(keepingCapacity: true)
     }
     
     open func write(_ text: String) throws {
-        try _file.write(text: text)
+        guard let data = text.data(using: .utf8) else { throw SwiftXMLError("could not convert text to data") }
+        buffer.append(data)
+        if buffer.count > bufferSize {
+            try flush()
+        }
     }
+    
+    public func close() throws {
+        if buffer.count > 0 {
+            try flush() // we could not throw in `deinit`
+        }
+        // closing `file` is not (!) done here
+    }
+    
 }
 
-public class CollectingWriter: Writer, CustomStringConvertible {
+class CollectingWriter: Writer, CustomStringConvertible {
     
     public init() {}
     
@@ -53,6 +74,9 @@ public class CollectingWriter: Writer, CustomStringConvertible {
     public func write(_ text: String) {
         texts.append(text)
     }
+    
+    public func close() throws {}
+    
 }
 
 public protocol XProductionTemplate {
