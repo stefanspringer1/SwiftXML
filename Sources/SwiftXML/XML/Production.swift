@@ -30,16 +30,16 @@ public class BufferedFileWriter: Writer {
     private var buffer: Data
     private let bufferSize: Int
     
-    public static func using(_ file: FileHandle, bufferSize: Int = 1024 * 1024, f: (Writer) throws -> ()) throws {
+    public static func using(_ file: FileHandle, bufferSize: Int? = nil, f: (Writer) throws -> ()) throws {
         let writer = BufferedFileWriter(file, bufferSize: bufferSize)
         try f(writer)
         try writer.flush()
     }
     
-    public init(_ file: FileHandle, bufferSize: Int = 1024 * 1024) {
+    public init(_ file: FileHandle, bufferSize: Int? = nil) {
         self.file = file
-        self.bufferSize = bufferSize
-        self.buffer = Data(capacity: bufferSize)
+        self.bufferSize = bufferSize ?? 1024 * 1024
+        self.buffer = Data(capacity: self.bufferSize)
     }
     
     open func write(_ text: String) throws {
