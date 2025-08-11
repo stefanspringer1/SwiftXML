@@ -143,7 +143,7 @@ public protocol XActiveProduction {
     func writeDocumentEnd(document: XDocument) throws
 }
 
-public class DefaultProductionTemplate: XProductionTemplate {
+open class DefaultProductionTemplate: XProductionTemplate {
     
     public let writeEmptyTags: Bool
     public let linebreak: String
