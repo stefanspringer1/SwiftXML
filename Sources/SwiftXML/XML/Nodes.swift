@@ -2011,6 +2011,13 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     }
     
     /// Only attributes without prefix are considered.
+    public var hasAttributes: Bool {
+        get {
+            !_attributes.isEmpty
+        }
+    }
+    
+    /// Only attributes without prefix are considered.
     public var attributeNames: [String] {
         get {
             _attributes.keys.sorted{ $0.caseInsensitiveCompare($1) == .orderedAscending }

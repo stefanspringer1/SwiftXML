@@ -126,6 +126,8 @@ let transformation = XTransformation {
 
 **UPDATE 42 (August 2025):** More efficient `FileWriter` renamed to `BufferedFileWriter`; `BufferedFileWriter` needs a final call to `flush()`.
 
+**UPDATE 43 (August 2025):** Added `XElement.hasAttributes`.
+
 ---
 
 ## Related packages
