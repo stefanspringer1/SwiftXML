@@ -85,7 +85,6 @@ The library should be efficient and applications that use it should be very inte
 
 - The encoding of the source must be UTF-8 (ASCII is considered as a subset of it). (So no UTF-16 as required by the XML standard is supported.) The parser checks for correct UTF-8 encoding and also checks (according to the data available to the currently used Swift implementation) if a found codepoint is a valid Unicode codepoint.
 - Currently no Unicode character normalization is done, even if the declared XML version is 1.1.
-- In the current state of the library, no namespace handling of attributes is available.
 - Validation of an XML tree against an XML schema is not available yet (you might use [Libxml2Validation](https://github.com/stefanspringer1/Libxml2Validation) instead).
 
 ### Manipulation of an XML document
