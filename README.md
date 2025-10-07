@@ -1,5 +1,12 @@
 # SwiftXML
 
+---
+**NOTE**
+
+This library will soon be moved to a new location (and with a new version number). An update will be posted here.
+
+---
+
 A library written in Swift to process XML.
 
 This library is published under the Apache License v2.0 with Runtime Library Exception.
@@ -28,13 +35,6 @@ let transformation = XTransformation {
 
 }
 ```
-
----
-**NOTE**
-
-This library will soon be moved to a new location (and with a new version number). An update will be posted here.
-
----
 
 ## Related packages
 
