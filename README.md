@@ -101,7 +101,7 @@ let document = try parseXML(
 )
 ```
 
-The `textAllowedInElementWithName:` argument is there to help removing unnessary whitespace as long as no other method, e.g. an upcoming validation feature, is used to remove it. You might as well just dispense with this argument and leave the whitespace as it is in the XML source. The `registeringAttributes:` argument registers certain attributes to they can be accesssed directly.
+The `textAllowedInElementWithName:` argument is there to help removing unnessary whitespace as long as no other method, e.g. an upcoming validation feature, is used to remove it. You might as well just dispense with this argument and leave the whitespace as it is in the XML source. The `registeringAttributes:` argument registers certain attributes to they can be accesssed directly, the direct access to the `label` attributes is used in this example.
 
 Your can easily access and change elements in your document:
 
