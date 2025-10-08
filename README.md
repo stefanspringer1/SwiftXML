@@ -90,11 +90,12 @@ It is very easy to parse this XML file into an `XDocument` instance:
 ```swift
 let document = try parseXML(
     fromPath: "my.xml",
+    registeringAttributes: .selected(["label"]),
     textAllowedInElementWithName: ["title", "td"]
 )
 ```
 
-The `textAllowedInElementWithName` argument is there to help removing unnessary whitespace as long as no other method, e.g. an upcoming validation feature, is used to remove it. You might as well just dispense with this argument and leave the whitespace as it is in the XML source.
+The `textAllowedInElementWithName:` argument is there to help removing unnessary whitespace as long as no other method, e.g. an upcoming validation feature, is used to remove it. You might as well just dispense with this argument and leave the whitespace as it is in the XML source. The `registeringAttributes:` argument registers certain attributes to they can be accesssed directly.
 
 Your can easily access and change elements in your document:
 
@@ -141,7 +142,7 @@ The new content of your file then is:
             <td>1</td>
         </tr>
     </table>
-    <paragraph role="caption">Table 1: A table with numbers</paragraph>
+    <paragraph role="caption">Table (1): A table with numbers</paragraph>
 </book>
 ```
 

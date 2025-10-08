@@ -16,16 +16,20 @@ final class FromReadmeTests: XCTestCase {
     
     func testFirstExample() throws {
         
-        let document = try parseXML(fromText: """
-            <book>
-                <table label="1">
-                    <title>A table with numbers</title>
-                    <tr>
-                        <td>1</td>
-                    </tr>
-                </table>
-            </book>
-            """, textAllowedInElementWithName: ["title", "td"])
+        let document = try parseXML(
+            fromText: """
+                <book>
+                    <table label="1">
+                        <title>A table with numbers</title>
+                        <tr>
+                            <td>1</td>
+                        </tr>
+                    </table>
+                </book>
+                """,
+            registeringAttributes: .selected(["label"]),
+            textAllowedInElementWithName: ["title", "td"]
+        )
         
         let transformation = XTransformation {
 
@@ -61,7 +65,7 @@ final class FromReadmeTests: XCTestCase {
                         <td>1</td>
                     </tr>
                 </table>
-                <paragraph role="caption">Table 1: A table with numbers</paragraph>
+                <paragraph role="caption">Table (1): A table with numbers</paragraph>
             </book>
             """)
     }
