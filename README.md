@@ -51,7 +51,7 @@ dependencies: [
 ]
 ```
 
-The [LoopsOnOptionals](https://github.com/stefanspringer1/LoopsOnOptionals) package is optional but very convenient when using `SwiftXML`, and it is necessary for the examples used here where a loop over an optional sequence is used. Cf. the section “Related packages” below.
+The [LoopsOnOptionals](https://github.com/stefanspringer1/LoopsOnOptionals) package is optional but can be convenient when using `SwiftXML`, and it is necessary for the examples used here where a loop over an optional sequence is used. Cf. the section “Related packages” below. You might not need or want to use the `LoopsOnOptionals` package for your own code.
 
 Add the dependency `"SwiftXML"` and optionally the dependency `"LoopsOnOptionals"` to your target in `Package.swift`:
 
@@ -163,18 +163,10 @@ The content of the file `output.xml` is then:
 
 For-in loops do not work on optionals e.g. optional chains in Swift. But when working with this XML libary being able to do so might be convenient at times. In order to be able to loop on optionals, include the very small `LoopsOnOptionals` package from https://github.com/stefanspringer1/LoopsOnOptionals.
 
-When having the following extension to `XDocument`:
+Suppose an element can have multiple `<metadata>` children, but for seome reason only the first one is relevant, and you want to iterate over its `<item>` children:
 
 ```swift
-extension XDocument {
-   var metaDataSection: XElement? { ... }
-}
-```
-
-then with the `LoopsOnOptionals` package you can write:
-
-```swift
-for metaDataItem in myDocument.metaDataSection?.children("item") {
+for metaDataItem in element.firstChild("metadata")?.children("item") {
     ...
 }
 ```
@@ -182,8 +174,8 @@ for metaDataItem in myDocument.metaDataSection?.children("item") {
 Of course, especially in this simple case you can express the same as follows, without using the `LoopsOnOptionals` package:
 
 ```swift
-if let metaDataSection = myDocument.metaDataSection {
-    for metaDataItem in metaDataSection.children("item") {
+if let metadata = element.firstChild("metadata") {
+    for metaDataItem in metadata {
         ...
     }
 }
