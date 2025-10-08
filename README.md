@@ -133,7 +133,7 @@ transformation.execute(inDocument: document)
 
 In the code of this transformation you see an `XElement` being initialized at some point. The `SwiftXML` package uses names not starting with `XML`, but names starting with just `X` instead. Names starting with `XML` belong to the `FoundationXML` implementation which is part of the Swift toolchain but which is not used here.
 
-Note that the order of the rules in a transformation is significant. They are applied again and again in their order until none of them has found a corresponding item.
+Note that the order of the rules in a transformation is significant. The rules are applied again and again in their order until none of them has found a corresponding item.
 
 After applying this transformation, the document can be then written to a file:
 
