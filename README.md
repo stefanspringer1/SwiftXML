@@ -113,7 +113,7 @@ for table in document.elements("table") {
 }
 ```
 
-`document.elements("table")` gives an iteration over all `<table>` elements anywhere in your document. This iteration over the elements of a document by name does not have to search for those elements, elements in a document (and attributes as far as they are registered) can be directly accessed by their names. The order of such an iteration is the order by which the item has been added to the document for a specfic name, so according items that are added during the iteration will be part of the iteration.
+`document.elements("table")` returns a lazy sequence over all `<table>` elements anywhere in your document. This iteration over the elements of a document by name does not have to search for those elements, elements in a document (and attributes as far as they are registered) can be directly accessed by their names. The order of such an iteration is the order by which the item has been added to the document for a specfic name, so according items that are added during the iteration will be part of the iteration.
 
 To then iterate through the rows of a table:
 
@@ -123,7 +123,7 @@ for row in table.children("tr") {
 }
 ```
 
-In both cases, the iteration is a lazy iteration, and you can change the XML tree of the document during the iteration without disturbing the iteration.
+`table.children("tr")` also returns a lazy sequence. In both cases, you can change the XML tree of the document during the iteration without disturbing the iteration.
 
 You can also define rules for the transformation of a document like the ones cited at the top and apply them as follows:
 
