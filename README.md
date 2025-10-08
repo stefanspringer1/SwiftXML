@@ -62,7 +62,6 @@ Add the dependency to your target in `Package.swift`:
             ],
             ...
         ),
-        ...
 ```
 
 Add the import statement in any source file where you would like to use `SwiftXML`:
