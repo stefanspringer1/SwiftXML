@@ -28,12 +28,11 @@ final class NamespacesTests: XCTestCase {
         // prefix must be added in serialization:
         XCTAssertEqual(document.serialized(pretty: true), """
             <math:math>
-              <math:mi>a</math:mi>
-              <math:mo>+</math:mo>
-              <math:mi>b</math:mi>
+                <math:mi>a</math:mi>
+                <math:mo>+</math:mo>
+                <math:mi>b</math:mi>
             </math:math>
-            """
-        )
+            """)
         
         // must not be reached via name alone:
         XCTAssertEqual(Array(document.descendants("mi", "mo").map{ $0.immediateTextsCombined }), [])
@@ -55,12 +54,11 @@ final class NamespacesTests: XCTestCase {
         // prefix is gone:
         XCTAssertEqual(document.serialized(pretty: true), """
             <math>
-              <mi>a</mi>
-              <mo>+</mo>
-              <mi>b</mi>
+                <mi>a</mi>
+                <mo>+</mo>
+                <mi>b</mi>
             </math>
-            """
-        )
+            """)
         
         // now the queries above have their results interchanged:
         XCTAssertEqual(Array(document.descendants("mi", "mo").map{ $0.immediateTextsCombined }), ["a", "+", "b"])
@@ -776,7 +774,7 @@ final class NamespacesTests: XCTestCase {
         XCTAssertEqual(
             document.serialized(pretty: true), """
             <math:a xmlns:math2="http://www.w3.org/1998/Math/MathML">
-              <math2:math/>
+                <math2:math/>
             </math:a>
             """
         )
@@ -801,7 +799,7 @@ final class NamespacesTests: XCTestCase {
         XCTAssertEqual(
             document.serialized(pretty: true), """
             <math:a xmlns:math2="http://www.w3.org/1998/Math/MathML">
-              <math2:math/>
+                <math2:math/>
             </math:a>
             """
         )

@@ -430,6 +430,17 @@ public class XNode {
     
     public func write(
         toWriter writer: Writer,
+        pretty: Bool = false,
+        indentation: String? = nil
+    ) throws {
+        try write(
+            toWriter: writer,
+            usingProductionTemplate: PrettyPrintProductionTemplate(indentation: indentation)
+        )
+    }
+    
+    public func write(
+        toWriter writer: Writer,
         usingProductionTemplate productionTemplate: XProductionTemplate? = nil,
         overwritingPrefixesForNamespaceURIs prefixesForNamespaceURIs: [String:String]? = nil,
         overwritingPrefixes prefixTranslations: [String:String]? = nil,
@@ -452,6 +463,17 @@ public class XNode {
     
     public func write(
         toFile fileHandle: FileHandle,
+        pretty: Bool = false,
+        indentation: String? = nil
+    ) throws {
+        try write(
+            toFile: fileHandle,
+            usingProductionTemplate: PrettyPrintProductionTemplate(indentation: indentation)
+        )
+    }
+    
+    public func write(
+        toFile fileHandle: FileHandle,
         usingProductionTemplate productionTemplate: XProductionTemplate? = nil,
         overwritingPrefixesForNamespaceURIs prefixesForNamespaceURIs: [String:String]? = nil,
         overwritingPrefixes prefixTranslations: [String:String]? = nil,
@@ -467,6 +489,17 @@ public class XNode {
                 suppressDeclarationForNamespaceURIs: declarationSupressingNamespaceURIs
             )
         }
+    }
+    
+    public func write(
+        toPath path: String,
+        pretty: Bool = false,
+        indentation: String? = nil
+    ) throws {
+        try write(
+            toPath: path,
+            usingProductionTemplate: PrettyPrintProductionTemplate(indentation: indentation)
+        )
     }
     
     public func write(
@@ -495,6 +528,17 @@ public class XNode {
             throw SwiftXMLError("cannot write to [\(path)]");
         }
         
+    }
+    
+    public func write(
+        toURL url: URL,
+        pretty: Bool = false,
+        indentation: String? = nil
+    ) throws {
+        try write(
+            toURL: url,
+            usingProductionTemplate: PrettyPrintProductionTemplate(indentation: indentation)
+        )
     }
     
     public func write(
@@ -909,7 +953,11 @@ public class XContent: XNode {
         let isolator = _Isolator_(inDocument: self.document)
         _insertPrevious(isolator)
         moving(content) {
-            for node in content { isolator._insertPrevious(node) }
+            for node in content {
+                if !(node is _Isolator_) {
+                    isolator._insertPrevious(node)
+                }
+            }
         }
         isolator.remove()
     }
@@ -1000,7 +1048,11 @@ public class XContent: XNode {
         let isolator = _Isolator_(inDocument: self.document)
         _insertNext(isolator)
         moving(content) {
-            for node in content { isolator._insertPrevious(node) }
+            for node in content {
+                if !(node is _Isolator_) {
+                    isolator._insertPrevious(node)
+                }
+            }
         }
         isolator.remove()
     }
@@ -1020,7 +1072,11 @@ public class XContent: XNode {
             prefetchOnContentIterators()
         }
         moving(content) {
-            for node in content { previousIsolator._insertPrevious(node) }
+            for node in content {
+                if !(node is _Isolator_) {
+                    previousIsolator._insertPrevious(node)
+                }
+            }
         }
         if previousIsolator._next === self {
             remove()
@@ -1037,7 +1093,18 @@ public class XContent: XNode {
     public func replace(_ insertionMode: InsertionMode = .following, @XContentBuilder builder: () -> [XContent]) {
         let isolator = _Isolator_(inDocument: self.document)
         _insertPrevious(isolator)
-        _replace(insertionMode: insertionMode, content: builder(), previousIsolator: isolator)
+        let content = builder()
+        _replace(insertionMode: insertionMode, content: content, previousIsolator: isolator)
+    }
+    
+    /// This methods replaces the content and returns the replacements.
+    /// This methods is meant to use inside some other replacement operation, else text at the edge of the content might remain isolated.
+    public func replacedBy(_ insertionMode: InsertionMode = .following, @XContentBuilder builder: (XContent) -> [XContent]) -> [XContent] {
+        let previousIsolator = _Isolator_(inDocument: document); self.insertPrevious { previousIsolator }
+        let nextIsolator = _Isolator_(inDocument: document); self.insertNext { nextIsolator }
+        let content = builder(self)
+        replace(insertionMode, content)
+        return enclosing(isolator1: previousIsolator, isolator2: nextIsolator)
     }
     
     public var asSequence: XContentSequence { get { XContentSelfSequence(content: self) } }
@@ -1321,7 +1388,11 @@ extension XBranchInternal {
     
     func _add(_ content: [XContent]) {
         moving(content) {
-            for node in content { _add(node) }
+            for node in content {
+                if !(node is _Isolator_) {
+                    _add(node)
+                }
+            }
         }
     }
     
@@ -1393,7 +1464,11 @@ extension XBranchInternal {
     
     func _addFirst(_ content: [XContent]) {
         moving(content) {
-            for node in content.reversed() { _addFirst(node) }
+            for node in content.reversed() {
+                if !(node is _Isolator_) {
+                    _addFirst(node)
+                }
+            }
         }
     }
     
@@ -1408,7 +1483,11 @@ extension XBranchInternal {
         let isolator = _Isolator_(inDocument: self.document)
         _addFirst(isolator)
         moving(content) {
-            for node in content { isolator._insertPrevious(node) }
+            for node in content {
+                if !(node is _Isolator_) {
+                    isolator._insertPrevious(node)
+                }
+            }
         }
         for node in isolator.next { node.remove() }
         isolator.remove()
@@ -1720,8 +1799,29 @@ public struct XStringBuilder {
     
 }
 
+func enclosing(isolator1: _Isolator_, isolator2: _Isolator_) -> [XContent] {
+    var result: [XContent] = [isolator1]
+    var node: XContent = isolator1
+    while let next = node._next {
+        result.append(next)
+        if next === isolator2 {
+            break
+        }
+        node = next
+    }
+    return result
+}
+
 public final class XElement: XContent, XBranchInternal, CustomStringConvertible {
 
+    public override func replacedBy(_ insertionMode: InsertionMode = .following, @XContentBuilder builder: (XElement) -> [XContent]) -> [XContent] {
+        let previousIsolator = _Isolator_(inDocument: document); self._insertPrevious(previousIsolator)
+        let nextIsolator = _Isolator_(inDocument: document); self._insertNext(nextIsolator)
+        let content = builder(self)
+        replace(insertionMode, content)
+        return enclosing(isolator1: previousIsolator, isolator2: nextIsolator)
+    }
+    
     public var firstChild: XElement? { _firstChild }
     
     public func firstChild(_ name: String) -> XElement? {
@@ -2330,6 +2430,14 @@ protocol ToBePeparedForMoving {
 
 public final class XText: XContent, XTextualContentRepresentation, ToBePeparedForMoving, CustomStringConvertible, ExpressibleByStringLiteral {
 
+    public override func replacedBy(_ insertionMode: InsertionMode = .following, @XContentBuilder builder: (XText) -> [XContent]) -> [XContent] {
+        let previousIsolator = _Isolator_(inDocument: document); self.insertPrevious { previousIsolator }
+        let nextIsolator = _Isolator_(inDocument: document); self.insertNext { nextIsolator }
+        let content = builder(self)
+        replace(insertionMode, content)
+        return enclosing(isolator1: previousIsolator, isolator2: nextIsolator)
+    }
+    
     public static func fromOptional(_ text: String?) -> XText? {
         if let text { return XText(text) } else { return nil }
     }
@@ -2532,6 +2640,14 @@ public final class XText: XContent, XTextualContentRepresentation, ToBePeparedFo
  */
 public final class XLiteral: XContent, XTextualContentRepresentation, ToBePeparedForMoving, CustomStringConvertible {
     
+    public override func replacedBy(_ insertionMode: InsertionMode = .following, @XContentBuilder builder: (XLiteral) -> [XContent]) -> [XContent] {
+        let previousIsolator = _Isolator_(inDocument: document); self.insertPrevious { previousIsolator }
+        let nextIsolator = _Isolator_(inDocument: document); self.insertNext { nextIsolator }
+        let content = builder(self)
+        replace(insertionMode, content)
+        return enclosing(isolator1: previousIsolator, isolator2: nextIsolator)
+    }
+    
     /// After cloning, this is the reference to the original node or to the cloned node respectively,
     /// acoording to the parameter used when cloning.
     ///
@@ -2642,6 +2758,14 @@ public final class XLiteral: XContent, XTextualContentRepresentation, ToBePepare
 
 public final class XInternalEntity: XContent {
     
+    public override func replacedBy(_ insertionMode: InsertionMode = .following, @XContentBuilder builder: (XInternalEntity) -> [XContent]) -> [XContent] {
+        let previousIsolator = _Isolator_(inDocument: document); self.insertPrevious { previousIsolator }
+        let nextIsolator = _Isolator_(inDocument: document); self.insertNext { nextIsolator }
+        let content = builder(self)
+        replace(insertionMode, content)
+        return enclosing(isolator1: previousIsolator, isolator2: nextIsolator)
+    }
+    
     /// After cloning, this is the reference to the original node or to the cloned node respectively,
     /// acoording to the parameter used when cloning.
     ///
@@ -2706,6 +2830,14 @@ public final class XInternalEntity: XContent {
 
 public final class XExternalEntity: XContent {
     
+    public override func replacedBy(_ insertionMode: InsertionMode = .following, @XContentBuilder builder: (XExternalEntity) -> [XContent]) -> [XContent] {
+        let previousIsolator = _Isolator_(inDocument: document); self.insertPrevious { previousIsolator }
+        let nextIsolator = _Isolator_(inDocument: document); self.insertNext { nextIsolator }
+        let content = builder(self)
+        replace(insertionMode, content)
+        return enclosing(isolator1: previousIsolator, isolator2: nextIsolator)
+    }
+    
     /// After cloning, this is the reference to the original node or to the cloned node respectively,
     /// acoording to the parameter used when cloning.
     ///
@@ -2769,6 +2901,14 @@ public final class XExternalEntity: XContent {
 }
 
 public final class XProcessingInstruction: XContent, CustomStringConvertible {
+    
+    public override func replacedBy(_ insertionMode: InsertionMode = .following, @XContentBuilder builder: (XProcessingInstruction) -> [XContent]) -> [XContent] {
+        let previousIsolator = _Isolator_(inDocument: document); self.insertPrevious { previousIsolator }
+        let nextIsolator = _Isolator_(inDocument: document); self.insertNext { nextIsolator }
+        let content = builder(self)
+        replace(insertionMode, content)
+        return enclosing(isolator1: previousIsolator, isolator2: nextIsolator)
+    }
     
     /// After cloning, this is the reference to the original node or to the cloned node respectively,
     /// acoording to the parameter used when cloning.
@@ -2853,6 +2993,14 @@ public final class XProcessingInstruction: XContent, CustomStringConvertible {
 
 public final class XComment: XContent {
     
+    public override func replacedBy(_ insertionMode: InsertionMode = .following, @XContentBuilder builder: (XComment) -> [XContent]) -> [XContent] {
+        let previousIsolator = _Isolator_(inDocument: document); self.insertPrevious { previousIsolator }
+        let nextIsolator = _Isolator_(inDocument: document); self.insertNext { nextIsolator }
+        let content = builder(self)
+        replace(insertionMode, content)
+        return enclosing(isolator1: previousIsolator, isolator2: nextIsolator)
+    }
+    
     public static func fromOptional(_ text: String?, withAdditionalSpace: Bool = true) -> XComment? {
         if let text { return XComment(text, withAdditionalSpace: withAdditionalSpace) } else { return nil }
     }
@@ -2925,6 +3073,14 @@ public final class XComment: XContent {
 }
 
 public final class XCDATASection: XContent, XTextualContentRepresentation {
+    
+    public override func replacedBy(_ insertionMode: InsertionMode = .following, @XContentBuilder builder: (XCDATASection) -> [XContent]) -> [XContent] {
+        let previousIsolator = _Isolator_(inDocument: document); self.insertPrevious { previousIsolator }
+        let nextIsolator = _Isolator_(inDocument: document); self.insertNext { nextIsolator }
+        let content = builder(self)
+        replace(insertionMode, content)
+        return enclosing(isolator1: previousIsolator, isolator2: nextIsolator)
+    }
     
     /// After cloning, this is the reference to the original node or to the cloned node respectively,
     /// acoording to the parameter used when cloning.

@@ -14,6 +14,58 @@ import class Foundation.Bundle
 
 final class FromReadmeTests: XCTestCase {
     
+    func testFirstExample() throws {
+        
+        let document = try parseXML(fromText: """
+            <book>
+                <table label="1">
+                    <title>A table with numbers</title>
+                    <tr>
+                        <td>1</td>
+                    </tr>
+                </table>
+            </book>
+            """, textAllowedInElementWithName: ["title", "td"])
+        
+        let transformation = XTransformation {
+
+            XRule(forRegisteredAttributes: "label") { label in
+                label.element["label"] = "(\(label.value))"
+            }
+            
+            XRule(forElements: "caption") { caption in
+                caption.name = "paragraph"
+                caption["role"] = "caption"
+            }
+            
+            XRule(forElements: "table") { table in
+                table.insertNext {
+                    XElement("caption") {
+                        if let label = table["label"] {
+                            "Table "; label; ": "
+                        }
+                        table.firstChild("title")?.replacedBy { $0.content }
+                    }
+                }
+                table["label"] = nil
+            }
+            
+        }
+        
+        transformation.execute(inDocument: document)
+        
+        XCTAssertEqual(document.serialized(pretty: true), """
+            <book>
+                <table>
+                    <tr>
+                        <td>1</td>
+                    </tr>
+                </table>
+                <paragraph role="caption">Table 1: A table with numbers</paragraph>
+            </book>
+            """)
+    }
+    
     func testParsingAndJoiningIDs() throws {
         let document = try parseXML(fromText: """
             <test>
@@ -45,7 +97,7 @@ final class FromReadmeTests: XCTestCase {
         <a>
             <b>Hello</b>
         </a>
-        """, textAllowedInElementWithName: { $0 == "b" })
+        """, textAllowedInElementWithName: ["b"])
         
         XCTAssertEqual(
             document.allContent.map{ "\($0.sourceRange!): \($0)" }.joined(separator: "\n"),
@@ -136,10 +188,10 @@ final class FromReadmeTests: XCTestCase {
 
         let expectedOutputAfterReplace = """
             <a>
-              <wrapper1>
-                <b/>
-                <wrapper2>Hello</wrapper2>
-              </wrapper1>
+                <wrapper1>
+                    <b/>
+                    <wrapper2>Hello</wrapper2>
+                </wrapper1>
             </a>
             """
         
@@ -170,10 +222,10 @@ final class FromReadmeTests: XCTestCase {
         
         XCTAssertEqual(element.serialized(pretty: true), #"""
             <x>
-              <text1>hello</text1>
-              <text2>world</text2>
-              <text1>greeting</text1>
-              <text2>you</text2>
+                <text1>hello</text1>
+                <text2>world</text2>
+                <text1>greeting</text1>
+                <text2>you</text2>
             </x>
             """#
         )
@@ -395,7 +447,7 @@ final class FromReadmeTests: XCTestCase {
                     </warning>
                 </section>
             </document>
-            """, textAllowedInElementWithName: { $0 == "paragraph" })
+            """, textAllowedInElementWithName: ["paragraph"])
         
         let transformation = XTransformation {
             
@@ -430,16 +482,16 @@ final class FromReadmeTests: XCTestCase {
             document.serialized(pretty: true),
             """
             <document>
-              <section>
-                <div>
-                  <p style="bold">HINT</p>
-                  <p>This is a hint.</p>
-                </div>
-                <div>
-                  <p style="bold">WARNING</p>
-                  <p style="color:Red">This is a warning.</p>
-                </div>
-              </section>
+                <section>
+                    <div>
+                        <p style="bold">HINT</p>
+                        <p>This is a hint.</p>
+                    </div>
+                    <div>
+                        <p style="bold">WARNING</p>
+                        <p style="color:Red">This is a warning.</p>
+                    </div>
+                </section>
             </document>
             """
         )
@@ -458,7 +510,7 @@ final class FromReadmeTests: XCTestCase {
                     </warning>
                 </section>
             </document>
-            """, textAllowedInElementWithName: { $0 == "paragraph" })
+            """, textAllowedInElementWithName: ["paragraph"])
         
         let transformation = XTransformation {
             
@@ -493,16 +545,16 @@ final class FromReadmeTests: XCTestCase {
             document.serialized(pretty: true),
             """
             <document>
-              <section>
-                <div>
-                  <p style="bold">HINT</p>
-                  <p>This is a hint.</p>
-                </div>
-                <div>
-                  <p style="bold">WARNING</p>
-                  <p style="color:Red">This is a warning.</p>
-                </div>
-              </section>
+                <section>
+                    <div>
+                        <p style="bold">HINT</p>
+                        <p>This is a hint.</p>
+                    </div>
+                    <div>
+                        <p style="bold">WARNING</p>
+                        <p style="color:Red">This is a warning.</p>
+                    </div>
+                </section>
             </document>
             """
         )
@@ -521,7 +573,7 @@ final class FromReadmeTests: XCTestCase {
                     </warning>
                 </section>
             </document>
-            """, textAllowedInElementWithName: { $0 == "paragraph" })
+            """, textAllowedInElementWithName: ["paragraph"])
         
         let transformation = XTransformation {
             
@@ -567,16 +619,16 @@ final class FromReadmeTests: XCTestCase {
             document.serialized(pretty: true),
             """
             <document>
-              <section>
-                <div>
-                  <p style="bold">HINT</p>
-                  <p>This is a hint.</p>
-                </div>
-                <div>
-                  <p style="bold">WARNING</p>
-                  <p style="color:Red">This is a warning.</p>
-                </div>
-              </section>
+                <section>
+                    <div>
+                        <p style="bold">HINT</p>
+                        <p>This is a hint.</p>
+                    </div>
+                    <div>
+                        <p style="bold">WARNING</p>
+                        <p style="color:Red">This is a warning.</p>
+                    </div>
+                </section>
             </document>
             """
         )
@@ -595,7 +647,7 @@ final class FromReadmeTests: XCTestCase {
                     </warning>
                 </section>
             </document>
-            """, textAllowedInElementWithName: { $0 == "paragraph" })
+            """, textAllowedInElementWithName: ["paragraph"])
         
         for section in document.elements("section") {
             section.traverse { node in
@@ -635,16 +687,16 @@ final class FromReadmeTests: XCTestCase {
             document.serialized(pretty: true),
             """
             <document>
-              <section>
-                <div>
-                  <p style="bold">HINT</p>
-                  <p>This is a hint.</p>
-                </div>
-                <div>
-                  <p style="bold">WARNING</p>
-                  <p style="color:Red">This is a warning.</p>
-                </div>
-              </section>
+                <section>
+                    <div>
+                        <p style="bold">HINT</p>
+                        <p>This is a hint.</p>
+                    </div>
+                    <div>
+                        <p style="bold">WARNING</p>
+                        <p style="color:Red">This is a warning.</p>
+                    </div>
+                </section>
             </document>
             """
         )
@@ -661,7 +713,7 @@ final class FromReadmeTests: XCTestCase {
                 <annex>This is the annex.</annex>
             </document>
             """,
-            textAllowedInElementWithName: { ["title", "p", "annex"].contains($0) }
+            textAllowedInElementWithName: ["title", "p", "annex"]
         )
         
         XCTAssertEqual(document.children.children("p")["id"].joined(separator: " "), "1 2")

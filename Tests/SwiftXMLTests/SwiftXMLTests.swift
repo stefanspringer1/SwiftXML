@@ -322,13 +322,13 @@ final class SwiftXMLTests: XCTestCase {
                 document.children.children
             }
             XCTAssertEqual(element.serialized(pretty: true), """
-            <test>
-              <title>this is the title</title>
-              <b id="1"/>
-              <b id="2"/>
-              <b drop="yes" id="3"/>
-            </test>
-            """)
+                <test>
+                    <title>this is the title</title>
+                    <b id="1"/>
+                    <b id="2"/>
+                    <b drop="yes" id="3"/>
+                </test>
+                """)
         }
         
         do {
@@ -340,15 +340,15 @@ final class SwiftXMLTests: XCTestCase {
             }
             
             XCTAssertEqual(element.serialized(pretty: true), """
-            <test>
-              <b id="1"/>
-              <b id="2"/>
-              <b drop="yes" id="3"/>
-              <b id="1"/>
-              <b id="2"/>
-              <b drop="yes" id="3"/>
-            </test>
-            """)
+                <test>
+                    <b id="1"/>
+                    <b id="2"/>
+                    <b drop="yes" id="3"/>
+                    <b id="1"/>
+                    <b id="2"/>
+                    <b drop="yes" id="3"/>
+                </test>
+                """)
         }
         
         do {
@@ -361,11 +361,11 @@ final class SwiftXMLTests: XCTestCase {
             }
             
             XCTAssertEqual(element.serialized(pretty: true), """
-        <test>
-          <title>this is the title</title>
-          <b id="2"/>
-        </test>
-        """)
+                <test>
+                    <title>this is the title</title>
+                    <b id="2"/>
+                </test>
+                """)
         }
         
         do {
@@ -375,10 +375,10 @@ final class SwiftXMLTests: XCTestCase {
             }
             
             XCTAssertEqual(element.serialized(pretty: true), """
-        <test>
-          <b id="2"/>
-        </test>
-        """)
+                <test>
+                    <b id="2"/>
+                </test>
+                """)
         }
         
         do {
@@ -390,11 +390,11 @@ final class SwiftXMLTests: XCTestCase {
             }
             
             XCTAssertEqual(element.serialized(pretty: true), """
-        <test>
-          <b id="2"/>
-          <b id="2"/>
-        </test>
-        """)
+                <test>
+                    <b id="2"/>
+                    <b id="2"/>
+                </test>
+                """)
         }
     }
     
@@ -459,7 +459,8 @@ final class SwiftXMLTests: XCTestCase {
               <b id="2"/>
               <b id="3"/>
             </test>
-            """)
+            """
+        )
         let bs = document.children.children
         XCTAssertEqual([
             bs.first,
@@ -476,7 +477,8 @@ final class SwiftXMLTests: XCTestCase {
               <b id="2"/>
               <b id="3"/>
             </test>
-            """)
+            """
+        )
         let a = A()
         
         actor A {
@@ -549,7 +551,8 @@ final class SwiftXMLTests: XCTestCase {
                 <b id="3">
                 "
                 "
-                """)
+                """
+            )
             
         }
         
@@ -1196,13 +1199,13 @@ final class SwiftXMLTests: XCTestCase {
         
         XCTAssertEqual(tree.serialized(pretty: true), """
             <tree>
-              <target>
-                <stop>
-                  <middle>
-                    <start/>
-                  </middle>
-                </stop>
-              </target>
+                <target>
+                    <stop>
+                        <middle>
+                            <start/>
+                        </middle>
+                    </stop>
+                </target>
             </tree>
             """)
         
@@ -1226,15 +1229,15 @@ final class SwiftXMLTests: XCTestCase {
         
         XCTAssertEqual(tree.serialized(pretty: true), """
             <tree>
-              <target>
-                <stop>
-                  <middle>
-                    <target>
-                      <start/>
-                    </target>
-                  </middle>
-                </stop>
-              </target>
+                <target>
+                    <stop>
+                        <middle>
+                            <target>
+                                <start/>
+                            </target>
+                        </middle>
+                    </stop>
+                </target>
             </tree>
             """)
         

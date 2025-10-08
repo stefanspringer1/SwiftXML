@@ -14,26 +14,120 @@ This library is published under the Apache License v2.0 with Runtime Library Exc
 ```swift
 let transformation = XTransformation {
 
+    XRule(forRegisteredAttributes: "label") { label in
+        label.element["label"] = "(\(label.value))"
+    }
+    
+    XRule(forElements: "caption") { caption in
+        caption.name = "paragraph"
+        caption["role"] = "caption"
+    }
+    
     XRule(forElements: "table") { table in
         table.insertNext {
             XElement("caption") {
-                "Table: "
-                table.children({ $0.name.contains("title") }).content
+                if let label = table["label"] {
+                    "Table "; label; ": "
+                }
+                table.firstChild("title")?.replacedBy { $0.content }
             }
         }
-    }
-
-    XRule(forElements: "tbody", "tfoot") { tablePart in
-        for cell in tablePart.children("tr").children("th") {
-            cell.name = "td"
-       }
+        table["label"] = nil
     }
     
-    XRule(forRegisteredAttributes: "label") { label in
-        label.element["label"] = label.value + ")"
-    }
-
 }
+```
+
+## Getting started
+
+Define the dependency in `Package.swift`:
+
+```swift
+    dependencies: [
+        ...
+        .package(url: "https://github.com/stefanspringer1/SwiftXML", from: "8.3.13"),
+        ...
+    ]
+```
+
+Add the dependency to your target in `Package.swift`:
+
+```swift
+        .target(
+            name: "...",
+            dependencies: [
+                ...
+                "SwiftXML",
+                ...
+            ],
+            ...
+        ),
+        ...
+```
+
+Add the import statement in any source file where you would like to use `SwiftXML`:
+
+```swift
+import SwiftXML
+```
+
+This import statement will be dropped in further examples.
+
+Suppose you have an XML file `my.xml` with the following content:
+
+```xml
+<book>
+    <table label="1">
+        <title>A table with numbers</title>
+        <tr>
+            <td>1</td>
+        </tr>
+    </table>
+</book>
+```
+
+It is very easy to parse this XML file into an `XDocument` instance:
+
+```swift
+let document = try parseXML(fromPath: "my.xml", textAllowedInElementWithName: ["title", "td"])
+```
+
+(The `textAllowedInElementWithName` argument is there to help removing unnessary whitespace as long as no other method, e.g. an upcoming validation feature, is used to remove it.) 
+
+Your can easily acces and change elements in your document:
+
+``swift
+for table in document.elements("caption") { caption in
+    // ... do something with the caption ...
+}
+```
+
+This access of elements by name does not have to search for those elements, but elements of certain names (and attributes as far as they are registered) can be accessed directly. When iterating through such a (lazy!) list of elements e.g. also via `myElement.children`, you can change the tree of the XML document without disturbing the iteration.
+
+You can also define a list of rules for the transformation of a document like the ones cited at the top and apply them as follows:
+
+```swift
+transformation.execute(inDocument: document)
+```
+
+After applying this transformation, you you can save the document as follows:
+
+```swift
+try document.write(toFile: "my.xml", pretty: true)
+```
+
+The `pretty: true` argument adds linebreaks and indentations to make the serialized XML look pretty. This is convient here in the examples, but in practice you might better dispense with this argument or use a production (see the according documentation below).
+
+The new new content of your file then is:
+
+```xml
+<book>
+    <table>
+        <tr>
+            <td>1</td>
+        </tr>
+    </table><paragraph role="caption">Table 1: A table with numbers</paragraph>
+</book>
 ```
 
 ## Related packages
@@ -72,6 +166,13 @@ But even more so in more complex situations, the introduction of such a `if let`
 
 
 ### The `Workflow` package
+
+---
+**NOTE**
+
+This `Workflow` package will soon be replaced by the new `Pipeline` package which is independant of the logging implementation and is better suited for the Swift 6 strict concurrency mode.
+
+---
 
 When using SwiftXML in the context of the [SwiftWorkflow](https://github.com/stefanspringer1/SwiftWorkflow) framework, you might include the [WorkflowUtilitiesForSwiftXML](https://github.com/stefanspringer1/WorkflowUtilitiesForSwiftXML).
 

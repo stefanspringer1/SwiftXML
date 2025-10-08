@@ -10,7 +10,7 @@
 
 import Foundation
 
-public let X_DEFAULT_INDENTATION = "  "
+public let X_DEFAULT_INDENTATION = "    "
 public let X_DEFAULT_LINEBREAK = "\n"
 
 /**
@@ -462,12 +462,12 @@ public class PrettyPrintProductionTemplate: XProductionTemplate {
     
     public init(
         writeEmptyTags: Bool = true,
-        indentation: String = X_DEFAULT_INDENTATION,
-        linebreak: String = X_DEFAULT_LINEBREAK,
+        indentation: String? = nil,
+        linebreak: String? = nil
     ) {
         self.writeEmptyTags = writeEmptyTags
-        self.indentation = indentation
-        self.linebreak = linebreak
+        self.indentation = indentation ?? X_DEFAULT_INDENTATION
+        self.linebreak = linebreak ?? X_DEFAULT_LINEBREAK
     }
     
     public func activeProduction(

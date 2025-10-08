@@ -140,7 +140,7 @@ final class ToolsTests: XCTestCase {
                 <p id="par-5.10-2"><begin/>Ja, </p>
                 <p id="par-5.10-3">das ist so <span>1 %</span>, echt.<end/></p>
             </section>
-            """, textAllowedInElementWithName: { ["p", "span"].contains($0) })
+            """, textAllowedInElementWithName: ["p", "span"])
         
         let start = document.firstChild?.children.first?.allTexts.first
         let end = document.firstChild?.children.dropFirst().first?.allTexts.dropFirst(2).first
@@ -170,12 +170,12 @@ final class ToolsTests: XCTestCase {
             """
             <!DOCTYPE html>
             <div>
-              <h1>The title</h1>
-              <p>1st paragraph</p>
-              <a name="anchor1"></a>
-              <p>2nd paragraph</p>
-              <div id="id1"></div>
-              <script></script>
+                <h1>The title</h1>
+                <p>1st paragraph</p>
+                <a name="anchor1"></a>
+                <p>2nd paragraph</p>
+                <div id="id1"></div>
+                <script></script>
             </div>
             """
         )
@@ -216,8 +216,8 @@ final class ToolsTests: XCTestCase {
             """
             <!DOCTYPE html>
             <div>
-              <a><img/></a>
-              <p></p>
+                <a><img/></a>
+                <p></p>
             </div>
             """
         )
@@ -234,9 +234,9 @@ final class ToolsTests: XCTestCase {
             """
             <!DOCTYPE html>
             <div>
-              <a name="anchor1"></a>
-              <a name="anchor2"></a>
-              <p></p>
+                <a name="anchor1"></a>
+                <a name="anchor2"></a>
+                <p></p>
             </div>
             """
         )
@@ -255,7 +255,7 @@ final class ToolsTests: XCTestCase {
             """
             <!DOCTYPE html>
             <div><a name="anchor1"></a><a name="anchor2"></a>
-              <p></p>
+                <p></p>
             </div>
             """
         )
@@ -291,8 +291,8 @@ final class ToolsTests: XCTestCase {
             """
             <!DOCTYPE html>
             <div>Hello
-              <div>world</div>
-              <div>!</div>
+                <div>world</div>
+                <div>!</div>
             </div>
             """
         )
@@ -311,13 +311,13 @@ final class ToolsTests: XCTestCase {
             """
             <!DOCTYPE html>
             <div>
-              <div class="table">
-                <table>
-                  <tr>
-                    <td>1</td>
-                  </tr>
-                </table>
-              </div>
+                <div class="table">
+                    <table>
+                        <tr>
+                            <td>1</td>
+                        </tr>
+                    </table>
+                </div>
             </div>
             """
         )
@@ -336,13 +336,13 @@ final class ToolsTests: XCTestCase {
             """
             <!DOCTYPE html>
             <div>Hello
-              <div class="table">
-                <table>
-                  <tr>
-                    <td>1</td>
-                  </tr>
-                </table>
-              </div>
+                <div class="table">
+                    <table>
+                        <tr>
+                            <td>1</td>
+                        </tr>
+                    </table>
+                </div>
             </div>
             """
         )
@@ -361,8 +361,8 @@ final class ToolsTests: XCTestCase {
             """
             <!DOCTYPE html>
             <div><span>leading span of the wrapper block</span>
-              <div>a block within the block</div>followed by text <a>an anchor</a><span>and a text</span> and some more text <span>and another span</span> 
-              <div>and another div</div>
+                <div>a block within the block</div>followed by text <a>an anchor</a><span>and a text</span> and some more text <span>and another span</span> 
+                <div>and another div</div>
             </div>
             """
         )
