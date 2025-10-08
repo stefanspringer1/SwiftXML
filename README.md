@@ -99,7 +99,7 @@ The `textAllowedInElementWithName` argument is there to help removing unnessary 
 Your can easily acces and change elements in your document:
 
 ```swift
-for table in document.elements("caption") { caption in
+for caption in document.elements("caption") {
     // ... do something with the caption ...
 }
 ```
