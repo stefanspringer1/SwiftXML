@@ -112,7 +112,7 @@ You can also define a list of rules for the transformation of a document like th
 transformation.execute(inDocument: document)
 ```
 
-After applying this transformation, you you can save the document as follows:
+After applying this transformation, the document can be then written to a file:
 
 ```swift
 try document.write(toFile: "my.xml", pretty: true)
