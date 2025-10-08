@@ -40,7 +40,7 @@ let transformation = XTransformation {
 
 ## Getting started
 
-Define the dependency in `Package.swift`:
+Define the dependency in `Package.swift` e.g. with a certain minimal version number (below the next major number):
 
 ```swift
     dependencies: [
