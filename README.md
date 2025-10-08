@@ -40,15 +40,15 @@ let transformation = XTransformation {
 
 ## Getting started
 
-Define the following dependencies in `Package.swift`, e.g. with a certain minimal version numbers below the next major version (replace the `...` accordingly):
+Define the following dependencies in `Package(..)` of the file `Package.swift`, e.g. with a certain minimal version numbers below the next major version (replace the `...` accordingly):
 
 ```swift
-    dependencies: [
-        ...
-        .package(url: "https://github.com/stefanspringer1/SwiftXML.git", from: "..."),
-        .package(url: "https://github.com/stefanspringer1/LoopsOnOptionals.git", from: "..."),
-        ...
-    ]
+dependencies: [
+    ...
+    .package(url: "https://github.com/stefanspringer1/SwiftXML.git", from: "..."),
+    .package(url: "https://github.com/stefanspringer1/LoopsOnOptionals.git", from: "..."),
+    ...
+]
 ```
 
 The `LoopsOnOptionals` package is optional but very convenient when using `SwiftXML`, and it is necessary for the examples used. Cf. the section “Related packages” below.
@@ -56,15 +56,15 @@ The `LoopsOnOptionals` package is optional but very convenient when using `Swift
 Add the dependency to your target in `Package.swift`:
 
 ```swift
-        .target(
-            name: "...",
-            dependencies: [
-                ...
-                "SwiftXML",
-                ...
-            ],
-            ...
-        ),
+.target(
+    name: "...",
+    dependencies: [
+        ...
+        "SwiftXML",
+        ...
+    ],
+    ...
+),
 ```
 
 (`LoopsOnOptionals` does not have to be added to the dependencies of the target.)
