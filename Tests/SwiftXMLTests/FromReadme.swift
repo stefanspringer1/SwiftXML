@@ -22,7 +22,8 @@ final class FromReadmeTests: XCTestCase {
                     <table label="1">
                         <title>A table with numbers</title>
                         <tr>
-                            <td>1</td>
+                            <td>7</td>
+                            <td>8</td>
                         </tr>
                     </table>
                 </book>
@@ -62,7 +63,8 @@ final class FromReadmeTests: XCTestCase {
             <book>
                 <table>
                     <tr>
-                        <td>1</td>
+                        <td>7</td>
+                        <td>8</td>
                     </tr>
                 </table>
                 <paragraph role="caption">Table (1): A table with numbers</paragraph>
@@ -79,7 +81,8 @@ final class FromReadmeTests: XCTestCase {
                         <title>A table</title>
                         <title> with numbers</title>
                         <tr>
-                            <td>1</td>
+                            <td>7</td>
+                            <td>8</td>
                         </tr>
                     </table>
                 </book>
@@ -119,7 +122,8 @@ final class FromReadmeTests: XCTestCase {
             <book>
                 <table>
                     <tr>
-                        <td>1</td>
+                        <td>7</td>
+                        <td>8</td>
                     </tr>
                 </table>
                 <paragraph role="caption">Table (1): A table with numbers</paragraph>

@@ -40,15 +40,18 @@ let transformation = XTransformation {
 
 ## Getting started
 
-Define the dependency in `Package.swift`, e.g. with a certain minimal version number below the next major version (replace the `...` accordingly):
+Define the following dependencies in `Package.swift`, e.g. with a certain minimal version numbers below the next major version (replace the `...` accordingly):
 
 ```swift
     dependencies: [
         ...
-        .package(url: "https://github.com/stefanspringer1/SwiftXML", from: "..."),
+        .package(url: "https://github.com/stefanspringer1/SwiftXML.git", from: "..."),
+        .package(url: "https://github.com/stefanspringer1/LoopsOnOptionals.git", from: "..."),
         ...
     ]
 ```
+
+The `LoopsOnOptionals` package is optional but very convenient when using `SwiftXML`, and it is necessary for the examples used. Cf. the section “Related packages” below.
 
 Add the dependency to your target in `Package.swift`:
 
@@ -63,6 +66,8 @@ Add the dependency to your target in `Package.swift`:
             ...
         ),
 ```
+
+(`LoopsOnOptionals` does not have to be added to the dependencies of the target.)
 
 Add the import statement in any source file where you would like to use `SwiftXML`:
 
@@ -79,7 +84,8 @@ Suppose you have an XML file `my.xml` with the following content:
     <table label="1">
         <title>A table with numbers</title>
         <tr>
-            <td>1</td>
+            <td>7</td>
+            <td>8</td>
         </tr>
     </table>
 </book>
@@ -139,7 +145,8 @@ The new content of your file then is:
 <book>
     <table>
         <tr>
-            <td>1</td>
+            <td>7</td>
+            <td>8</td>
         </tr>
     </table>
     <paragraph role="caption">Table (1): A table with numbers</paragraph>
