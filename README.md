@@ -40,12 +40,12 @@ let transformation = XTransformation {
 
 ## Getting started
 
-Define the dependency in `Package.swift`, e.g. with a certain minimal version number below the next major version:
+Define the dependency in `Package.swift`, e.g. with a certain minimal version number below the next major version (replace the `...` accordingly):
 
 ```swift
     dependencies: [
         ...
-        .package(url: "https://github.com/stefanspringer1/SwiftXML", from: "8.3.13"),
+        .package(url: "https://github.com/stefanspringer1/SwiftXML", from: "..."),
         ...
     ]
 ```
