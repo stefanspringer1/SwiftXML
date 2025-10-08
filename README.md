@@ -53,7 +53,7 @@ dependencies: [
 
 The `LoopsOnOptionals` package is optional but very convenient when using `SwiftXML`, and it is necessary for the examples used. Cf. the section “Related packages” below.
 
-Add the dependency to your target in `Package.swift`:
+Add the dependency `"SwiftXML"` to your target in `Package.swift`:
 
 ```swift
 .target(
