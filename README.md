@@ -79,7 +79,7 @@ These import statements will be dropped in following code samples.
 
 The example in this section does not use XML namespaces. For information on using XML namespaces, see the according section below.
 
-Suppose you have an XML file `my.xml` with the following content:
+Suppose you have an XML file `input.xml` with the following content:
 
 ```xml
 <book>
@@ -97,7 +97,7 @@ It is very easy to parse this XML file into an `XDocument` instance:
 
 ```swift
 let document = try parseXML(
-    fromPath: "my.xml",
+    fromPath: "input.xml",
     registeringAttributes: .selected(["label"]),
     textAllowedInElementWithName: ["title", "td"]
 )
@@ -138,12 +138,12 @@ Note that the order of the rules in a transformation is significant. In the give
 After applying this transformation, the document can be then written to a file:
 
 ```swift
-try document.write(toFile: "my.xml", pretty: true)
+try document.write(toFile: "output.xml", pretty: true)
 ```
 
 The `pretty: true` argument (which can also be set for the `echo(...)` and `serialized(...)` methods) adds linebreaks and indentations to make the serialized XML look pretty. This is convient here in the examples, but in practice you might better dispense with this argument or use a production (see the according documentation below).
 
-The new content of your file then is:
+The content of the file `output.xml` is then:
 
 ```xml
 <book>
