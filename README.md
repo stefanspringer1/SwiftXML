@@ -123,7 +123,7 @@ for row in table.children("tr") {
 }
 ```
 
-In both cases, the iteration is a lazy iteration, and you can change the tree during the iteration without disturbing the iteration.
+In both cases, the iteration is a lazy iteration, and you can change the XML tree of the document during the iteration without disturbing the iteration.
 
 You can also define rules for the transformation of a document like the ones cited at the top and apply them as follows:
 
