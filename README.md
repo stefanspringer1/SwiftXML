@@ -129,7 +129,7 @@ You can also define rules for the transformation of a document like the ones cit
 transformation.execute(inDocument: document)
 ```
 
-Note that the order of the rules in a transformation is significant. They are again and again applied in their order until none of them was applicable.
+Note that the order of the rules in a transformation is significant. They are applied again and again in their order until none of them has found a corresponding item.
 
 After applying this transformation, the document can be then written to a file:
 
