@@ -106,11 +106,13 @@ for title in document.elements("title") {
 
 This access of elements by name does not have to search for those elements, but elements of certain names (and attributes as far as they are registered) can be accessed directly. During the iteration through such a (lazy!) list of elements, you can change the tree of the XML document without disturbing the iteration. This is true for any of those lists, e.g. also for `myElement.children`.
 
-You can also define a list of rules for the transformation of a document like the ones cited at the top and apply them as follows:
+You can also define rules for the transformation of a document like the ones cited at the top and apply them as follows:
 
 ```swift
 transformation.execute(inDocument: document)
 ```
+
+Note that the order of the rules in a transformation is significant.
 
 After applying this transformation, the document can be then written to a file:
 
