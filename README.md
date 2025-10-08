@@ -104,7 +104,7 @@ for table in document.elements("caption") { caption in
 }
 ```
 
-This access of elements by name does not have to search for those elements, but elements of certain names (and attributes as far as they are registered) can be accessed directly. When iterating through such a (lazy!) list of elements e.g. also via `myElement.children`, you can change the tree of the XML document without disturbing the iteration.
+This access of elements by name does not have to search for those elements, but elements of certain names (and attributes as far as they are registered) can be accessed directly. During the iteration through such a (lazy!) list of elements e.g. also via `myElement.children`, you can change the tree of the XML document without disturbing the iteration.
 
 You can also define a list of rules for the transformation of a document like the ones cited at the top and apply them as follows:
 
