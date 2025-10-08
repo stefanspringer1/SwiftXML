@@ -1339,6 +1339,11 @@ extension Sequence<XContent> {
     public subscript(index: Int) -> Element? {
         self.dropFirst(index-1).first
     }
+    
+    public func replacedBy(_ insertionMode: InsertionMode = .following, @XContentBuilder builder: (XNode) -> [XContent]) -> [XContent] {
+        self.flatMap{ $0.replacedBy(insertionMode, builder: builder) }
+    }
+    
 }
 
 extension Sequence<XElement> {
@@ -1999,6 +2004,10 @@ extension Sequence<XElement> {
         }
     }
     
+    public func replacedBy(_ insertionMode: InsertionMode = .following, @XContentBuilder builder: (XElement) -> [XContent]) -> [XContent] {
+        self.flatMap{ $0.replacedBy(insertionMode, builder: builder) }
+    }
+    
 }
 
 extension Sequence<XText> {
@@ -2006,6 +2015,10 @@ extension Sequence<XText> {
     // Get the nth item, counting starts at 1.
     public subscript(index: Int) -> Element? {
         self.dropFirst(index-1).first
+    }
+    
+    public func replacedBy(_ insertionMode: InsertionMode = .following, @XContentBuilder builder: (XText) -> [XContent]) -> [XContent] {
+        self.flatMap{ $0.replacedBy(insertionMode, builder: builder) }
     }
     
 }

@@ -70,6 +70,63 @@ final class FromReadmeTests: XCTestCase {
             """)
     }
     
+    func testFirstExampleWithReplacedByForSequence() throws {
+        
+        let document = try parseXML(
+            fromText: """
+                <book>
+                    <table label="1">
+                        <title>A table</title>
+                        <title> with numbers</title>
+                        <tr>
+                            <td>1</td>
+                        </tr>
+                    </table>
+                </book>
+                """,
+            registeringAttributes: .selected(["label"]),
+            textAllowedInElementWithName: ["title", "td"]
+        )
+        
+        let transformation = XTransformation {
+
+            XRule(forRegisteredAttributes: "label") { label in
+                label.element["label"] = "(\(label.value))"
+            }
+            
+            XRule(forElements: "caption") { caption in
+                caption.name = "paragraph"
+                caption["role"] = "caption"
+            }
+            
+            XRule(forElements: "table") { table in
+                table.insertNext {
+                    XElement("caption") {
+                        if let label = table["label"] {
+                            "Table "; label; ": "
+                        }
+                        table.children("title").replacedBy { $0.content }
+                    }
+                }
+                table["label"] = nil
+            }
+            
+        }
+        
+        transformation.execute(inDocument: document)
+        
+        XCTAssertEqual(document.serialized(pretty: true), """
+            <book>
+                <table>
+                    <tr>
+                        <td>1</td>
+                    </tr>
+                </table>
+                <paragraph role="caption">Table (1): A table with numbers</paragraph>
+            </book>
+            """)
+    }
+    
     func testParsingAndJoiningIDs() throws {
         let document = try parseXML(fromText: """
             <test>

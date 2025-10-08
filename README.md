@@ -1463,6 +1463,33 @@ func replace(_ insertionMode: InsertionMode = .following, builder: () -> [XConte
 
 Note that the content that replaces a node is allowed to contain the node itself.
 
+Sometimes you might want to insert a node, but not really the node, but a replacement of it. The example at the top (which is used in the "Getting started" section) contains such an instance:
+
+```swift
+table.insertNext {
+    XElement("caption") {
+        if let label = table["label"] {
+            "Table "; label; ": "
+        }
+        table.firstChild("title")?.replacedBy { $0.content }
+    }
+}
+```
+
+Here the following method ist used (which also exists for other type of content, and also for sequences of `XNode`, `XEleemnt`, or `XText`):
+
+```swift
+func replacedBy(_ insertionMode: InsertionMode = .following, builder: (XElement) -> [XContent])
+```
+
+What you would like to insert in the example is:
+
+```swift
+table.firstChild("title")?.content
+```
+
+But then the `<title>` element remains (as empty empty elements). What you actually want is to somehow insert the `<title>`, but then just as the text of it. You could do that by first getting the the title, insert its content, and then removing the empty title, which is a little bit cumbersome. So the `replacedBy` method can be quite convenient. But only use is when its result is instead to be inserted somewhere, else texts on its borders might not combine with other text at a later point.
+
 Clear the contents of an element or a document respectively:
 
 ```swift
