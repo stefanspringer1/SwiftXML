@@ -67,7 +67,7 @@ Add the dependency `"SwiftXML"` to your target in `Package.swift`:
 ),
 ```
 
-(`LoopsOnOptionals` does not have to be added to the dependencies of the target.)
+(`"LoopsOnOptionals"` does not have to be added to the dependencies of the target.)
 
 Add the import statement in any source file where you would like to use `SwiftXML`:
 
