@@ -120,7 +120,7 @@ try document.write(toFile: "my.xml", pretty: true)
 
 The `pretty: true` argument adds linebreaks and indentations to make the serialized XML look pretty. This is convient here in the examples, but in practice you might better dispense with this argument or use a production (see the according documentation below).
 
-The new new content of your file then is:
+The new content of your file then is:
 
 ```xml
 <book>
@@ -128,7 +128,8 @@ The new new content of your file then is:
         <tr>
             <td>1</td>
         </tr>
-    </table><paragraph role="caption">Table 1: A table with numbers</paragraph>
+    </table>
+    <paragraph role="caption">Table 1: A table with numbers</paragraph>
 </book>
 ```
 
