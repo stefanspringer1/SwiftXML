@@ -133,7 +133,7 @@ transformation.execute(inDocument: document)
 
 In the code of this transformation you see an `XElement` being initialized at some point. The `SwiftXML` package uses names not starting with `XML`, but names starting with just `X` instead. Names starting with `XML` belong to the `FoundationXML` implementation which is part of the Swift toolchain but which is not used here.
 
-Note that the order of the rules in a transformation is significant. The rules are applied again and again in their order until none of them has found a corresponding item.
+Note that the order of the rules in a transformation is significant. In the given order, each rule is applied as long as an accordings item has been found, and the whole collection of rules is applied again and again until none of the rules has found an item.
 
 After applying this transformation, the document can be then written to a file:
 
@@ -1910,7 +1910,7 @@ As a side note, for such an `XTransformation` the lengths of the element names d
 
 Instead of using a transformation with a very large number of rules, you should use several transformations, each dedicated to a separate “topic”. E.g. for some document format you might first transform the inline elements and then the block elements. Splitting a transformation into several transformations practically does not hurt performance.
 
-Note that the order of the rules matters: Each rule is applied as long as an accordings item has been found, and the whole collection of rules is applied again and again until none of the rules has found an item. If you need to look up e.g. the parent of the element in a rule, it is important to know if this parent has already been changed by another rule, i.e. if a preceding rule has transformed this element. An example is given in the following section “Transformations with inverse order”. The usage of several transformations as described in the preciding paragraph might help here. Methods to work with better contextual information are described in the sections “Transformations with attachments for context information”, “Transformations with document versions”, and “Transformations with traversals” below.
+Note that the order of the rules matters: In the given order, each rule is applied as long as an accordings item has been found, and the whole collection of rules is applied again and again until none of the rules has found an item. If you need to look up e.g. the parent of the element in a rule, it is important to know if this parent has already been changed by another rule, i.e. if a preceding rule has transformed this element. An example is given in the following section “Transformations with inverse order”. The usage of several transformations as described in the preciding paragraph might help here. Methods to work with better contextual information are described in the sections “Transformations with attachments for context information”, “Transformations with document versions”, and “Transformations with traversals” below.
 
 Also note that using an `XTransformation` you can only transform a whole document. In the section “Transformations with traversals” below, another option is described for transforming any XML tree.
 
