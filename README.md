@@ -77,6 +77,8 @@ import SwiftXML
 
 This import statement will be dropped in further examples.
 
+The example in this section does not use XML namespaces, for the use XML namespaces see the according section below.
+
 Suppose you have an XML file `my.xml` with the following content:
 
 ```xml
