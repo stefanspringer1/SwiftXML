@@ -51,9 +51,9 @@ dependencies: [
 ]
 ```
 
-The `LoopsOnOptionals` package is optional but very convenient when using `SwiftXML`, and it is necessary for the examples used here. Cf. the section “Related packages” below.
+The `LoopsOnOptionals` package is optional but very convenient when using `SwiftXML`, and it is necessary for the examples used here where a loop over an optional sequence is used. Cf. the section “Related packages” below.
 
-Add the dependency `"SwiftXML"` to your target in `Package.swift`:
+Add the dependency `"SwiftXML"` and optiopnally the dependency `"LoopsOnOptionals"` to your target in `Package.swift`:
 
 ```swift
 .target(
@@ -61,18 +61,18 @@ Add the dependency `"SwiftXML"` to your target in `Package.swift`:
     dependencies: [
         ...
         "SwiftXML",
+        "LoopsOnOptionals","
         ...
     ],
     ...
 ),
 ```
 
-(`"LoopsOnOptionals"` does not have to be added to the dependencies of the target.)
-
-Add the import statement in any source file where you would like to use `SwiftXML`:
+Add the following import statements (or just the first of them) in any source file where you would like to use `SwiftXML`:
 
 ```swift
 import SwiftXML
+import LoopsOnOptionals
 ```
 
 This import statement will be dropped in following code samples.
