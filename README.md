@@ -141,7 +141,7 @@ After applying this transformation, the document can be then written to a file:
 try document.write(toFile: "my.xml", pretty: true)
 ```
 
-The `pretty: true` argument adds linebreaks and indentations to make the serialized XML look pretty. This is convient here in the examples, but in practice you might better dispense with this argument or use a production (see the according documentation below). The `pretty: true` argument is more sensible for the `echo(...)` or `serialized(...)` methods.
+The `pretty: true` argument (which can also be set for the `echo(...)` or `serialized(...)` methods) adds linebreaks and indentations to make the serialized XML look pretty. This is convient here in the examples, but in practice you might better dispense with this argument or use a production (see the according documentation below).
 
 The new content of your file then is:
 
