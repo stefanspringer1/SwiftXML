@@ -75,7 +75,7 @@ Add the import statement in any source file where you would like to use `SwiftXM
 import SwiftXML
 ```
 
-This import statement will be dropped in further examples.
+This import statement will be dropped in following code samples.
 
 The example in this section does not use XML namespaces. For information on using XML namespaces, see the according section below.
 
