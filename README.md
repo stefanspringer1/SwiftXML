@@ -111,7 +111,7 @@ for table in document.elements("table") {
 }
 ```
 
-This iteration though the elements of a document by name does not have to search for those elements, but elements in a document (and attributes as far as they are registered) can be accessed directly by their names. The order of such an iteration is the order by which the item has been added to the document, so according items that are added during the iteration will be part of the iteration.
+This iteration though the elements of a document by name does not have to search for those elements, but elements in a document (and attributes as far as they are registered) can be accessed directly by their names. The order of such an iteration is the order by which the item has been added to the document for a specfic name, so according items that are added during the iteration will be part of the iteration.
 
 To then iterate through the rows of a table:
 
