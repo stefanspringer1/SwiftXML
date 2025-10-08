@@ -99,12 +99,22 @@ The `textAllowedInElementWithName` argument is there to help removing unnessary 
 Your can easily acces and change elements in your document:
 
 ```swift
-for title in document.elements("title") {
-    // ... do something with the title ...
+for table in document.elements("table") {
+    // ... do something with the table ...
 }
 ```
 
-This access of elements by name does not have to search for those elements, but elements of certain names (and attributes as far as they are registered) can be accessed directly. During the iteration through such a (lazy!) list of elements, you can change the tree of the XML document without disturbing the iteration. This is true for any of those lists, e.g. also for `myElement.children`.
+This iteration of elements by name does not have to search for those elements, but elements of certain names (and attributes as far as they are registered) can be accessed directly.
+
+To then iterate through the rows of a table:
+
+```swift
+for row in table.children("tr") {
+    // ... do something with the row ...
+}
+```
+
+In both cases, the iteration is a lazy iteration, and you can change the tree during the iteration without disturbing the iteration.
 
 You can also define rules for the transformation of a document like the ones cited at the top and apply them as follows:
 
