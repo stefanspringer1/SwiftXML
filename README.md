@@ -89,10 +89,13 @@ Suppose you have an XML file `my.xml` with the following content:
 It is very easy to parse this XML file into an `XDocument` instance:
 
 ```swift
-let document = try parseXML(fromPath: "my.xml", textAllowedInElementWithName: ["title", "td"])
+let document = try parseXML(
+    fromPath: "my.xml",
+    textAllowedInElementWithName: ["title", "td"]
+)
 ```
 
-(The `textAllowedInElementWithName` argument is there to help removing unnessary whitespace as long as no other method, e.g. an upcoming validation feature, is used to remove it.) 
+The `textAllowedInElementWithName` argument is there to help removing unnessary whitespace as long as no other method, e.g. an upcoming validation feature, is used to remove it. You migth as well just dispense with this arguemnt and leave the whitespace as-is.
 
 Your can easily acces and change elements in your document:
 
