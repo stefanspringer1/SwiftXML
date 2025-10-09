@@ -206,6 +206,7 @@ The library should be efficient and applications that use it should be very inte
 - The encoding of the source must be UTF-8 (ASCII is considered as a subset of it). (So no UTF-16 as required by the XML standard is supported.) The parser checks for correct UTF-8 encoding and also checks (according to the data available to the currently used Swift implementation) if a found codepoint is a valid Unicode codepoint.
 - Currently no Unicode character normalization is done, even if the declared XML version is 1.1.
 - Validation of an XML tree against an XML schema is not available yet (you might use [Libxml2Validation](https://github.com/stefanspringer1/Libxml2Validation) instead).
+- An XML tree (e.g. a document) must not be examined or changed concurrently.
 
 ### Manipulation of an XML document
 
@@ -283,8 +284,6 @@ This library gives full control of how to handle entities. Named entity referenc
 Automated inclusion of the content external parsed entities can be configurated, the content might then be wrapped by elements with according information of the enities.
 
 For any error during parsing an error is thrown and no document is then provided.
-
-An XML tree (e.g. a document) must not be examined or changed concurrently.
 
 ---
 **NOTE**
