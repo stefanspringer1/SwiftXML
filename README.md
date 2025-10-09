@@ -1491,7 +1491,7 @@ What you would like to insert in the example is:
 table.firstChild("title")?.content
 ```
 
-But then the `<title>` element remains (as empty element). What you actually want is to somehow insert the `<title>`, but then just as the text of it. You could do that by first getting the title, insert its content, and then removing the empty title, which is a little bit cumbersome. So the `replacedBy` method can be quite convenient. But only use is when its result is instead to be inserted somewhere, else texts on its borders might not combine with other text at a later point.
+But then the `<title>` element remains (as empty element). What you actually want is to somehow insert the `<title>`, but then just as the text of it. You could do that by first getting the title, insert its content, and then removing the empty title, which is a little bit cumbersome. So the `replacedBy` method can be quite convenient. But only use is when its result is indeed to be inserted somewhere, else texts on its borders might not combine with other text at a later point.
 
 (`replacedBy` performs an actual, albeit isolated, replacement before returning the content: Even for the use cases where it is intended to be used, just removing the subject and returning the replacements would not be sufficient, because the subject could be part of the replacements, so such a temporary removal of the subject from the document could be problematic.)
 
