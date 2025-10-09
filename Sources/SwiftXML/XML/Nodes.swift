@@ -1097,8 +1097,17 @@ public class XContent: XNode {
         _replace(insertionMode: insertionMode, content: content, previousIsolator: isolator)
     }
     
-    /// This methods replaces the content and returns the replacements.
-    /// This methods is meant to use inside some other replacement operation, else text at the edge of the content might remain isolated.
+    /// This methods replaces the subject and returns the replacements.
+    /// To facilitate the application in common use cases, the replacements are
+    /// being isolated from its context in order to prevent the combination of
+    /// text at its border (the `isolated` property of texts is not changed).
+    /// This methods is meant to be used inside some other operation that by
+    /// itself has the insertion of the replacements as an effect, else text at
+    /// the edge of the replacements might remain isolated.
+    /// (Note that for those use cases it would not suffice to just remove the
+    /// subject and return the replacements, as the subject could be part of
+    /// the replacements, so such a temporary removal of the subject from the
+    /// document could be problematic.)
     public func replacedBy(_ insertionMode: InsertionMode = .following, @XContentBuilder builder: (XContent) -> [XContent]) -> [XContent] {
         let previousIsolator = _Isolator_(inDocument: document); self.insertPrevious { previousIsolator }
         let nextIsolator = _Isolator_(inDocument: document); self.insertNext { nextIsolator }
@@ -1814,6 +1823,17 @@ func enclosing(isolator1: _Isolator_, isolator2: _Isolator_) -> [XContent] {
 
 public final class XElement: XContent, XBranchInternal, CustomStringConvertible {
 
+    /// This methods replaces the subject and returns the replacements.
+    /// To facilitate the application in common use cases, the replacements are
+    /// being isolated from its context in order to prevent the combination of
+    /// text at its border (the `isolated` property of texts is not changed).
+    /// This methods is meant to be used inside some other operation that by
+    /// itself has the insertion of the replacements as an effect, else text at
+    /// the edge of the replacements might remain isolated.
+    /// (Note that for those use cases it would not suffice to just remove the
+    /// subject and return the replacements, as the subject could be part of
+    /// the replacements, so such a temporary removal of the subject from the
+    /// document could be problematic.)
     public override func replacedBy(_ insertionMode: InsertionMode = .following, @XContentBuilder builder: (XElement) -> [XContent]) -> [XContent] {
         let previousIsolator = _Isolator_(inDocument: document); self._insertPrevious(previousIsolator)
         let nextIsolator = _Isolator_(inDocument: document); self._insertNext(nextIsolator)
@@ -2430,6 +2450,17 @@ protocol ToBePeparedForMoving {
 
 public final class XText: XContent, XTextualContentRepresentation, ToBePeparedForMoving, CustomStringConvertible, ExpressibleByStringLiteral {
 
+    /// This methods replaces the subject and returns the replacements.
+    /// To facilitate the application in common use cases, the replacements are
+    /// being isolated from its context in order to prevent the combination of
+    /// text at its border (the `isolated` property of texts is not changed).
+    /// This methods is meant to be used inside some other operation that by
+    /// itself has the insertion of the replacements as an effect, else text at
+    /// the edge of the replacements might remain isolated.
+    /// (Note that for those use cases it would not suffice to just remove the
+    /// subject and return the replacements, as the subject could be part of
+    /// the replacements, so such a temporary removal of the subject from the
+    /// document could be problematic.)
     public override func replacedBy(_ insertionMode: InsertionMode = .following, @XContentBuilder builder: (XText) -> [XContent]) -> [XContent] {
         let previousIsolator = _Isolator_(inDocument: document); self.insertPrevious { previousIsolator }
         let nextIsolator = _Isolator_(inDocument: document); self.insertNext { nextIsolator }
@@ -2640,6 +2671,17 @@ public final class XText: XContent, XTextualContentRepresentation, ToBePeparedFo
  */
 public final class XLiteral: XContent, XTextualContentRepresentation, ToBePeparedForMoving, CustomStringConvertible {
     
+    /// This methods replaces the subject and returns the replacements.
+    /// To facilitate the application in common use cases, the replacements are
+    /// being isolated from its context in order to prevent the combination of
+    /// text at its border (the `isolated` property of texts is not changed).
+    /// This methods is meant to be used inside some other operation that by
+    /// itself has the insertion of the replacements as an effect, else text at
+    /// the edge of the replacements might remain isolated.
+    /// (Note that for those use cases it would not suffice to just remove the
+    /// subject and return the replacements, as the subject could be part of
+    /// the replacements, so such a temporary removal of the subject from the
+    /// document could be problematic.)
     public override func replacedBy(_ insertionMode: InsertionMode = .following, @XContentBuilder builder: (XLiteral) -> [XContent]) -> [XContent] {
         let previousIsolator = _Isolator_(inDocument: document); self.insertPrevious { previousIsolator }
         let nextIsolator = _Isolator_(inDocument: document); self.insertNext { nextIsolator }
@@ -2758,6 +2800,17 @@ public final class XLiteral: XContent, XTextualContentRepresentation, ToBePepare
 
 public final class XInternalEntity: XContent {
     
+    /// This methods replaces the subject and returns the replacements.
+    /// To facilitate the application in common use cases, the replacements are
+    /// being isolated from its context in order to prevent the combination of
+    /// text at its border (the `isolated` property of texts is not changed).
+    /// This methods is meant to be used inside some other operation that by
+    /// itself has the insertion of the replacements as an effect, else text at
+    /// the edge of the replacements might remain isolated.
+    /// (Note that for those use cases it would not suffice to just remove the
+    /// subject and return the replacements, as the subject could be part of
+    /// the replacements, so such a temporary removal of the subject from the
+    /// document could be problematic.)
     public override func replacedBy(_ insertionMode: InsertionMode = .following, @XContentBuilder builder: (XInternalEntity) -> [XContent]) -> [XContent] {
         let previousIsolator = _Isolator_(inDocument: document); self.insertPrevious { previousIsolator }
         let nextIsolator = _Isolator_(inDocument: document); self.insertNext { nextIsolator }
@@ -2830,6 +2883,17 @@ public final class XInternalEntity: XContent {
 
 public final class XExternalEntity: XContent {
     
+    /// This methods replaces the subject and returns the replacements.
+    /// To facilitate the application in common use cases, the replacements are
+    /// being isolated from its context in order to prevent the combination of
+    /// text at its border (the `isolated` property of texts is not changed).
+    /// This methods is meant to be used inside some other operation that by
+    /// itself has the insertion of the replacements as an effect, else text at
+    /// the edge of the replacements might remain isolated.
+    /// (Note that for those use cases it would not suffice to just remove the
+    /// subject and return the replacements, as the subject could be part of
+    /// the replacements, so such a temporary removal of the subject from the
+    /// document could be problematic.)
     public override func replacedBy(_ insertionMode: InsertionMode = .following, @XContentBuilder builder: (XExternalEntity) -> [XContent]) -> [XContent] {
         let previousIsolator = _Isolator_(inDocument: document); self.insertPrevious { previousIsolator }
         let nextIsolator = _Isolator_(inDocument: document); self.insertNext { nextIsolator }
@@ -2902,6 +2966,17 @@ public final class XExternalEntity: XContent {
 
 public final class XProcessingInstruction: XContent, CustomStringConvertible {
     
+    /// This methods replaces the subject and returns the replacements.
+    /// To facilitate the application in common use cases, the replacements are
+    /// being isolated from its context in order to prevent the combination of
+    /// text at its border (the `isolated` property of texts is not changed).
+    /// This methods is meant to be used inside some other operation that by
+    /// itself has the insertion of the replacements as an effect, else text at
+    /// the edge of the replacements might remain isolated.
+    /// (Note that for those use cases it would not suffice to just remove the
+    /// subject and return the replacements, as the subject could be part of
+    /// the replacements, so such a temporary removal of the subject from the
+    /// document could be problematic.)
     public override func replacedBy(_ insertionMode: InsertionMode = .following, @XContentBuilder builder: (XProcessingInstruction) -> [XContent]) -> [XContent] {
         let previousIsolator = _Isolator_(inDocument: document); self.insertPrevious { previousIsolator }
         let nextIsolator = _Isolator_(inDocument: document); self.insertNext { nextIsolator }
@@ -2993,6 +3068,17 @@ public final class XProcessingInstruction: XContent, CustomStringConvertible {
 
 public final class XComment: XContent {
     
+    /// This methods replaces the subject and returns the replacements.
+    /// To facilitate the application in common use cases, the replacements are
+    /// being isolated from its context in order to prevent the combination of
+    /// text at its border (the `isolated` property of texts is not changed).
+    /// This methods is meant to be used inside some other operation that by
+    /// itself has the insertion of the replacements as an effect, else text at
+    /// the edge of the replacements might remain isolated.
+    /// (Note that for those use cases it would not suffice to just remove the
+    /// subject and return the replacements, as the subject could be part of
+    /// the replacements, so such a temporary removal of the subject from the
+    /// document could be problematic.)
     public override func replacedBy(_ insertionMode: InsertionMode = .following, @XContentBuilder builder: (XComment) -> [XContent]) -> [XContent] {
         let previousIsolator = _Isolator_(inDocument: document); self.insertPrevious { previousIsolator }
         let nextIsolator = _Isolator_(inDocument: document); self.insertNext { nextIsolator }
@@ -3074,6 +3160,17 @@ public final class XComment: XContent {
 
 public final class XCDATASection: XContent, XTextualContentRepresentation {
     
+    /// This methods replaces the subject and returns the replacements.
+    /// To facilitate the application in common use cases, the replacements are
+    /// being isolated from its context in order to prevent the combination of
+    /// text at its border (the `isolated` property of texts is not changed).
+    /// This methods is meant to be used inside some other operation that by
+    /// itself has the insertion of the replacements as an effect, else text at
+    /// the edge of the replacements might remain isolated.
+    /// (Note that for those use cases it would not suffice to just remove the
+    /// subject and return the replacements, as the subject could be part of
+    /// the replacements, so such a temporary removal of the subject from the
+    /// document could be problematic.)
     public override func replacedBy(_ insertionMode: InsertionMode = .following, @XContentBuilder builder: (XCDATASection) -> [XContent]) -> [XContent] {
         let previousIsolator = _Isolator_(inDocument: document); self.insertPrevious { previousIsolator }
         let nextIsolator = _Isolator_(inDocument: document); self.insertNext { nextIsolator }

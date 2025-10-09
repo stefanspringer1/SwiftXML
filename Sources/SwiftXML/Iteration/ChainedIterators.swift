@@ -1335,11 +1335,12 @@ extension Sequence<XContent> {
         }
     }
     
-    // Get the nth item, counting starts at 1.
+    /// Get the nth item, counting starts at 1.
     public subscript(index: Int) -> Element? {
         self.dropFirst(index-1).first
     }
     
+    /// Applies the `replacedBy` method to each item and returns a concatenation of all resulting content lists.
     public func replacedBy(_ insertionMode: InsertionMode = .following, @XContentBuilder builder: (XNode) -> [XContent]) -> [XContent] {
         self.flatMap{ $0.replacedBy(insertionMode, builder: builder) }
     }
@@ -1357,7 +1358,7 @@ extension Sequence<XElement> {
         get { XAttributeValueSequenceDependingOnElementSequence(sequence: self, attributeName: attributeName) }
     }
     
-    // Get the nth item, counting starts at 1.
+    /// Get the nth item, counting starts at 1.
     public subscript(index: Int) -> Element? {
         self.dropFirst(index-1).first
     }
@@ -2004,6 +2005,7 @@ extension Sequence<XElement> {
         }
     }
     
+    /// Applies the `replacedBy` method to each item and returns a concatenation of all resulting content lists.
     public func replacedBy(_ insertionMode: InsertionMode = .following, @XContentBuilder builder: (XElement) -> [XContent]) -> [XContent] {
         self.flatMap{ $0.replacedBy(insertionMode, builder: builder) }
     }
@@ -2012,11 +2014,12 @@ extension Sequence<XElement> {
 
 extension Sequence<XText> {
     
-    // Get the nth item, counting starts at 1.
+    /// Get the nth item, counting starts at 1.
     public subscript(index: Int) -> Element? {
         self.dropFirst(index-1).first
     }
     
+    /// Applies the `replacedBy` method to each item and returns a concatenation of all resulting content lists.
     public func replacedBy(_ insertionMode: InsertionMode = .following, @XContentBuilder builder: (XText) -> [XContent]) -> [XContent] {
         self.flatMap{ $0.replacedBy(insertionMode, builder: builder) }
     }
