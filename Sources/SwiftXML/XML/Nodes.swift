@@ -667,13 +667,17 @@ public class XNode {
     
     public func serialized(
         pretty: Bool = false,
+        textAllowedInElementWithName: [String]? = nil,
         indentation: String = X_DEFAULT_INDENTATION,
         overwritingPrefixesForNamespaceURIs prefixesForNamespaceURIs: [String:String]? = nil,
         overwritingPrefixes prefixTranslations: [String:String]? = nil,
         suppressDeclarationForNamespaceURIs declarationSupressingNamespaceURIs: [String]? = nil
     ) -> String {
         return serialized(
-            usingProductionTemplate: pretty ? PrettyPrintProductionTemplate(indentation: indentation) : DefaultProductionTemplate(),
+            usingProductionTemplate: pretty ? PrettyPrintProductionTemplate(
+                textAllowedInElementWithName: textAllowedInElementWithName,
+                indentation: indentation
+            ) : DefaultProductionTemplate(),
             overwritingPrefixesForNamespaceURIs: prefixesForNamespaceURIs,
             overwritingPrefixes: prefixTranslations,
             suppressDeclarationForNamespaceURIs: declarationSupressingNamespaceURIs

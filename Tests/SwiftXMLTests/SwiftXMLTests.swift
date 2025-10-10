@@ -33,9 +33,9 @@ final class SwiftXMLTests: XCTestCase {
             """)
         
         // referencing the function:
-        let f = document.serialized(pretty:indentation:overwritingPrefixesForNamespaceURIs:overwritingPrefixes:suppressDeclarationForNamespaceURIs:)
+        let f = document.serialized(pretty:textAllowedInElementWithName:indentation:overwritingPrefixesForNamespaceURIs:overwritingPrefixes:suppressDeclarationForNamespaceURIs:)
         let noTranslation: [String:String]? = nil
-        XCTAssertEqual(f(true, "  ", noTranslation, noTranslation, nil), """
+        XCTAssertEqual(f(true, nil, "  ", noTranslation, noTranslation, nil), """
             <a id="1">
               <b id="2"/>
               <b id="3"/>
