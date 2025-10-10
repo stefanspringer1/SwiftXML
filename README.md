@@ -138,7 +138,9 @@ Note that the order of the rules in a transformation is significant. In the give
 After applying this transformation, the document can be then written to a file:
 
 ```swift
-try document.write(toPath: "output.xml", pretty: true)
+try document.write(
+    toPath: "output.xml",
+    pretty: true, textAllowedInElementWithName: textAllowedInElementWithName)
 ```
 
 The `pretty: true` argument (which can also be set for the `echo(...)` and `serialized(...)` methods) adds linebreaks and indentations to make the serialized XML look pretty. This is convient here in the examples, but in practice you might better dispense with this argument or use a production (see the according documentation below).

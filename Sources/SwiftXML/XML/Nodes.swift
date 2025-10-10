@@ -431,11 +431,15 @@ public class XNode {
     public func write(
         toWriter writer: Writer,
         pretty: Bool = false,
+        textAllowedInElementWithName: [String]? = nil,
         indentation: String? = nil
     ) throws {
         try write(
             toWriter: writer,
-            usingProductionTemplate: PrettyPrintProductionTemplate(indentation: indentation)
+            usingProductionTemplate: pretty ? PrettyPrintProductionTemplate(
+                textAllowedInElementWithName: textAllowedInElementWithName,
+                indentation: indentation
+            ) : DefaultProductionTemplate()
         )
     }
     
@@ -464,11 +468,15 @@ public class XNode {
     public func write(
         toFile fileHandle: FileHandle,
         pretty: Bool = false,
+        textAllowedInElementWithName: [String]? = nil,
         indentation: String? = nil
     ) throws {
         try write(
             toFile: fileHandle,
-            usingProductionTemplate: PrettyPrintProductionTemplate(indentation: indentation)
+            usingProductionTemplate: pretty ? PrettyPrintProductionTemplate(
+                textAllowedInElementWithName: textAllowedInElementWithName,
+                indentation: indentation
+            ) : DefaultProductionTemplate()
         )
     }
     
@@ -494,11 +502,15 @@ public class XNode {
     public func write(
         toPath path: String,
         pretty: Bool = false,
+        textAllowedInElementWithName: [String]? = nil,
         indentation: String? = nil
     ) throws {
         try write(
             toPath: path,
-            usingProductionTemplate: PrettyPrintProductionTemplate(indentation: indentation)
+            usingProductionTemplate: pretty ? PrettyPrintProductionTemplate(
+                textAllowedInElementWithName: textAllowedInElementWithName,
+                indentation: indentation
+            ) : DefaultProductionTemplate()
         )
     }
     
@@ -533,11 +545,15 @@ public class XNode {
     public func write(
         toURL url: URL,
         pretty: Bool = false,
+        textAllowedInElementWithName: [String]? = nil,
         indentation: String? = nil
     ) throws {
         try write(
             toURL: url,
-            usingProductionTemplate: PrettyPrintProductionTemplate(indentation: indentation)
+            usingProductionTemplate: pretty ? PrettyPrintProductionTemplate(
+                textAllowedInElementWithName: textAllowedInElementWithName,
+                indentation: indentation
+            ) : DefaultProductionTemplate()
         )
     }
     
@@ -624,6 +640,7 @@ public class XNode {
     
     public func echo(
         pretty: Bool = false,
+        textAllowedInElementWithName: [String]? = nil,
         indentation: String = X_DEFAULT_INDENTATION,
         overwritingPrefixesForNamespaceURIs prefixesForNamespaceURIs: [String:String]? = nil,
         overwritingPrefixes prefixTranslations: [String:String]? = nil,
@@ -631,7 +648,10 @@ public class XNode {
         terminator: String = "\n"
     ) {
         echo(
-            usingProductionTemplate: pretty ? PrettyPrintProductionTemplate(indentation: indentation) : DefaultProductionTemplate(),
+            usingProductionTemplate: pretty ? PrettyPrintProductionTemplate(
+                textAllowedInElementWithName: textAllowedInElementWithName,
+                indentation: indentation
+            ) : DefaultProductionTemplate(),
             overwritingPrefixesForNamespaceURIs: prefixesForNamespaceURIs,
             overwritingPrefixes: prefixTranslations,
             suppressDeclarationForNamespaceURIs: declarationSupressingNamespaceURIs,

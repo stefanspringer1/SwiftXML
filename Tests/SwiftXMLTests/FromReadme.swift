@@ -16,6 +16,8 @@ final class FromReadmeTests: XCTestCase {
     
     func testFirstExample() throws {
         
+        let textAllowedInElementWithName = ["title", "td"]
+        
         let document = try parseXML(
             fromText: """
                 <book>
@@ -29,7 +31,7 @@ final class FromReadmeTests: XCTestCase {
                 </book>
                 """,
             registeringAttributes: .selected(["label"]),
-            textAllowedInElementWithName: ["title", "td"]
+            textAllowedInElementWithName: textAllowedInElementWithName
         )
         
         let transformation = XTransformation {
@@ -59,7 +61,9 @@ final class FromReadmeTests: XCTestCase {
         
         transformation.execute(inDocument: document)
         
-        XCTAssertEqual(document.serialized(pretty: true), """
+        XCTAssertEqual(
+            document.serialized(pretty: true, textAllowedInElementWithName: textAllowedInElementWithName),
+            """
             <book>
                 <table>
                     <tr>
@@ -69,7 +73,8 @@ final class FromReadmeTests: XCTestCase {
                 </table>
                 <paragraph role="caption">Table (1): A table with numbers</paragraph>
             </book>
-            """)
+            """
+        )
     }
     
     func testFirstExampleWithReplacedByForSequence() throws {
