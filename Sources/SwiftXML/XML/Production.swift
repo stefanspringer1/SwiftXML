@@ -456,15 +456,18 @@ open class ActiveDefaultProduction: XActiveProduction {
 
 public class PrettyPrintProductionTemplate: XProductionTemplate {
     
+    public let textAllowedInElementWithName: [String]?
     public let writeEmptyTags: Bool
     public let indentation: String
     public let linebreak: String
     
     public init(
+        textAllowedInElementWithName: [String]? = nil,
         writeEmptyTags: Bool = true,
         indentation: String? = nil,
         linebreak: String? = nil
     ) {
+        self.textAllowedInElementWithName = textAllowedInElementWithName
         self.writeEmptyTags = writeEmptyTags
         self.indentation = indentation ?? X_DEFAULT_INDENTATION
         self.linebreak = linebreak ?? X_DEFAULT_LINEBREAK
@@ -479,6 +482,7 @@ public class PrettyPrintProductionTemplate: XProductionTemplate {
         ActivePrettyPrintProduction(
             withStartElement: startElement,
             writer: writer,
+            textAllowedInElementWithName: textAllowedInElementWithName,
             writeEmptyTags: writeEmptyTags,
             indentation: indentation,
             linebreak: linebreak,
@@ -491,11 +495,13 @@ public class PrettyPrintProductionTemplate: XProductionTemplate {
 
 open class ActivePrettyPrintProduction: ActiveDefaultProduction {
     
-    private var indentation: String
+    private let textAllowedInElementWithName: [String]?
+    private let indentation: String
     
     public init(
         withStartElement startElement: XElement?,
         writer: Writer,
+        textAllowedInElementWithName: [String]? = nil,
         writeEmptyTags: Bool = true,
         indentation: String = X_DEFAULT_INDENTATION,
         escapeGreaterThan: Bool = false,
@@ -503,8 +509,9 @@ open class ActivePrettyPrintProduction: ActiveDefaultProduction {
         escapeAll: Bool = false,
         linebreak: String = X_DEFAULT_LINEBREAK,
         prefixTranslations: [String:String]?,
-        suppressDeclarationForNamespaceURIs declarationSupressingNamespaceURIs: [String]?
+        suppressDeclarationForNamespaceURIs declarationSupressingNamespaceURIs: [String]?,
     ) {
+        self.textAllowedInElementWithName = textAllowedInElementWithName
         self.indentation = indentation
         super.init(
             withStartElement: startElement,
@@ -524,7 +531,7 @@ open class ActivePrettyPrintProduction: ActiveDefaultProduction {
     private var mixed = [Bool]()
     
     open func mightHaveMixedContent(element: XElement) -> Bool {
-        return element.content.contains(where: { $0 is XText || $0 is XInternalEntity || $0 is XInternalEntity })
+        return textAllowedInElementWithName?.contains(element.name) == true || element.content.contains(where: { $0 is XText || $0 is XInternalEntity || $0 is XInternalEntity })
     }
     
     /// This can be used to suppress the "pretty print" before an element.

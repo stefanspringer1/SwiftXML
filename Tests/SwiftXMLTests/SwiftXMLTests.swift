@@ -871,7 +871,141 @@ final class SwiftXMLTests: XCTestCase {
         }
     }
     
-    func testPretty() {
+    func testPretty1() throws {
+        
+        do {
+            let source = """
+                <book>
+                    <paragraph><emphasis>hello</emphasis></paragraph>
+                </book>
+                """
+            
+            let document = try parseXML(fromText: source)
+            
+            XCTAssertEqual(
+                document.serialized,
+                // like the original text because no adjustments when reading:
+                """
+                <book>
+                    <paragraph><emphasis>hello</emphasis></paragraph>
+                </book>
+                """
+            )
+            
+            XCTAssertEqual(
+                document.serialized(usingProductionTemplate: PrettyPrintProductionTemplate()),
+                // <book> itself is "mixed", so is everything inside:
+                """
+                <book>
+                    <paragraph><emphasis>hello</emphasis></paragraph>
+                </book>
+                """
+            )
+            
+            XCTAssertEqual(
+                document.serialized(usingProductionTemplate: PrettyPrintProductionTemplate(
+                    textAllowedInElementWithName: ["paragraph", "emphasis"]
+                )),
+                // the 'textAllowedInElementWithName' setting does not make a difference:
+                """
+                <book>
+                    <paragraph><emphasis>hello</emphasis></paragraph>
+                </book>
+                """
+            )
+            
+        }
+        
+        do {
+            let source = """
+                <book><paragraph><emphasis>hello</emphasis></paragraph></book>
+                """
+            
+            let document = try parseXML(fromText: source)
+            
+            XCTAssertEqual(
+                document.serialized,
+                // like the original text because no adjustments when reading:
+                """
+                <book><paragraph><emphasis>hello</emphasis></paragraph></book>
+                """
+            )
+            
+            XCTAssertEqual(
+                document.serialized(usingProductionTemplate: PrettyPrintProductionTemplate()),
+                // only <emphasis> is obviously "mixed", the serialization does not know more:
+                """
+                <book>
+                    <paragraph>
+                        <emphasis>hello</emphasis>
+                    </paragraph>
+                </book>
+                """
+            )
+            
+            XCTAssertEqual(
+                document.serialized(usingProductionTemplate: PrettyPrintProductionTemplate(
+                    textAllowedInElementWithName: ["paragraph", "emphasis"]
+                )),
+                // the serialization knows from the 'usingProductionTemplate' setting the <paragraph> too is "mixed":
+                """
+                <book>
+                    <paragraph><emphasis>hello</emphasis></paragraph>
+                </book>
+                """
+            )
+            
+        }
+        
+        do {
+            let source = """
+                <book>
+                    
+                    <paragraph><emphasis>hello</emphasis></paragraph>
+                    
+                </book>
+                """
+            
+            let document = try parseXML(fromText: source, textAllowedInElementWithName: ["paragraph", "emphasis"])
+            
+            XCTAssertEqual(
+                document.serialized,
+                // whitespace immediately in elements that are not mixed (that is knwon from the 'textAllowedInElementWithName' setting) is removed:
+                """
+                <book><paragraph><emphasis>hello</emphasis></paragraph></book>
+                """
+            )
+            
+            XCTAssertEqual(
+                document.serialized(usingProductionTemplate: PrettyPrintProductionTemplate()),
+                // here, the serialization does not know about the 'textAllowedInElementWithName' setting that was used when reading
+                // (and also should not know, because the output could be a different type of document):
+                """
+                <book>
+                    <paragraph>
+                        <emphasis>hello</emphasis>
+                    </paragraph>
+                </book>
+                """
+            )
+            
+            XCTAssertEqual(
+                document.serialized(usingProductionTemplate: PrettyPrintProductionTemplate(
+                    textAllowedInElementWithName: ["paragraph", "emphasis"]
+                )),
+                // the serialization knows from the 'usingProductionTemplate' setting the <paragraph> too is "mixed":
+                """
+                <book>
+                    <paragraph><emphasis>hello</emphasis></paragraph>
+                </book>
+                """
+            )
+            
+        }
+        
+    }
+    
+    func testPretty2() {
         let element1 = XElement("element1") { XInternalEntity("ent1")}
         
         XCTAssertEqual(element1.serialized(pretty: true), "<element1>&ent1;</element1>")
