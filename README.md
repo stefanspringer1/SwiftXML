@@ -96,10 +96,12 @@ Suppose you have an XML file `input.xml` with the following content:
 It is very easy to parse this XML file into an `XDocument` instance:
 
 ```swift
+let textAllowedInElementWithName = ["title", "td"]
+
 let document = try parseXML(
     fromPath: "input.xml",
     registeringAttributes: .selected(["label"]),
-    textAllowedInElementWithName: ["title", "td"]
+    textAllowedInElementWithName: textAllowedInElementWithName
 )
 ```
 
@@ -140,10 +142,12 @@ After applying this transformation, the document can be then written to a file:
 ```swift
 try document.write(
     toPath: "output.xml",
-    pretty: true, textAllowedInElementWithName: textAllowedInElementWithName)
+    pretty: true,
+    textAllowedInElementWithName: textAllowedInElementWithName
+)
 ```
 
-The `pretty: true` argument (which can also be set for the `echo(...)` and `serialized(...)` methods) adds linebreaks and indentations to make the serialized XML look pretty. This is convient here in the examples, but in practice you might better dispense with this argument or use a production (see the according documentation below).
+The `pretty: true` argument (which can also be set for the `echo(...)` and `serialized(...)` methods) adds linebreaks and indentations to make the serialized XML look pretty (and the `textAllowedInElementWithName:` makes sure no mixed content environment gets unwanted whitespace added). This is convient here in the examples, but in practice you might better dispense with this argument or use a production (see the according documentation below).
 
 The content of the file `output.xml` is then:
 
