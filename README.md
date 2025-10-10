@@ -131,7 +131,7 @@ You can also define rules for the transformation of a document like the ones cit
 transformation.execute(inDocument: document)
 ```
 
-In the code of this transformation you see an `XElement` being initialized at some point. The `SwiftXML` package uses names not starting with `XML`, but names starting with just `X` instead. Names starting with `XML` belong to the `FoundationXML` implementation which is part of the Swift toolchain but which is not used here. The parts of an XML tree (and also the XML document) are defined by classes so they can be easily passed around via function calls. The subscript notation `element["..."]` of an element is used to get or set an attribute value.
+In the code of this transformation you see an `XElement` being initialized at some point. The `SwiftXML` package uses names not starting with `XML`, but names starting with just `X` instead. Names starting with `XML` belong to the `FoundationXML` implementation which is part of the Swift toolchain but which is not used here. The parts of an XML tree (and also the XML document) are defined by classes so they can be easily passed around via function calls while keeping their identity. The subscript notation `element["..."]` of an element is used to get or set an attribute value.
 
 Note that the order of the rules in a transformation is significant. In the given order, each rule is applied as long as an accordings item has been found, and the whole collection of rules is applied again and again until none of the rules has found an item.
 
