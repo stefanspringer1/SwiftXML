@@ -716,7 +716,7 @@ You can also use a prefix in the first (optional) argument for direct access to 
 
 ## Direct access to attributes
 
-To directly find where an attribut with a certain name is set, you can use an analogue to the direct access to elements, but for efficiency reason you have to specify the attribute names which can be used for such a direct access. You specify these attribute names when creating a document (e.g. `XDocument(registeringAttributes: .selected(["id", "label"]))`) or indirecting when using the parse functions (e.g. `try parseXML(fromText: "...", registeringAttributes: .selected(["id", "label"]))`). You can also register attributes for a certain namespace or a prefix and then list them by additionally using the `prefix:` argument, see the section on prefixes and namespaces.
+To directly find where an attribute with a certain name is set, you can use an analogue to the direct access to elements, but for efficiency reason you have to specify the attribute names which can be used for such a direct access. You specify these attribute names when creating a document (e.g. `XDocument(registeringAttributes: .selected(["id", "label"]))`) or indirecting when using the parse functions (e.g. `try parseXML(fromText: "...", registeringAttributes: .selected(["id", "label"]))`). You can also register attributes for a certain namespace or a prefix and then list them by additionally using the `prefix:` argument, see the section on prefixes and namespaces.
 
 Example:
 
@@ -790,7 +790,7 @@ if let element = document.registeredValues("1", forAttribute: "id").first?.eleme
 
 ## Direct access to processing instructions
 
-You can also directly access processing instructions of certains targets:
+You can also efficiently access the processing instructions of specific targets directly:
 
 ```swift
 let source = """
