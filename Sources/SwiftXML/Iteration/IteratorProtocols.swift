@@ -45,3 +45,12 @@ protocol XAttributeIteratorProtocol {
     mutating func next() -> AttributeProperties?
     mutating func previous() -> AttributeProperties?
 }
+
+/**
+ XProcessingInstructionrotocol is the version of XNodeIteratorProtocol for
+ processing instructions.
+ */
+public protocol XProcessingInstructionIteratorProtocol {
+    mutating func next() -> XProcessingInstruction?
+    mutating func previous() -> XProcessingInstruction?
+}

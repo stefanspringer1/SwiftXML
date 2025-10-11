@@ -260,3 +260,51 @@ public final class XBidirectionalAttributeIterator: XAttributeIterator {
         prefetched = true
     }
 }
+
+/**
+ The XProcessingInstructionIterator does the work of making sure that an XML tree can be manipulated
+ during iteration. It is ignorant about what precise iteration takes place. The
+ precise iteration is implemented in "iteratorImplementation" which implements
+ the XIteratorProtocol.
+ */
+public final class XBidirectionalProcessingInstructionIterator: XProcessingInstructionIterator {
+    
+    var previousIterator: XBidirectionalProcessingInstructionIterator? = nil
+    var nextIterator: XBidirectionalProcessingInstructionIterator? = nil
+    
+    public typealias Element = XProcessingInstruction
+    
+    var processingInstructionIterator: XProcessingInstructionIteratorProtocol
+    
+    public init(processingInstructionIterator: XProcessingInstructionIteratorProtocol) {
+        self.processingInstructionIterator = processingInstructionIterator    }
+    
+    weak var current: XProcessingInstruction? = nil
+    var prefetched = false
+    
+    public override func next() -> XProcessingInstruction? {
+        if prefetched {
+            prefetched = false
+            return current
+        }
+        current?.removeProcessingInstructionIterator(self)
+        current = processingInstructionIterator.next()
+        current?.addProcessingInstructionIterator(self)
+        return current
+    }
+    
+    public override func previous() -> XProcessingInstruction? {
+        prefetched = false
+        current?.removeProcessingInstructionIterator(self)
+        current = processingInstructionIterator.previous()
+        current?.addProcessingInstructionIterator(self)
+        return current
+    }
+    
+    public func prefetch() {
+        current?.removeProcessingInstructionIterator(self)
+        current = processingInstructionIterator.next()
+        current?.addProcessingInstructionIterator(self)
+        prefetched = true
+    }
+}

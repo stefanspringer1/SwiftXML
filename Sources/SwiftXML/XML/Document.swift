@@ -436,7 +436,7 @@ public final class XDocument: XNode, XBranchInternal {
         }
     }
     
-    func registerElement(element: XElement) {
+    func register(element: XElement) {
         
         // register via name:
         let name = element.name
@@ -509,7 +509,7 @@ public final class XDocument: XNode, XBranchInternal {
         element._registered = true
     }
     
-    func unregisterElement(element: XElement) {
+    func unregister(element: XElement) {
         element.gotoPreviousOnNameIterators()
         let name = element.name
         element.previousWithSameName?.nextWithSameName = element.nextWithSameName
@@ -706,6 +706,46 @@ public final class XDocument: XNode, XBranchInternal {
     
     public func registeredValues(_ value: String, forAttribute attributeName: String, withPrefix attributePrefix: String? = nil) -> XAttributeSequence {
         return XAttributesOfSameValueSequence(document: self, attributePrefix: attributePrefix, attributeName: attributeName, attributeValue: value)
+    }
+    
+    // -------------------------------------------------------------------------
+    // processing instructions:
+    // -------------------------------------------------------------------------
+    
+    var _processingInstructionsOfTarget_first = [String:XProcessingInstruction]()
+    var _processingInstructionsOfTarget_last = [String:XProcessingInstruction]()
+    
+    func register(processingInstruction: XProcessingInstruction) {
+        let target = processingInstruction.target
+        if let theLast = _processingInstructionsOfTarget_first[target] {
+            theLast.nextWithSameTarget = processingInstruction
+            processingInstruction.previousWithSameTarget = theLast
+        }
+        else {
+            _processingInstructionsOfTarget_first[target] = processingInstruction
+        }
+        _processingInstructionsOfTarget_last[target] = processingInstruction
+        processingInstruction.nextWithSameTarget = nil
+    }
+    
+    func unregister(processingInstruction: XProcessingInstruction) {
+        processingInstruction.gotoPreviousOnProcessingInstructionIterators()
+        processingInstruction.previousWithSameTarget?.nextWithSameTarget = processingInstruction.nextWithSameTarget
+        processingInstruction.nextWithSameTarget?.previousWithSameTarget = processingInstruction.previousWithSameTarget
+        let target = processingInstruction.target
+        if _processingInstructionsOfTarget_first[target] === processingInstruction {
+            _processingInstructionsOfTarget_first[target] = processingInstruction.nextWithSameTarget
+        }
+        if _processingInstructionsOfTarget_last[target] === processingInstruction {
+            _processingInstructionsOfTarget_last[target] = processingInstruction.previousWithSameTarget
+        }
+        processingInstruction.previousWithSameTarget = nil
+        processingInstruction.nextWithSameTarget = nil
+        processingInstruction._document = nil
+    }
+    
+    public func processingInstructions(ofTarget target: String) -> XProcessingInstructionSequence {
+        return XProcessingInstructionsOfSameTargetSequence(document: self, target: target)
     }
     
     deinit {

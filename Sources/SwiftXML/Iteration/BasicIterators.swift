@@ -30,6 +30,16 @@ public class XTextIterator: IteratorProtocol, XTextIteratorProtocol {
     }
 }
 
+public class XProcessingInstructionIterator: IteratorProtocol, XProcessingInstructionIteratorProtocol {
+    public typealias Element = XProcessingInstruction
+    public func next() -> XProcessingInstruction? {
+        return nil
+    }
+    public func previous() -> XProcessingInstruction? {
+        return nil
+    }
+}
+
 public class XContentIteratorWithCondition: XContentIterator {
     
     let iterator: XContentIterator
@@ -608,6 +618,12 @@ public class XAttributeSequence: LazySequenceProtocol {
     }
 }
 
+public class XProcessingInstructionSequence: LazySequenceProtocol {
+    public func makeIterator() -> XProcessingInstructionIterator {
+        return XProcessingInstructionIterator()
+    }
+}
+
 
 public class XContentConvertibleIterator: IteratorProtocol {
     public typealias Element = XContentConvertible
@@ -806,6 +822,53 @@ final class XAttributesOfSameNameIterator: XAttributeIteratorProtocol {
                 started = false
             }
             return currentAttribute
+        }
+        return nil
+    }
+}
+
+/**
+ Iterates though the processing instructions with a specified target.
+ */
+final class XProcessingInstructionOfSameTargetIterator: XProcessingInstructionIteratorProtocol {
+
+    private var started = false
+    weak var document: XDocument?
+    let target: String
+    weak var currentProcessingInstruction: XProcessingInstruction? = nil
+    let keepLast: Bool
+    
+    public init(document: XDocument, target: String, keepLast: Bool = false) {
+        self.document = document
+        self.target = target
+        self.keepLast = keepLast
+    }
+    
+    func next() -> XProcessingInstruction? {
+        let oldStarted = started
+        let oldCurrent = currentProcessingInstruction
+        if started {
+            currentProcessingInstruction = currentProcessingInstruction?.nextWithSameTarget
+        }
+        else {
+            currentProcessingInstruction = document?._processingInstructionsOfTarget_first[target]
+            started = true
+        }
+        if currentProcessingInstruction == nil && keepLast {
+            started = oldStarted
+            currentProcessingInstruction = oldCurrent
+            return nil
+        }
+        return currentProcessingInstruction
+    }
+    
+    func previous() -> XProcessingInstruction? {
+        if started {
+            currentProcessingInstruction = currentProcessingInstruction?.previousWithSameTarget
+            if currentProcessingInstruction == nil {
+                started = false
+            }
+            return currentProcessingInstruction
         }
         return nil
     }

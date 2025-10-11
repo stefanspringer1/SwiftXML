@@ -143,7 +143,11 @@ public class XNode {
     /// Return the document that the node belongs to if it exists.
     public weak var document: XDocument? {
         get {
-            return (self as? XBranchInternal ?? self._parent)?._registeringDocument
+            if let processingInstruction = self as? XProcessingInstruction {
+                return processingInstruction._document
+            } else {
+                return (self as? XBranchInternal ?? self._parent)?._registeringDocument
+            }
         }
     }
     
@@ -880,13 +884,19 @@ public class XContent: XNode {
      */
     public func remove() {
         _removeKeep()
-        if let meAsElement = self as? XElement {
-            //meAsElement.gotoPreviousOnNameIterators()
-            meAsElement.document?.unregisterElement(element: meAsElement)
-            for descendant in meAsElement.descendants {
-                //descendant.gotoPreviousOnNameIterators()
-                descendant.document?.unregisterElement(element: descendant)
+        if let element = self as? XElement {
+            if let document = element.document {
+                document.unregister(element: element)
+                element.traverse { node in
+                    if let element = node as? XElement {
+                        document.unregister(element: element)
+                    } else if let processingInstruction = node as? XProcessingInstruction {
+                        document.unregister(processingInstruction: processingInstruction)
+                    }
+                }
             }
+        } else if let processingInstruction = self as? XProcessingInstruction {
+            processingInstruction._document?.unregister(processingInstruction: processingInstruction)
         }
     }
     
@@ -916,6 +926,8 @@ public class XContent: XNode {
             // set document:
             if let element = node as? XElement, let receivingDocument = document {
                 element.setDocument(document: receivingDocument)
+            } else if let processingInstruction = node as? XProcessingInstruction, let receivingDocument = document {
+                processingInstruction.setDocument(document: receivingDocument)
             }
         }
         
@@ -1011,6 +1023,8 @@ public class XContent: XNode {
             // set document:
             if let element = node as? XElement, let receivingDocument = document {
                 element.setDocument(document: receivingDocument)
+            } else if let processingInstruction = node as? XProcessingInstruction, let receivingDocument = document {
+                processingInstruction.setDocument(document: receivingDocument)
             }
         }
         
@@ -1382,7 +1396,7 @@ extension XBranchInternal {
         }
         
         node._removeKeep()
-
+        
         // insert into new chain:
         if let theLastChild = __lastContent {
             theLastChild._next = node
@@ -1394,16 +1408,20 @@ extension XBranchInternal {
         }
         __lastContent = node
         node._next = nil
-
+        
         // set parent:
         node._parent = self
-
+        
         // set tree order:
         node.setTreeOrderWhenInserting()
         
         // set document:
-        if let element = node as? XElement, let receivingDocument = _registeringDocument {
-            element.setDocument(document: receivingDocument)
+        if let receivingDocument = _registeringDocument {
+            if let element = node as? XElement  {
+                element.setDocument(document: receivingDocument)
+            } else if let processingInstruction = node as? XProcessingInstruction {
+                processingInstruction.setDocument(document: receivingDocument)
+            }
         }
     }
     
@@ -1478,8 +1496,12 @@ extension XBranchInternal {
         node.setTreeOrderWhenInserting()
         
         // set document:
-        if let element = node as? XElement, let receivingDocument = _registeringDocument {
-            element.setDocument(document: receivingDocument)
+        if let receivingDocument = _registeringDocument {
+            if let element = node as? XElement {
+                element.setDocument(document: receivingDocument)
+            } else if let processingInstruction = node as? XProcessingInstruction {
+                processingInstruction.setDocument(document: receivingDocument)
+            }
         }
     }
     
@@ -1901,9 +1923,11 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         repeat {
             if let element = node as? XElement {
                 if newDocument !== element._registeringDocument {
-                    element._registeringDocument?.unregisterElement(element: element)
-                    newDocument?.registerElement(element: element)
+                    element._registeringDocument?.unregister(element: element)
+                    newDocument?.register(element: element)
                 }
+            } else if let processingInstruction = node as? XProcessingInstruction {
+                processingInstruction.setDocument(document: newDocument)
             }
             if self._lastInTree === node {
                 break
@@ -2068,11 +2092,9 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
             let actualPrefix = newPrefix?.isEmpty == true ? nil : newPrefix
             if actualPrefix != _prefix {
                 if let theDocument = _registeringDocument {
-                    gotoPreviousOnNameIterators()
-                    for nameIterator in nameIterators { _ = nameIterator.previous() }
-                    theDocument.unregisterElement(element: self)
+                    theDocument.unregister(element: self)
                     _prefix = actualPrefix
-                    theDocument.registerElement(element: self)
+                    theDocument.register(element: self)
                 }
                 else {
                     _prefix = actualPrefix
@@ -2098,9 +2120,9 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
                 if let theDocument = _registeringDocument {
                     gotoPreviousOnNameIterators()
                     for nameIterator in nameIterators { _ = nameIterator.previous() }
-                    theDocument.unregisterElement(element: self)
+                    theDocument.unregister(element: self)
                     _name = newName
-                    theDocument.registerElement(element: self)
+                    theDocument.register(element: self)
                 }
                 else {
                     _name = newName
@@ -2113,12 +2135,10 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         let actualPrefix = prefix?.isEmpty == true ? nil : prefix
         if actualPrefix != _prefix || name != _name {
             if let theDocument = _registeringDocument {
-                gotoPreviousOnNameIterators()
-                for nameIterator in nameIterators { _ = nameIterator.previous() }
-                theDocument.unregisterElement(element: self)
+                theDocument.unregister(element: self)
                 _prefix = actualPrefix
                 _name = name
-                theDocument.registerElement(element: self)
+                theDocument.register(element: self)
             }
             else {
                 _prefix = actualPrefix
@@ -2409,7 +2429,7 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         self._prefix = prefix
         self._name = name
         super.init()
-        document.registerElement(element: self)
+        document.register(element: self)
     }
     
     public override func _removeKeep() {
@@ -3009,6 +3029,34 @@ public final class XProcessingInstruction: XContent, CustomStringConvertible {
         return enclosing(isolator1: previousIsolator, isolator2: nextIsolator)
     }
     
+    weak var previousWithSameTarget: XProcessingInstruction? = nil
+    var nextWithSameTarget: XProcessingInstruction? = nil
+    
+    private var processingInstructionIterators = WeakList<XBidirectionalProcessingInstructionIterator>()
+    
+    /// Register a content iterator which have this node as the current position.
+    ///
+    /// This will be called for the found node when `previous`, `next`, or `prefetch` is called on the iterator.
+    func addProcessingInstructionIterator(_ processingInstructionIterator: XBidirectionalProcessingInstructionIterator) {
+        processingInstructionIterators.append(processingInstructionIterator)
+    }
+    
+    /// Deregister a content iterator, because its current position will not be this node after some operation.
+    ///
+    /// This will be called for this node when `previous`, `next`, or `prefetch` is called on the iterator.
+    func removeProcessingInstructionIterator(_ processingInstructionIterator: XBidirectionalProcessingInstructionIterator) {
+        processingInstructionIterators.remove(processingInstructionIterator)
+    }
+    
+    /// Go to previous on all registered content operators, because this node will not be at same position after some operation.
+    func gotoPreviousOnProcessingInstructionIterators() {
+        for processingInstructionIterator in processingInstructionIterators { _ = processingInstructionIterator.previous() }
+    }
+    
+    func prefetchOnProcessingInstructionIterators() {
+        for processingInstructionIterator in processingInstructionIterators { processingInstructionIterator.prefetch() }
+    }
+    
     /// After cloning, this is the reference to the original node or to the cloned node respectively,
     /// acoording to the parameter used when cloning.
     ///
@@ -3038,6 +3086,16 @@ public final class XProcessingInstruction: XContent, CustomStringConvertible {
     var _target: String
     var _data: String?
     
+    weak var _document: XDocument? = nil
+    
+    func setDocument(document newDocument: XDocument?) {
+        if newDocument !== _document {
+            document?.unregister(processingInstruction: self)
+            newDocument?.register(processingInstruction: self)
+            _document = newDocument
+        }
+    }
+    
     public override var description: String {
         get {
             """
@@ -3051,7 +3109,13 @@ public final class XProcessingInstruction: XContent, CustomStringConvertible {
             return _target
         }
         set(newTarget) {
-            _target = newTarget
+            if let document {
+                document.unregister(processingInstruction: self)
+                _target = newTarget
+                document.register(processingInstruction: self)
+            } else {
+                _target = newTarget
+            }
         }
     }
     
