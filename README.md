@@ -790,7 +790,7 @@ if let element = document.registeredValues("1", forAttribute: "id").first?.eleme
 
 ## Direct access to processing instructions
 
-You can also efficiently access the processing instructions of specific targets directly via the `processingInstructions` method:
+You can also efficiently access the processing instructions of specific targets directly via the `processingInstructions(_:)` method:
 
 ```swift
 let source = """
