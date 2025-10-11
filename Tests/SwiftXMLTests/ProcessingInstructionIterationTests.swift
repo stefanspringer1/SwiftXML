@@ -81,6 +81,16 @@ final class ProcessingInstructionIterationTests: XCTestCase {
             Hello world!
             """
         )
+        
+        anotherDocument.processingInstructions("MyTarget").remove()
+        
+        XCTAssertEqual(
+            anotherDocument.processingInstructions("MyTarget")
+                .map { $0.data ?? "" }.joined(separator: "\n"),
+            // All processing instructions of the target are now removed in the other document:
+            """
+            """
+        )
     }
     
 }

@@ -2025,3 +2025,14 @@ extension Sequence<XText> {
     }
     
 }
+
+
+extension Sequence<XProcessingInstruction> {
+    
+    public func remove() {
+        for processingInstruction in self {
+            processingInstruction.remove()
+        }
+    }
+    
+}
