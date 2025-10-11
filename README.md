@@ -795,7 +795,7 @@ You can also directly access processing instructions of certains targets:
 ```swift
 let source = """
     <a>
-        <b>Blabla.<?MyTarget Hello World!?></b>
+        <b>Blabla.<?MyTarget Hello world!?></b>
         <b>Blabla.<?OtherTarget This has another target.?></b>
         <b>Blabla.<?MyTarget This has the same target.?></b>
     </a>
@@ -819,10 +819,10 @@ print(
 Output:
 
 ```text
-Hello World!
+Hello world!
 This has the same target.
 ----
-Hello World!
+Hello world!
 This has the same target.
 This has another target.
 ```
@@ -1331,13 +1331,13 @@ When constructing an element, its contents are given in parentheses `{...}` (tho
 let myElement = XElement("div") {
     XElement("hr")
     XElement("paragraph") {
-        "Hello World"
+        "Hello world"
     }
     XElement("hr")
 }
 ```
 
-(The text `"Hello World"` could also be given as `XText("Hello World")`. The text will be converted in such an XML node automatically.)
+(The text `"Hello world"` could also be given as `XText("Hello world")`. The text will be converted in such an XML node automatically.)
 
 The content might be given as an array or an appropriate sequence:
 

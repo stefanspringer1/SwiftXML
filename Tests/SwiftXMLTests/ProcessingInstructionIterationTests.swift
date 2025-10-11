@@ -9,7 +9,7 @@ final class ProcessingInstructionIterationTests: XCTestCase {
         
         let source = """
             <a>
-                <b>Blabla.<?MyTarget Hello World!?></b>
+                <b>Blabla.<?MyTarget Hello world!?></b>
                 <b>Blabla.<?OtherTarget This has another target.?></b>
                 <b>Blabla.<?MyTarget This has the same target.?></b>
             </a>
@@ -21,7 +21,7 @@ final class ProcessingInstructionIterationTests: XCTestCase {
             document.processingInstructions("MyTarget")
                 .map { $0.data ?? "" }.joined(separator: "\n"),
             """
-            Hello World!
+            Hello world!
             This has the same target.
             """
         )
@@ -30,7 +30,7 @@ final class ProcessingInstructionIterationTests: XCTestCase {
             document.processingInstructions("MyTarget", "OtherTarget")
                 .map { $0.data ?? "" }.joined(separator: "\n"),
             """
-            Hello World!
+            Hello world!
             This has the same target.
             This has another target.
             """
@@ -78,7 +78,7 @@ final class ProcessingInstructionIterationTests: XCTestCase {
             // Now we also have the other processing instruction of the target in the other document:
             """
             This has the same target.
-            Hello World!
+            Hello world!
             """
         )
     }

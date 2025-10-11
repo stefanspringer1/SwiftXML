@@ -685,7 +685,7 @@ final class SwiftXMLTests: XCTestCase {
     
     func testTexts() throws {
         let document = try parseXML(fromText: """
-            <paragraph>Hello <bold>World</bold>!</paragraph>
+            <paragraph>Hello <bold>world</bold>!</paragraph>
             """)
         XCTAssertEqual(document.children.first!.immediateTexts.map{ "\"\($0.value)\"" }.joined(separator: ", "), #""Hello ", "!""#)
     }
@@ -697,9 +697,9 @@ final class SwiftXMLTests: XCTestCase {
     
     func testAllTexts() throws {
         let document = try parseXML(fromText: """
-            <paragraph>Hello <bold>World</bold>!</paragraph>
+            <paragraph>Hello <bold>world</bold>!</paragraph>
             """)
-        XCTAssertEqual(document.allTexts.map{ "\"\($0.value)\"" }.joined(separator: ", "), #""Hello ", "World", "!""#)
+        XCTAssertEqual(document.allTexts.map{ "\"\($0.value)\"" }.joined(separator: ", "), #""Hello ", "world", "!""#)
     }
     
     func testTraversalWithRemoval() throws {
@@ -1026,25 +1026,25 @@ final class SwiftXMLTests: XCTestCase {
     func testTextForElementSequence() throws {
         let document = try parseXML(fromText: """
         <sentences>
-            <sentence><word>Hello</word> <word>World</word></sentence>
+            <sentence><word>Hello</word> <word>world</word></sentence>
             <sentence><word>Feel</word> <word>good</word></sentence>
         </sentences>
         """)
         
-        XCTAssertEqual(document.elements("sentence").map{ "\"\($0.allTextsCombined)\"" }.joined(separator: ", "), #""Hello World", "Feel good""#)
+        XCTAssertEqual(document.elements("sentence").map{ "\"\($0.allTextsCombined)\"" }.joined(separator: ", "), #""Hello world", "Feel good""#)
     }
     
     func testReversedAllContent() throws {
         let document = try parseXML(fromText: """
         <sentences>
-            <sentence><word>Hello</word>, <word>World</word></sentence>
+            <sentence><word>Hello</word>, <word>world</word></sentence>
             <sentence><word>Feel</word> <word>good</word></sentence>
         </sentences>
         """)
         
         let start = document.firstChild!.firstChild!
         
-        let allContent = ["<word>", "\"Hello\"", "\", \"", "<word>", "\"World\""]
+        let allContent = ["<word>", "\"Hello\"", "\", \"", "<word>", "\"world\""]
         
         XCTAssertEqual(Array(start.allContent.map{ $0.description }), allContent)
         XCTAssertEqual(Array(start.allContentReversed.map{ $0.description }), allContent.reversed())
@@ -1053,14 +1053,14 @@ final class SwiftXMLTests: XCTestCase {
     func testReversedAllTexts() throws {
         let document = try parseXML(fromText: """
         <sentences>
-            <sentence><word>Hello</word>, <word>World</word></sentence>
+            <sentence><word>Hello</word>, <word>world</word></sentence>
             <sentence><word>Feel</word> <word>good</word></sentence>
         </sentences>
         """)
         
         let start = document.firstChild!.firstChild!
         
-        let allTexts = ["Hello", ", ", "World"]
+        let allTexts = ["Hello", ", ", "world"]
         
         XCTAssertEqual(Array(start.allTexts.map{ $0.value }), allTexts)
         XCTAssertEqual(Array(start.allTextsReversed.map{ $0.value }), allTexts.reversed())
