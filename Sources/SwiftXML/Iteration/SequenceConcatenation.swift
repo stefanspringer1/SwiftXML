@@ -99,7 +99,7 @@ public final class XAttributesOfNamesIterator: XAttributeIterator {
     private var iteratorIndex = 0
     
     init(forPrefix attributePrefix: String?, forNames names: [String], forDocument document: XDocument) {
-        iterators = names.map{
+        iterators = names.map {
             XBidirectionalAttributeIterator(
                 forAttributeName: $0, attributeIterator: XAttributesOfSameNameIterator(
                     document: document,
@@ -127,6 +127,48 @@ public final class XAttributesOfNamesIterator: XAttributeIterator {
             if let next = iterator.next() {
                 foundElement = true
                 return XAttributeSpot(name: next.name, value: next.value, element: next.element)
+            }
+            else {
+                iteratorIndex += 1
+            }
+        }
+    }
+    
+}
+
+public final class XProcessingInstructionOfTargetsIterator: XProcessingInstructionIterator {
+    
+    private let iterators: [XBidirectionalProcessingInstructionIterator]
+    private var foundProcessingInstruction = false
+    private var iteratorIndex = 0
+    
+    init(forTargets targets: [String], forDocument document: XDocument) {
+        iterators = targets.map {
+            XBidirectionalProcessingInstructionIterator(processingInstructionIterator: XProcessingInstructionOfSameTargetIterator(
+                    document: document,
+                    target: $0,
+                    keepLast: true
+                )
+            )
+        }
+    }
+    
+    public override func next() -> XProcessingInstruction? {
+        guard iterators.count > 0 else { return nil }
+        while true {
+            if iteratorIndex == iterators.count {
+                if foundProcessingInstruction {
+                    iteratorIndex = 0
+                    foundProcessingInstruction = false
+                }
+                else {
+                    return nil
+                }
+            }
+            let iterator = iterators[iteratorIndex]
+            if let next = iterator.next() {
+                foundProcessingInstruction = true
+                return next
             }
             else {
                 iteratorIndex += 1

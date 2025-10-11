@@ -788,6 +788,45 @@ if let element = document.registeredValues("1", forAttribute: "id").first?.eleme
 
 ---
 
+## Direct access to processing instructions
+
+You can also directly access processing instructions of certains targets:
+
+```swift
+let source = """
+    <a>
+        <b>Blabla.<?MyTarget Hello World!?></b>
+        <b>Blabla.<?OtherTarget This has another target.?></b>
+        <b>Blabla.<?MyTarget This has the same target.?></b>
+    </a>
+    """
+
+let document = try parseXML(fromText: source)
+
+print(
+    document.processingInstructions("MyTarget")
+        .map { $0.data ?? "" }.joined(separator: "\n")
+)
+
+print("----")
+
+print(
+    document.processingInstructions("MyTarget", "OtherTarget")
+        .map { $0.data ?? "" }.joined(separator: "\n"),
+)
+```
+
+Output:
+
+```text
+Hello World!
+This has the same target.
+----
+Hello World!
+This has the same target.
+This has another target.
+```
+
 ## Finding related content
 
 Starting from some content, you might want to find related content, e.g. its children. The names chosen for the accordings methods come from the idea that all content have a natural order, namely the order of a depth-first traversal, which is the same order in which the content of an XML document is stored in a text file. This order gives a meaning to method names such a `nextTouching`. Note that, other than for the iterations you get via `elements(_:)`, even nodes that stay in the same document can occur in such an iteration sevaral times if moved accordingly during the iteration.

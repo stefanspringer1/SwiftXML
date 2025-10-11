@@ -971,6 +971,25 @@ public final class XProcessingInstructionsOfSameTargetSequence: XProcessingInstr
     }
 }
 
+public final class XProcessingInstructionsOfSameTargetsSequence: XProcessingInstructionSequence {
+    
+    let document: XDocument
+    let targets: [String]
+    
+    public init(document: XDocument, targets: [String]) {
+        self.document = document
+        self.targets = targets
+    }
+    
+    public override func makeIterator() -> XProcessingInstructionIterator {
+        return XBidirectionalProcessingInstructionIterator(
+            processingInstructionIterator: XProcessingInstructionOfTargetsIterator(
+                forTargets: targets,
+                forDocument: document
+            )
+        )
+    }
+}
 
 public final class XAttributesOfSameValueSequence: XAttributeSequence {
     

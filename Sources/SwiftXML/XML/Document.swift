@@ -744,8 +744,16 @@ public final class XDocument: XNode, XBranchInternal {
         processingInstruction._document = nil
     }
     
-    public func processingInstructions(ofTarget target: String) -> XProcessingInstructionSequence {
-        return XProcessingInstructionsOfSameTargetSequence(document: self, target: target)
+    public func processingInstructions(_ target: String) -> XProcessingInstructionSequence {
+        XProcessingInstructionsOfSameTargetSequence(document: self, target: target)
+    }
+    
+    public func processingInstructions(_ targets: [String]) -> XProcessingInstructionSequence {
+        XProcessingInstructionsOfSameTargetsSequence(document: self, targets: targets)
+    }
+    
+    public func processingInstructions(_ targets: String...) -> XProcessingInstructionSequence {
+        processingInstructions(targets)
     }
     
     deinit {
