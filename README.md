@@ -790,7 +790,9 @@ if let element = document.registeredValues("1", forAttribute: "id").first?.eleme
 
 ## Direct access to processing instructions
 
-You can also efficiently access the processing instructions of specific targets directly via the `processingInstructions(_:)` method:
+Processing instructions provide additional information to the application processing an XML document. They are written as `<?target data?>`, where `target` and `data` are replaced with concrete values. The target should indicate the type of problem or the topic to which the processing instruction relates, or possibly the application that placed it, and the data should provide the details. Namespace prefixes cannot be used in targets (a target with a colon is not correct syntax when namespaces are enabled), but prefixes written as, for example, `<?myPrefix-myIssueType ...?>` can be useful. Processing instructions should be placed carefully: if they are placed in the middle of the text, this can disrupt the use of a text search at that point.
+
+`SwiftXML` provides efficient direct access to the processing instructions of specific targets via the `processingInstructions(_:)` method:
 
 ```swift
 let source = """
@@ -825,6 +827,12 @@ This has the same target.
 Hello world!
 This has the same target.
 This has another target.
+```
+
+If you want to delete all processing instructions of specific targets (e.g. before you start a process that sets exactly these processing instructions), you can do this with the following simple notation:
+
+```swift
+document.processingInstructions("MyTarget").remove()
 ```
 
 ## Finding related content

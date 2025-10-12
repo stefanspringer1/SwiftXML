@@ -864,4 +864,9 @@ final class FromReadmeTests: XCTestCase {
         )
     }
     
+    func testProcessingInstructionWithTargetPrefix() throws {
+        // check target with "prefix":
+        XCTAssertEqual((try parseXML(fromText: "<?prefix-type data?>").firstContent as? XProcessingInstruction)?.target, "prefix-type")
+    }
+    
 }
