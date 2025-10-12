@@ -222,7 +222,7 @@ The following features are important:
 
 - All iteration over content in the document using the according library functions are lazy by default, i.e. the iteration only looks at one item at a time and does not (!) collect all items in advance.
 - While lazily iterating over content in the document in this manner, the document tree can be changed without negatively affecting the iteration.
-- Elements of a certain name can be efficiently found without having to traverse the whole tree. An according iteration proceeds in the order by which the elements have been added to the document. When iterating in this manner, newly added elements are then also processed as part of the same iteration.
+- Elements and attributes of specific names and processing instructions of specific targets can be efficiently found without having to traverse the entire tree (for attributes, it is necessary to configure which attributes should be registered). An according iteration proceeds in the order by which the items have been added to the document. When iterating in this manner, newly added items are then also processed as part of the same iteration.
 
 The following code takes any `<item>` with an integer value of `multiply` larger than 1 and additionally inserts an item with a `multiply` number one less, while removing the `multiply` value on the existing item (the library will be explained in more detail in subsequent sections):
 
