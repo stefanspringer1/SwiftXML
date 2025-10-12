@@ -829,7 +829,7 @@ This has the same target.
 This has another target.
 ```
 
-If you want to delete all processing instructions of specific targets (e.g. before you start a process that sets exactly these processing instructions), you can do this with the following simple notation:
+If you want to delete all processing instructions of specific targets (e.g., before starting a process that sets exactly those processing instructions), you can do so using the following simple notation:
 
 ```swift
 document.processingInstructions("MyTarget").remove()
