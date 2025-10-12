@@ -277,6 +277,12 @@ Of course, since those iterations are regular sequences, all according Swift lib
 
 The user of the library can also provide sets of rules to be applied (see the code at the beginning and a full example in the section about rules). In such a rule, the user defines what to do with an element or attribute with a certain name. A set of rules can then be applied to a document, i.e. the rules are applied in the order of their definition. This is repeated, guaranteeing that a rule is only applied once to the same object (if not fully removed from the document and added again, see the section below on document membership), until no more application takes places. So elements can be added during application of a rule and then later be processed by the same or another rule.
 
+### The use of unnamed arguments
+
+All methods that iterate over elements or attributes with specific names, or processing instructions for specific targets, receive the names or targets via an unnamed argument. XML code can contain quite complex chains and conditions, and writing e.g. `children(ofName: "a")` instead of `children("a")` makes complex code less readable. Since something like `children("a")` is easy to understand, this shorter form has been used.
+
+Perhaps `document.processingInstructions(ofTarget: ")` could have been used, since this method is typically used outside of such complex chains or conditions. However, for the sake of consistency, the argument name has been omitted here as well; one simply writes, for example, `document.processingInstructions("a")`.
+
 ### Other properties
 
 The library uses the [SwiftXMLParser](https://github.com/stefanspringer1/SwiftXMLParser) to parse XML which implements the according protocol from [SwiftXMLInterfaces](https://github.com/stefanspringer1/SwiftXMLInterfaces).
