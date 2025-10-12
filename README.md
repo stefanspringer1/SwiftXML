@@ -832,7 +832,7 @@ This has another target.
 If you want to delete all processing instructions of specific targets (e.g., before starting a process that sets exactly those processing instructions), you can do so using the following simple notation:
 
 ```swift
-document.processingInstructions("MyTarget").remove()
+document.processingInstructions("MyTarget", "OtherTarget").remove()
 ```
 
 ## Finding related content
