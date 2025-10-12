@@ -169,7 +169,7 @@ The content of the file `output.xml` is then:
 
 For-in loops do not work on optionals e.g. optional chains in Swift. But when working with this XML libary being able to do so might be convenient at times. In order to be able to loop on optionals, include the very small `LoopsOnOptionals` package from https://github.com/stefanspringer1/LoopsOnOptionals.
 
-Suppose an element can have multiple `<metadata>` children, but for some reason only the first one is relevant, and you want to iterate over its `<item>` children, but it is also ok if there is no `<metadata>` at all:
+Suppose an element can have multiple `<metadata>` children, but for some reason only the first one is relevant, and you want to iterate over its `<item>` children, but it is also ok if there is no `<metadata>` at all. When using the `LoopsOnOptionals` package, you can just write:
 
 ```swift
 for metaDataItem in element.firstChild("metadata")?.children("item") {
