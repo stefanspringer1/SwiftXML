@@ -864,11 +864,17 @@ final class FromReadmeTests: XCTestCase {
         )
     }
     
-    func testProcessingInstruction() throws {
+    func testProcessingInstructions() throws {
         
         let processingInstruction = XProcessingInstruction(target: "test", data: "hello")
         XCTAssertEqual(processingInstruction.target, "test")
         XCTAssertEqual(processingInstruction.data, "hello")
+        XCTAssertEqual(processingInstruction.serialized, "<?test hello?>")
+        
+        // except the first space character, whitespace and quotes are included in the data:
+        XCTAssertEqual((try parseXML(fromText: "<?prefix-type    data ?>").firstContent as? XProcessingInstruction)?.data, "   data ")
+        XCTAssertEqual((try parseXML(fromText: #"<?prefix-type "data"?>"#).firstContent as? XProcessingInstruction)?.data, #""data""#)
+        XCTAssertEqual((try parseXML(fromText: "<?prefix-type 'data' ?>").firstContent as? XProcessingInstruction)?.data, "'data' ")
         
         // check target with "prefix":
         XCTAssertEqual((try parseXML(fromText: "<?prefix-type data?>").firstContent as? XProcessingInstruction)?.target, "prefix-type")

@@ -3128,7 +3128,7 @@ public final class XProcessingInstruction: XContent, CustomStringConvertible {
         }
     }
     
-    public init(target: String, data: String?) {
+    public init(target: String, data: String? = nil) {
         self._target = target
         self._data = data
     }
