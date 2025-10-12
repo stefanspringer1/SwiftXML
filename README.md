@@ -279,7 +279,7 @@ The user of the library can also provide sets of rules to be applied (see the co
 
 ### The use of unnamed arguments
 
-All methods that iterate over elements or attributes with specific names, or processing instructions for specific targets, receive the names or targets via an unnamed argument. Code for the processing of XML can contain quite complex chains and conditions, and writing e.g. `children(ofName: "a")` instead of `children("a")`, etc., makes complex code less readable. Since something like `children("a")` is easy to understand, this shorter form has been used.
+All methods that iterate over elements or attributes with specific names receive the names or targets via an unnamed argument. Code for the processing of XML can contain quite complex chains and conditions, and writing e.g. `children(ofName: "a")` instead of `children("a")`, etc., makes complex code less readable. Since something like `children("a")` is easy to understand, this shorter form has been used.
 
 The method `processingInstructions(ofTarget:)` is typically used outside of such complex chains or conditionals, so the trade-off here is to keep the argument name for this method, although this does break consistency a bit.
 
