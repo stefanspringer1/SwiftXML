@@ -279,9 +279,9 @@ The user of the library can also provide sets of rules to be applied (see the co
 
 ### The use of unnamed arguments
 
-All methods that iterate over elements or attributes with specific names, or processing instructions for specific targets, receive the names or targets via an unnamed argument. XML code can contain quite complex chains and conditions, and writing e.g. `children(ofName: "a")` instead of `children("a")` makes complex code less readable. Since something like `children("a")` is easy to understand, this shorter form has been used.
+All methods that iterate over elements or attributes with specific names, or processing instructions for specific targets, receive the names or targets via an unnamed argument. Code for the processing of XML can contain quite complex chains and conditions, and writing e.g. `children(ofName: "a")` instead of `children("a")`, etc., makes complex code less readable. Since something like `children("a")` is easy to understand, this shorter form has been used.
 
-Perhaps `document.processingInstructions(ofTarget: ")` could have been used, since this method is typically used outside of such complex chains or conditions. However, for the sake of consistency, the argument name has been omitted here as well; one simply writes, for example, `document.processingInstructions("a")`.
+The method `processingInstructions(ofTarget:)` is typically used outside of such complex chains or conditionals, so the trade-off here is to keep the argument name for this method, although this does break consistency a bit.
 
 ### Other properties
 
@@ -798,7 +798,7 @@ if let element = document.registeredValues("1", forAttribute: "id").first?.eleme
 
 Processing instructions provide additional information to the application processing an XML document. They are written as `<?target data?>` in the XML source, where `target` and `data` are replaced with concrete values, or created via `XProcessingInstruction(target: "...", data: "...")`. The data part is optional, and it includes all whitespace that is included in the serialization of the processing instruction except the first space character after the target. A processing instruction can be understood as an according command specified by the target and an argument specified by the data. Alternatively, the target could specify the application that placed it or is intended to work on it, or the type of problem or the topic to which the processing instruction relates, the data providing the details. Namespace prefixes cannot be used in targets (a target with a colon is not correct syntax when namespaces are enabled), but prefixes written as, for example, `<?myPrefix-myIssueType ...?>` can be useful. Processing instructions should be placed carefully: if they are placed in the middle of the text, this can disrupt the a text search at that point.
 
-`SwiftXML` provides efficient direct access to the processing instructions of specific targets via the `processingInstructions(_:)` method:
+`SwiftXML` provides efficient direct access to the processing instructions of specific targets via the `processingInstructions(ofTarget:)` method:
 
 ```swift
 let source = """
@@ -812,14 +812,14 @@ let source = """
 let document = try parseXML(fromText: source)
 
 print(
-    document.processingInstructions("MyTarget")
+    document.processingInstructions(ofTarget: "MyTarget")
         .map { $0.data ?? "" }.joined(separator: "\n")
 )
 
 print("----")
 
 print(
-    document.processingInstructions("MyTarget", "OtherTarget")
+    document.processingInstructions(ofTarget: "MyTarget", "OtherTarget")
         .map { $0.data ?? "" }.joined(separator: "\n"),
 )
 ```
@@ -838,7 +838,7 @@ This has another target.
 If you want to delete all processing instructions of specific targets (e.g., before starting a process that sets exactly those processing instructions), you can do so using the following simple notation:
 
 ```swift
-document.processingInstructions("MyTarget", "OtherTarget").remove()
+document.processingInstructions(ofTarget: "MyTarget", "OtherTarget").remove()
 ```
 
 ## Finding related content

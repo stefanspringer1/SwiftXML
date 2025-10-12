@@ -18,7 +18,7 @@ final class ProcessingInstructionIterationTests: XCTestCase {
         let document = try parseXML(fromText: source)
         
         XCTAssertEqual(
-            document.processingInstructions("MyTarget")
+            document.processingInstructions(ofTarget: "MyTarget")
                 .map { $0.data ?? "" }.joined(separator: "\n"),
             """
             Hello world!
@@ -27,7 +27,7 @@ final class ProcessingInstructionIterationTests: XCTestCase {
         )
         
         XCTAssertEqual(
-            document.processingInstructions("MyTarget", "OtherTarget")
+            document.processingInstructions(ofTarget: "MyTarget", "OtherTarget")
                 .map { $0.data ?? "" }.joined(separator: "\n"),
             """
             Hello world!
@@ -36,11 +36,11 @@ final class ProcessingInstructionIterationTests: XCTestCase {
             """
         )
         
-        let firstProcessingInstructionOfTarget = document.processingInstructions("MyTarget").first?.removed()
+        let firstProcessingInstructionOfTarget = document.processingInstructions(ofTarget: "MyTarget").first?.removed()
         XCTAssertTrue(firstProcessingInstructionOfTarget?.document == nil)
         
         XCTAssertEqual(
-            document.processingInstructions("MyTarget")
+            document.processingInstructions(ofTarget: "MyTarget")
                 .map { $0.data ?? "" }.joined(separator: "\n"),
             // The first processing instruction of the target is now missing:
             """
@@ -52,7 +52,7 @@ final class ProcessingInstructionIterationTests: XCTestCase {
             document.descendants("b").last
         }
         XCTAssertEqual(
-            document.processingInstructions("MyTarget")
+            document.processingInstructions(ofTarget: "MyTarget")
                 .map { $0.data ?? "" }.joined(separator: "\n"),
             // Now the 2nd processing instruction of the target is also gone from the first document:
             """
@@ -60,7 +60,7 @@ final class ProcessingInstructionIterationTests: XCTestCase {
         )
         
         XCTAssertEqual(
-            anotherDocument.processingInstructions("MyTarget")
+            anotherDocument.processingInstructions(ofTarget: "MyTarget")
                 .map { $0.data ?? "" }.joined(separator: "\n"),
             // ...it is now in the second document:
             """
@@ -73,7 +73,7 @@ final class ProcessingInstructionIterationTests: XCTestCase {
         }
         
         XCTAssertEqual(
-            anotherDocument.processingInstructions("MyTarget")
+            anotherDocument.processingInstructions(ofTarget: "MyTarget")
                 .map { $0.data ?? "" }.joined(separator: "\n"),
             // Now we also have the other processing instruction of the target in the other document:
             """
@@ -82,10 +82,10 @@ final class ProcessingInstructionIterationTests: XCTestCase {
             """
         )
         
-        anotherDocument.processingInstructions("MyTarget").remove()
+        anotherDocument.processingInstructions(ofTarget: "MyTarget").remove()
         
         XCTAssertEqual(
-            anotherDocument.processingInstructions("MyTarget")
+            anotherDocument.processingInstructions(ofTarget: "MyTarget")
                 .map { $0.data ?? "" }.joined(separator: "\n"),
             // All processing instructions of the target are now removed in the other document:
             """
