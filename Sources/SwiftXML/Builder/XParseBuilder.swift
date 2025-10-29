@@ -88,7 +88,7 @@ public final class XParseBuilder: XEventHandler {
         if let elementName = externalWrapperElement {
             var attributes = [String:String]()
             attributes["name"] = entityName
-            attributes["sytemID"] = systemID
+            attributes["systemID"] = systemID
             attributes["path"] = url?.path
             elementStart(
                 name: elementName,
