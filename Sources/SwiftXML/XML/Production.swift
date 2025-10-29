@@ -191,6 +191,7 @@ public class DefaultProductionTemplate: XProductionTemplate {
 open class ActiveDefaultProduction: XActiveProduction {
     
     private var writer: Writer
+    public var ignore: Bool = false
     
     public func write(_ text: String) throws {
         try writer.write(text)
@@ -304,6 +305,7 @@ open class ActiveDefaultProduction: XActiveProduction {
     }
     
     open func writeElementStartBeforeAttributes(element: XElement) throws {
+        guard !ignore else { return }
         if let prefix = element.prefix {
             if let prefixTranslations, let translatedPrefix = prefixTranslations[prefix] {
                 if translatedPrefix.isEmpty {
@@ -324,6 +326,7 @@ open class ActiveDefaultProduction: XActiveProduction {
     }
     
     open func writeAttributeValue(name: String, value: String, element: XElement) throws {
+        guard !ignore else { return }
         try write(
             (
                 escapeAll ? value.escapingAllForXML :
@@ -334,6 +337,7 @@ open class ActiveDefaultProduction: XActiveProduction {
     }
     
     open func writeAttribute(name: String, value: String, element: XElement) throws {
+        guard !ignore else { return }
         try write(" \(name)=\"")
         try writeAttributeValue(name: name, value: value, element: element)
         try write("\"")
@@ -344,6 +348,7 @@ open class ActiveDefaultProduction: XActiveProduction {
     }
     
     open func writeElementStartAfterAttributes(element: XElement) throws {
+        guard !ignore else { return }
         if element === startElement, let document = element.document, !document._prefixToNamespaceURI.isEmpty {
             for (prefix, uri) in document._prefixToNamespaceURI.sorted(by: < ) {
                 if let declarationSupressingNamespaceURIs, declarationSupressingNamespaceURIs.contains(uri) { continue }
@@ -373,6 +378,7 @@ open class ActiveDefaultProduction: XActiveProduction {
     }
     
     open func writeElementEnd(element: XElement) throws {
+        guard !ignore else { return }
         if !(element.isEmpty && writeAsEmptyTagIfEmpty(element: element)) {
             if let prefix = element.prefix {
                 if let prefixTranslations, let translatedPrefix = prefixTranslations[prefix] {
@@ -391,6 +397,7 @@ open class ActiveDefaultProduction: XActiveProduction {
     }
     
     open func writeText(text: XText) throws {
+        guard !ignore else { return }
         try write(
             escapeAll || escapeAllInText ? text.value.escapingAllForXML :
                 (escapeGreaterThan ? text.value.escapingForXML.replacingOccurrences(of: ">", with: "&gt;") : text.value.escapingForXML)
@@ -398,18 +405,22 @@ open class ActiveDefaultProduction: XActiveProduction {
     }
     
     open func writeLiteral(literal: XLiteral) throws {
+        guard !ignore else { return }
         try write(literal._value)
     }
     
     open func writeCDATASection(cdataSection: XCDATASection) throws {
+        guard !ignore else { return }
         try write("<![CDATA[\(cdataSection._value)]]>")
     }
     
     open func writeProcessingInstruction(processingInstruction: XProcessingInstruction) throws {
+        guard !ignore else { return }
         try write("<?\(processingInstruction._target)\(processingInstruction._data != nil ? " \(processingInstruction._data ?? "")" : "")?>")
     }
     
     open func writeComment(comment: XComment) throws {
+        guard !ignore else { return }
         try write("<!--\(comment._value.avoidingDoubleHyphens)-->")
     }
     
@@ -434,10 +445,12 @@ open class ActiveDefaultProduction: XActiveProduction {
     }
     
     open func writeInternalEntity(internalEntity: XInternalEntity) throws {
+        guard !ignore else { return }
         try write("&\(internalEntity._name);")
     }
     
     open func writeExternalEntity(externalEntity: XExternalEntity) throws {
+        guard !ignore else { return }
         try write("&\(externalEntity._name);")
     }
     
