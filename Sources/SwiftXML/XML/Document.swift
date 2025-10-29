@@ -818,12 +818,18 @@ public final class XDocument: XNode, XBranchInternal {
     }
     
     public init(
+        xmlVersion: String = "1.0",
+        encoding: String? = nil,
+        standalone: String? = nil,
         attached: [String:Any?]? = nil,
         registeringAttributes attributeRegisterMode: AttributeRegisterMode = .none,
         registeringValuesForAttributes AttributeRegisterMode: AttributeRegisterMode = .none,
         registeringAttributesWithPrefix attributeWithPrefixRegisterMode: AttributeWithPrefixRegisterMode = .none,
         registeringValuesForAttributesWithPrefix AttributeWithPrefixRegisterMode: AttributeWithPrefixRegisterMode = .none,
     ) {
+        self.xmlVersion = xmlVersion
+        self.encoding = encoding
+        self.standalone = standalone
         self._attributeRegisterMode = attributeRegisterMode
         self._attributeValueRegisterMode = AttributeRegisterMode
         self._attributeWithPrefixRegisterMode = attributeWithPrefixRegisterMode
