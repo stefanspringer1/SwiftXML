@@ -1544,7 +1544,7 @@ The first replacement is isolated to prevent the concatenation of texts at its b
 ---
 **NOTE**
 
-The `replacedBy` method is convenient at times, but as it actually first replaces something before inserting the replacement elsewhere, it is less efficient than doing this first replacement later e.g. in a following rule. A more complete set of rules might not need to use `replacedBy`.
+The `replacedBy` method is convenient at times, but as it actually first replaces something before inserting the replacement elsewhere, it is less efficient than doing this first replacement later e.g. in a following rule. With a more complete set of rules you might not see a need to use `replacedBy`.
 
 ---
 
