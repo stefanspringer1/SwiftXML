@@ -1524,7 +1524,7 @@ func replace(_ insertionMode: InsertionMode = .following, builder: () -> [XConte
 
 Note that the content that replaces a node is allowed to contain the node itself.
 
-Sometimes you might want to insert a node, but not really the node, but a replacement of it. The example at the top (which is used in the "Getting started" section) contains such an instance:
+Sometimes you might want to insert a node, but not really the node, but a replacement of it. The `replacedBy` methods first replaces the node before inserting the result somehere else. The example at the top (which is used in the "Getting started" section) contains such an instance:
 
 ```swift
 table.insertNext {
@@ -1537,21 +1537,16 @@ table.insertNext {
 }
 ```
 
-Here the following method ist used (which also exists for other type of content, and also for sequences of `XNode`, `XElement`, or `XText`):
+`replacedBy` also can be applied to sequences. It has to do a real first replacement in order to prevent nodes to leave the document in an unwanted way (note that the node where `replacedBy` is applied might iself be part of the replacement, so we cannot break with the usual replacement scheme).
 
-```swift
-func replacedBy(_ insertionMode: InsertionMode = .following, builder: (XElement) -> [XContent])
-```
+The first replacement is isolated to prevent the concatenation of texts at its borders, this isolation is removed when the result of `replacedBy` is inserted somewhere else as in the example above.
 
-What you would like to insert in the example is:
+---
+**NOTE**
 
-```swift
-table.firstChild("title")?.content
-```
+The `replacedBy` method is convenient at times, but as it actually first replaces something before inserting the replacement elsewhere, it is less efficient than doing this first replacement later e.g. in a following rule. A more complete set of rules might not need to use `replacedBy`.
 
-But then the `<title>` element remains (as empty element). What you actually want is to somehow insert the `<title>`, but then just as the text of it. You could do that by first getting the title, insert its content, and then removing the empty title, which is a little bit cumbersome. So the `replacedBy` method can be quite convenient. But only use is when its result is indeed to be inserted somewhere, else texts on its borders might not combine with other text at a later point.
-
-(`replacedBy` performs an actual, albeit isolated, replacement before returning the content: Even for the use cases where it is intended to be used, just removing the subject and returning the replacements would not be sufficient, because the subject could be part of the replacements, so such a temporary removal of the subject from the document could be problematic.)
+---
 
 Clear the contents of an element or a document respectively:
 
