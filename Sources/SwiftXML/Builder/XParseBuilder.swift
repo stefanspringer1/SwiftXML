@@ -82,39 +82,40 @@ public final class XParseBuilder: XEventHandler {
         document._attributeValueRegisterMode = registeringAttributeValuesFor
     }
     
-    public func documentStart() {}
+    public func documentStart() -> Bool { true }
     
-    public func enterExternalDataSource(data: Data, entityName: String?, systemID: String, url: URL?, textRange _: XTextRange?, dataRange _: XDataRange?) {
+    public func enterExternalDataSource(data: Data, entityName: String?, systemID: String, url: URL?, textRange _: XTextRange?, dataRange _: XDataRange?) -> Bool {
         if let elementName = externalWrapperElement {
             var attributes = [String:String]()
             attributes["name"] = entityName
             attributes["systemID"] = systemID
             attributes["path"] = url?.path
-            elementStart(
+            _ = elementStart(
                 name: elementName,
                 attributes: &attributes,
                 textRange: nil,
                 dataRange: nil
             )
         }
+        return true
     }
     
-    public func leaveExternalDataSource() {
+    public func leaveExternalDataSource() -> Bool {
         if let elementName = externalWrapperElement {
-            elementEnd(name: elementName, textRange: nil, dataRange: nil)
+            _ = elementEnd(name: elementName, textRange: nil, dataRange: nil)
         }
+        return true
     }
     
-    public func enterInternalDataSource(data: Data, entityName: String, textRange: XTextRange?, dataRange: XDataRange?) {
-        // -
+    public func enterInternalDataSource(data: Data, entityName: String, textRange: XTextRange?, dataRange: XDataRange?) -> Bool {
+        return true
     }
     
-    public func leaveInternalDataSource() {
-        // -
+    public func leaveInternalDataSource() -> Bool {
+        return true
     }
     
-    
-    public func xmlDeclaration(version: String, encoding: String?, standalone: String?, textRange _: XTextRange?, dataRange _: XDataRange?) {
+    public func xmlDeclaration(version: String, encoding: String?, standalone: String?, textRange _: XTextRange?, dataRange _: XDataRange?) -> Bool {
         document.xmlVersion = version
         if let theEncoding = encoding {
             document.encoding = theEncoding
@@ -122,19 +123,21 @@ public final class XParseBuilder: XEventHandler {
         if let theStandalone = standalone {
             document.standalone = theStandalone
         }
+        return true
     }
     
-    public func documentTypeDeclarationStart(type: String, publicID: String?, systemID: String?, textRange _: XTextRange?, dataRange _: XDataRange?) {
+    public func documentTypeDeclarationStart(type: String, publicID: String?, systemID: String?, textRange _: XTextRange?, dataRange _: XDataRange?) -> Bool {
         document.type = type
         document.publicID = publicID
         document.systemID = systemID
+        return true
     }
     
-    public func documentTypeDeclarationEnd(textRange _: XTextRange?, dataRange _: XDataRange?) {
-        // -
+    public func documentTypeDeclarationEnd(textRange _: XTextRange?, dataRange _: XDataRange?) -> Bool {
+        return true
     }
     
-    public func elementStart(name: String, attributes: inout [String:String], textRange: XTextRange?, dataRange _: XDataRange?) {
+    public func elementStart(name: String, attributes: inout [String:String], textRange: XTextRange?, dataRange _: XDataRange?) -> Bool {
         
         let element = XElement(name)
         
@@ -321,9 +324,11 @@ public final class XParseBuilder: XEventHandler {
         
         currentBranch = element
         element._sourceRange = textRange
+        
+        return true
     }
     
-    public func elementEnd(name: String, textRange: XTextRange?, dataRange _: XDataRange?) {
+    public func elementEnd(name: String, textRange: XTextRange?, dataRange _: XDataRange?) -> Bool {
         
         if namespaceAware, let element = currentBranch as? XElement, let namespaceDefinitionCount = element.attached["nsCount"] as? Int {
             namespaceURIAndPrefixDuringBuild.removeLast(namespaceDefinitionCount)
@@ -348,89 +353,104 @@ public final class XParseBuilder: XEventHandler {
         else {
             currentBranch = document
         }
+        
+        return true
     }
     
-    public func text(text: String, whitespace: WhitespaceIndicator, textRange: XTextRange?, dataRange _: XDataRange?) {
+    public func text(text: String, whitespace: WhitespaceIndicator, textRange: XTextRange?, dataRange _: XDataRange?) -> Bool {
         let node = XText(text, whitespace: whitespace)
         node._sourceRange = textRange
         currentBranch._add(node)
+        return true
     }
     
-    public func cdataSection(text: String, textRange: XTextRange?, dataRange _: XDataRange?) {
+    public func cdataSection(text: String, textRange: XTextRange?, dataRange _: XDataRange?) -> Bool {
         let node = keepCDATASections ? XCDATASection(text): XText(text)
         node._sourceRange = textRange
         currentBranch._add(node)
+        return true
     }
     
-    public func internalEntity(name: String, textRange: XTextRange?, dataRange _: XDataRange?) {
+    public func internalEntity(name: String, textRange: XTextRange?, dataRange _: XDataRange?) -> Bool {
         let node = XInternalEntity(name)
         node._sourceRange = textRange
         currentBranch._add(node)
+        return true
     }
     
-    public func externalEntity(name: String, textRange: XTextRange?, dataRange _: XDataRange?) {
+    public func externalEntity(name: String, textRange: XTextRange?, dataRange _: XDataRange?) -> Bool {
         let node = XExternalEntity(name)
         node._sourceRange = textRange
         currentBranch._add(node)
+        return true
     }
     
-    public func processingInstruction(target: String, data: String?, textRange: XTextRange?, dataRange _: XDataRange?) {
+    public func processingInstruction(target: String, data: String?, textRange: XTextRange?, dataRange _: XDataRange?) -> Bool {
         let node = XProcessingInstruction(target: target, data: data)
         node._sourceRange = textRange
         currentBranch._add(node)
+        return true
     }
     
-    public func comment(text: String, textRange: XTextRange?, dataRange _: XDataRange?) {
+    public func comment(text: String, textRange: XTextRange?, dataRange _: XDataRange?) -> Bool {
         if keepComments {
             let node = XComment(text, withAdditionalSpace: false)
             node._sourceRange = textRange
             currentBranch._add(node)
         }
+        return true
     }
     
-    public func internalEntityDeclaration(name: String, value: String, textRange: XTextRange?, dataRange _: XDataRange?) {
+    public func internalEntityDeclaration(name: String, value: String, textRange: XTextRange?, dataRange _: XDataRange?) -> Bool {
         let decl = XInternalEntityDeclaration(name: name, value: value)
         decl._sourceRange = textRange
         document.internalEntityDeclarations[name] = decl
+        return true
     }
     
-    public func externalEntityDeclaration(name: String, publicID: String?, systemID: String, textRange: XTextRange?, dataRange _: XDataRange?) {
+    public func externalEntityDeclaration(name: String, publicID: String?, systemID: String, textRange: XTextRange?, dataRange _: XDataRange?) -> Bool {
         let decl = XExternalEntityDeclaration(name: name, publicID: publicID, systemID: systemID)
         decl._sourceRange = textRange
         document.externalEntityDeclarations[name] = decl
+        return true
     }
     
-    public func unparsedEntityDeclaration(name: String, publicID: String?, systemID: String, notation: String, textRange: XTextRange?, dataRange _: XDataRange?) {
+    public func unparsedEntityDeclaration(name: String, publicID: String?, systemID: String, notation: String, textRange: XTextRange?, dataRange _: XDataRange?) -> Bool {
         let decl = XUnparsedEntityDeclaration(name: name, publicID: publicID, systemID: systemID, notationName: notation)
         decl._sourceRange = textRange
         document.unparsedEntityDeclarations[name] = decl
+        return true
     }
     
-    public func notationDeclaration(name: String, publicID: String?, systemID: String?, textRange: XTextRange?, dataRange _: XDataRange?) {
+    public func notationDeclaration(name: String, publicID: String?, systemID: String?, textRange: XTextRange?, dataRange _: XDataRange?) -> Bool {
         let decl = XNotationDeclaration(name: name, publicID: publicID, systemID: systemID)
         decl._sourceRange = textRange
         document.notationDeclarations[name] = decl
+        return true
     }
     
-    public func elementDeclaration(name: String, literal: String, textRange: XTextRange?, dataRange _: XDataRange?) {
+    public func elementDeclaration(name: String, literal: String, textRange: XTextRange?, dataRange _: XDataRange?) -> Bool {
         let decl = XElementDeclaration(name: name, literal: literal)
         decl._sourceRange = textRange
         document.elementDeclarations[name] = decl
+        return true
     }
     
-    public func attributeListDeclaration(name: String, literal: String, textRange: XTextRange?, dataRange _: XDataRange?) {
+    public func attributeListDeclaration(name: String, literal: String, textRange: XTextRange?, dataRange _: XDataRange?) -> Bool {
         let decl = XAttributeListDeclaration(name: name, literal: literal)
         decl._sourceRange = textRange
         document.attributeListDeclarations[name] = decl
+        return true
     }
     
-    public func parameterEntityDeclaration(name: String, value: String, textRange: XTextRange?, dataRange _: XDataRange?) {
+    public func parameterEntityDeclaration(name: String, value: String, textRange: XTextRange?, dataRange _: XDataRange?) -> Bool {
         let decl = XParameterEntityDeclaration(name: name, value: value)
         decl._sourceRange = textRange
         document.parameterEntityDeclarations[name] = decl
+        return true
     }
     
-    public func documentEnd() {
+    public func documentEnd() -> Bool {
         
         document._attributeWithPrefixRegisterMode =
             switch registeringAttributesForNamespaces {
@@ -479,6 +499,8 @@ public final class XParseBuilder: XEventHandler {
                 }
             }
         }
+        
+        return true
     }
     
 }
