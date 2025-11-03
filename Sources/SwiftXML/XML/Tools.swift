@@ -158,7 +158,7 @@ public struct XDocumentProperties {
 public extension XDocumentSource {
     
     /// Get the document properties from the document source without parsing it any further.
-    /// The root property will be an empty representation of root element.
+    /// The root property will be an empty representation of the root element.
     /// Note that no namespace is being resolved.
     func readDocumentProperties() throws -> XDocumentProperties {
         
