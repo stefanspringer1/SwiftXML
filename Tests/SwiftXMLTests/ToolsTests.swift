@@ -11,7 +11,8 @@
 import XCTest
 import class Foundation.Bundle
 import AutoreleasepoolShim
-@testable import SwiftXML
+import SwiftXMLInterfaces
+import SwiftXML
 
 final class ToolsTests: XCTestCase {
     
@@ -383,6 +384,29 @@ final class ToolsTests: XCTestCase {
             <div><object data="tables/1.html" type="txt/html"><object data="tables/tablePlaceHolder.png" type="image/png">Picture missing. No alternative text available.</object></object></div>
             """
         )
+    }
+    
+    func testGettingPublicIDAndRoot() throws {
+        
+        let source = """
+            <?xml version="1.0" encoding="us-ascii" standalone="no"?>
+            <!DOCTYPE theName PUBLIC "the public identifier" "the system identifier">
+            <book id="1">
+                <title>My Book Title</title>
+            </book>
+            """
+        
+        let documentProperties = try XDocumentSource.text(source).readDocumentProperties()
+        
+        XCTAssertEqual(documentProperties.xmlVersion, "1.0")
+        XCTAssertEqual(documentProperties.encoding, "us-ascii")
+        XCTAssertEqual(documentProperties.standalone, "no")
+        XCTAssertEqual(documentProperties.name, "theName")
+        XCTAssertEqual(documentProperties.publicID, "the public identifier")
+        XCTAssertEqual(documentProperties.systemID, "the system identifier")
+        XCTAssertEqual(documentProperties.root?.serialized, """
+            <book id="1"/>
+            """)
     }
     
 }

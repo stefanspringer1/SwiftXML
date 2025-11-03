@@ -126,8 +126,8 @@ public final class XParseBuilder: XEventHandler {
         return true
     }
     
-    public func documentTypeDeclarationStart(type: String, publicID: String?, systemID: String?, textRange _: XTextRange?, dataRange _: XDataRange?) -> Bool {
-        document.type = type
+    public func documentTypeDeclarationStart(name: String, publicID: String?, systemID: String?, textRange _: XTextRange?, dataRange _: XDataRange?) -> Bool {
+        document.name = name
         document.publicID = publicID
         document.systemID = systemID
         return true

@@ -2355,6 +2355,15 @@ Result:
 
 ## Tools
 
+### Reading the document properties with full parsing
+
+You can read the document properties (including an empty representation of root element) without parsing the while document as in the follwoing example:
+
+```swift
+let documentProperties = try XDocumentSource.url(myURL).readDocumentProperties()
+```
+This is very useful if you need basic information about the kind of document before the actual parsing process, in order to configure the parsing accordingly.
+
 ### `copyXStructure`
 
 ```swift

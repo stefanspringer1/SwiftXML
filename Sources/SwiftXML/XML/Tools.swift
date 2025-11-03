@@ -9,6 +9,8 @@
 //===----------------------------------------------------------------------===//
 
 import Foundation
+import SwiftXMLInterfaces
+import SwiftXMLParser
 
 /// Info that a correction in the call to `copyXStructure` has to use.
 public struct StructureCopyInfo {
@@ -119,5 +121,90 @@ public func copyXStructure(from start: XContent, to end: XContent, upTo: XElemen
         return correction(StructureCopyInfo(structure: result, start: start, cloneForStart: startClone, end: end, cloneForEnd: endClone))
     } else {
         return result
+    }
+}
+
+public struct XDocumentProperties {
+    
+    // -----------------------------
+    // from the XML declaration:
+    // -----------------------------
+    
+    /// The XML version text.
+    public let xmlVersion: String?
+    
+    /// The XML version text.
+    public let encoding: String?
+    public let standalone: String?
+    
+    // -----------------------------
+    // from the doctype declaration:
+    // -----------------------------
+    
+    /// The document name.
+    public let name: String?
+    public var publicID: String?
+    public var systemID: String?
+    
+    // -----------------------------
+    // the root element:
+    // -----------------------------
+    
+    /// The root element.
+    public let root: XElement?
+    
+}
+
+public extension XDocumentSource {
+    
+    /// Get the document properties from the document source with parsing it any further.
+    /// The root property will be an empty representation of root element.
+    /// Note that no namespace is being resolved.
+    func readDocumentProperties() throws -> XDocumentProperties {
+        
+        class PublicIDAndRootReader: XDefaultEventHandler {
+            
+            var xmlVersion: String? = nil
+            var encoding: String? = nil
+            var standalone: String? = nil
+            var name: String? = nil
+            var publicID: String? = nil
+            var systemID: String? = nil
+            var root: XElement? = nil
+            
+            override func xmlDeclaration(version: String, encoding: String?, standalone: String?, textRange: XTextRange?, dataRange: XDataRange?) -> Bool {
+                self.xmlVersion = version
+                self.encoding = encoding
+                self.standalone = standalone
+                return true
+            }
+            
+            override func documentTypeDeclarationStart(name: String, publicID: String?, systemID: String?, textRange: XTextRange?, dataRange: XDataRange?) -> Bool {
+                self.name = name
+                self.publicID = publicID
+                self.systemID = systemID
+                return true
+            }
+            
+            override func elementStart(name: String, attributes: inout [String : String], textRange: XTextRange?, dataRange: XDataRange?) -> Bool {
+                root = XElement(name, attributes)
+                return false
+            }
+            
+        }
+        
+        let eventHandler = PublicIDAndRootReader()
+        
+        try XParser().parse(fromData: self.getData(), eventHandlers: [eventHandler])
+        
+        return XDocumentProperties(
+            xmlVersion: eventHandler.xmlVersion,
+            encoding: eventHandler.encoding,
+            standalone: eventHandler.standalone,
+            name: eventHandler.name,
+            publicID: eventHandler.publicID,
+            systemID: eventHandler.systemID,
+            root: eventHandler.root
+        )
     }
 }

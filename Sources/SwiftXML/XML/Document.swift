@@ -188,9 +188,26 @@ public final class XDocument: XNode, XBranchInternal {
     public var encoding: String? = nil
     public var standalone: String? = nil
     
-    var type: String? = nil
+    public var name: String? = nil
     public var publicID: String? = nil
     public var systemID: String? = nil
+    
+    public var root: XElement? { firstChild }
+    
+    /// Get the document properties from the document.
+    /// The root will be a shallow clone of the current root element.
+    /// Note that namespaces might have been resolved.
+    public var documentProperties: XDocumentProperties {
+        XDocumentProperties(
+            xmlVersion: xmlVersion,
+            encoding: encoding,
+            standalone: standalone,
+            name: name,
+            publicID: publicID,
+            systemID: systemID,
+            root: root?.shallowClone
+        )
+    }
     
     // ------------------------------------------------------------------------
     // repeat methods from XBranchInternal:
@@ -273,7 +290,7 @@ public final class XDocument: XNode, XBranchInternal {
         theClone.xmlVersion = xmlVersion
         theClone.encoding = encoding
         theClone.standalone = standalone
-        theClone.type = type
+        theClone.name = name
         theClone.publicID = publicID
         theClone.systemID = systemID
         theClone._sourcePath = _sourcePath
