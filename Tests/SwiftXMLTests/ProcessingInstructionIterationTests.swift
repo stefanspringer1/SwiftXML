@@ -15,7 +15,13 @@ final class ProcessingInstructionIterationTests: XCTestCase {
             </a>
             """
         
+        print(">>>>>>>>>>>>>>>>>>>>>>")
         let document = try parseXML(fromText: source)
+        
+        document.descendants("b").first?.add {
+            XProcessingInstruction(target: "MyTarget", data: "PI added later with same target.")
+        }
+        print("<<<<<<<<<<<<<<<<<<<<<<")
         
         XCTAssertEqual(
             document.processingInstructions(ofTarget: "MyTarget")
@@ -23,6 +29,7 @@ final class ProcessingInstructionIterationTests: XCTestCase {
             """
             Hello world!
             This has the same target.
+            PI added later with same target.
             """
         )
         
@@ -32,6 +39,7 @@ final class ProcessingInstructionIterationTests: XCTestCase {
             """
             Hello world!
             This has the same target.
+            PI added later with same target.
             This has another target.
             """
         )
@@ -45,6 +53,7 @@ final class ProcessingInstructionIterationTests: XCTestCase {
             // The first processing instruction of the target is now missing:
             """
             This has the same target.
+            PI added later with same target.
             """
         )
         
@@ -56,6 +65,7 @@ final class ProcessingInstructionIterationTests: XCTestCase {
                 .map { $0.data ?? "" }.joined(separator: "\n"),
             // Now the 2nd processing instruction of the target is also gone from the first document:
             """
+            PI added later with same target.
             """
         )
         

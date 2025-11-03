@@ -734,7 +734,7 @@ public final class XDocument: XNode, XBranchInternal {
     
     func register(processingInstruction: XProcessingInstruction) {
         let target = processingInstruction.target
-        if let theLast = _processingInstructionsOfTarget_first[target] {
+        if let theLast = _processingInstructionsOfTarget_last[target] {
             theLast.nextWithSameTarget = processingInstruction
             processingInstruction.previousWithSameTarget = theLast
         }
