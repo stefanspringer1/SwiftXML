@@ -2151,6 +2151,14 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
         _prefix == prefix && _name == name
     }
     
+    public func has(prefix: String?, name names: [String]) -> Bool {
+        _prefix == prefix && names.contains(_name)
+    }
+    
+    public func has(prefix: String?, name names: String...) -> Bool {
+        has(prefix: prefix, name: names)
+    }
+    
     public func hasEqualValues(as other: XElement) -> Bool {
         return self.name == other.name
         && self._attributes.keys.allSatisfy { self[$0] == other[$0] }
