@@ -3,7 +3,7 @@
 ---
 **NOTE**
 
-This library will soon be moved to a new location (and with a new version number). An update will be posted here.
+This library will soon be moved to a new location (and with a reset version number). An update will be posted here.
 
 ---
 
