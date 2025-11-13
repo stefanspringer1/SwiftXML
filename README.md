@@ -2357,7 +2357,7 @@ Result:
 
 ## Tools
 
-### Reading the document properties with full parsing
+### Reading the document properties without full parsing
 
 You can read the document properties (including an empty representation of the root element) without parsing the whole document as in the following example (you need to import `SwiftXMLInterfaces` in order to use `XDocumentSource`):
 
