@@ -11,6 +11,8 @@ A library written in Swift to process XML.
 
 This library is published under the Apache License v2.0 with Runtime Library Exception.
 
+Project lead: [struktaris](https://struktaris.de).
+
 ```swift
 let transformation = XTransformation {
 
