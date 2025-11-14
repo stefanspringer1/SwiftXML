@@ -313,8 +313,8 @@ The following functions take a source and return an XML document instance (`XDoc
 Reading from a URL which references a local file:
 
 ```swift
-func parseXML(
-    fromURL url: URL,
+public func parseXML(
+    from documentSource: XDocumentSource,
     namespaceAware: Bool = false,
     silentEmptyRootPrefix: Bool = false,
     registeringAttributes: AttributeRegisterMode = .none,
@@ -322,7 +322,7 @@ func parseXML(
     registeringAttributesForNamespaces: AttributeWithNamespaceURIRegisterMode = .none,
     registeringAttributeValuesForForNamespaces: AttributeWithNamespaceURIRegisterMode = .none,
     sourceInfo: String? = nil,
-    textAllowedInElementWithName: ((String) -> Bool)? = nil,
+    textAllowedInElementWithName: [String]? = nil,
     internalEntityAutoResolve: Bool = false,
     internalEntityResolver: InternalEntityResolver? = nil,
     internalEntityResolverHasToResolve: Bool = true,
@@ -334,7 +334,7 @@ func parseXML(
     keepCDATASections: Bool = false,
     eventHandlers: [XEventHandler]? = nil,
     immediateTextHandlingNearEntities: ImmediateTextHandlingNearEntities = .atExternalEntities
-) throws -> XDocument 
+) throws -> XDocument
 ```
 
 And accordingly:
@@ -369,7 +369,7 @@ func parseXML(
 ) throws -> XDocument
 ```
 
-The optional `textAllowedInElementWithName` method gets the name of the surrounding element when text is found inside an element and should notify whether text is allowed in the specific context. If not, the text is discarded is it is whitespace. If no text is allowed in the context but the text is not whitespace, an error is thrown. If you need a more specific context than the element name to decide if text is allowed, use an `XEventHandler` to track more specific context information.
+The optional `textAllowedInElementWithName` can specify which element allow text content, so insignificant space can easily get removed during parsing as long as no validation method is available, and this list can also be used for pretty-printing XML. If no text is allowed in the context but the text is not whitespace, an error is thrown.
 
 All internal entity references in attribute values have to be replaced by text during parsing. In order to achieve this (in case that internal entity references occur at all in attribute values in the source), an `InternalEntityResolver` can be provided. An `InternalEntityResolver` has to implement the following method:
 
