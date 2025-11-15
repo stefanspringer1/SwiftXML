@@ -9,7 +9,6 @@
 //===----------------------------------------------------------------------===//
 
 import Foundation
-import AutoreleasepoolShim
 
 public struct SwiftXMLError: LocalizedError, CustomStringConvertible {
 
