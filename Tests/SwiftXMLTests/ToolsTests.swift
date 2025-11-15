@@ -65,10 +65,10 @@ final class ToolsTests: XCTestCase {
         let start = document.descendants("sec").first?.children("p").first?.descendants("p").first?.allTexts.first
         let end = start
         
-        XCTAssertEqual(start?.serialized().replacing(regex: #"\s+"#, with: " ").trimming(), #"""
+        XCTAssertEqual(start?.serialized().replacing(/\s+/, with: " ").trimming(), #"""
             Das ist zu tun.
             """#)
-        XCTAssertEqual(end?.serialized().replacing(regex: #"\s+"#, with: " ").trimming(), #"""
+        XCTAssertEqual(end?.serialized().replacing(/\s+/, with: " ").trimming(), #"""
             Das ist zu tun.
             """#)
         
@@ -122,10 +122,10 @@ final class ToolsTests: XCTestCase {
         let start = document.allTexts.first
         let end = document.allTexts.dropFirst(4).first
         
-        XCTAssertEqual(start?.serialized().replacing(regex: #"\s+"#, with: " ").trimming(), #"""
+        XCTAssertEqual(start?.serialized().replacing(/\s+/, with: " ").trimming(), #"""
             In
             """#)
-        XCTAssertEqual(end?.serialized().replacing(regex: #"\s+"#, with: " ").trimming(), #"""
+        XCTAssertEqual(end?.serialized().replacing(/\s+/, with: " ").trimming(), #"""
             muss man schauen.
             """#)
         
@@ -146,10 +146,10 @@ final class ToolsTests: XCTestCase {
         let start = document.firstChild?.children.first?.allTexts.first
         let end = document.firstChild?.children.dropFirst().first?.allTexts.dropFirst(2).first
         
-        XCTAssertEqual(start?.serialized().replacing(regex: #"\s+"#, with: " ").trimming(), #"""
+        XCTAssertEqual(start?.serialized().replacing(/\s+/, with: " ").trimming(), #"""
             Ja,
             """#)
-        XCTAssertEqual(end?.serialized().replacing(regex: #"\s+"#, with: " ").trimming(), #"""
+        XCTAssertEqual(end?.serialized().replacing(/\s+/, with: " ").trimming(), #"""
             , echt.
             """#)
         
@@ -428,17 +428,6 @@ public struct ErrorWithDescription: LocalizedError, CustomStringConvertible {
 }
 
 extension String {
-    
-    /// Replace all text matching a certain certain regular expression.
-    ///
-    /// Use lookarounds (e.g. lookaheads) to avoid having to apply your regular expression several times.
-    func replacing(regex: String, with theReplacement: String) -> String {
-        var result = self
-        autoreleasepool {
-            result = self.replacingOccurrences(of: regex, with: theReplacement, options: .regularExpression, range: nil)
-        }
-        return result
-    }
     
     /// Trimming all whitespace.
     func trimming() -> String {

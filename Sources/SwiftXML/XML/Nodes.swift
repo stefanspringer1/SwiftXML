@@ -2677,7 +2677,7 @@ public final class XText: XContent, XTextualContentRepresentation, ToBePeparedFo
     
     public var isWhitespace: Bool {
         if _whitespace == .UNKNOWN {
-            if _value.contains(regex: #"^\s+$"#) {
+            if _value.contains(/^\s+$/) {
                 _whitespace = .WHITESPACE
             }
             else {
