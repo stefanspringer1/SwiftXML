@@ -8,7 +8,11 @@
 //
 //===----------------------------------------------------------------------===//
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /**
  The XNodeIteratorProtocol implements one more features over the IteratorProtocol,

@@ -214,7 +214,7 @@ final class FromReadmeTests: XCTestCase {
         for element in document.descendants.descendants {
             output += element.serialized(pretty: true)
         }
-        output = output.replacingOccurrences(of: " ", with: "").replacingOccurrences(of: "\n", with: "")
+        output = output.replacing(" ", with: "").replacing("\n", with: "")
         XCTAssertEqual(output, "<b><c><d/></c></b><c><d/></c><d/><c><d/></c><d/><d/>")
     }
     

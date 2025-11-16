@@ -8,7 +8,11 @@
 //
 //===----------------------------------------------------------------------===//
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 func getPrefixTranslations(fromPrefixesForNamespaceURIs prefixesForNamespaceURIs: [String:String]?, forNode node: XNode) -> [String:String]? {
     if let prefixesForNamespaceURIs, let document = node.document {

@@ -8,7 +8,12 @@
 //
 //===----------------------------------------------------------------------===//
 
+// !!! currently FoundationEssentials does not have Filehandle !!!
+//#if canImport(FoundationEssentials)
+//import FoundationEssentials
+//#else
 import Foundation
+//#endif
 
 public let X_DEFAULT_INDENTATION = "    "
 public let X_DEFAULT_LINEBREAK = "\n"
@@ -330,9 +335,9 @@ open class ActiveDefaultProduction: XActiveProduction {
         try write(
             (
                 escapeAll ? value.escapingAllForXML :
-                (escapeGreaterThan ? value.escapingDoubleQuotedValueForXML.replacingOccurrences(of: ">", with: "&gt;") : value.escapingDoubleQuotedValueForXML)
+                (escapeGreaterThan ? value.escapingDoubleQuotedValueForXML.replacing(">", with: "&gt;") : value.escapingDoubleQuotedValueForXML)
             )
-                .replacingOccurrences(of: "\n", with: "&#x0A;").replacingOccurrences(of: "\r", with: "&#x0D;")
+                .replacing("\n", with: "&#x0A;").replacing("\r", with: "&#x0D;")
         )
     }
     
@@ -400,7 +405,7 @@ open class ActiveDefaultProduction: XActiveProduction {
         guard !ignore else { return }
         try write(
             escapeAll || escapeAllInText ? text.value.escapingAllForXML :
-                (escapeGreaterThan ? text.value.escapingForXML.replacingOccurrences(of: ">", with: "&gt;") : text.value.escapingForXML)
+                (escapeGreaterThan ? text.value.escapingForXML.replacing(">", with: "&gt;") : text.value.escapingForXML)
         )
     }
     
@@ -835,7 +840,7 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
     open override func writeText(text: XText) throws {
         var result = (escapeAll || escapeAllInText) ? text._value.escapingAllForXML : text._value.escapingForXML
         if escapeGreaterThan {
-            result = result.replacingOccurrences(of: ">", with: "&gt;")
+            result = result.replacing(">", with: "&gt;")
         }
         if writeAsASCII {
             result = result.asciiWithXMLCharacterReferences
@@ -846,9 +851,9 @@ open class ActiveHTMLProduction: ActivePrettyPrintProduction {
     open override func writeAttributeValue(name: String, value: String, element: XElement) throws {
         var result = (
                 escapeAll ? value.escapingAllForXML :
-                (escapeGreaterThan ? value.escapingDoubleQuotedValueForXML.replacingOccurrences(of: ">", with: "&gt;") : value.escapingDoubleQuotedValueForXML)
+                (escapeGreaterThan ? value.escapingDoubleQuotedValueForXML.replacing(">", with: "&gt;") : value.escapingDoubleQuotedValueForXML)
             )
-                .replacingOccurrences(of: "\n", with: "&#x0A;").replacingOccurrences(of: "\r", with: "&#x0D;")
+                .replacing("\n", with: "&#x0A;").replacing("\r", with: "&#x0D;")
         if writeAsASCII {
             result = result.asciiWithXMLCharacterReferences
         }
@@ -865,10 +870,19 @@ fileprivate extension String {
             if scalar.value < 127 {
                 texts.append(String(scalar))
             } else {
-                texts.append("&#x\(String(format: "%04x", scalar.value));")
+                texts.append("&#x\( String(scalar.value, radix: 16, uppercase: true).prepending("0", until: 4));")
             }
         }
         return texts.joined()
+    }
+
+    func prepending(_ s: Character, until length: Int) -> String {
+        let missing = length - self.count
+        if missing > 0 {
+            return self + String(repeating: s, count: missing)
+        } else {
+            return self
+        }
     }
     
 }

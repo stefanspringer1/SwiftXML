@@ -8,7 +8,11 @@
 //
 //===----------------------------------------------------------------------===//
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 public struct SwiftXMLError: LocalizedError, CustomStringConvertible {
 
@@ -27,31 +31,31 @@ public extension String {
     
     var escapingAllForXML: String {
         self
-            .replacingOccurrences(of: "&", with: "&amp;")
-            .replacingOccurrences(of: "<", with: "&lt;")
-            .replacingOccurrences(of: ">", with: "&gt;")
-            .replacingOccurrences(of: "\"", with: "&quot;")
-            .replacingOccurrences(of: "'", with: "&apos;")
+            .replacing("&", with: "&amp;")
+            .replacing("<", with: "&lt;")
+            .replacing(">", with: "&gt;")
+            .replacing("\"", with: "&quot;")
+            .replacing("'", with: "&apos;")
     }
     
     var escapingForXML: String {
         self
-            .replacingOccurrences(of: "&", with: "&amp;")
-            .replacingOccurrences(of: "<", with: "&lt;")
+            .replacing("&", with: "&amp;")
+            .replacing("<", with: "&lt;")
     }
     
     var escapingDoubleQuotedValueForXML: String {
         self
-            .replacingOccurrences(of: "&", with: "&amp;")
-            .replacingOccurrences(of: "<", with: "&lt;")
-            .replacingOccurrences(of: "\"", with: "&quot;")
+            .replacing("&", with: "&amp;")
+            .replacing("<", with: "&lt;")
+            .replacing("\"", with: "&quot;")
     }
     
     var escapingSimpleQuotedValueForXML: String {
         self
-            .replacingOccurrences(of: "&", with: "&amp;")
-            .replacingOccurrences(of: "<", with: "&lt;")
-            .replacingOccurrences(of: "'", with: "&apos;")
+            .replacing("&", with: "&amp;")
+            .replacing("<", with: "&lt;")
+            .replacing("'", with: "&apos;")
     }
     
 }
@@ -220,19 +224,19 @@ public struct SimplePropertiesParseError: LocalizedError {
 
 func escapeInSimplePropertiesList(_ text: String) -> String {
     return text
-        .replacingOccurrences(of: "\\", with: "\\\\")
-        .replacingOccurrences(of: "=", with: "\\=")
-        .replacingOccurrences(of: ":", with: "\\:")
-        .replacingOccurrences(of: "\n", with: "\\n")
-        .replacingOccurrences(of: "#", with: "\\#")
+        .replacing("\\", with: "\\\\")
+        .replacing("=", with: "\\=")
+        .replacing(":", with: "\\:")
+        .replacing("\n", with: "\\n")
+        .replacing("#", with: "\\#")
 }
 func unescapeInSimplePropertiesList(_ text: String) -> String {
     return text.components(separatedBy: "\\\\").map { $0
-        .replacingOccurrences(of: "\\#", with: "#")
-        .replacingOccurrences(of: "\\n", with: "\n")
-        .replacingOccurrences(of: "\\:", with: ":")
-        .replacingOccurrences(of: "\\=", with: "=")
-        .replacingOccurrences(of: "\\\\", with: "\\")
+        .replacing("\\#", with: "#")
+        .replacing("\\n", with: "\n")
+        .replacing("\\:", with: ":")
+        .replacing("\\=", with: "=")
+        .replacing("\\\\", with: "\\")
     }.joined(separator: "\\")
 }
 
@@ -277,7 +281,7 @@ extension String {
     var avoidingDoubleHyphens: String {
         
         var result  = if self.contains("--") {
-            self.replacingOccurrences(of: "--", with: "(HYPHEN)(HYPHEN)")
+            self.replacing("--", with: "(HYPHEN)(HYPHEN)")
         } else {
             self
         }

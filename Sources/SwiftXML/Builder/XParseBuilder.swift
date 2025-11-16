@@ -8,7 +8,12 @@
 //
 //===----------------------------------------------------------------------===//
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
+
 import SwiftXMLInterfaces
 
 fileprivate func makePrefix(forName name: String, andURI uri: String) -> String {

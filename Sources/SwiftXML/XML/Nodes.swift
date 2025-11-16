@@ -8,7 +8,13 @@
 //
 //===----------------------------------------------------------------------===//
 
+// !!! currently FoundationEssentials does not have Filehandle !!!
+//#if canImport(FoundationEssentials)
+//import FoundationEssentials
+//#else
 import Foundation
+//#endif
+
 import SwiftXMLInterfaces
 import SwiftXMLParser
 
@@ -528,7 +534,7 @@ public class XNode {
         let productionTemplate = productionTemplate ?? DefaultProductionTemplate()
         let fileManager = FileManager.default
         
-        fileManager.createFile(atPath: path,  contents:Data("".utf8), attributes: nil)
+        _ = fileManager.createFile(atPath: path,  contents:Data("".utf8), attributes: nil)
         
         if let fileHandle = FileHandle(forWritingAtPath: path) {
             try write(
@@ -1562,7 +1568,7 @@ extension XBranchInternal {
     func _trimWhiteSpace() {
         self.traverse { node in
             if let text = node as? XText {
-                text.value = text.value.trimmingCharacters(in: .whitespacesAndNewlines)
+                text.value = text.value.replacing(/\s+/, with: " ")
             }
         }
     }
@@ -2026,15 +2032,15 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     public var unprefixedAttributesDescription: String? {
         if _attributes.isEmpty { return nil }
         return _attributes.sorted{
-            $0.0.caseInsensitiveCompare($1.0) == .orderedAscending
+            $0.0.lowercased() < $1.0.lowercased()
         }.map { (attributeName,attributeValue) in "\(attributeName)=\"\(attributeValue.escapingDoubleQuotedValueForXML)\"" }.joined(separator: " ")
     }
     
     public var prefixedAttributesDescription: String? {
         if _attributesForPrefix.isEmpty { return nil }
         return _attributesForPrefix.all.sorted{
-            $0.0.caseInsensitiveCompare($1.0) == .orderedAscending ||
-            ($0.0 == $1.0 && $0.1.caseInsensitiveCompare($1.1) == .orderedAscending)
+            $0.0.lowercased() < $1.0.lowercased() ||
+            ($0.0 == $1.0 && $0.1.lowercased() < $1.1.lowercased())
         }.map{ "\($0.0):\($0.1)=\"\($0.2.escapingDoubleQuotedValueForXML)\"" }.joined(separator: " ")
     }
     
@@ -2192,16 +2198,16 @@ public final class XElement: XContent, XBranchInternal, CustomStringConvertible 
     /// Only attributes without prefix are considered.
     public var attributeNames: [String] {
         get {
-            _attributes.keys.sorted{ $0.caseInsensitiveCompare($1) == .orderedAscending }
+            _attributes.keys.sorted{ $0.lowercased() < $1.lowercased() }
         }
     }
     
     /// Attribute without prefix get the first value `nil` in the result.
     public var attributeNamesWithPrefix: [(String?,String)] {
         get {
-            let prefixes: [String] = _attributesForPrefix.firstKeys.sorted{ $0.caseInsensitiveCompare($1) == .orderedAscending }
+            let prefixes: [String] = _attributesForPrefix.firstKeys.sorted{ $0.lowercased() < $1.lowercased() }
             let prefixesWithNames: [(String,String)] = prefixes
-                .flatMap{ prefix in _attributesForPrefix.secondKeys(forLeftKey: prefix)!.sorted{ $0.caseInsensitiveCompare($1) == .orderedAscending }
+                .flatMap{ prefix in _attributesForPrefix.secondKeys(forLeftKey: prefix)!.sorted{ $0.lowercased() < $1.lowercased() }
                 .map{ (prefix,$0) } }
             return attributeNames.map{ (nil,$0) } + prefixesWithNames
         }
@@ -2688,11 +2694,11 @@ public final class XText: XContent, XTextualContentRepresentation, ToBePeparedFo
     }
     
     public func trim() {
-        self.value = self.value.trimmingCharacters(in: .whitespacesAndNewlines)
+        self.value = self.value.replacing(/^\s+/, with: "").replacing(/\s+$/, with: "")
     }
     
     public func trimming() -> XText {
-        self.value = self.value.trimmingCharacters(in: .whitespacesAndNewlines)
+        trim()
         return self
     }
     

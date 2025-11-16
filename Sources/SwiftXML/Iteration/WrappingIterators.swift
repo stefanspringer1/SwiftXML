@@ -8,7 +8,11 @@
 //
 //===----------------------------------------------------------------------===//
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /**
  The XNodeIterator does the work of making sure that an XML tree can be manipulated
