@@ -2261,17 +2261,7 @@ The resulting output is:
 </a>
 ```
 
-When searching for elements with prefixes, those prefixes have to be used:
-
-```swift
-let mathMLPrefix = myDocument.prefix(forNamespaceURI: "http://www.w3.org/1998/Math/MathML")
-
-for element in document.elements(prefix: mathMLPrefix, "math", "mo", "mi") {
-    print("element \"\(element.name)\" with prefix \"\(element.prefix ?? "")\"")
-}
-```
-
-The resulting output:
+When searching for elements with prefixes, those prefixes have to be used in the calls of the according methods, see the example at the beginning of this section which has as output:
 
 ```text
 element "math" with prefix "math"
