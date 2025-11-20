@@ -2199,6 +2199,14 @@ When transforming elements, it might be convenient to keep the identity of trans
 
 ## Prefixes and namespaces
 
+```swift
+let mathMLPrefix = myDocument.prefix(forNamespaceURI: "http://www.w3.org/1998/Math/MathML")
+
+for element in document.elements(prefix: mathMLPrefix, "math", "mo", "mi") {
+    print("element \"\(element.name)\" with prefix \"\(element.prefix ?? "")\"")
+}
+```
+
 A namespace is referenced by a unique URI (Uniform Resource Identifier) and is supposed to differentiate between elements of different purpose or origin. Namespaces in the serialization of an XML document (i.e. in the textual file) are defined as attributes in the form `xmlns:prefix="namespace URI"` or `xmlns="namespace URI"` (with some values for the prefix `prefix` and the namespace URI `namespace URI`) and are valid in their respective contexts (i.e. in the according part of the XML tree). Elements that belong to that namespace then have the name `prefix:name` (with some value for `name`) in this serialization. `prefix:name` is then also called the “qualified” name and the value `name` is called the “local” name. In the case of `xmlns="namespace URI"`, all elements in the context whitout a prefix are supposed to belong to the namespace, as long as no competing definition occurs. An attribute can also have a namespace prefix, it is then considered to be an extra thing to the attributes that an element already has and which should _not_ have a namespace prefix set.
 
 The handling of namespaces in this library differs from other libraries for XML in that the prefix plays a more prominent role. In addition to the name, elements can also have a prefix, which is not only useful for referencing namespaces, but can also be used independently of namespaces to distinguish between elements with the same name during the processing of a document. It is also very straightforward to write code that works regardless of whether a namespace is used for the corresponding elements, without losing the definiteness if the namespace is declared.
