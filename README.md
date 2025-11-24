@@ -167,6 +167,10 @@ The content of the file `output.xml` is then:
 
 ## Related packages
 
+### The `Pipeline` package
+
+The [Pipeline](https://github.com/stefanspringer1/Pipeline) package together with the [PipelineXMLExtensions](https://github.com/stefanspringer1/PipelineXMLExtensions) is well suited for building a pipeline to process an XML document.
+
 ### The `LoopsOnOptionals` package
 
 For-in loops do not work on optionals e.g. optional chains in Swift. But when working with this XML libary being able to do so might be convenient at times. In order to be able to loop on optionals, include the very small `LoopsOnOptionals` package from https://github.com/stefanspringer1/LoopsOnOptionals.
@@ -190,18 +194,6 @@ if let metadata = element.firstChild("metadata") {
 ```
 
 But even more so in more complex situations, the introduction of such a `if let` (or `case let`) expression makes the code harder to understand.
-
-
-### The `Workflow` package
-
----
-**NOTE**
-
-This `Workflow` package will soon be replaced by the new `Pipeline` package which is independant of the logging implementation and is better suited for the Swift 6 strict concurrency mode.
-
----
-
-When using SwiftXML in the context of the [SwiftWorkflow](https://github.com/stefanspringer1/SwiftWorkflow) framework, you might include the [WorkflowUtilitiesForSwiftXML](https://github.com/stefanspringer1/WorkflowUtilitiesForSwiftXML).
 
 ## Properties of the library
 
