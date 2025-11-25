@@ -1,9 +1,12 @@
 # SwiftXML
 
 ---
-**NOTE**
 
-This library will soon be moved to a new location (and with a reset version number). An update will be posted here.
+⚠️ **NOTE:**
+
+This package is _deprecated;_ use the following, currently maintained package instead:
+
+https://github.com/swiftxml/SwiftXML
 
 ---
 
