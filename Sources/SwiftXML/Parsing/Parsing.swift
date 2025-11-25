@@ -17,7 +17,7 @@ import Foundation
 import SwiftXMLInterfaces
 import SwiftXMLParser
 
-@available(*, deprecated, message: "this package is deprecated, use https://github.com/swiftxml/SwiftXML instead")
+@available(*, deprecated, message: "this package is deprecated, use the repository https://github.com/swiftxml/SwiftXML instead")
 public func parseXML(
     from documentSource: XDocumentSource,
     namespaceAware: Bool = false,
@@ -81,7 +81,7 @@ public func parseXML(
     return document
 }
 
-@available(*, deprecated, message: "this package is deprecated, use https://github.com/swiftxml/SwiftXML instead")
+@available(*, deprecated, message: "this package is deprecated, use the repository https://github.com/swiftxml/SwiftXML instead")
 public func parseXML(
     fromPath path: String,
     namespaceAware: Bool = false,
@@ -128,7 +128,7 @@ public func parseXML(
     )
 }
 
-@available(*, deprecated, message: "this package is deprecated, use https://github.com/swiftxml/SwiftXML instead")
+@available(*, deprecated, message: "this package is deprecated, use the repository https://github.com/swiftxml/SwiftXML instead")
 public func parseXML(
     fromURL url: URL,
     namespaceAware: Bool = false,
@@ -175,7 +175,7 @@ public func parseXML(
     )
 }
 
-@available(*, deprecated, message: "this package is deprecated, use https://github.com/swiftxml/SwiftXML instead")
+@available(*, deprecated, message: "this package is deprecated, use the repository https://github.com/swiftxml/SwiftXML instead")
 public func parseXML(
     fromText text: String,
     namespaceAware: Bool = false,
@@ -222,7 +222,7 @@ public func parseXML(
     )
 }
 
-@available(*, deprecated, message: "this package is deprecated, use https://github.com/swiftxml/SwiftXML instead")
+@available(*, deprecated, message: "this package is deprecated, use the repository https://github.com/swiftxml/SwiftXML instead")
 public func parseXML(
     fromData data: Data,
     namespaceAware: Bool = false,

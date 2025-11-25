@@ -4,7 +4,7 @@
 
 ⚠️ **NOTE:**
 
-This package is _deprecated;_ use the following, currently maintained package instead:
+This repository is _deprecated;_ use the following, currently maintained repository instead:
 
 https://github.com/swiftxml/SwiftXML
 

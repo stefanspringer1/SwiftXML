@@ -838,7 +838,7 @@ public final class XDocument: XNode, XBranchInternal {
         }
     }
     
-    @available(*, deprecated, message: "this package is deprecated, use https://github.com/swiftxml/SwiftXML instead")
+    @available(*, deprecated, message: "this package is deprecated, use the repository https://github.com/swiftxml/SwiftXML instead")
     public init(
         xmlVersion: String = "1.0",
         encoding: String? = nil,
@@ -867,7 +867,7 @@ public final class XDocument: XNode, XBranchInternal {
         }
     }
     
-    @available(*, deprecated, message: "this package is deprecated, use https://github.com/swiftxml/SwiftXML instead")
+    @available(*, deprecated, message: "this package is deprecated, use the repository https://github.com/swiftxml/SwiftXML instead")
     public convenience init(
         attached: [String:Any?]? = nil,
         registeringAttributes attributeRegisterMode: AttributeRegisterMode = .none,
